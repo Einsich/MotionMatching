@@ -1,0 +1,45 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+.vscode/*
+*.cmake
+*.make
+MainApplication/CMakeFiles/*
+MainApplication/CMakeCache.txt
+MainApplication/Makefile
+ShaderPrecompiler/CMakeFiles/*
+ShaderPrecompiler/CMakeCache.txt
+ShaderPrecompiler/Makefile
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+# Resources
+*.fbx
+*.jpg
+*.png
