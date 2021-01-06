@@ -75,8 +75,9 @@ void Scene::init()
   gameObjects.emplace_back(plane);
 
   animPlayer = animation_preprocess(importer, man, root);
-  
-  
+  animPlayer->play_animation(0);
+  input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
+  input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 }
 void Scene::update()
 { 

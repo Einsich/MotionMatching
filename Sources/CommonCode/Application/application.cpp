@@ -43,10 +43,10 @@ void Application::main_loop()
   while(running){
     timer.update();
     
+    context.start_frame();
 		running = sdl_event_handler();
     if (running)
     {
-      context.start_frame();
       scene.update();
       scene.render();
       ImGui::Render();

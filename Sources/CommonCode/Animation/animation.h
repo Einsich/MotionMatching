@@ -6,6 +6,7 @@
 #include "bone_render.h"
 #include "CommonCode/GameObject/game_object.h"
 #include "CommonCode/Serialization/serialization.h"
+#include "CommonCode/Event/input.h"
 #include <map>
 
 
@@ -39,6 +40,8 @@ public:
   void PlayNextCadr();
   void render(const Camera& mainCam, const DirectionLight& light);
   int cadr_count();
+  void play_animation(int anim_index);
+  void animation_selector(const KeyboardEvent &event);
 
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;

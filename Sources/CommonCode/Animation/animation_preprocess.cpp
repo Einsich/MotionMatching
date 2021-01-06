@@ -22,7 +22,7 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
   {
     TimeScope scope("Animation Reading from fbx file");
     string path = join_recources_path("MocapOnlineMobilityStarterPack/Animation/Root_Motion");
-    
+    uintmax_t animation_size = 0;
     animPlayer->animationTree = AnimationTree(root);
     animPlayer->curTransform.resize(go->get_mesh()->bonesMap.size());
     for (const auto & entry : fs::directory_iterator(path))
@@ -36,6 +36,7 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
       else
       if (entry.is_regular_file())
       {
+        animation_size += entry.file_size();
         const string& nextPath = entry.path();
         importer.ReadFile(nextPath, 0);
         const aiScene* scene = importer.GetScene();
@@ -79,6 +80,8 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
     ofstream myfile (join_recources_path("StarterMocapLib.bin"), ios::binary);
     size_t t1 = animPlayer->serialize(myfile);
     myfile.close();
+    int cadr_count = animPlayer->cadr_count();
+    debug_log("Bin file use %ld KB instead %ld KB, %ld cadres, %ld bytes on cadr", t1 / 1024, animation_size / 1024, cadr_count, t1 / cadr_count);
   }
   else
   {

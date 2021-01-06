@@ -58,12 +58,14 @@ void AnimationPlayer::PlayNextCadr()
   {
     curCadr = 0;
     curT = 0;
+    /*
     curAnim++;
     if (curAnim >= animations.size())
     {
       curAnim = 0;
     }
-    debug_error("play %s", animations[curAnim].name.c_str());
+    debug_log("play %s", animations[curAnim].name.c_str());
+    */
   }
 }
 int AnimationPlayer::cadr_count()
@@ -79,6 +81,20 @@ void AnimationPlayer::render(const Camera& mainCam, const DirectionLight& light)
   gameObject->get_shader().set_mat4x4("Bones", curTransform, false);
   gameObject->render(mainCam, light);
   boneRender.render(gameObject->get_transform().get_transform(), animationTree, mainCam, light);
+}
+
+void AnimationPlayer::play_animation(int anim_index)
+{
+  curAnim = (anim_index + animations.size()) % animations.size();
+  debug_log("play %s", animations[curAnim].name.c_str());
+}
+void AnimationPlayer::animation_selector(const KeyboardEvent &event)
+{
+  if (event.keycode == SDLK_RIGHT)
+    play_animation(curAnim + 1);
+  if (event.keycode == SDLK_LEFT)
+    play_animation(curAnim - 1);
+  
 }
 size_t Animation::serialize(std::ostream& os) const
 {

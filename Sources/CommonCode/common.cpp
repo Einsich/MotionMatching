@@ -23,10 +23,10 @@ void debug_common(const char *fmt, int status, va_list args)
     snprintf(timeBuf, timeLen, "[%.2f] ", Time::time());
     if (q.size() >= MaxQueueSize)
     {
-      q.pop_back();
+      q.pop_front();
     }
     
-    q.push_front({string(timeBuf) + string(messageBuf), status});
+    q.push_back({string(timeBuf) + string(messageBuf), status});
   }
   else
   {
