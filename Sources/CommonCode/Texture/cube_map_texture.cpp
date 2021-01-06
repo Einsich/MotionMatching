@@ -17,12 +17,12 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
     images[i] = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
     if (!images[i])
     {
-      log_error("Can't load face[%d] %s for cubemap!", i, fullpath.c_str());
+      debug_error("Can't load face[%d] %s for cubemap!", i, fullpath.c_str());
       continue;
     }
     if (h != w)
     {
-      log_error("Cubmap face[%d] %s must have similar width and height (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), w, h);
+      debug_error("Cubmap face[%d] %s must have similar width and height (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), w, h);
       return;
     }
     if (size < 0)
@@ -32,7 +32,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
     {
       if (size != h)
       {
-        log_error("Cubmap face[%d] %s must have similar sizes (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), size, h);
+        debug_error("Cubmap face[%d] %s must have similar sizes (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), size, h);
         return;
       }
     }    

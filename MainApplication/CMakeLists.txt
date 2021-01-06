@@ -19,12 +19,12 @@ set(CMAKE_CXX_FLAGS "-Wall -g")
 set(TINYLINK "-lX11 -lpthread -lSDL2  -lSDL2_image ")
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${TINYLINK}")
 
-#file(GLOB IMGUI_SRC src/imgui/*.cpp)
+file(GLOB IMGUI_SRC "${ROOT}/imgui/*.cpp")
 
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/CommonCode/*.cpp")
-file(GLOB_RECURSE C_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/Glad/*.c")
+file(GLOB_RECURSE C_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/glad/*.c")
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${C_SOURCES} ${ROOT}/MainApplication/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES} ${C_SOURCES} ${IMGUI_SRC} ${ROOT}/MainApplication/main.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY} assimp glfw ${CMAKE_DL_LIBS})
 

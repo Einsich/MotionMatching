@@ -1,5 +1,7 @@
 #include "application.h"
 #include "CommonCode/Shader/shader_factory.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_sdl.h"
 
 Application::Application(string window_name, int width, int height):
 scene(), context(window_name, width, height), timer(), input()
@@ -14,6 +16,7 @@ bool Application::sdl_event_handler()
   bool running = true;
   while (SDL_PollEvent(&event))
   {
+    ImGui_ImplSDL2_ProcessEvent(&event);
     switch(event.type){
       case SDL_QUIT: running = false; break;
       
@@ -39,16 +42,23 @@ void Application::main_loop()
   bool running = true;
   while(running){
     timer.update();
+    
 		running = sdl_event_handler();
     if (running)
     {
+      context.start_frame();
       scene.update();
       scene.render();
+      ImGui::Render();
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();
     }
 	}
 }
 void Application::exit()
 {
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
   SDL_Quit();
 }

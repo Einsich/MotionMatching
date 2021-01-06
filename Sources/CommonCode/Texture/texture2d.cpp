@@ -48,7 +48,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
 		}
 		else
 		{
-			log_error("Can't load texture %s!",texture_path_from_textures_folder.c_str());
+			debug_error("Can't load texture %s!",texture_path_from_textures_folder.c_str());
 			return;
 		}
   }

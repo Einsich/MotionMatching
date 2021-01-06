@@ -1,7 +1,7 @@
 #include "CommonCode/shader_factory.h"
 #include <iostream>
 #include <SDL2/SDL.h>
-#include "Glad/include/glad/glad.h"
+#include "glad/glad.h"
 
 SDL_Window * window;
 SDL_GLContext gl_context;

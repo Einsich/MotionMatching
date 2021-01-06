@@ -58,7 +58,7 @@ void read_directories(string path)
         }
         catch(ifstream::failure &e)
         {
-          log_error("Shader in %s not successfuly read!", nextPath.c_str());
+          debug_error("Shader in %s not successfuly read!", nextPath.c_str());
         }
       }
     }
@@ -90,7 +90,7 @@ void compile_shaders(const map<string, vector<pair<SHADER_TYPE, string>>> &shade
             if (p.second == codes.first)
               extension = p.first;
 
-        log_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.c_str(), infoLog);
+        debug_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.c_str(), infoLog);
       };
       shaders.push_back(shaderProg);
     }
@@ -105,12 +105,12 @@ void compile_shaders(const map<string, vector<pair<SHADER_TYPE, string>>> &shade
     if(!success)
     {
         glGetProgramInfoLog(program, 512, NULL, infoLog);
-        log_error("Shader programm (%s) linking failed!\n Log: %s", shaderName.c_str(), infoLog);
+        debug_error("Shader programm (%s) linking failed!\n Log: %s", shaderName.c_str(), infoLog);
     }
 
     for (GLuint shaderProg: shaders)
       glDeleteShader(shaderProg);
-    log_debug("Shader %s was compiled.", shaderName.c_str());
+    debug_log("Shader %s was compiled.", shaderName.c_str());
     if (createShaders)
     {
       Shader(shaderName, program);

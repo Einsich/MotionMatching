@@ -38,4 +38,9 @@ public:
   {
     return timer->secondDelta;
   }
+  static float fps()
+  {
+    int t = timer->millisecondDelta < 1 ? 1 : timer->millisecondDelta;
+    return 1000.f / t;
+  }
 };

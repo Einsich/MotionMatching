@@ -1,13 +1,13 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "Glad/include/glad/glad.h"
+#include "glad/glad.h"
 #include <memory>
 using namespace std;
 
-#define log_error(format, args...) fprintf(stderr, format "\n", ##args)
-
-#define log_debug(format, args...) fprintf(stdout, format "\n", ##args)
+void debug_error(const char *format, ...);
+void debug_log(const char *format, ...);
+void debug_show();
 
 #define F4FMT "[%f, %f, %f, %f]\n"
 #define F4ARG(v) v[0], v[1], v[2], v[3]

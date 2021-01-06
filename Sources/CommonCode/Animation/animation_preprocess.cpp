@@ -39,7 +39,7 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
         const string& nextPath = entry.path();
         importer.ReadFile(nextPath, 0);
         const aiScene* scene = importer.GetScene();
-        log_debug("In file %s have %d animations:", nextPath.c_str(), scene->mNumAnimations);
+        debug_log("In file %s have %d animations:", nextPath.c_str(), scene->mNumAnimations);
         for (uint animInd = 0; animInd < scene->mNumAnimations; animInd++)
         {
 
@@ -87,7 +87,7 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
     size_t t2 = animPlayer->deserialize(l);
     l.close();
     int cadr_count = animPlayer->cadr_count();
-    log_debug("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
+    debug_log("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
   }
   return animPlayer;
 }

@@ -13,7 +13,7 @@ public:
   void stop()
   {
     Uint32 delta = SDL_GetTicks() - start;
-    log_debug("%s\nspend %f seconds", message.c_str(), delta * 0.001f);
+    debug_log("%s\nspend %f seconds", message.c_str(), delta * 0.001f);
   }
   ~TimeScope()
   {

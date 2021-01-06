@@ -9,6 +9,7 @@ private:
   int width, height;
 public:
   Context(string window_name, int width, int height);
+  void start_frame();
   void swap_buffer();
   int get_width() const;
   int get_height() const;

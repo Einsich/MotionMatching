@@ -9,7 +9,7 @@ void Property::bind_to_shader(const Shader &shader)
     case 3: shader.set_vec3(name.c_str(), property); break;
     case 4: shader.set_vec4(name.c_str(), property); break;    
     case 5: texture->bind(shader, name.c_str()); break;    
-    default:log_error("Can't set %s to shader", name.c_str());break;
+    default:debug_error("Can't set %s to shader", name.c_str());break;
   }
 }
 void Property::unbind_to_shader(const Shader &shader)
@@ -21,7 +21,7 @@ void Property::unbind_to_shader(const Shader &shader)
     case 3: shader.set_vec3(name.c_str(), vec3()); break;
     case 4: shader.set_vec4(name.c_str(), vec4()); break;    
     case 5: texture->unbind(); break;    
-    default:log_error("Can't unbind %s from shader", name.c_str());break;
+    default:debug_error("Can't unbind %s from shader", name.c_str());break;
   }
 }
 bool Property::operator== (const Property & other)

@@ -63,7 +63,7 @@ void AnimationPlayer::PlayNextCadr()
     {
       curAnim = 0;
     }
-    log_debug("play %s", animations[curAnim].name.c_str());
+    debug_error("play %s", animations[curAnim].name.c_str());
   }
 }
 int AnimationPlayer::cadr_count()

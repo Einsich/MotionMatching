@@ -1,6 +1,6 @@
 #include "scene.h"
 
-#include "Glad/include/glad/glad.h"
+#include "glad/glad.h"
 #include "CommonCode/skybox.h"
 #include "CommonCode/Camera/cameras.h"
 #include "CommonCode/Application/application.h"
@@ -9,12 +9,12 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
+#include "imgui/imgui.h"
 
 void read_tree(aiNode * node, int depth = 0)
 {
   string tab(depth, ' ');
-  log_debug("%s%s, mesh count %d",tab.c_str(), node->mName.C_Str(), node->mNumMeshes);
+  debug_log("%s%s, mesh count %d",tab.c_str(), node->mName.C_Str(), node->mNumMeshes);
   
   for (uint i = 0; i < node->mNumChildren; i++)
     read_tree(node->mChildren[i], depth + 1);
@@ -79,9 +79,15 @@ void Scene::init()
   
 }
 void Scene::update()
-{
+{ 
   main_camera()->update();
   animPlayer->PlayNextCadr();
+  ImGui::Begin("FPS");
+  ImGui::Text("%.1f", Time::fps());
+  ImGui::End();
+  ImGui::Begin("Debug");
+  debug_show();
+  ImGui::End();
 }
 void Scene::render()
 {

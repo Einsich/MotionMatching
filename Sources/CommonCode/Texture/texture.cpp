@@ -15,7 +15,7 @@ void Texture::bind(const Shader &shader, const char * textureName)
   }
   if (offset == maxActiveTexturesCount)
   {
-    log_error("Need more texture unit for %s", textureName);
+    debug_error("Need more texture unit for %s", textureName);
     return;
   }
   
