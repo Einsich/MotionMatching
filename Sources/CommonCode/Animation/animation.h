@@ -31,6 +31,7 @@ private:
   float speed = 1.f, curT = 0;
   mat4 rootTransform;
   BoneRender boneRender;
+  bool rootMotion = false;
   void CalculateBonesTransform(AnimationNode &node, mat4 parent, int d);
 public:
   AnimationTree animationTree;
@@ -42,6 +43,7 @@ public:
   int cadr_count();
   void play_animation(int anim_index);
   void animation_selector(const KeyboardEvent &event);
+  void set_root_motion(bool root_motion);
 
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;

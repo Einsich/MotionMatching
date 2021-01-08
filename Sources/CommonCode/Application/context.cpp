@@ -33,7 +33,7 @@ Context::Context(string window_name, int width, int height):
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL3_Init(glsl_version);
 }
-void Context::start_frame()
+void Context::start_imgui()
 {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplSDL2_NewFrame(window);

@@ -52,14 +52,14 @@ void Scene::init()
   const aiScene* scene = importer.GetScene();
   
   aiNode* root = scene->mRootNode;
-  root = root->mChildren[0]->mChildren[0];
+  root = root->mChildren[0];
   read_tree(root);
 
   Mesh mesh = Mesh(scene->mMeshes[0]);
   TexturePtr tex = make_texture2d("MocapOnlineMobilityStarterPack/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr floor = make_texture2d("Textures/ground.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
 
-  GameObjectPtr man = make_game_object(Transform(vec3(10.f, 0.f,-150.f)),
+  GameObjectPtr man = make_game_object(Transform(vec3(10.f, 0.f,-150.f), vec3(0.f), vec3(-1,1,-1)),
   make_mesh(scene->mMeshes[0]),
   standart_textured_material(tex),
   get_shader("animation_normal_uv"));
@@ -78,17 +78,15 @@ void Scene::init()
   animPlayer->play_animation(0);
   input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
   input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
+
+  personController = TestPersonController(man, animPlayer);
 }
 void Scene::update()
 { 
   main_camera()->update();
+  personController.update();
   animPlayer->PlayNextCadr();
-  ImGui::Begin("FPS");
-  ImGui::Text("%.1f", Time::fps());
-  ImGui::End();
-  ImGui::Begin("Debug");
-  debug_show();
-  ImGui::End();
+
 }
 void Scene::render()
 {
@@ -105,5 +103,14 @@ void Scene::render()
 
 
   render_sky_box();
-  glFlush();
+  glFlush(); 
+}
+void Scene::render_ui()
+{
+  ImGui::Begin("Debug");
+  debug_show();
+  ImGui::End();
+  ImGui::Begin("FPS");
+  ImGui::Text("%.1f", Time::fps());
+  ImGui::End();
 }

@@ -27,17 +27,14 @@ mat4x4 Transform::get_transform() const
 vec3 Transform::get_forward() const
 {
   return -rotation[2];
-  //return vec3(rotation[0][2], rotation[1][2],rotation[2][2]);
 }
 vec3 Transform::get_right() const
 {
   return rotation[0];
-  //return -vec3(rotation[0][0], rotation[1][0],rotation[2][0]);
 }
 vec3 Transform::get_up() const
 {
   return rotation[1];
-  //return -vec3(rotation[0][1], rotation[1][1],rotation[2][1]);
 }
 void Transform::set_rotation(float yaw, float pitch, float roll)
 {

@@ -8,33 +8,26 @@ void AnimationPlayer::CalculateBonesTransform(AnimationNode &node, mat4 parent, 
   if (it != animations[curAnim].channels.end())
   {
     AnimationChannel& channel = it->second;
-    mat4 rotation =  channel.get_lerped_rotation(curCadr, curT);
     
-    if (d == 0)
+    if (d == 1)
     {
-      mat4 translation = channel.get_lerped_translation(curCadr, curT);
-      nodeTransform = translation * nodeTransform * rotation;
-      gameObject->get_transform().set_rotation(mat4(mat3(nodeTransform)));
-
-      gameObject->get_transform().set_position(nodeTransform[3]);
-      parent = nodeTransform = mat4(1.f);
-        //BoneRender.rootPoint = new Vector3D(nodeTransform.A4, nodeTransform.B4, nodeTransform.C4);
+      if (rootMotion)
+      {
+        nodeTransform = channel.get_lerped_translation(curCadr, curT) * mat4(mat3(nodeTransform)) * channel.get_lerped_rotation(curCadr, curT);
+      }
+      else
+      {
+        nodeTransform = channel.get_lerped_locked_translation(curCadr, curT) * mat4(mat3(nodeTransform)) * channel.get_lerped_locked_rotation(curCadr, curT);
+      }
+      
     }   
     else
     {
-      nodeTransform = nodeTransform * rotation;
-    }
-                      
-  }
-  else
-  {
-      //Console.WriteLine($"!{node.Name} + {(animNode != null ? animNode.Name : "null")}");
+      nodeTransform = nodeTransform * channel.get_lerped_rotation(curCadr, curT);
+    }             
   }
   node.animationTransform = nodeTransform;
   nodeTransform = parent * nodeTransform;
-  //if (d == 0)
-  //    BoneRender.rootPoint = new Vector3D(nodeTransform.A4, nodeTransform.B4, nodeTransform.C4);
-  //BoneRender.AddBones(parent, nodeTransform, new Vector3D(0.1f,1.5f,0.1f), node.Name);
 
   auto it2 = gameObject->get_mesh()->bonesMap.find(node.name);
   if (it2 != gameObject->get_mesh()->bonesMap.end())
@@ -96,6 +89,11 @@ void AnimationPlayer::animation_selector(const KeyboardEvent &event)
     play_animation(curAnim - 1);
   
 }
+void AnimationPlayer::set_root_motion(bool root_motion)
+{
+  rootMotion = root_motion;
+}
+
 size_t Animation::serialize(std::ostream& os) const
 {
   size_t size = 0;

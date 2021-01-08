@@ -43,12 +43,14 @@ void Application::main_loop()
   while(running){
     timer.update();
     
-    context.start_frame();
+    
 		running = sdl_event_handler();
     if (running)
     {
       scene.update();
       scene.render();
+      context.start_imgui();
+      scene.render_ui();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();

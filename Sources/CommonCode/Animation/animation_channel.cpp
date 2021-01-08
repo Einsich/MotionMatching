@@ -8,6 +8,21 @@ mat4 AnimationChannel::get_lerped_rotation(uint i, float t)
 {
   return (i + 1 < rot.size()) ? toMat4(glm::mix(rot[i], rot[i + 1], t)): mat4(1.f);
 }
+mat4 AnimationChannel::get_lerped_locked_translation(uint i, float t)
+{
+  mat4 m = (i + 1 < pos.size()) ? translate(mat4(1.f), lerp(pos[i], pos[i + 1], t)) : mat4(1.f);
+  m[3].x = m[3].z = 0;
+  return m;
+}
+mat4 AnimationChannel::get_lerped_locked_rotation(uint i, float t)
+{
+  mat4 m =  (i + 1 < rot.size()) ? toMat4(glm::mix(rot[i], rot[i + 1], t)): mat4(1.f);
+  float x, y, z;
+  glm::extractEulerAngleXYZ(m, x, y, z);
+  x = 0;
+  m = glm::eulerAngleXYZ(x, y, z);
+  return m;
+}
 size_t AnimationChannel::serialize(std::ostream& os) const
 {
   size_t size = 0;
