@@ -89,7 +89,7 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
     vec3 d = boneOffsets[i] - p;
     mat4 t = translate(mat4(1.f), p);
     float len = length(d);
-    float width = std::min(1.5f, len * 0.13f);
+    float width = std::min(0.5f, len * 0.05f);
     mat4 s = scale(mat4(1.f), vec3(width, len, width));
 
     mat4 r = directionMatrix(vec3(0, 1, 0), d);

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include "CommonCode/math.h"
 #include "CommonCode/Time/time_scope.h"
+#include <assimp/postprocess.h>
 
 string normalName(const string& badName)
 {
@@ -38,7 +39,8 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
       {
         animation_size += entry.file_size();
         const string& nextPath = entry.path();
-        importer.ReadFile(nextPath, 0);
+        importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
+        importer.ReadFile(nextPath, aiProcess_GlobalScale);
         const aiScene* scene = importer.GetScene();
         debug_log("In file %s have %d animations:", nextPath.c_str(), scene->mNumAnimations);
         for (uint animInd = 0; animInd < scene->mNumAnimations; animInd++)
@@ -77,6 +79,7 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
         
       }
     }
+    animPlayer->build_state_machine();
     ofstream myfile (join_recources_path("StarterMocapLib.bin"), ios::binary);
     size_t t1 = animPlayer->serialize(myfile);
     myfile.close();

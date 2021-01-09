@@ -40,7 +40,16 @@ public:
   }
   static float fps()
   {
-    int t = timer->millisecondDelta < 1 ? 1 : timer->millisecondDelta;
-    return 1000.f / t;
+    const int N  = 60;
+    static Uint32 s[N] = {};
+    static Uint32 sum = 0;
+    static int k = 0;
+    int t = timer->millisecondDelta;
+
+    sum -= s[k];
+    s[k] = t;
+    sum += t; 
+    k = (k + 1) % N;
+    return 1000.f  * N / sum;
   }
 };
