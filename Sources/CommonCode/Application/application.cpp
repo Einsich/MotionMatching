@@ -33,6 +33,7 @@ bool Application::sdl_event_handler()
       case SDL_MOUSEMOTION: input.event_process(event.motion); break;
 
       case SDL_MOUSEWHEEL: input.event_process(event.wheel); break;
+      case SDL_WINDOWEVENT: break;
     }
   }
   return running;

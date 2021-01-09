@@ -45,9 +45,13 @@ void Context::swap_buffer()
 }
 int Context::get_width() const
 {
-  return width;
+  int h, w;
+  SDL_GL_GetDrawableSize(window, &w, &h);
+  return w;
 }
 int Context::get_height() const
 {
-  return height;
+  int h, w;
+  SDL_GL_GetDrawableSize(window, &w, &h);
+  return h;
 }

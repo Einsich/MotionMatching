@@ -5,7 +5,7 @@
 #include "CommonCode/Time/time.h"
 #include <list>
 #include <stdarg.h>
-const int MaxQueueSize = 5;
+const int MaxQueueSize = 10;
 struct Message
 {
   string message;
@@ -17,22 +17,18 @@ char messageBuf[messageLen], timeBuf[timeLen];
 
 void debug_common(const char *fmt, int status, va_list args)
 {
-  if (ImGui::GetCurrentWindowRead())
+  vsnprintf(messageBuf, messageLen, fmt, args);
+  snprintf(timeBuf, timeLen, "[%.2f] ", Time::time());
+  
+  if (q.size() >= MaxQueueSize)
   {
-    vsnprintf(messageBuf, messageLen, fmt, args);
-    snprintf(timeBuf, timeLen, "[%.2f] ", Time::time());
-    if (q.size() >= MaxQueueSize)
-    {
-      q.pop_front();
-    }
-    
-    q.push_back({string(timeBuf) + string(messageBuf), status});
+    q.pop_front();
   }
-  else
-  {
-    vprintf(fmt, args);
-    printf("\n");
-  }
+
+  q.push_back({string(timeBuf) + string(messageBuf), status});
+
+  printf("%s%s\n", timeBuf, messageBuf);
+
 }
 void debug_error(const char *fmt, ...)
 {
@@ -53,5 +49,4 @@ void debug_show()
   for (const Message &m: q)
     ImGui::TextColored(m.status ? ImVec4(1,1,1,1) : ImVec4(1,0.1f,0.1f,1) , "%s", m.message.c_str());
   
-
 }
