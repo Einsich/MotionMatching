@@ -1,0 +1,3 @@
+/home/yan/Documents/MotionMatching/ECSCodeGenerator/CMakeFiles/rebuild_cache.dir
+/home/yan/Documents/MotionMatching/ECSCodeGenerator/CMakeFiles/edit_cache.dir
+/home/yan/Documents/MotionMatching/ECSCodeGenerator/CMakeFiles/ECSCodeGenerator.exe.dir

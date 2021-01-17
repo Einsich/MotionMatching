@@ -5,7 +5,7 @@
 class ArcballCamera: public Camera, public std::enable_shared_from_this<ArcballCamera>
 {
  private:
-  float distance;
+  float maxdistance, zoom, distance;
   vec2 rotation;
   vec3 target_position;
   Transform *target_transform;
@@ -13,12 +13,12 @@ class ArcballCamera: public Camera, public std::enable_shared_from_this<ArcballC
   bool rotationEnable = false;
 public: 
   ArcballCamera(Transform *target, float distance, vec2 rotation):
-  distance(distance), rotation(rotation), target_position(vec3()), target_transform(target)
+  maxdistance(distance), zoom(0.2f), distance(zoom * maxdistance), rotation(rotation), target_position(vec3()), target_transform(target)
   { 
     calculate_transform();
   }
   ArcballCamera(vec3 target, float distance, vec2 rotation):
-  distance(distance), rotation(rotation), target_position(target), target_transform(nullptr)
+  maxdistance(distance), zoom(0.2f), distance(zoom * maxdistance), rotation(rotation), target_position(target), target_transform(nullptr)
   { 
     calculate_transform();
   }

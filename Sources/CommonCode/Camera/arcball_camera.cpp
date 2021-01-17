@@ -45,7 +45,12 @@ void ArcballCamera::update()
     target_position = target_transform->get_position();
   }
 
-  const float arcballCameraZoomSpeed = 1.f;
-  distance -= Input::input().get_wheel() * arcballCameraZoomSpeed;
+  const float arcballCameraZoomSpeed = 0.001f;
+  zoom -= Input::input().get_wheel() * arcballCameraZoomSpeed;
+  if (zoom < 0.f)
+    zoom = 0.f;
+  if (zoom > 1.f)
+    zoom = 1.f;
+  distance = maxdistance * zoom;
   calculate_transform();
 }

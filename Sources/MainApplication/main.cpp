@@ -6,7 +6,7 @@
 int main(int argc, char** argv)
 {
   Application application("Motion matching", 1848, 1016);
-   
+
   application.main_loop();
 
   application.exit();

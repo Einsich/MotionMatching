@@ -1,44 +1,86 @@
 #include "animation.h"
 #include "CommonCode/Time/time.h"
 #include "CommonCode/Light/direction_light.h"
+vec3 Animation::get_lerped_root_delta_pos()
+{
+  vec3 p = glm::mix(rootMotions[cadr], rootMotions[cadr + 1], t);
+  vec3 d = p - rootMotion;
+  rootMotion = p;
+  return cadr == 0 ? vec3(0.f) : d;
+}
+float Animation::get_lerped_root_delta_rot()
+{
+  float r = glm::mix(rootRotations[cadr], rootRotations[cadr + 1], t);
+  float d = r - rootRotation;
+  rootRotation = r;
+  return  cadr == 0 ? 0.f : d;
+}
+vec3 Animation::get_lerped_pos(const string &name)
+{
+  auto it = channels.find(name);
+  if (it == channels.end() || it->second.pos.size() == 0)
+    return vec3(0.f);
+  return glm::mix(it->second.pos[cadr], it->second.pos[cadr + 1], t);
+}
+quat Animation::get_lerped_rot(const string &name)
+{
+  auto it = channels.find(name);
+  if (it == channels.end() || it->second.rot.size() == 0)
+    return quat();
+  return glm::mix(it->second.rot[cadr], it->second.rot[cadr + 1], t);
+}
+vec3 AnimationPlayer::get_lerped_root_delta_pos()
+{
+  if (!blendMode.anim1)
+    return vec3(0.f);
+  if (!blendMode.anim2)
+    return blendMode.anim1->get_lerped_root_delta_pos();
+  return glm::mix(blendMode.anim1->get_lerped_root_delta_pos(), blendMode.anim2->get_lerped_root_delta_pos(), 1.f - blendMode.t);
+}
+float AnimationPlayer::get_lerped_root_delta_rot()
+{
+  if (!blendMode.anim1)
+    return 0.f;
+  if (!blendMode.anim2)
+    return blendMode.anim1->get_lerped_root_delta_rot();
+  return glm::mix(blendMode.anim1->get_lerped_root_delta_rot(), blendMode.anim2->get_lerped_root_delta_rot(), 1.f - blendMode.t);
+}
+mat4 AnimationPlayer::get_lerped_pos(const string &name)
+{
+  if (!blendMode.anim1)
+    return mat4(1.f);
+  if (!blendMode.anim2)
+    return translate(mat4(1.f), blendMode.anim1->get_lerped_pos(name));
+  
+  return translate(mat4(1.f), glm::mix(blendMode.anim1->get_lerped_pos(name), blendMode.anim2->get_lerped_pos(name), 1.f - blendMode.t));
+}
+mat4 AnimationPlayer::get_lerped_rot(const string &name)
+{
+  if (!blendMode.anim1)
+    return mat4(1.f);
+  if (!blendMode.anim2)
+    return toMat4(blendMode.anim1->get_lerped_rot(name));
+  
+  return toMat4(glm::mix(blendMode.anim1->get_lerped_rot(name), blendMode.anim2->get_lerped_rot(name), 1.f - blendMode.t));
+}
 void AnimationPlayer::CalculateBonesTransform(AnimationNode &node, mat4 parent, int d)
 {
   mat4 nodeTransform = node.transform;
-  auto it = animations[curAnim].channels.find(node.name);
-  if (it != animations[curAnim].channels.end())
+  auto it = blendMode.anim1->channels.find(node.name);
+  if (it != blendMode.anim1->channels.end())
   {
     AnimationChannel& channel = it->second;
     
     if (d == 1)
     {
-      if (rootMotion)
-      {
-        nodeTransform = channel.get_lerped_translation(curCadr, curT) * mat4(mat3(nodeTransform)) * channel.get_lerped_rotation(curCadr, curT);
-      }
-      else
-      {
-        vec3 translation;
-        float rotation;
-        nodeTransform = channel.get_lerped_locked_translation(curCadr, curT, translation) * mat4(mat3(nodeTransform)) *
-           channel.get_lerped_locked_rotation(curCadr, curT, rotation);
-        if (curCadr != 0)
-        {
-          rootDeltaTranslation = translation - rootTranslation;
-          rootDeltaRotation = rotation - rootRotation;
-        }
-        else
-        {
-          rootDeltaTranslation = vec3(0.f);
-          rootDeltaRotation = 0;
-        }
-        rootTranslation = translation;
-        rootRotation = rotation;
-      }
-      
+      nodeTransform = get_lerped_pos(node.name) * mat4(mat3(nodeTransform)) * get_lerped_rot(node.name);
+
+      rootDeltaTranslation = get_lerped_root_delta_pos();
+      rootDeltaRotation = get_lerped_root_delta_rot();
     }   
     else
     {
-      nodeTransform = nodeTransform * channel.get_lerped_rotation(curCadr, curT);
+      nodeTransform = nodeTransform * get_lerped_rot(node.name);
     }             
   }
   node.animationTransform = nodeTransform;
@@ -54,20 +96,37 @@ void AnimationPlayer::CalculateBonesTransform(AnimationNode &node, mat4 parent, 
     CalculateBonesTransform(animationTree.nodes[node.childs[i]], nodeTransform, d + 1);
   }
 }
+
+void Animation::update(float dt)
+{
+  t += ticksPerSecond * dt;
+  int skippedCardes = (int)t;
+  t -= skippedCardes;
+  cadr += skippedCardes;
+}
+bool Animation::ended()
+{
+  return cadr >= duration - 1;
+}
 void AnimationPlayer::PlayNextCadr()
 {
   
   CalculateBonesTransform(animationTree.nodes[0], mat4(1.f), 0);
-  
-  curT += speed * Time::delta_time() * animations[curAnim].ticksPerSecond;
-  int skippedCardes = (int)curT;
-  curT -= skippedCardes;
-  curCadr += skippedCardes;
-  if (curCadr >= states[curAnim].duration - 1)
+  float dt = speed * Time::delta_time();
+  blendMode.anim1->update(dt);
+  if (blendMode.anim2)
   {
-    curCadr = 0;
-    curT = 0;
-    State &state = states[curAnim];
+    blendMode.anim2->update(dt);
+    blendMode.t += dt / blendMode.blendSeconds;
+    if (blendMode.anim2->ended() || blendMode.t > 1.f)
+    {
+      blendMode.anim2 = nullptr;
+      blendMode.t = 0.f;
+    }
+  }
+  if (blendMode.anim1->ended())
+  {
+    State &state = *blendMode.curState;
     if (!state.loopable)
     {
       if (state.edges.size() == 1)
@@ -76,8 +135,13 @@ void AnimationPlayer::PlayNextCadr()
       }
       else
       {
-        debug_error("Can't play nex cadr in %s", state.name.c_str());
+        debug_error("Can't play nex cadr in %s", blendMode.anim1->name.c_str());
+        blendMode.anim1->cadr = 0;
       }        
+    }
+    else
+    {
+      blendMode.anim1->cadr = 0;
     }
   }
 }
@@ -98,22 +162,24 @@ void AnimationPlayer::render(const Camera& mainCam, const DirectionLight& light)
 
 void AnimationPlayer::play_animation(int anim_index)
 {
-  curAnim = (anim_index + animations.size()) % animations.size();
-  curCadr = 0;
-  debug_log("play %s", animations[curAnim].name.c_str());
+  anim_index = (anim_index + animations.size()) % animations.size();
+  blendMode.anim2 = blendMode.anim1 && !blendMode.anim1->ended() ? blendMode.anim1 : nullptr;
+  blendMode.t = 0.f;
+  blendMode.anim1 = &animations[anim_index];
+  blendMode.curState = &states[anim_index];
+  blendMode.anim1->cadr = 0;
+  blendMode.anim1->t = 0.f;
+  debug_log("play %s", animations[anim_index].name.c_str());
 }
 void AnimationPlayer::animation_selector(const KeyboardEvent &event)
 {
   return;
+  static int anim = 0;
   if (event.keycode == SDLK_RIGHT)
-    play_animation(curAnim + 1);
+    anim++;
   if (event.keycode == SDLK_LEFT)
-    play_animation(curAnim - 1);
-  
-}
-void AnimationPlayer::set_root_motion(bool root_motion)
-{
-  rootMotion = root_motion;
+    anim--;
+  play_animation(anim);  
 }
 
 size_t Animation::serialize(std::ostream& os) const
@@ -123,6 +189,8 @@ size_t Animation::serialize(std::ostream& os) const
   size += write(os, ticksPerSecond);
   size += write(os, name);
   size += write(os, channels);
+  size += write(os, rootMotion);
+  size += write(os, rootRotation);
   return size;
 }
 size_t Animation::deserialize(std::istream& is)
@@ -132,6 +200,8 @@ size_t Animation::deserialize(std::istream& is)
   size += read(is, ticksPerSecond);
   size += read(is, name);
   size += read(is, channels);
+  size += read(is, rootMotion);
+  size += read(is, rootRotation);
   return size;
 }
 size_t AnimationPlayer::serialize(std::ostream& os) const
@@ -164,25 +234,16 @@ int AnimationPlayer::anim_index(const string& name)
   }
   return -1;
 }
-int AnimationPlayer::state_index(const string& name)
-{
-  for (int i = 0; i < states.size(); i++)
-  {
-    if (states[i].name == name)
-      return i;
-  }
-  return -1;
-}
 void AnimationPlayer::add_states()
 {
   for (int i = 0; i < animations.size(); i++)
   {
-    states.push_back(State(i, animations));
+    states.push_back(State());
   }
 }
 void AnimationPlayer::set_state(const string& name,  bool loopable, bool breakable )
 {
-  int i = state_index(name);
+  int i = anim_index(name);
   if (i < 0)
   {
     debug_error("Can't find %s animation in state list", name.c_str());
@@ -193,8 +254,8 @@ void AnimationPlayer::set_state(const string& name,  bool loopable, bool breakab
 }
 void AnimationPlayer::add_edge(const string& from, const string &to, const vector<pair<string, int>> &actions)
 {
-  int i = state_index(from);
-  int j = state_index(to);
+  int i = anim_index(from);
+  int j = anim_index(to);
   if (i < 0 || j < 0)
   {
     debug_error("Can't find %s (%d) or %s (%d) animation in state list", from.c_str(), i, to.c_str(), j);
@@ -205,17 +266,16 @@ void AnimationPlayer::add_edge(const string& from, const string &to, const vecto
 }
 bool AnimationPlayer::try_change_state(const string& property, int value)
 {
-  State &state = states[curAnim];
+  State &state = *blendMode.curState;
   if (state.breakable)
   {
     for (int i = 0; i < state.edges.size(); i++)
     {
       if (state.edges[i].have_action(property, value))
       {
-        if ( state.edges[i].to == curAnim)
+        if (&animations[state.edges[i].to] == blendMode.anim1)
           return true;
         
-        state_values[property] = value;
         play_animation(state.edges[i].to);
         return true;
       }
@@ -242,17 +302,17 @@ void AnimationPlayer::build_state_machine()
   add_edge("MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", "MOB1_Crouch_Idle_V2", {{"rotation", 0}});
   add_edge("MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", "MOB1_Crouch_Rlx_Turn_In_Place_R_Loop", {{"rotation", 1}});
 
-  set_state("MOB1_Crouch_To_Stand_Relaxed", false, false);
+  set_state("MOB1_Crouch_To_Stand_Relaxed", false);
   add_edge("MOB1_Crouch_To_Stand_Relaxed", "MOB1_Stand_Relaxed_Idle_v2");
 
-  set_state("MOB1_Crouch_To_CrouchWalk_F", false, false);
+  set_state("MOB1_Crouch_To_CrouchWalk_F", false);
   add_edge("MOB1_Crouch_To_CrouchWalk_F", "MOB1_CrouchWalk_F_Loop");
 
 
   set_state("MOB1_CrouchWalk_F_Loop");
   add_edge("MOB1_CrouchWalk_F_Loop", "MOB1_CrouchWalk_F_To_Crouch_RU", {{"speed", 0}});
 
-  set_state("MOB1_CrouchWalk_F_To_Crouch_RU", false, false);
+  set_state("MOB1_CrouchWalk_F_To_Crouch_RU", false);
   add_edge("MOB1_CrouchWalk_F_To_Crouch_RU", "MOB1_Crouch_Idle_V2");
 
 
@@ -271,17 +331,17 @@ void AnimationPlayer::build_state_machine()
   add_edge("MOB1_Stand_Rlx_Turn_In_Place_L_Loop", "MOB1_Stand_Relaxed_Idle_v2", {{"rotation", 0}});
   add_edge("MOB1_Stand_Rlx_Turn_In_Place_L_Loop", "MOB1_Stand_Rlx_Turn_In_Place_R_Loop", {{"rotation", 1}});
 
-  set_state("MOB1_Stand_Relaxed_To_Crouch", false, false);
+  set_state("MOB1_Stand_Relaxed_To_Crouch", false);
   add_edge("MOB1_Stand_Relaxed_To_Crouch", "MOB1_Crouch_Idle_V2");
 
-  set_state("MOB1_Stand_Relaxed_To_Walk_F", false, false);
-  add_edge("MOB1_Stand_Relaxed_To_Walk_F", "MOB1_Walk_F_Loop");
+  set_state("MOB1_Stand_Relaxed_To_Walk_F", false);
+  add_edge("MOB1_Stand_Relaxed_To_Walk_F", "MOB1_Walk_F_Loop",{{"speed", 0}});
 
-  set_state("MOB1_Stand_Relaxed_To_Jog_F", false, false);
+  set_state("MOB1_Stand_Relaxed_To_Jog_F", false);
   add_edge("MOB1_Stand_Relaxed_To_Jog_F", "MOB1_Jog_F_Loop");
 
-  set_state("MOB1_Walk_F_To_Stand_Relaxed_RU", false, false);
-  add_edge("MOB1_Walk_F_To_Stand_Relaxed_RU", "MOB1_Stand_Relaxed_Idle_v2");
+  set_state("MOB1_Walk_F_To_Stand_Relaxed_RU", false);
+  add_edge("MOB1_Walk_F_To_Stand_Relaxed_RU", "MOB1_Stand_Relaxed_Idle_v2", {{"rotation", 1},{"rotation", -1}});
 
   set_state("MOB1_Walk_F_Loop");
   add_edge("MOB1_Walk_F_Loop", "MOB1_Walk_F_Jump_RU", {{"jump", 1}});
@@ -292,10 +352,10 @@ void AnimationPlayer::build_state_machine()
   add_edge("MOB1_Jog_F_Loop", "MOB1_Jog_F_Jump", {{"jump", 1}});
   add_edge("MOB1_Jog_F_Loop", "MOB1_Walk_F_Loop", {{"speed", 0}, {"speed", 1}});
 
-  set_state("MOB1_Jog_F_Jump", false, false);
+  set_state("MOB1_Jog_F_Jump", false);
   add_edge("MOB1_Jog_F_Jump", "MOB1_Jog_F_Loop");
 
-  set_state("MOB1_Walk_F_Jump_RU", false, false);
+  set_state("MOB1_Walk_F_Jump_RU", false);
   add_edge("MOB1_Walk_F_Jump_RU", "MOB1_Walk_F_Loop");
 }
 void AnimationPlayer::crouch(int crouch)
@@ -305,7 +365,6 @@ void AnimationPlayer::crouch(int crouch)
 void AnimationPlayer::jump()
 {
   try_change_state("jump", 1);
-  state_values["jump"] = 0;
 }
 void AnimationPlayer::set_rotation(float rotation)
 {

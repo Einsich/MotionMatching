@@ -12,11 +12,25 @@ string normalName(const string& badName)
 }
 namespace fs = filesystem;
 
-
+vec3 extract_root_motion(vec3 & translation)
+{
+  vec3 rootMotion = vec3(translation.x, 0, translation.z);
+  translation.x = translation.z = 0;
+  return rootMotion;
+}
+float extract_root_motion(quat & rotation)
+{
+  mat4 m = toMat4(rotation);
+  float x, y, z;
+  glm::extractEulerAngleXYZ(m, x, y, z);
+  m = glm::eulerAngleXYZ(0.f, y, z);
+  rotation = quat_cast(m);
+  return x;
+}
 
 AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPtr go, aiNode *root)
 {
-  bool fromFile = false;
+  bool fromFile = true;
   AnimationPlayerPtr animPlayer = make_shared<AnimationPlayer>();
   animPlayer->gameObject = go;
   if (fromFile)
@@ -60,18 +74,42 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
             const aiNodeAnim * animNode = animation->mChannels[i];
             string name = normalName(string(animNode->mNodeName.C_Str()));
             auto &p = channels[name];
+            bool isRoot = name == "Hips";
             if (animNode->mNumPositionKeys == duration + 1)
             {
-              for (uint j = 0; j < duration; j++)
+              if (isRoot)
               {
-                p.pos.push_back(to_vec3(animNode->mPositionKeys[j + 1].mValue));
+                for (uint j = 0; j < duration; j++)
+                {
+                  vec3 d = to_vec3(animNode->mPositionKeys[j + 1].mValue);
+                  animationData.rootMotions.push_back(extract_root_motion(d));
+                  p.pos.push_back(d);
+                }
               }
+              else
+              {
+                for (uint j = 0; j < duration; j++)
+                  p.pos.push_back(to_vec3(animNode->mPositionKeys[j + 1].mValue));                
+              }
+              
+              
+              
             }
             if (animNode->mNumRotationKeys == duration + 1)
             {
-              for (uint j = 0; j < duration; j++)
+              if (isRoot)
               {
-                p.rot.push_back(to_quat(animNode->mRotationKeys[j + 1].mValue));
+                for (uint j = 0; j < duration; j++)
+                {
+                  quat q = to_quat(animNode->mRotationKeys[j + 1].mValue);
+                  animationData.rootRotations.push_back(extract_root_motion(q));
+                  p.rot.push_back(q);
+                }
+              }
+              else
+              {
+                for (uint j = 0; j < duration; j++)
+                  p.rot.push_back(to_quat(animNode->mRotationKeys[j + 1].mValue));
               }
             }
           }

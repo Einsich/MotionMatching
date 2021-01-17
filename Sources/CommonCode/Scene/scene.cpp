@@ -30,7 +30,7 @@ void Scene::init()
   create_sky_box("Textures/Skyboxes/CloudSky");
   sun = DirectionLight(vec3(0.1f, -0.5f, 0.1f));
 
-  shared_ptr<ArcballCamera> arcballCam = make_shared<ArcballCamera>(vec3(10.f,50.f,-150.f), 10, vec2());
+  shared_ptr<ArcballCamera> arcballCam = make_shared<ArcballCamera>(vec3(10.f,50.f,-150.f), 40, vec2(0.f, 30.f*DegToRad));
   arcballCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
   add_camera(arcballCam);
   input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
@@ -53,7 +53,7 @@ void Scene::init()
   
   aiNode* root = scene->mRootNode;
   root = root->mChildren[0];
-  read_tree(root);
+  //read_tree(root);
 
   Mesh mesh = Mesh(scene->mMeshes[0]);
   TexturePtr tex = make_texture2d("MocapOnlineMobilityStarterPack/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
