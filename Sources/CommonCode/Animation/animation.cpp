@@ -1,99 +1,104 @@
 #include "animation.h"
 #include "CommonCode/Time/time.h"
 #include "CommonCode/Light/direction_light.h"
-vec3 Animation::get_lerped_root_delta_pos()
+vec3 get_vec3(const map<string, vector<vec3>>& vecs, const string& name, uint i)
 {
-  vec3 p = glm::mix(rootMotions[cadr], rootMotions[cadr + 1], t);
-  vec3 d = p - rootMotion;
-  rootMotion = p;
-  return cadr == 0 ? vec3(0.f) : d;
+  auto it = vecs.find(name);
+  return (it == vecs.cend() || i < 0 || it->second.size() <= i) ? vec3(0.f) : it->second[i];
 }
-float Animation::get_lerped_root_delta_rot()
+quat get_quat(const map<string, vector<quat>>& vecs, const string& name, uint i)
 {
-  float r = glm::mix(rootRotations[cadr], rootRotations[cadr + 1], t);
-  float d = r - rootRotation;
-  rootRotation = r;
-  return  cadr == 0 ? 0.f : d;
+  auto it = vecs.find(name);
+  return (it == vecs.cend() || i < 0 || it->second.size() <= i) ? quat() : it->second[i];
 }
-vec3 Animation::get_lerped_pos(const string &name)
+Animation::Animation(uint duration, const AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs)
 {
-  auto it = channels.find(name);
-  if (it == channels.end() || it->second.pos.size() == 0)
-    return vec3(0.f);
-  return glm::mix(it->second.pos[cadr], it->second.pos[cadr + 1], t);
-}
-quat Animation::get_lerped_rot(const string &name)
-{
-  auto it = channels.find(name);
-  if (it == channels.end() || it->second.rot.size() == 0)
-    return quat();
-  return glm::mix(it->second.rot[cadr], it->second.rot[cadr + 1], t);
-}
-vec3 AnimationPlayer::get_lerped_root_delta_pos()
-{
-  if (!blendMode.anim1)
-    return vec3(0.f);
-  if (!blendMode.anim2)
-    return blendMode.anim1->get_lerped_root_delta_pos();
-  return glm::mix(blendMode.anim1->get_lerped_root_delta_pos(), blendMode.anim2->get_lerped_root_delta_pos(), 1.f - blendMode.t);
-}
-float AnimationPlayer::get_lerped_root_delta_rot()
-{
-  if (!blendMode.anim1)
-    return 0.f;
-  if (!blendMode.anim2)
-    return blendMode.anim1->get_lerped_root_delta_rot();
-  return glm::mix(blendMode.anim1->get_lerped_root_delta_rot(), blendMode.anim2->get_lerped_root_delta_rot(), 1.f - blendMode.t);
-}
-mat4 AnimationPlayer::get_lerped_pos(const string &name)
-{
-  if (!blendMode.anim1)
-    return mat4(1.f);
-  if (!blendMode.anim2)
-    return translate(mat4(1.f), blendMode.anim1->get_lerped_pos(name));
   
-  return translate(mat4(1.f), glm::mix(blendMode.anim1->get_lerped_pos(name), blendMode.anim2->get_lerped_pos(name), 1.f - blendMode.t));
-}
-mat4 AnimationPlayer::get_lerped_rot(const string &name)
-{
-  if (!blendMode.anim1)
-    return mat4(1.f);
-  if (!blendMode.anim2)
-    return toMat4(blendMode.anim1->get_lerped_rot(name));
-  
-  return toMat4(glm::mix(blendMode.anim1->get_lerped_rot(name), blendMode.anim2->get_lerped_rot(name), 1.f - blendMode.t));
-}
-void AnimationPlayer::CalculateBonesTransform(AnimationNode &node, mat4 parent, int d)
-{
-  mat4 nodeTransform = node.transform;
-  auto it = blendMode.anim1->channels.find(node.name);
-  if (it != blendMode.anim1->channels.end())
+  cadres.resize(duration);
+  for (uint i = 0; i < duration; i++)
   {
-    AnimationChannel& channel = it->second;
+    AnimationCadr& cadr = cadres[i];
+    cadr.nodeRotation.resize(tree.nodes.size());
+    for (uint j = 0; j < tree.nodes.size(); j++)
+    {
+      const AnimationNode& node = tree.nodes[j];
+      quat rotation = get_quat(quats, node.name, i);
+      if (node.name == "Hips")
+      {
+        vec3 translation = get_vec3(vecs, node.name, i);
+        cadr.rootTranslationDelta = vec3(translation.x, 0, translation.z);
+        cadr.nodeTranslation = vec3(0, translation.y, 0);
+      
+        mat4 m = toMat4(rotation);
+        float x, y, z;
+        glm::extractEulerAngleXYZ(m, x, y, z);
+        m = glm::eulerAngleXYZ(0.f, y, z);
+        cadr.rootRotationDelta = x;
+        rotation = quat_cast(m);
+      }
+      cadr.nodeRotation[j] = rotation;
+    }    
+  }
+
+  debug_log("%f, %f", cadres[0].rootTranslationDelta.x, cadres[0].rootTranslationDelta.z);
+  debug_log("%f, %f", cadres[duration -1].rootTranslationDelta.x, cadres[duration-1].rootTranslationDelta.z);
+  for (int i = duration - 1; i >=0; i--)
+  {
+    AnimationCadr& cadr1 = cadres[i];
+    AnimationCadr& cadr2 = cadres[i - 1];
+    cadr1.rootRotationDelta -= cadr2.rootRotationDelta;
+    cadr1.rootTranslationDelta -= cadr2.rootTranslationDelta;
+  }
+  cadres[0].rootRotationDelta = 0;
+  cadres[0].rootTranslationDelta = vec3(0.f);
+
+}
+int Animation::duration() const
+{
+  return cadres.size();
+}
+
+AnimationCadr Animation::get_lerped_cadr()
+{
+  return cadr < cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
+}
+AnimationCadr AnimationPlayer::get_lerped_cadr()
+{
+  assert(blendMode.anim1 != nullptr);
     
-    if (d == 1)
-    {
-      nodeTransform = get_lerped_pos(node.name) * mat4(mat3(nodeTransform)) * get_lerped_rot(node.name);
-
-      rootDeltaTranslation = get_lerped_root_delta_pos();
-      rootDeltaRotation = get_lerped_root_delta_rot();
-    }   
-    else
-    {
-      nodeTransform = nodeTransform * get_lerped_rot(node.name);
-    }             
-  }
-  node.animationTransform = nodeTransform;
-  nodeTransform = parent * nodeTransform;
-
-  auto it2 = gameObject->get_mesh()->bonesMap.find(node.name);
-  if (it2 != gameObject->get_mesh()->bonesMap.end())
+  if (!blendMode.anim2)
+    return blendMode.anim1->get_lerped_cadr();
+  return lerped_cadr(blendMode.anim1->get_lerped_cadr(), blendMode.anim2->get_lerped_cadr(), 1.f - blendMode.t);
+}
+void AnimationPlayer::calculate_bones_transform()
+{
+  AnimationCadr cadr = get_lerped_cadr();
+  float dt = blendMode.anim1->ticksPerSecond;
+  rootDeltaTranslation = cadr.rootTranslationDelta * dt;
+  rootDeltaRotation = cadr.rootRotationDelta * dt;
+  for (uint i = 0; i < animationTree.nodes.size(); i++)
   {
-    curTransform[it2->second] = nodeTransform * node.meshToBone;
+    AnimationNode& node = animationTree.nodes[i];
+    node.animationTransform = node.transform;
+    mat4& nodeTransform = node.animationTransform;
+    mat4 rotation = glm::toMat4(cadr.nodeRotation[i]);
+    mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(nodeTransform)) : nodeTransform;
+    nodeTransform = translation * rotation;
+    if (node.parent >= 0)
+    {
+      nodeTransform = animationTree.nodes[node.parent].animationTransform * nodeTransform;
+    }
+    
   }
-  for (uint i = 0; i < node.childs.size(); i++)
+  
+  for (uint i = 0; i < animationTree.nodes.size(); i++)
   {
-    CalculateBonesTransform(animationTree.nodes[node.childs[i]], nodeTransform, d + 1);
+    AnimationNode& node = animationTree.nodes[i];
+    auto it2 = gameObject->get_mesh()->bonesMap.find(node.name);
+    if (it2 != gameObject->get_mesh()->bonesMap.end())
+    {
+      curTransform[it2->second] = node.animationTransform * node.meshToBone;
+    }
   }
 }
 
@@ -106,12 +111,12 @@ void Animation::update(float dt)
 }
 bool Animation::ended()
 {
-  return cadr >= duration - 1;
+  return cadr >= duration() - 1;
 }
 void AnimationPlayer::PlayNextCadr()
 {
   
-  CalculateBonesTransform(animationTree.nodes[0], mat4(1.f), 0);
+  calculate_bones_transform();
   float dt = speed * Time::delta_time();
   blendMode.anim1->update(dt);
   if (blendMode.anim2)
@@ -149,7 +154,7 @@ int AnimationPlayer::cadr_count()
 {
   int count = 0;
   for (Animation & anim: animations)
-    count += anim.duration;
+    count += anim.duration();
   return count;
 }
 void AnimationPlayer::render(const Camera& mainCam, const DirectionLight& light)
@@ -185,23 +190,17 @@ void AnimationPlayer::animation_selector(const KeyboardEvent &event)
 size_t Animation::serialize(std::ostream& os) const
 {
   size_t size = 0;
-  size += write(os, duration);
   size += write(os, ticksPerSecond);
   size += write(os, name);
-  size += write(os, channels);
-  size += write(os, rootMotion);
-  size += write(os, rootRotation);
+  size += write(os, cadres);
   return size;
 }
 size_t Animation::deserialize(std::istream& is)
 {
   size_t size = 0;
-  size += read(is, duration);
   size += read(is, ticksPerSecond);
   size += read(is, name);
-  size += read(is, channels);
-  size += read(is, rootMotion);
-  size += read(is, rootRotation);
+  size += read(is, cadres);
   return size;
 }
 size_t AnimationPlayer::serialize(std::ostream& os) const
@@ -227,7 +226,7 @@ size_t AnimationPlayer::deserialize(std::istream& is)
 
 int AnimationPlayer::anim_index(const string& name)
 {
-  for (int i = 0; i < animations.size(); i++)
+  for (uint i = 0; i < animations.size(); i++)
   {
     if (animations[i].name == name)
       return i;
@@ -236,7 +235,7 @@ int AnimationPlayer::anim_index(const string& name)
 }
 void AnimationPlayer::add_states()
 {
-  for (int i = 0; i < animations.size(); i++)
+  for (uint i = 0; i < animations.size(); i++)
   {
     states.push_back(State());
   }
@@ -269,7 +268,7 @@ bool AnimationPlayer::try_change_state(const string& property, int value)
   State &state = *blendMode.curState;
   if (state.breakable)
   {
-    for (int i = 0; i < state.edges.size(); i++)
+    for (uint i = 0; i < state.edges.size(); i++)
     {
       if (state.edges[i].have_action(property, value))
       {

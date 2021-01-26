@@ -16,22 +16,17 @@ class Animation: public ISerializable
 private:
 
 public:
-  uint duration;
+  Animation(){}
+  Animation(uint duration, const AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs);
   float ticksPerSecond;
   string name;
-  map<string, AnimationChannel> channels;
   int cadr = 0; 
   float t = 0.f;
-  vec3 rootMotion = vec3(0.f);
-  float rootRotation = 0;
-  vector<vec3> rootMotions;
-  vector<float> rootRotations;
+  vector<AnimationCadr> cadres;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
-  vec3 get_lerped_pos(const string &name);
-  quat get_lerped_rot(const string &name);
-  vec3 get_lerped_root_delta_pos();
-  float get_lerped_root_delta_rot();
+  AnimationCadr get_lerped_cadr();
+  int duration() const;
   void update(float dt);
   bool ended();
 
@@ -85,11 +80,10 @@ class Edge
   void set_state(const string& name,  bool loopable = true, bool breakable = true);
   void add_edge(const string& from, const string &to, const vector<pair<string, int>> &actions = {});
   bool try_change_state(const string& property, int value);
-  void CalculateBonesTransform(AnimationNode &node, mat4 parent, int d);
-  mat4 get_lerped_pos(const string &name);
-  mat4 get_lerped_rot(const string &name);
-  vec3 get_lerped_root_delta_pos();
-  float get_lerped_root_delta_rot();
+  AnimationCadr get_lerped_cadr();
+
+  void calculate_bones_transform();
+
 public:
   vec3 rootDeltaTranslation= vec3(0.f);
   float rootDeltaRotation = 0 ;

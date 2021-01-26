@@ -18,6 +18,7 @@ void AnimationTree::build_tree(aiNode *node, mat4 parent_transform, int index, i
   nodes[index].meshToBone = inverse(parent_transform);
   
   nodes[index].name = string(node->mName.C_Str());
+  childMap[nodes[index].name] = index;
   for (uint i = 0; i < node->mNumChildren; i++)
   {
     int childIndex = nodes.size(); 
@@ -57,4 +58,18 @@ size_t AnimationTree::deserialize(std::istream& is)
   size_t size = 0;
   size += read(is, nodes);
   return size;
+}
+AnimationTreeIterator AnimationTree::begin() const
+{
+  return AnimationTreeIterator(0, (AnimationTree*)this);
+}
+AnimationTreeIterator AnimationTree::end() const
+{
+  return AnimationTreeIterator(nodes.size(), (AnimationTree*)this);
+}
+
+int AnimationTree::get_child(const string& name)
+{
+  auto it = childMap.find(name);
+  return it == childMap.end() ? -1 : it->second;
 }
