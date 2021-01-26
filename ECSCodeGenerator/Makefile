@@ -123,6 +123,60 @@ ECSCodeGenerator.exe/fast:
 	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/build
 .PHONY : ECSCodeGenerator.exe/fast
 
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.o: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.o
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.o
+
+# target to build an object file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.o:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.o
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.o
+
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.i: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.i
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.i
+
+# target to preprocess a source file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.i:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.i
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.i
+
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.s: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.s
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.s
+
+# target to generate assembly for a file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.s:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.s
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp.s
+
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.o: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.o
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.o
+
+# target to build an object file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.o:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.o
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.o
+
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.i: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.i
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.i
+
+# target to preprocess a source file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.i:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.i
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.i
+
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.s: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.s
+
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.s
+
+# target to generate assembly for a file
+home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.s:
+	$(MAKE) -f CMakeFiles/ECSCodeGenerator.exe.dir/build.make CMakeFiles/ECSCodeGenerator.exe.dir/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.s
+.PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp.s
+
 home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.o: home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.cpp.o
 
 .PHONY : home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.o
@@ -159,6 +213,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... ECSCodeGenerator.exe"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.o"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.i"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.s"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.o"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.i"
+	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.s"
 	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.o"
 	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.i"
 	@echo "... home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.s"
