@@ -11,10 +11,12 @@ quat get_quat(const map<string, vector<quat>>& vecs, const string& name, uint i)
   auto it = vecs.find(name);
   return (it == vecs.cend() || i < 0 || it->second.size() <= i) ? quat() : it->second[i];
 }
-Animation::Animation(uint duration, const AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs)
+
+Animation::Animation(uint duration, AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs)
 {
   
   cadres.resize(duration);
+  features.resize(duration);
   for (uint i = 0; i < duration; i++)
   {
     AnimationCadr& cadr = cadres[i];
@@ -37,11 +39,17 @@ Animation::Animation(uint duration, const AnimationTree& tree, const map<string,
         rotation = quat_cast(m);
       }
       cadr.nodeRotation[j] = rotation;
+      tree.nodes[j].animationTransform = tree.nodes[j].transform;
+      mat4 &nodeTransform = tree.nodes[j].animationTransform;
+      mat4 rotationM = glm::toMat4(rotation);
+      mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(nodeTransform)) : nodeTransform;
+      nodeTransform = translation * rotationM;
+      if (tree.nodes[j].parent >= 0)
+        nodeTransform = tree.nodes[tree.nodes[j].parent].transform * nodeTransform;
+      features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
 
-  debug_log("%f, %f", cadres[0].rootTranslationDelta.x, cadres[0].rootTranslationDelta.z);
-  debug_log("%f, %f", cadres[duration -1].rootTranslationDelta.x, cadres[duration-1].rootTranslationDelta.z);
   for (int i = duration - 1; i >=0; i--)
   {
     AnimationCadr& cadr1 = cadres[i];
@@ -60,7 +68,7 @@ int Animation::duration() const
 
 AnimationCadr Animation::get_lerped_cadr()
 {
-  return cadr < cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
+  return cadr < (int)cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
 }
 AnimationCadr AnimationPlayer::get_lerped_cadr()
 {
@@ -167,7 +175,7 @@ void AnimationPlayer::render(const Camera& mainCam, const DirectionLight& light)
 
 void AnimationPlayer::play_animation(int anim_index)
 {
-  anim_index = (anim_index + animations.size()) % animations.size();
+  currentAnimation = anim_index = (anim_index + animations.size()) % animations.size();
   blendMode.anim2 = blendMode.anim1 && !blendMode.anim1->ended() ? blendMode.anim1 : nullptr;
   blendMode.t = 0.f;
   blendMode.anim1 = &animations[anim_index];
@@ -193,6 +201,7 @@ size_t Animation::serialize(std::ostream& os) const
   size += write(os, ticksPerSecond);
   size += write(os, name);
   size += write(os, cadres);
+  size += write(os, features);
   return size;
 }
 size_t Animation::deserialize(std::istream& is)
@@ -201,6 +210,7 @@ size_t Animation::deserialize(std::istream& is)
   size += read(is, ticksPerSecond);
   size += read(is, name);
   size += read(is, cadres);
+  size += read(is, features);
   return size;
 }
 size_t AnimationPlayer::serialize(std::ostream& os) const

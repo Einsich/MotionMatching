@@ -17,12 +17,13 @@ private:
 
 public:
   Animation(){}
-  Animation(uint duration, const AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs);
+  Animation(uint duration, AnimationTree& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs);
   float ticksPerSecond;
   string name;
   int cadr = 0; 
   float t = 0.f;
   vector<AnimationCadr> cadres;
+  vector<AnimationFeatures> features;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_lerped_cadr();
@@ -91,6 +92,7 @@ public:
   vector<Animation> animations;
   vector<mat4> curTransform;
   GameObjectPtr gameObject;
+  int currentAnimation;
   void PlayNextCadr();
   void render(const Camera& mainCam, const DirectionLight& light);
   int cadr_count();

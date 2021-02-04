@@ -10,6 +10,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "imgui/imgui.h"
+#include "../Animation/animation_debug.h"
 
 void read_tree(aiNode * node, int depth = 0)
 {
@@ -125,6 +126,7 @@ void Scene::render_ui()
   ImGui::Begin("Debug");
   debug_show();
   ImGui::End();
+  debug_pose_matching(animPlayer);
   ImGui::Begin("FPS");
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();

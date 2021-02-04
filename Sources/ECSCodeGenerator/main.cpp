@@ -5,17 +5,8 @@
 #include <regex>
 #include <filesystem>
 #include <vector>
+#include "system_description.h"
 namespace fs = std::filesystem;
-struct FunctionArgument
-{
-    std::string type = "none", name = "none";
-    bool optional = false;
-};
-struct SystemDesription
-{
-    std::string sys_file, sys_name;
-    std::vector<FunctionArgument> args;
-};
 std::vector<std::string> get_matches(const std::string& str, std::regex reg, int max_matches = 10000000)
 {
     std::vector<std::string> v;

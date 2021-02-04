@@ -40,13 +40,11 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
         importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
         importer.ReadFile(nextPath, aiProcess_GlobalScale);
         const aiScene* scene = importer.GetScene();
-        debug_log("In file %s have %d animations:", nextPath.c_str(), scene->mNumAnimations);
         for (uint animInd = 0; animInd < scene->mNumAnimations; animInd++)
         {
 
           const aiAnimation* animation = scene->mAnimations[animInd];
           uint duration = (uint)animation->mDuration;
-          
           
           map<string, vector<quat>> rotation;
           map<string, vector<vec3>> translation;
@@ -92,6 +90,10 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
     int cadr_count = animPlayer->cadr_count();
     debug_log("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
   }
+  for (Animation &animation : animPlayer->animations)
+    debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration());
+  debug_log("Animation at all: %d", animPlayer->animations.size());
+  
   return animPlayer;
 }
 

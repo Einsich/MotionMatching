@@ -29,7 +29,7 @@ public:
   vector<AnimationNode> nodes;
   AnimationTree(){}
   AnimationTree(aiNode * node);
-  int get_child(const string& name);
+  int get_child(const string& name) const;
   
   AnimationTreeIterator begin() const;
   AnimationTreeIterator end() const;

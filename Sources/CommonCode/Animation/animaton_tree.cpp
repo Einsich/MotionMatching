@@ -68,7 +68,7 @@ AnimationTreeIterator AnimationTree::end() const
   return AnimationTreeIterator(nodes.size(), (AnimationTree*)this);
 }
 
-int AnimationTree::get_child(const string& name)
+int AnimationTree::get_child(const string& name) const
 {
   auto it = childMap.find(name);
   return it == childMap.end() ? -1 : it->second;
