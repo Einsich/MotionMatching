@@ -58,6 +58,7 @@ void Scene::init()
   Mesh mesh = Mesh(scene->mMeshes[0]);
   TexturePtr tex = make_texture2d("MocapOnlineMobilityStarterPack/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr floor = make_texture2d("Textures/ground.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
+  TexturePtr tex1 = make_texture2d("Textures/screen.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
 
   GameObjectPtr man = make_game_object(Transform(vec3(1.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1)),
   make_mesh(scene->mMeshes[0]),
@@ -73,6 +74,18 @@ void Scene::init()
   plane->get_material()->set_property(Property("uvScale", vec2(80.f,80.f)));
   plane->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(plane);
+
+  GameObjectPtr cube = create_cube(Transform(vec3(2.f,1.f,4.f), vec3(), vec3(0.7f,0.4f,0.7f)), true);
+  cube->set_shader(get_shader("standart_normal_uv"));
+  cube->get_material()->set_property(Property("mainTex", tex1));
+  cube->get_material()->set_property(Property("Specular", vec3(0.f)));
+  gameObjects.emplace_back(cube);
+
+GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3(1.8f,1.8f,1.8f)), 20, true, true);
+  sphere->set_shader(get_shader("standart_normal_uv"));
+  sphere->get_material()->set_property(Property("mainTex", tex1));
+  sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
+  gameObjects.emplace_back(sphere);
 
   animPlayer = animation_preprocess(importer, man, root);
   animPlayer->play_animation(0);

@@ -33,4 +33,4 @@ GameObjectPtr make_game_object(const Transform& transform, MeshPtr mesh_ptr, Mat
 
 GameObjectPtr create_plane(const Transform &transform, bool create_uv = false);
 GameObjectPtr create_cube(const Transform &transform, bool create_uv = false);
-GameObjectPtr create_sphere(const Transform &transform, bool create_uv = false);
+GameObjectPtr create_sphere(const Transform &transform, int detailed = 1, bool smooth = false, bool create_uv = false);

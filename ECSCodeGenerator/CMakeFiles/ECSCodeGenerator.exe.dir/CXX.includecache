@@ -6,23 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/system_example.inl.cpp
+/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs_core.cpp
+ecs_core.h
+/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs_core.h
 
-/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs/systems_a/system_example.inl.cpp
-
-/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/main.cpp
-fstream
+/home/yan/Documents/MotionMatching/Sources/ECSCodeGenerator/ecs_core.h
+vector
 -
-iostream
--
-sstream
+map
 -
 string
 -
-regex
--
-filesystem
--
-vector
+assert.h
 -
 
