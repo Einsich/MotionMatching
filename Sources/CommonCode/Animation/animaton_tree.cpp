@@ -16,8 +16,8 @@ void AnimationTree::build_tree(aiNode *node, mat4 parent_transform, int index, i
   //if (index == 0)
   //  nodes[index].transform = mat4(mat3(nodes[index].transform));
   nodes[index].meshToBone = inverse(parent_transform);
-  
   nodes[index].name = string(node->mName.C_Str());
+
   childMap[nodes[index].name] = index;
   for (uint i = 0; i < node->mNumChildren; i++)
   {

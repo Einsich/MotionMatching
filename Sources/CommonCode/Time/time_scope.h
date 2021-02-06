@@ -5,18 +5,21 @@ class TimeScope
 {
 private:
   Uint32 start;
-  string message;
+  const string message;
+  bool stopped;
 public:
   TimeScope(const string &message):
-    start(SDL_GetTicks()), message(message)
+    start(SDL_GetTicks()), message(message), stopped(false)
   { }
   void stop()
   {
     Uint32 delta = SDL_GetTicks() - start;
     debug_log("%s\nspend %f seconds", message.c_str(), delta * 0.001f);
+    stopped = true;
   }
   ~TimeScope()
   {
-    stop();
+    if (!stopped)
+      stop();
   }
 };

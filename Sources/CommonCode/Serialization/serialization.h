@@ -12,6 +12,10 @@ public:
   virtual size_t serialize(std::ostream& os) const = 0;
   virtual size_t deserialize(std::istream& is) = 0;
 };
+
+size_t save_object(const ISerializable &object, const std::string &path);
+size_t load_object(ISerializable &object, const std::string &path);
+
 template<typename T>
 inline std::enable_if_t<!std::is_same_v<std::string, T>, size_t> write(std::ostream& os, const T& value)
 {
