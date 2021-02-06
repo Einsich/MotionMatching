@@ -1,6 +1,6 @@
 #pragma once
 #include "../GameObject/game_object.h"
-#include "../Animation/animation.h"
+#include "../Animation/animation_player.h"
 #include "../Event/input.h"
 class TestPersonController
 {

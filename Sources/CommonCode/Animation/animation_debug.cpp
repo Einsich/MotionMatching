@@ -1,12 +1,12 @@
 #include "animation_debug.h"
 
-void show_statistics(const vector<Animation> &animations, const AnimationFeatures &feature)
+void show_statistics(const vector<AnimationClip> &animations, const AnimationFeatures &feature)
 {
 
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
   ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
-  for(const Animation &animation : animations)
+  for(const AnimationClip &animation : animations)
   {
     ImGui::Text("%s", animation.name.c_str());
   }
@@ -18,7 +18,7 @@ void show_statistics(const vector<Animation> &animations, const AnimationFeature
   ImVec2 size = ImVec2(5, 10);
   int besti, bestj;
   float best = 0;
-  for(int i = 0; i < animations.size(); i++)
+  for(uint i = 0; i < animations.size(); i++)
   {
     for (int j = 0, n = animations[i].features.size(); j < n; j++)
     {
@@ -42,10 +42,11 @@ void show_statistics(const vector<Animation> &animations, const AnimationFeature
 void debug_pose_matching(AnimationPlayerPtr animPlayer)
 {
   ImGui::Begin("Pose matching");
-  if (animPlayer && animPlayer->currentAnimation >= 0)
+  if (animPlayer)
   {
-    int cadr = animPlayer->animations[animPlayer->currentAnimation].cadr;
-    show_statistics(animPlayer->animations, animPlayer->animations[animPlayer->currentAnimation].features[cadr]);
+    AnimationIndex index = animPlayer->get_current_animation();
+    if (index.dataBase && index.animation1 >= 0)
+    show_statistics(index.dataBase->clips, index.dataBase->clips[index.animation1].features[index.cadr1]);
   }
   ImGui::End();
 }

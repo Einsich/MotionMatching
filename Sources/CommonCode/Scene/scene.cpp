@@ -88,8 +88,8 @@ GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3
   sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(sphere);
 
-  animPlayer = animation_preprocess(importer, man, root);
-  animPlayer->play_animation(0);
+  auto dataBase = animation_preprocess(importer, root);
+  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0);
   input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
   input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
@@ -100,7 +100,7 @@ GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3
 void Scene::update()
 { 
   main_camera()->update();
-  animPlayer->PlayNextCadr();
+  animPlayer->update();
   personController.update();
 
 }

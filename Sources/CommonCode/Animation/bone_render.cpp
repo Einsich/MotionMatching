@@ -70,14 +70,7 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
     const AnimationNode &node = tree.nodes[i];
-    if (node.parent >= 0)
-    {
-      boneTransforms[i] = boneTransforms[node.parent] * node.animationTransform;
-    }
-    else
-    {
-      boneTransforms[i] = transform * node.animationTransform;
-    }    
+    boneTransforms[i] = node.get_transform();
     boneOffsets[i] = vec3(boneTransforms[i][3]);
   }
   mat4 flip = mat4(1.f);
@@ -85,7 +78,7 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
   flip[1] = vec4(1,0,0,0);
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
-    vec3 p = tree.nodes[i].parent >= 0 ? boneOffsets[tree.nodes[i].parent] : vec3(0.f);
+    vec3 p = tree.nodes[i].parent() >= 0 ? boneOffsets[tree.nodes[i].parent()] : vec3(0.f);
     vec3 d = boneOffsets[i] - p;
     mat4 t = translate(mat4(1.f), p);
     float len = length(d);
@@ -93,7 +86,7 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
     mat4 s = scale(mat4(1.f), vec3(width, len, width));
 
     mat4 r = directionMatrix(vec3(0, 1, 0), d);
-    boneTransforms[i] = t * r * s;
+    boneTransforms[i] = transform * t * r * s;
   }
 }
 void BoneRender::render(const mat4& transform, const AnimationTree &tree, const Camera& mainCam, const DirectionLight& light)

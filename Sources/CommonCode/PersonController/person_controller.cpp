@@ -20,16 +20,16 @@ void TestPersonController::update()
   t.get_position() -= (animation->rootDeltaTranslation.z * t.get_forward() + animation->rootDeltaTranslation.x * t.get_right()) * Time::delta_time() ;
   t.set_rotation(rotation); 
   
-  animation->set_rotation(r);
-  animation->set_speed(speed);
+  animation->get_state_machine().set_rotation(r);
+  animation->get_state_machine().set_speed(speed);
 }
 void TestPersonController::crouch(const KeyboardEvent &event)
 {
   crouching = !crouching;
-  animation->crouch(crouching);
+  animation->get_state_machine().crouch(crouching);
 }
 void TestPersonController::jump(const KeyboardEvent &event)
 {
-  animation->jump();
+  animation->get_state_machine().jump();
 
 }

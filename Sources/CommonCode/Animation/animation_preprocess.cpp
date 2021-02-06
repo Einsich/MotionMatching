@@ -11,26 +11,23 @@ string normalName(const string& badName)
 }
 namespace fs = filesystem;
 
-void print_tree(const AnimationTree &tree, int node_index, int depth)
+void print_tree(const AnimationTreeData &tree, int node_index, int depth)
 {
-  const AnimationNode &node = tree.nodes[node_index];
+  const AnimationNodeData &node = tree.nodes[node_index];
   debug_log("%s%s",string(depth, ' ').c_str(), node.name.c_str());
   for (int child : node.childs)
     print_tree(tree, child, depth + 1);
 }
 
-AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPtr go, aiNode *root)
+AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *root)
 {
-  bool fromFile = false;
-  AnimationPlayerPtr animPlayer = make_shared<AnimationPlayer>();
-  animPlayer->gameObject = go;
+  bool fromFile = true;
+  AnimationDataBasePtr animDatabase = make_shared<AnimationDataBase>(root);
   if (fromFile)
   {
     TimeScope scope("Animation Reading from fbx file");
     string path = join_recources_path("MocapOnlineMobilityStarterPack/Animation/Root_Motion");
     uintmax_t animation_size = 0;
-    AnimationTree& tree = animPlayer->animationTree = AnimationTree(root);
-    animPlayer->curTransform.resize(go->get_mesh()->bonesMap.size());
     for (const auto & entry : fs::directory_iterator(path))
     {
       
@@ -73,30 +70,27 @@ AnimationPlayerPtr animation_preprocess(Assimp::Importer& importer, GameObjectPt
             }
           }
 
-          animPlayer->animations.push_back(Animation(duration, tree, rotation, translation));
-          Animation & animationData = animPlayer->animations.back();
-          animationData.ticksPerSecond = animation->mTicksPerSecond;
-          animationData.name = string(animation->mName.C_Str());
+          animDatabase->clips.push_back(AnimationClip(duration, animation->mTicksPerSecond, string(animation->mName.C_Str()),
+              animDatabase->tree, rotation, translation));
         }
         
       }
     }
-    animPlayer->build_state_machine();
-    size_t t1 = save_object(*animPlayer, "StarterMocapLib.bin");
-    int cadr_count = animPlayer->cadr_count();
+    size_t t1 = save_object(*animDatabase, "StarterMocapLib.bin");
+    int cadr_count = animDatabase->cadr_count();
     debug_log("Bin file use %ld KB instead %ld KB, %ld cadres, %ld bytes on cadr", t1 / 1024, animation_size / 1024, cadr_count, t1 / cadr_count);
   }
   else
   {
     
-    size_t t2 = load_object(*animPlayer, "StarterMocapLib.bin");
-    int cadr_count = animPlayer->cadr_count();
+    size_t t2 = load_object(*animDatabase, "StarterMocapLib.bin");
+    int cadr_count = animDatabase->cadr_count();
     debug_log("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
   }
-  for (Animation &animation : animPlayer->animations)
-    debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration());
-  debug_log("Animation at all: %d", animPlayer->animations.size());
-  //print_tree(animPlayer->animationTree, 0, 0);
-  return animPlayer;
+  for (const AnimationClip &animation : animDatabase->clips)
+    debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
+  debug_log("Animation at all: %d", animDatabase->clips.size());
+  //print_tree(animDatabase->tree, 0, 0);
+  return animDatabase;
 }
 
