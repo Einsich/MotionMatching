@@ -6,12 +6,14 @@ AnimationFeatures::AnimationFeatures():
 size_t AnimationFeatures::serialize(std::ostream& os) const
 {
   size_t size = 0;
+  size += write(os, path);
   size += write(os, features);
   return size;
 }
 size_t AnimationFeatures::deserialize(std::istream& is)
 {
   size_t size = 0;
+  size += read(is, path);
   size += read(is, features);
   return size;
 }
@@ -38,4 +40,11 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
     norma += weights->weights[i] * length(feature1.features[i] - feature2.features[i]);
   return 1.f - weights->norma_function_weight * norma;
+}
+
+float goal_matching_norma(const AnimationPathFeature &path, const vector<AnimationTag> &tags, const AnimationGoal &goal)
+{
+  float norma = 0.f;
+
+  return norma;
 }

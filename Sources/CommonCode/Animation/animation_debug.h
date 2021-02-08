@@ -8,6 +8,7 @@ class AnimationDebugRender
 private:
   GameObjectPtr debugSphere;
   AnimationDataBasePtr dataBase;
+  AnimationPlayerPtr animPlayer;
   vector<vector<float>> poseMatchingWeights;
   vector<const AnimationFeatures*> targetFeatures;
   Transform transform;

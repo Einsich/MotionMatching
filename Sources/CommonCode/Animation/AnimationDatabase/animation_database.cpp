@@ -1,5 +1,30 @@
 #include "animation_database.h"
-
+static map<string, vector<AnimationTag>> tagMap = {
+{"MOB1_Crouch_To_Stand_Relaxed", {AnimationTag::Stay}},
+{"MOB1_Stand_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Stay}},
+{"MOB1_Crouch_R_90", {AnimationTag::Crouch}},
+{"MOB1_Walk_F_Loop", {AnimationTag::Stay}},
+{"MOB1_Walk_F_Jump_RU", {AnimationTag::Stay}},
+{"MOB1_Stand_Relaxed_R_90", {AnimationTag::Stay}},
+{"MOB1_Jog_F_Loop", {AnimationTag::Stay}},
+{"MOB1_Crouch_L_90", {AnimationTag::Crouch}},
+{"MOB1_Crouch_Idle_V2", {AnimationTag::Crouch}},
+{"MOB1_Stand_Relaxed_To_Jog_F", {AnimationTag::Stay}},
+{"MOB1_Crouch_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Crouch}},
+{"MOB1_Crouch_To_CrouchWalk_F", {AnimationTag::Crouch}},
+{"MOB1_CrouchWalk_F_To_Crouch_RU", {AnimationTag::Crouch}},
+{"MOB1_Stand_Relaxed_To_Crouch", {AnimationTag::Stay, AnimationTag::Crouch}},
+{"MOB1_Walk_F_Jump", {AnimationTag::Jump}},
+{"MOB1_Stand_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Stay}},
+{"MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Crouch}},
+{"MOB1_Stand_Relaxed_Idle_v2", {AnimationTag::Stay}},
+{"MOB1_Walk_F_To_Stand_Relaxed_RU", {AnimationTag::Stay}},
+{"MOB1_Jog_F_Jump_RU", {AnimationTag::Jump}},
+{"MOB1_Jog_F_Jump", {AnimationTag::Jump}},
+{"MOB1_Stand_Relaxed_L_90", {AnimationTag::Stay}},
+{"MOB1_Stand_Relaxed_To_Walk_F", {AnimationTag::Stay}},
+{"MOB1_CrouchWalk_F_Loop", {AnimationTag::Crouch}}
+};
 vec3 get_vec3(const map<string, vector<vec3>>& vecs, const string& name, uint i)
 {
   auto it = vecs.find(name);
@@ -48,7 +73,6 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
-
   for (int i = duration - 1; i >=0; i--)
   {
     AnimationCadr& cadr1 = cadres[i];
@@ -58,6 +82,30 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
   }
   cadres[0].rootRotationDelta = 0;
   cadres[0].rootTranslationDelta = vec3(0.f);
+  for (uint i = 0; i < duration; i++)
+  {
+    vec3 dt = cadres[i].rootTranslationDelta;
+    float dr = cadres[i].rootRotationDelta;
+    AnimationPathFeature &pathFeature = features[i].path;
+    for (uint j = 0; j < AnimationPathFeature::PathLength; j++)
+    {
+      if (j != 0)
+      {
+        pathFeature.path[j] = pathFeature.path[j - 1];
+      }
+      for (uint k = 0; k < AnimationPathFeature::SkipCadres; k++)
+      {
+        uint nextInd = i + j * AnimationPathFeature::SkipCadres + k;
+        if (nextInd < cadres.size())
+        {
+          dt = cadres[nextInd].rootTranslationDelta;
+          dr = cadres[nextInd].rootRotationDelta;
+        }
+        pathFeature.path[j] += dt;
+        pathFeature.rotation += dr;
+      }
+    }
+  }
 
 }
 AnimationCadr AnimationClip::get_lerped_cadr(int cadr, float t) const

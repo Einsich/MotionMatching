@@ -3,7 +3,7 @@
 #include "animation_state_machine.h"
 #include "AnimationRender/animation_render.h"
 #include "AnimationTree/animation_tree.h"
-
+#include "animation_goal.h"
 class AnimationPlayer
 {
 private:
@@ -16,6 +16,7 @@ public:
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0 ;
   GameObjectPtr gameObject;
+  AnimationGoal inputGoal;
   AnimationPlayer(AnimationDataBasePtr dataBase, GameObjectPtr gameObject, int first_anim);
   void update();
 

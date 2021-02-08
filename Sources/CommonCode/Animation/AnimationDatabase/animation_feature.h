@@ -4,10 +4,13 @@
 #include "CommonCode/Serialization/serialization.h"
 #include "CommonCode/math.h"
 #include "animation_feature_weight.h"
+#include "animation_path_feature.h"
+#include "../animation_goal.h"
 
 class AnimationFeatures : public ISerializable
 {
 public:
+  AnimationPathFeature path;
   vector<vec3> features;
   AnimationFeatures();
   void set_feature(const string& name, vec3 feature);
@@ -17,3 +20,5 @@ public:
 
 void pose_matching_norma_weights(AnimationFeaturesWeightsPtr weights_ptr);
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2);
+
+float goal_matching_norma(const AnimationPathFeature &path, const vector<AnimationTag> &tags, const AnimationGoal &goal);

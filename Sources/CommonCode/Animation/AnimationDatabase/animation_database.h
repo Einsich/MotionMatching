@@ -5,6 +5,7 @@
 #include "animation_feature.h"
 #include "animation_cadr.h"
 
+
 class AnimationClip: public ISerializable
 {
 private:
@@ -16,6 +17,7 @@ public:
   uint duration;
   float ticksPerSecond;
   string name;
+  vector<AnimationTag> tags;
   vector<AnimationCadr> cadres;
   vector<AnimationFeatures> features;
   virtual size_t serialize(std::ostream& os) const override;

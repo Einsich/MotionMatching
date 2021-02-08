@@ -14,6 +14,7 @@ void AnimationDebugRender::analyze_pose_matching(AnimationPlayerPtr animPlayer)
   {
     AnimationIndex index = animPlayer->get_current_animation();
     targetFeatures.clear();
+    this->animPlayer = animPlayer;
     if (index.dataBase == dataBase && index.animation1 >= 0)
     {
       transform = animPlayer->gameObject->get_transform();
@@ -26,6 +27,7 @@ void AnimationDebugRender::analyze_pose_matching(AnimationPlayerPtr animPlayer)
         for (uint j = 0, n = animations[i].features.size(); j < n; j++)
         {
           float pose_match = poseMatchingWeights[i][j] = pose_matching_norma(animations[i].features[j], feature);
+          float goal_match = goal_matching_norma(animations[i].features[j].path, animations[i].tags, animPlayer->inputGoal);
           if (pose_match > best)
           {
             best = pose_match;
@@ -78,8 +80,22 @@ void AnimationDebugRender::render_pose_matching(const Camera& mainCam, const Dir
   for (const AnimationFeatures *feature : targetFeatures)
     if (feature)
     {
+      debugSphere->get_material()->set_property(Property("Ambient", vec3(0,0,1)));
       debugSphere->get_transform().set_scale(vec3(0.1f));
       for (vec3 v: feature->features)
+      {
+        debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
+        debugSphere->render(mainCam, light, true);
+      }
+      debugSphere->get_transform().set_scale(vec3(0.02f));
+      debugSphere->get_material()->set_property(Property("Ambient", vec3(0,1,0)));
+      for (vec3 v: feature->path.path)
+      {
+        debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
+        debugSphere->render(mainCam, light, true);
+      }
+      debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
+      for (vec3 v: animPlayer->inputGoal.path.path)
       {
         debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
         debugSphere->render(mainCam, light, true);
