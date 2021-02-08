@@ -83,7 +83,7 @@ size_t AnimationClip::deserialize(std::istream& is)
 
 
 AnimationDataBase::AnimationDataBase(aiNode *root):
-tree(root){}
+tree(root), featureWeights(make_shared<AnimationFeaturesWeights>()){}
 int AnimationDataBase::cadr_count() const
 {
   int count = 0;
@@ -104,5 +104,13 @@ size_t AnimationDataBase::deserialize(std::istream& is)
   size += read(is, clips);
   size += read(is, tree);
   return size;
+}
+void AnimationDataBase::save_runtime_parameters()
+{
+  save_object(*featureWeights, "FeaturesWeights.bin");
+}
+void AnimationDataBase::load_runtime_parameters()
+{
+  load_object(*featureWeights, "FeaturesWeights.bin");
 }
 

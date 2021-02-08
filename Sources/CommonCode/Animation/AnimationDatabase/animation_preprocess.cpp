@@ -90,6 +90,10 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *ro
   for (const AnimationClip &animation : animDatabase->clips)
     debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
   debug_log("Animation at all: %d", animDatabase->clips.size());
+
+  animDatabase->load_runtime_parameters();
+  pose_matching_norma_weights(animDatabase->featureWeights);
+  
   //print_tree(animDatabase->tree, 0, 0);
   return animDatabase;
 }

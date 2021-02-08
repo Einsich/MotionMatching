@@ -16,5 +16,6 @@ public:
   void update();
   void render();
   void render_ui();
+  void exit();
 
 };

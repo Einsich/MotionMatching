@@ -28,9 +28,12 @@ public:
   AnimationDataBase(aiNode *root);
   AnimationTreeData tree;
   vector<AnimationClip> clips;
+  AnimationFeaturesWeightsPtr featureWeights;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   int cadr_count() const;
+  void save_runtime_parameters();
+  void load_runtime_parameters();
 };
 using AnimationClipPtr = shared_ptr<AnimationClip>;
 

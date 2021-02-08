@@ -1,6 +1,6 @@
 #include "animation_debug.h"
 
-void show_statistics(const vector<AnimationClip> &animations, const AnimationFeatures &feature)
+void show_statistics(AnimationFeaturesWeightsPtr weights, const vector<AnimationClip> &animations, const AnimationFeatures &feature)
 {
 
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -10,12 +10,13 @@ void show_statistics(const vector<AnimationClip> &animations, const AnimationFea
   {
     ImGui::Text("%s", animation.name.c_str());
   }
-  static float scale = 1;
-  ImGui::SliderFloat("pose match scale", &scale, 0, 1000);
+  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 1000);
+  for (const auto &p : weights->featureMap)
+    ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);
   
   ImVec2 stringsPos = ImGui::GetWindowPos();
   ImVec2 pos = ImVec2(stringsPos.x + stringsSize.x, stringsPos.y + 1.75f * ImGui::GetTextLineHeightWithSpacing());
-  ImVec2 size = ImVec2(5, 10);
+  ImVec2 size = ImVec2(3, 10);
   int besti, bestj;
   float best = 0;
   for(uint i = 0; i < animations.size(); i++)
@@ -24,7 +25,7 @@ void show_statistics(const vector<AnimationClip> &animations, const AnimationFea
     {
       ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + i * ImGui::GetTextLineHeightWithSpacing()); 
       float pose_match = pose_matching_norma(animations[i].features[j], feature);
-      float t = 1 - pose_match * scale;
+      float t = pose_match;
       if (t > best)
       {
         best = t;
@@ -46,7 +47,7 @@ void debug_pose_matching(AnimationPlayerPtr animPlayer)
   {
     AnimationIndex index = animPlayer->get_current_animation();
     if (index.dataBase && index.animation1 >= 0)
-    show_statistics(index.dataBase->clips, index.dataBase->clips[index.animation1].features[index.cadr1]);
+    show_statistics(index.dataBase->featureWeights, index.dataBase->clips, index.dataBase->clips[index.animation1].features[index.cadr1]);
   }
   ImGui::End();
 }

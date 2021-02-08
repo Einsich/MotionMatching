@@ -132,3 +132,8 @@ void Scene::render_ui()
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();
 }
+
+void Scene::exit()
+{
+  animPlayer->get_current_animation().dataBase->save_runtime_parameters();
+}

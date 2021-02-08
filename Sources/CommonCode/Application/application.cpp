@@ -60,6 +60,7 @@ void Application::main_loop()
 }
 void Application::exit()
 {
+  scene.exit();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();

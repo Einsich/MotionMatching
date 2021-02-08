@@ -3,17 +3,8 @@
 #include <vector>
 #include "CommonCode/Serialization/serialization.h"
 #include "CommonCode/math.h"
+#include "animation_feature_weight.h"
 
-
-enum class AnimationFeaturesNode
-{
-  Hips,
-  LeftHand,
-  RightHand,
-  LeftFoot,
-  RightFoot,
-  Count
-};
 class AnimationFeatures : public ISerializable
 {
 public:
@@ -24,5 +15,5 @@ public:
   virtual size_t deserialize(std::istream& is) override;
 };
 
-void change_pose_matching_norma_weights(AnimationFeaturesNode node, float weight);
+void pose_matching_norma_weights(AnimationFeaturesWeightsPtr weights_ptr);
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2);
