@@ -18,7 +18,7 @@ public:
   map<string, int> bonesMap;//FIX IT
   Mesh(VertexArrayObject vao);
   Mesh(const aiMesh *mesh);
-  void render();
+  void render(bool wire_frame = false);
 };
 
 using MeshPtr = shared_ptr<Mesh>;

@@ -9,7 +9,7 @@ class Application
 {
 private:
   inline static Application *application;
-  Scene scene;
+  shared_ptr<Scene> scene;
   Context context;
   Time timer;
   Input input;

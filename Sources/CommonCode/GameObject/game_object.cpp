@@ -5,7 +5,7 @@ Transform &GameObject::get_transform()
 {
   return transform;
 }
-void GameObject::render(const Camera& mainCam, const DirectionLight& light)
+void GameObject::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
 
   light.bind_to_shader(shader);
@@ -13,7 +13,7 @@ void GameObject::render(const Camera& mainCam, const DirectionLight& light)
   material->bind_to_shader(shader);
   transform.set_to_shader(shader);
 
-  mesh->render();
+  mesh->render(wire_frame);
 
   material->unbind_to_shader(shader);
   light.unbind_to_shader(shader);
@@ -56,7 +56,7 @@ GameObjectPtr create_plane(const Transform &transform, bool create_uv)
 
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
-  return make_game_object(transform, mesh, material, Shader());  
+  return make_game_object(transform, mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
 GameObjectPtr create_cube(const Transform &transform, bool create_uv)
 {
@@ -112,7 +112,7 @@ GameObjectPtr create_cube(const Transform &transform, bool create_uv)
   }
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
-  return make_game_object(transform, mesh, material, Shader());  
+  return make_game_object(transform, mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
 GameObjectPtr create_sphere(const Transform &transform, int detailed, bool smooth, bool create_uv)
 {
@@ -161,5 +161,5 @@ GameObjectPtr create_sphere(const Transform &transform, int detailed, bool smoot
     mesh = spheres[t] =  make_mesh(VertexArrayObject(indices, vertices, normals, uv));
   }
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
-  return make_game_object(transform, mesh, material, Shader());  
+  return make_game_object(transform, mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }

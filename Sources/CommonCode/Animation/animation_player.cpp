@@ -3,7 +3,7 @@
 
 
 AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, GameObjectPtr gameObject, int first_anim):
-stateMachine(dataBase), animRender(gameObject), tree(dataBase->tree)
+stateMachine(dataBase), animRender(gameObject), tree(dataBase->tree), gameObject(gameObject)
 {
   stateMachine.play_animation(first_anim);
 }

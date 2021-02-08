@@ -4,11 +4,12 @@
 #include "imgui/imgui_impl_sdl.h"
 
 Application::Application(string window_name, int width, int height):
-scene(), context(window_name, width, height), timer(), input()
+context(window_name, width, height), timer(), input()
 {
   application = this;
   compile_shaders(); 
-  scene.init();
+  scene = make_shared<Scene>();
+  scene->init();
 }
 bool Application::sdl_event_handler()
 {
@@ -48,10 +49,10 @@ void Application::main_loop()
 		running = sdl_event_handler();
     if (running)
     {
-      scene.update();
-      scene.render();
+      scene->update();
+      scene->render();
       context.start_imgui();
-      scene.render_ui();
+      scene->render_ui();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();
@@ -60,7 +61,7 @@ void Application::main_loop()
 }
 void Application::exit()
 {
-  scene.exit();
+  scene->exit();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();

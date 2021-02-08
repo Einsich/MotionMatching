@@ -3,6 +3,7 @@
 #include "CommonCode/GameObject/game_object.h"
 #include "CommonCode/Light/direction_light.h"
 #include "../PersonController/person_controller.h"
+#include "../Animation/animation_debug.h"
 #include <vector>
 class Scene
 {
@@ -11,6 +12,7 @@ private:
   AnimationPlayerPtr animPlayer;
   DirectionLight sun;
   TestPersonController personController;
+  AnimationDebugRenderPtr debugRender;
 public:
   void init();
   void update();

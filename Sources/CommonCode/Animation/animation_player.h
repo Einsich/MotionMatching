@@ -15,7 +15,7 @@ private:
 public:
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0 ;
-
+  GameObjectPtr gameObject;
   AnimationPlayer(AnimationDataBasePtr dataBase, GameObjectPtr gameObject, int first_anim);
   void update();
 

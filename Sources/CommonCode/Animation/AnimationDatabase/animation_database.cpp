@@ -15,6 +15,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
  AnimationTreeData& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs):
  duration(duration), ticksPerSecond(ticksPerSecond), name(name), cadres(duration), features(duration)
 {
+  vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
   {
     AnimationCadr& cadr = cadres[i];
@@ -42,7 +43,8 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(nodeTransform)) : nodeTransform;
       nodeTransform = translation * rotationM;
       if (tree.nodes[j].parent >= 0)
-        nodeTransform = tree.nodes[tree.nodes[j].parent].transform * nodeTransform;
+        nodeTransform = transfroms[tree.nodes[j].parent] * nodeTransform;
+      transfroms[j] = nodeTransform;
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }

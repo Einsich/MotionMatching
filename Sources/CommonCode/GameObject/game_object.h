@@ -21,7 +21,7 @@ public:
     
   }
   Transform &get_transform();
-  void render(const Camera& mainCam, const DirectionLight& light);
+  void render(const Camera& mainCam, const DirectionLight& light, bool wire_frame = false);
   MaterialPtr get_material();
   MeshPtr get_mesh();
   void set_shader(const Shader & shader);

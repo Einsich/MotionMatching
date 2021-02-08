@@ -10,7 +10,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "imgui/imgui.h"
-#include "../Animation/animation_debug.h"
 #include "../Animation/AnimationDatabase/animation_preprocess.h"
 
 void read_tree(aiNode * node, int depth = 0)
@@ -71,26 +70,25 @@ void Scene::init()
   arcballCam->set_target(&man->get_transform());
 
   GameObjectPtr plane = create_plane(Transform(vec3(0.f,0.f,0.f), vec3(), vec3(500,1,500)), true);
-  plane->set_shader(get_shader("standart_normal_uv"));
   plane->get_material()->set_property(Property("mainTex", floor));
   plane->get_material()->set_property(Property("uvScale", vec2(80.f,80.f)));
   plane->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(plane);
 
   GameObjectPtr cube = create_cube(Transform(vec3(2.f,1.f,4.f), vec3(), vec3(0.7f,0.4f,0.7f)), true);
-  cube->set_shader(get_shader("standart_normal_uv"));
   cube->get_material()->set_property(Property("mainTex", tex1));
   cube->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(cube);
 
 GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3(1.8f,1.8f,1.8f)), 20, true, true);
-  sphere->set_shader(get_shader("standart_normal_uv"));
+
   sphere->get_material()->set_property(Property("mainTex", tex1));
   sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(sphere);
 
   auto dataBase = animation_preprocess(importer, root);
   animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0);
+  debugRender = make_shared<AnimationDebugRender>(dataBase);
   input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
   input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
@@ -103,6 +101,7 @@ void Scene::update()
   main_camera()->update();
   animPlayer->update();
   personController.update();
+  debugRender->analyze_pose_matching(animPlayer);
 
 }
 void Scene::render()
@@ -116,7 +115,7 @@ void Scene::render()
     objects->get_shader().use();
     objects->render(*mainCamera, sun);
   }
-  
+  debugRender->render_pose_matching(*mainCamera, sun);
 
 
   render_sky_box();
@@ -127,7 +126,7 @@ void Scene::render_ui()
   ImGui::Begin("Debug");
   debug_show();
   ImGui::End();
-  debug_pose_matching(animPlayer);
+  debugRender->show_ui_pose_matching();
   ImGui::Begin("FPS");
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();

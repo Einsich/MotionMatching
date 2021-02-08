@@ -52,10 +52,10 @@ public:
     glBindVertexArray(0);
     numIndices = indices.size();
   }
-  void render()
+  void render(bool wire_frame = false)
   {
     glBindVertexArray(vertexArrayBufferObject);
-    glDrawElementsBaseVertex(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, 0);
+    glDrawElementsBaseVertex(wire_frame ? GL_LINES : GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, 0);
     glBindVertexArray(0);
   }
   void render_instances(int instance)

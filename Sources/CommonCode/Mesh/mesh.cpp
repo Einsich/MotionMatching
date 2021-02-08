@@ -62,9 +62,9 @@ Mesh::Mesh(const aiMesh *mesh)
     vertexArrayObject = VertexArrayObject(indices, positions, normals, uvs, weights, weightsIndex);
   }
 }
-void Mesh::render()
+void Mesh::render(bool wire_frame)
 {
-  vertexArrayObject.render();
+  vertexArrayObject.render(wire_frame);
 }
 
 MeshPtr make_mesh(VertexArrayObject vao)

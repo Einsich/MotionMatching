@@ -28,6 +28,9 @@ void AnimationFeatures::set_feature(const string& name, vec3 feature)
   auto it = weights->featureMap.find(name);
   if (it != weights->featureMap.end())
     features[(int)it->second] = feature;
+  if (name == "LeftFoot")
+  debug_log("[%f, %f, %f]", feature.x, feature.y, feature.z);
+  
 }
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2)
 {
