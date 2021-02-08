@@ -1,8 +1,8 @@
 #include "animation_preprocess.h"
 #include <filesystem>
 #include "CommonCode/math.h"
-#include "../Serialization/serialization.h"
-#include "../Time/time_scope.h"
+#include "../../Serialization/serialization.h"
+#include "../../Time/time_scope.h"
 #include <assimp/postprocess.h>
 
 string normalName(const string& badName)

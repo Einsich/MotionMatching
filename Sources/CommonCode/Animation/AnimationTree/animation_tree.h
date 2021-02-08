@@ -3,7 +3,7 @@
 #include "CommonCode/math.h"
 #include <vector>
 #include "animation_tree_data.h"
-#include "../animation_cadr.h"
+#include "../AnimationDatabase/animation_cadr.h"
 
 class AnimationNode
 {

@@ -2,7 +2,7 @@
 #include "CommonCode/common.h"
 #include "CommonCode/math.h"
 #include <vector>
-#include "../Serialization/serialization.h"
+#include "../../Serialization/serialization.h"
 
 class AnimationCadr : public ISerializable
 {

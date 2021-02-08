@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonCode/common.h"
 #include "CommonCode/Shader/shader.h"
-#include "AnimationTree/animation_tree.h"
+#include "../AnimationTree/animation_tree.h"
 #include "CommonCode/Material/material.h"
 #include "CommonCode/Mesh/vertex_array_object.h"
 #include "CommonCode/Light/direction_light.h"

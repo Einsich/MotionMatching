@@ -1,4 +1,4 @@
-#include "animation_channel.h"
+#include "animation_feature.h"
 #include <cmath>
 
 AnimationFeatures::AnimationFeatures():

@@ -1,8 +1,8 @@
 #pragma once
-#include "../common.h"
-#include "CommonCode/Serialization/serialization.h"
-#include "AnimationTree/animation_tree.h"
-#include "animation_channel.h"
+#include "../../common.h"
+#include "../../Serialization/serialization.h"
+#include "../AnimationTree/animation_tree.h"
+#include "animation_feature.h"
 #include "animation_cadr.h"
 
 class AnimationClip: public ISerializable

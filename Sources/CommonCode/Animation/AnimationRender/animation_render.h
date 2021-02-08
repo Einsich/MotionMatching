@@ -1,10 +1,10 @@
 #pragma once
-#include "AnimationTree/animation_tree.h"
-#include "animation_channel.h"
+#include "../AnimationTree/animation_tree.h"
+#include "../AnimationDatabase/animation_feature.h"
 #include "bone_render.h"
-#include "../GameObject/game_object.h"
-#include "../Light/direction_light.h"
-#include "../Camera/camera.h"
+#include "../../GameObject/game_object.h"
+#include "../../Light/direction_light.h"
+#include "../../Camera/camera.h"
 class AnimationRender
 {
 private:

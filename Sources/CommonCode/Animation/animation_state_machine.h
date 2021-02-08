@@ -1,8 +1,7 @@
 #pragma once
 #include "CommonCode/common.h"
 #include "animation.h"
-#include "animation_channel.h"
-#include "animation_database.h"
+#include "AnimationDatabase/animation_database.h"
 struct AnimationIndex
 {
   AnimationDataBasePtr dataBase;

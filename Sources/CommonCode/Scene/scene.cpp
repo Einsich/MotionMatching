@@ -11,6 +11,7 @@
 #include <assimp/postprocess.h>
 #include "imgui/imgui.h"
 #include "../Animation/animation_debug.h"
+#include "../Animation/AnimationDatabase/animation_preprocess.h"
 
 void read_tree(aiNode * node, int depth = 0)
 {

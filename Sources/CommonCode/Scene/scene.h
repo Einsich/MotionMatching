@@ -2,7 +2,6 @@
 #include "CommonCode/common.h"
 #include "CommonCode/GameObject/game_object.h"
 #include "CommonCode/Light/direction_light.h"
-#include "CommonCode/Animation/animation_preprocess.h"
 #include "../PersonController/person_controller.h"
 #include <vector>
 class Scene
