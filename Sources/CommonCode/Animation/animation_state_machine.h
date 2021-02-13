@@ -2,14 +2,7 @@
 #include "CommonCode/common.h"
 #include "animation.h"
 #include "AnimationDatabase/animation_database.h"
-struct AnimationIndex
-{
-  AnimationDataBasePtr dataBase;
-  int animation1, cadr1;
-  int animation2, cadr2;
-  AnimationIndex(AnimationDataBasePtr dataBase, int animation1, int cadr1, int animation2, int cadr2) :
-  dataBase(dataBase), animation1(animation1), cadr1(cadr1), animation2(animation2), cadr2(cadr2){}
-};
+#include "animation_index.h"
 class AnimationStateMachine
 {
 private:
@@ -59,13 +52,11 @@ class Edge
 public:
   AnimationStateMachine(AnimationDataBasePtr dataBase);
 
-  AnimationCadr get_lerped_cadr() const;
-  AnimationIndex get_current_animation() const;
+  AnimationLerpedIndex get_current_animation() const;
   void update(float dt);
   void play_animation(int anim_index);
   void crouch(int crouch);
   void jump();
   void set_rotation(float rotation);
   void set_speed(float speed);
-  float ticksPerSecond() const;
 };

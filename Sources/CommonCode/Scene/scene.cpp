@@ -86,9 +86,9 @@ GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3
   sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(sphere);
 
-  auto dataBase = animation_preprocess(importer, root);
-  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0);
-  debugRender = make_shared<AnimationDebugRender>(dataBase);
+  dataBase = animation_preprocess(importer, root);
+  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0, false);
+  debugRender = make_shared<AnimationDebugRender>();
   input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
   input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
@@ -99,9 +99,8 @@ GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3
 void Scene::update()
 { 
   main_camera()->update();
-  animPlayer->update();
   personController.update();
-  debugRender->analyze_pose_matching(animPlayer);
+  animPlayer->update();
 
 }
 void Scene::render()
@@ -115,7 +114,7 @@ void Scene::render()
     objects->get_shader().use();
     objects->render(*mainCamera, sun);
   }
-  debugRender->render_pose_matching(*mainCamera, sun);
+  debugRender->render_pose_matching(animPlayer, *mainCamera, sun);
 
 
   render_sky_box();
@@ -126,7 +125,7 @@ void Scene::render_ui()
   ImGui::Begin("Debug");
   debug_show();
   ImGui::End();
-  debugRender->show_ui_pose_matching();
+  debugRender->show_ui_matching(animPlayer);
   ImGui::Begin("FPS");
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();
@@ -134,5 +133,5 @@ void Scene::render_ui()
 
 void Scene::exit()
 {
-  animPlayer->get_current_animation().dataBase->save_runtime_parameters();
+  dataBase->save_runtime_parameters();
 }

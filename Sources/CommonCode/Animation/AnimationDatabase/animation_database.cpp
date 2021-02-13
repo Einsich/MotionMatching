@@ -4,7 +4,7 @@ static map<string, vector<AnimationTag>> tagMap = {
 {"MOB1_Stand_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Stay}},
 {"MOB1_Crouch_R_90", {AnimationTag::Crouch}},
 {"MOB1_Walk_F_Loop", {AnimationTag::Stay}},
-{"MOB1_Walk_F_Jump_RU", {AnimationTag::Stay}},
+{"MOB1_Walk_F_Jump_RU", {AnimationTag::Jump}},
 {"MOB1_Stand_Relaxed_R_90", {AnimationTag::Stay}},
 {"MOB1_Jog_F_Loop", {AnimationTag::Stay}},
 {"MOB1_Crouch_L_90", {AnimationTag::Crouch}},
@@ -13,7 +13,7 @@ static map<string, vector<AnimationTag>> tagMap = {
 {"MOB1_Crouch_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Crouch}},
 {"MOB1_Crouch_To_CrouchWalk_F", {AnimationTag::Crouch}},
 {"MOB1_CrouchWalk_F_To_Crouch_RU", {AnimationTag::Crouch}},
-{"MOB1_Stand_Relaxed_To_Crouch", {AnimationTag::Stay, AnimationTag::Crouch}},
+{"MOB1_Stand_Relaxed_To_Crouch", {AnimationTag::Crouch}},
 {"MOB1_Walk_F_Jump", {AnimationTag::Jump}},
 {"MOB1_Stand_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Stay}},
 {"MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Crouch}},
@@ -38,7 +38,7 @@ quat get_quat(const map<string, vector<quat>>& vecs, const string& name, uint i)
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
  AnimationTreeData& tree, const map<string, vector<quat>>& quats, const map<string, vector<vec3>>& vecs):
- duration(duration), ticksPerSecond(ticksPerSecond), name(name), cadres(duration), features(duration)
+ duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tagMap[name]), cadres(duration), features(duration)
 {
   vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
@@ -87,6 +87,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     vec3 dt = cadres[i].rootTranslationDelta;
     float dr = cadres[i].rootRotationDelta;
     AnimationPathFeature &pathFeature = features[i].path;
+    pathFeature.rotation = 0;
     for (uint j = 0; j < AnimationPathFeature::PathLength; j++)
     {
       if (j != 0)

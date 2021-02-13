@@ -10,6 +10,7 @@ class Scene
 private:
   vector<GameObjectPtr> gameObjects;
   AnimationPlayerPtr animPlayer;
+  AnimationDataBasePtr dataBase;
   DirectionLight sun;
   TestPersonController personController;
   AnimationDebugRenderPtr debugRender;

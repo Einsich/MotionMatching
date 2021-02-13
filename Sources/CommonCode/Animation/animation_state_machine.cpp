@@ -1,28 +1,15 @@
 #include "animation_state_machine.h"
 
 
-AnimationCadr AnimationStateMachine::get_lerped_cadr() const
+AnimationLerpedIndex AnimationStateMachine::get_current_animation() const
 {
-  assert(blendMode.anim1 != nullptr);
-    
-  if (!blendMode.anim2)
-    return blendMode.anim1->get_lerped_cadr();
-  return lerped_cadr(blendMode.anim1->get_lerped_cadr(), blendMode.anim2->get_lerped_cadr(), 1.f - blendMode.t);
-}
-
-AnimationIndex AnimationStateMachine::get_current_animation() const
-{
-  return AnimationIndex(dataBase, 
+  return AnimationLerpedIndex(dataBase, 
   blendMode.anim1 ? anim_index(blendMode.anim1->clip.name) : -1,
   blendMode.anim1 ? blendMode.anim1->cadr : -1,
   blendMode.anim2 ? anim_index(blendMode.anim2->clip.name) : -1,
-  blendMode.anim2 ? blendMode.anim2->cadr : -1);
+  blendMode.anim2 ? blendMode.anim2->cadr : -1, blendMode.t);
 }
 
-float AnimationStateMachine::ticksPerSecond() const
-{
-  return blendMode.anim1 ? blendMode.anim1->ticksPerSecond() : 0;
-}
 void AnimationStateMachine::update(float dt)
 {
   blendMode.anim1->update(dt);
@@ -121,6 +108,8 @@ bool AnimationStateMachine::try_change_state(const string& property, int value)
 AnimationStateMachine::AnimationStateMachine(AnimationDataBasePtr dataBase) :
 dataBase(dataBase)
 {
+  if (!dataBase)
+    return;
   for (uint i = 0; i < dataBase->clips.size(); i++)
   {
     animations.push_back(Animation(dataBase->clips[i]));

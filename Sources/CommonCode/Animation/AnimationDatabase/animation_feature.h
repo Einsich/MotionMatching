@@ -22,3 +22,5 @@ void pose_matching_norma_weights(AnimationFeaturesWeightsPtr weights_ptr);
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2);
 
 float goal_matching_norma(const AnimationPathFeature &path, const vector<AnimationTag> &tags, const AnimationGoal &goal);
+
+float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght);
