@@ -62,14 +62,32 @@ void AnimationDebugRender::render_pose_matching(AnimationPlayerPtr player, const
   
   Transform transform = player->gameObject->get_transform();
   debugSphere->get_shader().use();
-
-  const auto& feature = player->get_motion_matching().get_index().first.get_feature();
+  auto &mm = player->get_motion_matching();
+  const auto& feature = mm.get_index().first.get_feature();
+  
+  u8 onGround = mm.get_index().first.get_clip().onGround[mm.get_index().first.get_cadr_index()];
 
   debugSphere->get_material()->set_property(Property("Ambient", vec3(0,0,1)));
   debugSphere->get_transform().set_scale(vec3(0.1f));
   for (vec3 v: feature.features)
   {
     debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
+    debugSphere->render(mainCam, light, true);
+  }
+  if (onGround & 1)
+  {
+    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,1)));
+    debugSphere->get_transform().set_scale(vec3(0.11f));
+    
+    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
+    debugSphere->render(mainCam, light, true);
+  }
+  if (onGround & 2)
+  {
+    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,1)));
+    debugSphere->get_transform().set_scale(vec3(0.11f));
+    
+    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
     debugSphere->render(mainCam, light, true);
   }
   debugSphere->get_transform().set_scale(vec3(0.02f));

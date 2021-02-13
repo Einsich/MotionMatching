@@ -11,9 +11,9 @@ enum class AnimationFeaturesNode
   RightForeArm,
   RightHand,
   LeftLeg,
-  LeftFoot,
+  LeftToeBase,
   RightLeg,
-  RightFoot,
+  RightToeBase,
   Head,
   Count
 };

@@ -9,7 +9,7 @@
 class AnimationClip: public ISerializable
 {
 private:
-
+  void ground_calculate();
 public:
   AnimationClip(){}
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
@@ -20,6 +20,7 @@ public:
   vector<AnimationTag> tags;
   vector<AnimationCadr> cadres;
   vector<AnimationFeatures> features;
+  vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_lerped_cadr(int cadr, float t) const;

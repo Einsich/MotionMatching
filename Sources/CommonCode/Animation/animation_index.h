@@ -42,6 +42,10 @@ public:
   {
     return cadr;
   }
+  const AnimationClip &get_clip() const
+  {
+    return dataBase->clips[clip];
+  }
   const AnimationCadr &get_cadr() const
   {
     return dataBase->clips[clip].cadres[cadr];

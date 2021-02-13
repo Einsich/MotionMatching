@@ -20,5 +20,6 @@ public:
 
   AnimationLerpedIndex get_index();
   void update(float dt, const AnimationGoal &goal);
+  AnimationDataBasePtr get_data_base() const;
   MotionMatchingSolverPtr get_solver() const;
 };

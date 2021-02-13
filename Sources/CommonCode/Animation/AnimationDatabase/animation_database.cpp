@@ -73,6 +73,22 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
+  ground_calculate();
+  vec3 lastRootPos = cadres[0].rootTranslationDelta;
+  for (uint i = 1; i < duration; i++)
+  {
+    if ((onGround[i-1] & 1) && (onGround[i] & 1) && (onGround[i-1] & 2) && (onGround[i] & 2))
+    {
+      vec3 d = cadres[i].rootTranslationDelta - lastRootPos;
+      cadres[i].rootTranslationDelta -= d;
+      cadres[i].nodeTranslation += d;
+      for(vec3 &feature : features[i].features)
+        feature += d;
+    } else
+    {
+      lastRootPos = cadres[i].rootTranslationDelta;
+    }
+  }
   for (int i = duration - 1; i >=0; i--)
   {
     AnimationCadr& cadr1 = cadres[i];
@@ -82,6 +98,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
   }
   cadres[0].rootRotationDelta = 0;
   cadres[0].rootTranslationDelta = vec3(0.f);
+
   for (uint i = 0; i < duration; i++)
   {
     vec3 dt = cadres[i].rootTranslationDelta;
@@ -107,11 +124,25 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       }
     }
   }
-
 }
 AnimationCadr AnimationClip::get_lerped_cadr(int cadr, float t) const
 {
   return cadr < (int)cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
+}
+void AnimationClip::ground_calculate()
+{
+  onGround.resize(features.size(), 0);
+  vector<float> h(features.size());
+  for (uint i = 0; i < h.size(); i++)
+    h[i] = features[i].features[(int)AnimationFeaturesNode::LeftToeBase].y;
+  for (uint i = 0; i < h.size(); i++)
+    if(abs(h[i]) < 0.05f)
+      onGround[i] |= 1;
+  for (uint i = 0; i < h.size(); i++)
+    h[i] = features[i].features[(int)AnimationFeaturesNode::RightToeBase].y;
+  for (uint i = 0; i < h.size(); i++)
+    if(abs(h[i]) < 0.05f)
+      onGround[i] |= 2;
 }
 size_t AnimationClip::serialize(std::ostream& os) const
 {
@@ -132,6 +163,7 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, cadres);
   size += read(is, features);
   tags = tagMap[name];
+  ground_calculate();
   return size;
 }
 

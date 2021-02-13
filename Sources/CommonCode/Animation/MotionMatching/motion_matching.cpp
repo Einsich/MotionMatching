@@ -45,3 +45,7 @@ MotionMatchingSolverPtr MotionMatching::get_solver() const
 {
   return solver;
 }
+AnimationDataBasePtr MotionMatching::get_data_base() const
+{
+  return dataBase;
+}

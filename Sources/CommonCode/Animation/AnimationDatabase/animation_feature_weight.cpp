@@ -9,9 +9,9 @@ weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(RightForeArm),
     FEATURE(RightHand),
     FEATURE(LeftLeg),
-    FEATURE(LeftFoot),
+    FEATURE(LeftToeBase),
     FEATURE(RightLeg),
-    FEATURE(RightFoot),
+    FEATURE(RightToeBase),
     FEATURE(Head)})
 {}
 size_t AnimationFeaturesWeights::serialize(std::ostream& os) const
@@ -42,7 +42,8 @@ size_t AnimationFeaturesWeights::deserialize(std::istream& is)
     float weight;
     size += read(is, name);
     size += read(is, weight);
-    weights[(int)featureMap[name]] = weight;
+    if (featureMap.find(name) != featureMap.end())
+      weights[(int)featureMap[name]] = weight;
   }
   size += read(is, norma_function_weight);
   size += read(is, goal_path_weight);
