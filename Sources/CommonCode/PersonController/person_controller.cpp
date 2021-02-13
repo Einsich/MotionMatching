@@ -11,6 +11,7 @@ void TestPersonController::update()
 {
   float speed = Input::input().get_key(SDLK_w) * (1.f + 2*Input::input().get_key(SDLK_LSHIFT));
   float r = Input::input().get_key(SDLK_d) - Input::input().get_key(SDLK_a);
+
   float wantedRotation = -r * DegToRad *40.f;
   if (glm::abs(animation->rootDeltaRotation * Time::delta_time()) < glm::abs(wantedRotation* Time::delta_time()))
   rotation += wantedRotation* Time::delta_time();

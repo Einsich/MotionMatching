@@ -13,12 +13,12 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
 {
   if (!dataBase || !index())
     return AnimationIndex();
-  float best = 0;
-  int bestClip = -1;
-  int bestCadr = -1;
   const AnimationFeatures &feature = index.get_feature();
   int curClip = index.get_clip_index();
   int curCadr = index.get_cadr_index();
+  float best = 0;
+  int bestClip = curClip;
+  int bestCadr = curCadr;
   for(uint nextClip = 0; nextClip < dataBase->clips.size(); nextClip++)
   {
     for (uint nextCadr = 0, n = dataBase->clips[nextClip].features.size(); nextCadr < n; nextCadr++)

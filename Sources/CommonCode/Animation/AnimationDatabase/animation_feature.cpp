@@ -63,7 +63,8 @@ float goal_matching_norma(const AnimationPathFeature &path, const vector<Animati
   for (uint i = 0; i < AnimationPathFeature::PathLength; i++)
     path_norma += length(path.path[i] - goal.path.path[i]);
   path_norma *= weights->goal_path_weight;
-  rotation_norma = weights->goal_rotation * abs(goal.path.rotation - path.rotation);
+  if (length(goal.path.path[0]) < 0.05f)
+    rotation_norma = weights->goal_rotation * abs(goal.path.rotation - path.rotation);
   
   return (1.f - path_norma - rotation_norma + contains(goal.tags, tags) * weights->goal_tag_weight) * weights->goal_weight;
 }
