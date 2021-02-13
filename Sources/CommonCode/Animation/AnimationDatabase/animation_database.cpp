@@ -116,6 +116,7 @@ AnimationCadr AnimationClip::get_lerped_cadr(int cadr, float t) const
 size_t AnimationClip::serialize(std::ostream& os) const
 {
   size_t size = 0;
+  size += write(os, duration);
   size += write(os, ticksPerSecond);
   size += write(os, name);
   size += write(os, cadres);
@@ -125,10 +126,12 @@ size_t AnimationClip::serialize(std::ostream& os) const
 size_t AnimationClip::deserialize(std::istream& is)
 {
   size_t size = 0;
+  size += read(is, duration);
   size += read(is, ticksPerSecond);
   size += read(is, name);
   size += read(is, cadres);
   size += read(is, features);
+  tags = tagMap[name];
   return size;
 }
 
@@ -146,14 +149,12 @@ size_t AnimationDataBase::serialize(std::ostream& os) const
 {
   size_t size = 0;
   size += write(os, clips);
-  size += write(os, tree);
   return size;
 }
 size_t AnimationDataBase::deserialize(std::istream& is)
 {
   size_t size = 0;
   size += read(is, clips);
-  size += read(is, tree);
   return size;
 }
 void AnimationDataBase::save_runtime_parameters()

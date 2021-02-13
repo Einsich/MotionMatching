@@ -21,7 +21,7 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
 
 AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *root)
 {
-  bool fromFile = true;
+  bool fromFile = false;
   AnimationDataBasePtr animDatabase = make_shared<AnimationDataBase>(root);
   if (fromFile)
   {
