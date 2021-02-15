@@ -2,6 +2,7 @@
 #define FEATURE(F) {#F, AnimationFeaturesNode::F}
 AnimationFeaturesWeights::AnimationFeaturesWeights():
 norma_function_weight(1.f), goal_path_weight(1.f), goal_rotation(1.f), goal_tag_weight(1.f), goal_weight(1.f), next_cadr_weight(1.f),
+debug_scale(1.f),
 weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(Hips),
     FEATURE(LeftForeArm),

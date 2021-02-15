@@ -7,7 +7,7 @@ class TestPersonController
 private:
   GameObjectPtr character;
   AnimationPlayerPtr animation;
-  float rotation = 0;
+  float rotation = 0, wantedRotation = 0;
   bool crouching = false;
 public:
   TestPersonController(){}
@@ -16,5 +16,6 @@ public:
   void update();
   void crouch(const KeyboardEvent &event);
   void jump(const KeyboardEvent &event);
+  void rotate(const KeyboardEvent &event);
 };
 

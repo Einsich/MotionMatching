@@ -75,7 +75,7 @@ float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, 
   if (next_anim == cur_anim && d < 8)
     return glm::clamp(1.f - d * 0.125f, 0.f, 1.f) * weights->next_cadr_weight;
   d -= clip_lenght;
-  if (next_anim == cur_anim && d > -8)
-    return glm::clamp(-1.f - d * 0.125f, -1.f, 0.f) * weights->next_cadr_weight;
+  if (next_anim == cur_anim && d > -15)
+    return -1 * weights->next_cadr_weight;
   return 0;
 }

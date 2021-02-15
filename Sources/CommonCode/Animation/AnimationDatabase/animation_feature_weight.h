@@ -20,7 +20,7 @@ enum class AnimationFeaturesNode
 class AnimationFeaturesWeights : public ISerializable
 {
 public:
-  float norma_function_weight, goal_path_weight, goal_rotation, goal_tag_weight, goal_weight, next_cadr_weight;
+  float norma_function_weight, goal_path_weight, goal_rotation, goal_tag_weight, goal_weight, next_cadr_weight, debug_scale;
   vector<float> weights;
   AnimationFeaturesWeights();
   map<string, AnimationFeaturesNode> featureMap;

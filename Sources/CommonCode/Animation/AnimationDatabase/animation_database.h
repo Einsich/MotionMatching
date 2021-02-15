@@ -10,6 +10,7 @@ class AnimationClip: public ISerializable
 {
 private:
   void ground_calculate();
+  void leg_process(int leg_index, u8 leg);
 public:
   AnimationClip(){}
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,

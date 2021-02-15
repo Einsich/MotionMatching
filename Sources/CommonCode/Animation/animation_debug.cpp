@@ -3,6 +3,8 @@ AnimationDebugRender::AnimationDebugRender():
 debugSphere(create_sphere(Transform(vec3(), vec3()), 10))
 {
   debugSphere->get_material()->set_property(Property("Ambient", vec3(1,1,1)));
+  debugSphere->get_material()->set_property(Property("Diffuse", vec3(0,0,0)));
+  debugSphere->get_material()->set_property(Property("Specular", vec3(0,0,0)));
 }
 
 
@@ -11,15 +13,18 @@ void AnimationDebugRender::show_ui_matching(AnimationPlayerPtr player)
 
   MotionMatchingBruteSolver* solver;
   AnimationDataBasePtr dataBase;
-  if (!player || !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching().get_solver().get())) 
+  if (!player || !player->get_motion_matching() ||
+  !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching()->get_solver().get())) 
       || !(dataBase = solver->get_data_base()))
     return;
   ImGui::Begin("Pose matching");
   const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
   const vector<AnimationClip> &animations = dataBase->clips;
   const auto &matchingScore = solver->get_matching_scores();
-  AnimationIndex cur = player->get_motion_matching().get_index().first;
-  AnimationIndex next = player->get_motion_matching().get_index().second;
+
+  MotionMatching &mm = *player->get_motion_matching();
+  AnimationIndex cur = mm.get_index().first;
+  AnimationIndex next = mm.get_index().second;
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
   ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
@@ -27,6 +32,7 @@ void AnimationDebugRender::show_ui_matching(AnimationPlayerPtr player)
   {
     ImGui::Text("%s", animation.name.c_str());
   }
+  ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 1.f);
   ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 5.f);
   ImGui::SliderFloat("goal scale", &weights->goal_weight, 0, 5.f);
   ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 5.f);
@@ -44,7 +50,7 @@ void AnimationDebugRender::show_ui_matching(AnimationPlayerPtr player)
     for (uint j = 0, n = matchingScore[i].size(); j < n; j++)
     {
       ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + i * ImGui::GetTextLineHeightWithSpacing()); 
-      float t = matchingScore[i][j];
+      float t = matchingScore[i][j] * weights->debug_scale;
       draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f - t,t, 0 ,1.f)));
     }
   }
@@ -59,24 +65,35 @@ void AnimationDebugRender::render_pose_matching(AnimationPlayerPtr player, const
 {
   if (!player)
     return;
+  AnimationLerpedIndex index = player->get_motion_matching() ? player->get_motion_matching()->get_index() : player->get_index();
+
   
   Transform transform = player->gameObject->get_transform();
   debugSphere->get_shader().use();
-  auto &mm = player->get_motion_matching();
-  const auto& feature = mm.get_index().first.get_feature();
-  
-  u8 onGround = mm.get_index().first.get_clip().onGround[mm.get_index().first.get_cadr_index()];
 
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(0,0,1)));
+  const auto& feature = index.first.get_feature();
+  
+  u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
+
+  debugSphere->get_material()->set_property(Property("Ambient", vec3(1,1,1)));
   debugSphere->get_transform().set_scale(vec3(0.1f));
   for (vec3 v: feature.features)
   {
     debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
     debugSphere->render(mainCam, light, true);
   }
+
+  float r = feature.path.rotation;
+  debugSphere->get_material()->set_property(Property("Ambient", vec3(r,0,0)));
+  debugSphere->get_transform().get_position() = transform.get_transform() * vec4(0.1f,2,0, 1.f);
+  debugSphere->render(mainCam, light, true);
+
+  debugSphere->get_material()->set_property(Property("Ambient", vec3(-r,0,0)));
+  debugSphere->get_transform().get_position() = transform.get_transform() * vec4(-0.1f,2,0, 1.f);
+  debugSphere->render(mainCam, light, true);
   if (onGround & 1)
   {
-    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,1)));
+    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
     debugSphere->get_transform().set_scale(vec3(0.11f));
     
     debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
@@ -84,12 +101,13 @@ void AnimationDebugRender::render_pose_matching(AnimationPlayerPtr player, const
   }
   if (onGround & 2)
   {
-    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,1)));
+    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
     debugSphere->get_transform().set_scale(vec3(0.11f));
     
     debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
     debugSphere->render(mainCam, light, true);
   }
+
   debugSphere->get_transform().set_scale(vec3(0.02f));
   debugSphere->get_material()->set_property(Property("Ambient", vec3(0,1,0)));
   for (vec3 v: feature.path.path)

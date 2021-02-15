@@ -74,19 +74,17 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     }    
   }
   ground_calculate();
-  vec3 lastRootPos = cadres[0].rootTranslationDelta;
+  float pathLength = 0;
   for (uint i = 1; i < duration; i++)
+    pathLength += length(cadres[i].rootTranslationDelta - cadres[i-1].rootTranslationDelta);
+  if(pathLength < 0.3f)
   {
-    if ((onGround[i-1] & 1) && (onGround[i] & 1) && (onGround[i-1] & 2) && (onGround[i] & 2))
+    for (uint i = 0; i < duration; i++)
     {
-      vec3 d = cadres[i].rootTranslationDelta - lastRootPos;
-      cadres[i].rootTranslationDelta -= d;
-      cadres[i].nodeTranslation += d;
-      for(vec3 &feature : features[i].features)
-        feature += d;
-    } else
-    {
-      lastRootPos = cadres[i].rootTranslationDelta;
+      cadres[i].nodeTranslation += cadres[i].rootTranslationDelta;
+      for (vec3 &f:features[i].features)
+        f += cadres[i].rootTranslationDelta;
+      cadres[i].rootTranslationDelta = vec3(0.f);
     }
   }
   for (int i = duration - 1; i >=0; i--)
@@ -129,20 +127,36 @@ AnimationCadr AnimationClip::get_lerped_cadr(int cadr, float t) const
 {
   return cadr < (int)cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
 }
+void AnimationClip::leg_process(int leg_index, u8 leg)
+{
+  vector<float> h(features.size());
+  vector<int> g(features.size());
+  for (uint i = 0; i < h.size(); i++)
+    h[i] = features[i].features[leg_index].y;
+
+  g[0] = abs(h[0]) < 0.07f ? 1 : 0;
+  for (uint i = 1; i < h.size(); i++)
+    if (abs(h[i]) < 0.07f)
+      g[i] = g[i - 1] + 1;
+  
+  for(int j = h.size() - 1; j >= 0; j--)
+  {
+    if (g[j] > 5)
+    {
+      while (j >= 0 && g[j] > 0)
+      {
+        onGround[j] |= leg;
+        j--;
+      }
+    }
+  }
+    
+}
 void AnimationClip::ground_calculate()
 {
   onGround.resize(features.size(), 0);
-  vector<float> h(features.size());
-  for (uint i = 0; i < h.size(); i++)
-    h[i] = features[i].features[(int)AnimationFeaturesNode::LeftToeBase].y;
-  for (uint i = 0; i < h.size(); i++)
-    if(abs(h[i]) < 0.05f)
-      onGround[i] |= 1;
-  for (uint i = 0; i < h.size(); i++)
-    h[i] = features[i].features[(int)AnimationFeaturesNode::RightToeBase].y;
-  for (uint i = 0; i < h.size(); i++)
-    if(abs(h[i]) < 0.05f)
-      onGround[i] |= 2;
+  leg_process((int)AnimationFeaturesNode::LeftToeBase, 1);
+  leg_process((int)AnimationFeaturesNode::RightToeBase, 2);
 }
 size_t AnimationClip::serialize(std::ostream& os) const
 {

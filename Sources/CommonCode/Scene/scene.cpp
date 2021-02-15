@@ -80,14 +80,14 @@ void Scene::init()
   cube->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(cube);
 
-GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3(1.8f,1.8f,1.8f)), 20, true, true);
+GameObjectPtr sphere = create_sphere(Transform(vec3(-6.f,1.f,-6.f), vec3(), vec3(1.8f,1.8f,1.8f)), 20, true, true);
 
   sphere->get_material()->set_property(Property("mainTex", tex1));
   sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
   gameObjects.emplace_back(sphere);
 
   dataBase = animation_preprocess(importer, root);
-  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0, false);
+  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0, AnimationPlayerType::MotionMatching);
   debugRender = make_shared<AnimationDebugRender>();
   input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
   input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
@@ -95,6 +95,8 @@ GameObjectPtr sphere = create_sphere(Transform(vec3(-2.f,1.f,-2.f), vec3(), vec3
   personController = TestPersonController(man, animPlayer);
   input.keyboard_event(KeyAction::Down, SDLK_z) += createMethodEventHandler(personController, &TestPersonController::crouch);
   input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(personController, &TestPersonController::jump);
+  input.keyboard_event(KeyAction::Down, SDLK_a) += createMethodEventHandler(personController, &TestPersonController::rotate);
+  input.keyboard_event(KeyAction::Down, SDLK_d) += createMethodEventHandler(personController, &TestPersonController::rotate);
 }
 void Scene::update()
 { 
