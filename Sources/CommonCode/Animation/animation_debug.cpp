@@ -1,16 +1,23 @@
 #include "animation_debug.h"
+#include "imgui/imgui.h"
+#include "CommonCode/Components/MeshRender/mesh_render.h"
+#include "animation_player.h"
 AnimationDebugRender::AnimationDebugRender():
-debugSphere(create_sphere(Transform(vec3(), vec3()), 10))
+debugSphere(make_game_object())
 {
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(1,1,1)));
-  debugSphere->get_material()->set_property(Property("Diffuse", vec3(0,0,0)));
-  debugSphere->get_material()->set_property(Property("Specular", vec3(0,0,0)));
+  debugSphere->add_component<Transform>(vec3(0,0,0));
+  MaterialPtr material = 
+  debugSphere->add_component<MeshRender>(create_sphere(10))->get_material();
+
+  material->set_property(Property("Ambient", vec3(1,1,1)));
+  material->set_property(Property("Diffuse", vec3(0,0,0)));
+  material->set_property(Property("Specular", vec3(0,0,0)));
 }
 
 
-void AnimationDebugRender::show_ui_matching(AnimationPlayerPtr player)
+void AnimationDebugRender::ui_render()
 {
-
+  AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
   MotionMatchingBruteSolver* solver;
   AnimationDataBasePtr dataBase;
   if (!player || !player->get_motion_matching() ||
@@ -61,65 +68,71 @@ void AnimationDebugRender::show_ui_matching(AnimationPlayerPtr player)
   ImGui::End();
 }
 
-void AnimationDebugRender::render_pose_matching(AnimationPlayerPtr player, const Camera& mainCam, const DirectionLight& light)
+void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
+  AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
   if (!player)
     return;
   AnimationLerpedIndex index = player->get_motion_matching() ? player->get_motion_matching()->get_index() : player->get_index();
 
   
-  Transform transform = player->gameObject->get_transform();
-  debugSphere->get_shader().use();
+  Transform* transform = gameObject->get_component<Transform>();
+  mat4 transformation = transform ? transform->get_transform() : mat4(1.f);
 
+  MeshRender * meshRender = debugSphere->get_component<MeshRender>();
+  transform = debugSphere->get_component<Transform>();
+  if (!meshRender || ! transform)
+    return;
+  MaterialPtr material = meshRender->get_material();
   const auto& feature = index.first.get_feature();
   
   u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
 
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(1,1,1)));
-  debugSphere->get_transform().set_scale(vec3(0.1f));
+  material->set_property(Property("Ambient", vec3(1,1,1)));
+  transform->set_scale(vec3(0.1f));
   for (vec3 v: feature.features)
   {
-    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
-    debugSphere->render(mainCam, light, true);
+    transform->get_position() = transformation * vec4(v, 1.f);
+    meshRender->render(*transform, mainCam, light, true);
   }
 
   float r = feature.path.rotation;
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(r,0,0)));
-  debugSphere->get_transform().get_position() = transform.get_transform() * vec4(0.1f,2,0, 1.f);
-  debugSphere->render(mainCam, light, true);
+  material->set_property(Property("Ambient", vec3(r,0,0)));
+  transform->get_position() = transformation * vec4(0.1f,2,0, 1.f);
+  meshRender->render(*transform, mainCam, light, true);
 
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(-r,0,0)));
-  debugSphere->get_transform().get_position() = transform.get_transform() * vec4(-0.1f,2,0, 1.f);
-  debugSphere->render(mainCam, light, true);
+  material->set_property(Property("Ambient", vec3(-r,0,0)));
+  transform->get_position() = transformation * vec4(-0.1f,2,0, 1.f);
+  meshRender->render(*transform, mainCam, light, true);
   if (onGround & 1)
   {
-    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
-    debugSphere->get_transform().set_scale(vec3(0.11f));
+    material->set_property(Property("Ambient", vec3(1,0,0)));
+    transform->set_scale(vec3(0.11f));
     
-    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
-    debugSphere->render(mainCam, light, true);
+    transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
+    meshRender->render(*transform, mainCam, light, true);
   }
   if (onGround & 2)
   {
-    debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
-    debugSphere->get_transform().set_scale(vec3(0.11f));
+    material->set_property(Property("Ambient", vec3(1,0,0)));
+    transform->set_scale(vec3(0.11f));
     
-    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
-    debugSphere->render(mainCam, light, true);
+    transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
+    meshRender->render(*transform, mainCam, light, true);
   }
 
-  debugSphere->get_transform().set_scale(vec3(0.02f));
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(0,1,0)));
+  transform->set_scale(vec3(0.02f));
+  material->set_property(Property("Ambient", vec3(0,1,0)));
   for (vec3 v: feature.path.path)
   {
-    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
-    debugSphere->render(mainCam, light, true);
+    transform->get_position() = transformation * vec4(v, 1.f);
+    meshRender->render(*transform, mainCam, light, true);
   }
-  debugSphere->get_material()->set_property(Property("Ambient", vec3(1,0,0)));
+  material->set_property(Property("Ambient", vec3(1,0,0)));
   for (vec3 v: player->inputGoal.path.path)
   {
-    debugSphere->get_transform().get_position() = transform.get_transform() * vec4(v, 1.f);
-    debugSphere->render(mainCam, light, true);
+    transform->get_position() = transformation * vec4(v, 1.f);
+    meshRender->render(*transform, mainCam, light, true);
   }
     
   

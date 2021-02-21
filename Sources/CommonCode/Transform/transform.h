@@ -2,7 +2,9 @@
 #include "CommonCode/common.h"
 #include "CommonCode/math.h"
 #include "CommonCode/Shader/shader.h"
-class Transform
+#include "CommonCode/component.h"
+class Component;
+class Transform : public Component
 {
 private:
   vec3 position;
@@ -23,5 +25,5 @@ public:
   void set_rotation(float yaw = 0, float pitch = 0, float roll = 0);
   void set_position(const vec3 position);
   void set_scale(const vec3 scale);
-  void set_to_shader(const Shader& shader);
+  void set_to_shader(const Shader& shader) const;
 };

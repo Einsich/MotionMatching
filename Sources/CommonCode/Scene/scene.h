@@ -2,18 +2,14 @@
 #include "CommonCode/common.h"
 #include "CommonCode/GameObject/game_object.h"
 #include "CommonCode/Light/direction_light.h"
-#include "../PersonController/person_controller.h"
-#include "../Animation/animation_debug.h"
+#include "../Animation/AnimationDatabase/animation_database.h"
 #include <vector>
 class Scene
 {
 private:
-  vector<GameObjectPtr> gameObjects;
-  AnimationPlayerPtr animPlayer;
+  vector<GameObject*> gameObjects;
   AnimationDataBasePtr dataBase;
   DirectionLight sun;
-  TestPersonController personController;
-  AnimationDebugRenderPtr debugRender;
 public:
   void init();
   void update();

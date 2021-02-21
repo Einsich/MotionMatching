@@ -53,7 +53,7 @@ void Transform::set_scale(const vec3 scale)
   this->scale = scale;
 }
 
-void Transform::set_to_shader(const Shader& shader)
+void Transform::set_to_shader(const Shader& shader) const
 {
   shader.set_mat4x4("Model", get_transform());
 }

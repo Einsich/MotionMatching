@@ -1,19 +1,14 @@
 #pragma once
-#include "../GameObject/game_object.h"
-#include "../Animation/animation_player.h"
 #include "../Event/input.h"
-class TestPersonController
+#include "CommonCode/component.h"
+class TestPersonController : public Component, public IUpdatable
 {
 private:
-  GameObjectPtr character;
-  AnimationPlayerPtr animation;
   float rotation = 0, wantedRotation = 0;
   bool crouching = false;
 public:
-  TestPersonController(){}
-  TestPersonController(GameObjectPtr character, AnimationPlayerPtr animation);
 
-  void update();
+  void update() override;
   void crouch(const KeyboardEvent &event);
   void jump(const KeyboardEvent &event);
   void rotate(const KeyboardEvent &event);

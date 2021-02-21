@@ -2,13 +2,12 @@
 #include "CommonCode/Time/time.h"
 
 
-AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, GameObjectPtr gameObject, int first_anim, AnimationPlayerType playerType):
+AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, int first_anim, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f), 
 stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 
 motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
-animRender(gameObject), tree(dataBase->tree), 
-index(dataBase, first_anim, 0, first_anim, 1),
-gameObject(gameObject)
+tree(dataBase->tree), 
+index(dataBase, first_anim, 0, first_anim, 1)
 {
   if (playerType ==  AnimationPlayerType::StateMachine)
   {
@@ -70,7 +69,8 @@ AnimationLerpedIndex AnimationPlayer::get_index() const
 {
   return index;
 }
-void AnimationPlayer::render(const Camera& mainCam, const DirectionLight& light)
+
+const AnimationTree &AnimationPlayer::get_tree() const
 {
-  animRender.render(mainCam, light, tree);
+  return tree;
 }

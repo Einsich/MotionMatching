@@ -57,7 +57,7 @@ void Input::event_process(const SDL_KeyboardEvent& event)
   else
   {
     e.action = KeyAction::Up;
-    keyMap[e.keycode] = {0, 0};
+    keyMap[e.keycode] = {0, Time::time()};
 
   }  
   keyboardEvent.get_event((int)e.action, 0)(e);
@@ -111,14 +111,19 @@ void Input::event_process(const SDL_MouseWheelEvent& event)
   mouseWheelEvent.get_event(0, 0)(e);
 }
 
-float Input::get_key(SDL_Keycode keycode)
+float Input::get_key(SDL_Keycode keycode, float reaction_time)
 {
   auto p = keyMap[keycode];
   if (p.first == 0)
-    return 0;
-  const float reactionTime = 1.f / 0.1f;
-  float t = (Time::time() - p.second) * reactionTime;
-  return t < 1 ? t : 1;
+  {
+    float t = 1.f - (Time::time() - p.second) / reaction_time;
+    return t < 0 ? 0 : t;
+  }
+  else
+  {
+    float t = (Time::time() - p.second) / reaction_time;
+    return t < 1 ? t : 1;
+  }
 }
 float Input::get_wheel()
 {

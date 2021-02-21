@@ -11,6 +11,11 @@
 #include <assimp/postprocess.h>
 #include "imgui/imgui.h"
 #include "../Animation/AnimationDatabase/animation_preprocess.h"
+#include "CommonCode/Components/MeshRender/mesh_render.h"
+#include "CommonCode/Components/AnimationRender/animation_render.h"
+#include "../PersonController/person_controller.h"
+#include "CommonCode/Animation/animation_player.h"
+#include "../Animation/animation_debug.h"
 
 void read_tree(aiNode * node, int depth = 0)
 {
@@ -56,53 +61,80 @@ void Scene::init()
   root = root->mChildren[0];
   //read_tree(root);
 
-  Mesh mesh = Mesh(scene->mMeshes[0]);
+  MeshPtr mesh = make_mesh(scene->mMeshes[0]);
+  dataBase = animation_preprocess(importer, root);
   TexturePtr tex = make_texture2d("MocapOnlineMobilityStarterPack/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr floor = make_texture2d("Textures/ground.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr tex1 = make_texture2d("Textures/screen.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
+  MaterialPtr material;
+  {
+    GameObject* man = new GameObject();
+    man->add_component<Transform>(vec3(1.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1));
+    man->add_component<AnimationRender>(
+      mesh,
+      standart_textured_material(tex),
+      get_shader("animation_normal_uv"), true);
 
-  GameObjectPtr man = make_game_object(Transform(vec3(1.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1)),
-  make_mesh(scene->mMeshes[0]),
-  standart_textured_material(tex),
-  get_shader("animation_normal_uv"));
-  man->get_material()->set_property(Property("Shininess", 100.f));
+    man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
+
+
+    AnimationPlayer *animPlayer = man->add_component<AnimationPlayer>(dataBase, 0, AnimationPlayerType::MotionMatching);
+    input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
+    input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
+
+    TestPersonController *personController = man->add_component<TestPersonController>();
+    input.keyboard_event(KeyAction::Down, SDLK_z) += createMethodEventHandler(*personController, &TestPersonController::crouch);
+    input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*personController, &TestPersonController::jump);
+    input.keyboard_event(KeyAction::Down, SDLK_a) += createMethodEventHandler(*personController, &TestPersonController::rotate);
+    input.keyboard_event(KeyAction::Down, SDLK_d) += createMethodEventHandler(*personController, &TestPersonController::rotate);
+
+    man->add_component<AnimationDebugRender>();
+
+    gameObjects.push_back(man);
+
+    arcballCam->set_target(man->get_component<Transform>());
+  }
+  GameObject* plane = new GameObject();
+  plane->add_component<Transform>(vec3(0.f,0.f,0.f), vec3(), vec3(500,1,500));
+  plane->add_component<MeshRender>(create_plane(true));
+  material = plane->get_component<MeshRender>()->get_material();
+  material->set_property(Property("mainTex", floor));
+  material->set_property(Property("uvScale", vec2(80.f,80.f)));
+  material->set_property(Property("Specular", vec3(0.f)));
+  gameObjects.push_back(plane);
+
+  GameObject* cube = new GameObject();
+  cube->add_component<Transform>(vec3(2.f,1.f,4.f), vec3(), vec3(0.7f,0.4f,0.7f));
+  cube->add_component<MeshRender>(create_cube(true));
+  material = cube->get_component<MeshRender>()->get_material();
+  material->set_property(Property("mainTex", tex1));
+  material->set_property(Property("Specular", vec3(0.f)));
+  gameObjects.push_back(cube);
+
+  GameObject* sphere = new GameObject();
+  sphere->add_component<Transform>(vec3(-6.f,1.f,-6.f), vec3(), vec3(1.8f,1.8f,1.8f));
+  sphere->add_component<MeshRender>(create_sphere(20, true, true));
+  material = sphere->get_component<MeshRender>()->get_material();
+
+  material->set_property(Property("mainTex", tex1));
+  material->set_property(Property("Specular", vec3(0.f)));
+  gameObjects.push_back(sphere);
+
   
-  arcballCam->set_target(&man->get_transform());
-
-  GameObjectPtr plane = create_plane(Transform(vec3(0.f,0.f,0.f), vec3(), vec3(500,1,500)), true);
-  plane->get_material()->set_property(Property("mainTex", floor));
-  plane->get_material()->set_property(Property("uvScale", vec2(80.f,80.f)));
-  plane->get_material()->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.emplace_back(plane);
-
-  GameObjectPtr cube = create_cube(Transform(vec3(2.f,1.f,4.f), vec3(), vec3(0.7f,0.4f,0.7f)), true);
-  cube->get_material()->set_property(Property("mainTex", tex1));
-  cube->get_material()->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.emplace_back(cube);
-
-GameObjectPtr sphere = create_sphere(Transform(vec3(-6.f,1.f,-6.f), vec3(), vec3(1.8f,1.8f,1.8f)), 20, true, true);
-
-  sphere->get_material()->set_property(Property("mainTex", tex1));
-  sphere->get_material()->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.emplace_back(sphere);
-
-  dataBase = animation_preprocess(importer, root);
-  animPlayer = make_shared<AnimationPlayer>(dataBase, man, 0, AnimationPlayerType::MotionMatching);
-  debugRender = make_shared<AnimationDebugRender>();
-  input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
-  input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
-
-  personController = TestPersonController(man, animPlayer);
-  input.keyboard_event(KeyAction::Down, SDLK_z) += createMethodEventHandler(personController, &TestPersonController::crouch);
-  input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(personController, &TestPersonController::jump);
-  input.keyboard_event(KeyAction::Down, SDLK_a) += createMethodEventHandler(personController, &TestPersonController::rotate);
-  input.keyboard_event(KeyAction::Down, SDLK_d) += createMethodEventHandler(personController, &TestPersonController::rotate);
 }
 void Scene::update()
 { 
   main_camera()->update();
-  personController.update();
-  animPlayer->update();
+  
+  for (auto objects : gameObjects)
+  {
+    for (auto component : objects->get_components())
+    {
+      IUpdatable *updatable = dynamic_cast<IUpdatable*>(component.get());
+      if (updatable)
+        updatable->update();
+    }
+  }
 
 }
 void Scene::render()
@@ -110,14 +142,15 @@ void Scene::render()
   glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   CameraPtr mainCamera = main_camera();
-  animPlayer->render(*mainCamera, sun);
   for (auto objects : gameObjects)
   {
-    objects->get_shader().use();
-    objects->render(*mainCamera, sun);
+    for (auto component : objects->get_components())
+    {
+      IRenderable *renderable = dynamic_cast<IRenderable*>(component.get());
+      if (renderable)
+        renderable->render(*mainCamera, sun);
+    }
   }
-  debugRender->render_pose_matching(animPlayer, *mainCamera, sun);
-
 
   render_sky_box();
   glFlush(); 
@@ -127,7 +160,15 @@ void Scene::render_ui()
   ImGui::Begin("Debug");
   debug_show();
   ImGui::End();
-  debugRender->show_ui_matching(animPlayer);
+  for (auto objects : gameObjects)
+  {
+    for (auto component : objects->get_components())
+    {
+      IUIRenderable *UIrenderable = dynamic_cast<IUIRenderable*>(component.get());
+      if (UIrenderable)
+        UIrenderable->ui_render();
+    }
+  }
   ImGui::Begin("FPS");
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();
