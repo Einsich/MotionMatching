@@ -16,7 +16,8 @@
 #include "../PersonController/person_controller.h"
 #include "CommonCode/Animation/animation_player.h"
 #include "../Animation/animation_debug.h"
-
+#include "CommonCode/Components/DebugTools/debug_arrow.h"
+#include "CommonCode/Physics/physics.h"
 void read_tree(aiNode * node, int depth = 0)
 {
   string tab(depth, ' ');
@@ -68,7 +69,7 @@ void Scene::init()
   TexturePtr tex1 = make_texture2d("Textures/screen.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   MaterialPtr material;
   {
-    GameObject* man = new GameObject();
+    GameObjectPtr man = make_game_object();
     man->add_component<Transform>(vec3(1.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1));
     man->add_component<AnimationRender>(
       mesh,
@@ -94,33 +95,53 @@ void Scene::init()
 
     arcballCam->set_target(man->get_component<Transform>());
   }
-  GameObject* plane = new GameObject();
-  plane->add_component<Transform>(vec3(0.f,0.f,0.f), vec3(), vec3(500,1,500));
-  plane->add_component<MeshRender>(create_plane(true));
-  material = plane->get_component<MeshRender>()->get_material();
-  material->set_property(Property("mainTex", floor));
-  material->set_property(Property("uvScale", vec2(80.f,80.f)));
-  material->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.push_back(plane);
-
-  GameObject* cube = new GameObject();
-  cube->add_component<Transform>(vec3(2.f,1.f,4.f), vec3(), vec3(0.7f,0.4f,0.7f));
-  cube->add_component<MeshRender>(create_cube(true));
-  material = cube->get_component<MeshRender>()->get_material();
-  material->set_property(Property("mainTex", tex1));
-  material->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.push_back(cube);
-
-  GameObject* sphere = new GameObject();
-  sphere->add_component<Transform>(vec3(-6.f,1.f,-6.f), vec3(), vec3(1.8f,1.8f,1.8f));
-  sphere->add_component<MeshRender>(create_sphere(20, true, true));
-  material = sphere->get_component<MeshRender>()->get_material();
-
-  material->set_property(Property("mainTex", tex1));
-  material->set_property(Property("Specular", vec3(0.f)));
-  gameObjects.push_back(sphere);
-
-  
+  {
+    GameObjectPtr plane = make_game_object();
+    plane->add_component<Transform>(vec3(0.f,0.0f,0.1f), vec3(), vec3(500,1,500));
+    plane->add_component<MeshRender>(create_plane(true));
+    material = plane->get_component<MeshRender>()->get_material();
+    material->set_property(Property("mainTex", floor));
+    material->set_property(Property("uvScale", vec2(80.f,80.f)));
+    material->set_property(Property("Specular", vec3(0.f)));
+    gameObjects.push_back(plane);
+    add_collider(plane, make_collider<PlaneCollider>());
+  }
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      vec3 rotation = radians(vec3(0, 0, 0));
+      vec3 offset = vec3(0, i* 0.2f, i);
+      GameObjectPtr cube = make_game_object();
+      cube->add_component<Transform>(offset, rotation, vec3(0.7f,0.4f,0.7f));
+      cube->add_component<MeshRender>(create_cube(true));
+      material = cube->get_component<MeshRender>()->get_material();
+      material->set_property(Property("mainTex", tex1));
+      material->set_property(Property("Specular", vec3(0.f)));
+      gameObjects.push_back(cube);
+      add_collider(cube, make_collider<BoxCollider>());
+    }
+  }
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      vec3 offset = vec3(-1.f,0.f,-1.f) + vec3(-i, i*0.5, i)*0.4f;
+      GameObjectPtr sphere = make_game_object();
+      sphere->add_component<Transform>(offset, vec3(), vec3(0.4f));
+      sphere->add_component<MeshRender>(create_sphere(20, true, true));
+      material = sphere->get_component<MeshRender>()->get_material();
+      material->set_property(Property("mainTex", tex1));
+      material->set_property(Property("Specular", vec3(0.f)));
+      gameObjects.push_back(sphere);
+      add_collider(sphere, make_collider<SphereCollider>(0.4f));
+    }
+  }
+  {
+    GameObjectPtr debug_arrow = make_game_object();
+    debug_arrow->add_component<DebugArrow>();
+    gameObjects.push_back(debug_arrow);
+  }
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
 }
 void Scene::update()
 { 

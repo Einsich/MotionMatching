@@ -21,6 +21,7 @@ private:
   AnimationTree tree;
   AnimationLerpedIndex index;
 public:
+  vec3 hipsPosition;
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;

@@ -38,6 +38,7 @@ void AnimationPlayer::update()
   AnimationCadr cadr = index.get_lerped_cadr();
   rootDeltaTranslation = cadr.rootTranslationDelta * ticks;
   rootDeltaRotation = cadr.rootRotationDelta * ticks;
+  hipsPosition = index.first.get_feature().features[(int)AnimationFeaturesNode::Hips];
   tree.set_cadr(cadr);
 }
 

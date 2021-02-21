@@ -22,7 +22,11 @@ mat4x4 Transform::get_transform() const
 {
   mat4 s = glm::scale(mat4(1.f), scale);
   mat4 t = glm::translate(mat4(1.f), position);
-  return t * s * rotation;
+  return t * rotation * s;
+}
+mat3 Transform::get_rotation() const
+{
+  return rotation;
 }
 vec3 Transform::get_forward() const
 {

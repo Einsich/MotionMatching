@@ -3,6 +3,8 @@
 #include "../Transform/transform.h"
 #include "CommonCode/Animation/animation_player.h"
 #include "../Time/time.h"
+#include "CommonCode/Components/DebugTools/debug_arrow.h"
+#include "CommonCode/Physics/physics.h"
 
 
 void TestPersonController::update()
@@ -23,6 +25,7 @@ void TestPersonController::update()
     rotation +=  rotationDelta / skipSecond * Time::delta_time();
   else
     rotation += player->rootDeltaRotation * Time::delta_time();
+
   player->inputGoal.tags.clear();
   if (Input::input().get_key(SDLK_SPACE) > 0)
     player->inputGoal.tags.push_back(AnimationTag::Jump);
@@ -34,8 +37,23 @@ void TestPersonController::update()
   for (int i = 0; i < AnimationPathFeature::PathLength; i++)
     player->inputGoal.path.path[i] = vec3(0, 0, 1) * speed * (i + 1.f) * (float)AnimationPathFeature::SkipCadres / 30.f;
 
-  transform->get_position() -= (player->rootDeltaTranslation.z * transform->get_forward() + player->rootDeltaTranslation.x * transform->get_right()) * Time::delta_time() ;
+  vec3 hips = transform->get_transform() * vec4(player->hipsPosition, 1.f);
+  Ray ray(hips, vec3(0,-1,0), 100);
+  Collision collision = ray_cast(ray);
+  float dh =0;
+  if (collision.collider)
+  {
+    draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
+    dh = collision.distance - player->hipsPosition.y;
+    dh *= 5;
+  }
+  transform->get_position() -= 
+  (player->rootDeltaTranslation.z * transform->get_forward() + 
+  dh * transform->get_up()+ 
+  player->rootDeltaTranslation.x * transform->get_right()) * Time::delta_time() ;
   transform->set_rotation(rotation); 
+  
+  //transform->set_rotation(rotation); 
   
   //player->get_state_machine().set_rotation(r);
   //player->get_state_machine().set_speed(speed);

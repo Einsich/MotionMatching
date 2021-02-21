@@ -50,6 +50,10 @@ public:
 	{
 		glUniform3fv(glGetUniformLocation(program, name), 1, glm::value_ptr(v));
   }
+	void set_vec3(const char*name, const vector<vec3> &v) const
+	{
+		glUniform3fv(glGetUniformLocation(program, name), v.size(), glm::value_ptr(*v.data()));
+  }
 	void set_vec4(const char*name, const vec4 &v) const
 	{
 		glUniform4fv(glGetUniformLocation(program, name), 1, glm::value_ptr(v));

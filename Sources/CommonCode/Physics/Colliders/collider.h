@@ -1,33 +1,47 @@
 #pragma once
+#include <memory>
+#include "CommonCode/math.h"
+#include "CommonCode/component.h"
 #include "collision.h"
-#include "CommonCode/Transform/transform.h"
-class Collider
+#include "../ray.h"
+class Collider : public Component
 {
 public:
-  const Transform *transform;
-  Collider(const Transform *transform) :transform(transform){}
-
+  virtual bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) = 0;
 };
 class PlaneCollider : public Collider
 {
 public:
-  PlaneCollider(const Transform *transform) : Collider(transform){}
+  PlaneCollider(){}
+  bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) override;
 };
 class SphereCollider : public Collider
 {
 public:
   float radius;
-  SphereCollider(const Transform *transform) : Collider(transform){}
+  SphereCollider(float radius) : radius(radius){}
+  bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) override;
 };
 class BoxCollider : public Collider
 {
 public:
   vec3 scale;
-  BoxCollider(const Transform *transform) : Collider(transform){}
+  BoxCollider(vec3 scale = vec3(1.f)) : scale(scale){}
+  bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) override;
 };
 class CapsuleCollider : public Collider
 {
 public:
   vec3 scale;
-  CapsuleCollider(const Transform *transform) : Collider(transform){}
+  CapsuleCollider(vec3 scale) : scale(scale){}
+  bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) override;
 };
+
+using ColliderPtr = std::shared_ptr<Collider>;
+
+template<typename T, typename ...Args>
+ColliderPtr make_collider(Args ... args)
+{
+  return std::shared_ptr<Collider>((Collider*)(new T(args...)));
+}
+

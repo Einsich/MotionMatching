@@ -1,18 +1,19 @@
 #version 440
 in vec3 EyespaceNormal;
 in vec3 WorldPosition;
+in vec3 Color;
 out vec4 FragColor;
 
 uniform vec3 CameraPosition;
 
 uniform vec3 LightDirection;
 
-uniform vec3 Ambient;
-uniform vec3 Diffuse;
 uniform vec3 Specular;
 uniform float Shininess;
 void main()
 {
+    vec3 Diffuse = Color;
+    vec3 Ambient = Diffuse * 0.2;
     vec3 N = normalize(EyespaceNormal);
     vec3 L = LightDirection;
     vec3 W = normalize(CameraPosition - WorldPosition);

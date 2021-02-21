@@ -45,7 +45,7 @@ void ArcballCamera::update()
     target_position = target_transform->get_position();
   }
 
-  const float arcballCameraZoomSpeed = 0.001f;
+  const float arcballCameraZoomSpeed = 0.007f;
   zoom -= Input::input().get_wheel() * arcballCameraZoomSpeed;
   if (zoom < 0.f)
     zoom = 0.f;

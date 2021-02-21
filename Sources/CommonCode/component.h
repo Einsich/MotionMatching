@@ -6,10 +6,14 @@ class DirectionLight;
 class Component
 {
 protected:
-  GameObject* gameObject;
+  std::shared_ptr<GameObject> gameObject;
 public:
   virtual ~Component(){}
   friend class GameObject;
+  std::shared_ptr<GameObject> get_game_object() const
+  {
+    return gameObject;
+  }
 };
 
 class IUpdatable

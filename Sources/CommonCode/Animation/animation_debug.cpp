@@ -2,6 +2,8 @@
 #include "imgui/imgui.h"
 #include "CommonCode/Components/MeshRender/mesh_render.h"
 #include "animation_player.h"
+#include "CommonCode/Components/DebugTools/debug_arrow.h"
+#include "CommonCode/Physics/physics.h"
 AnimationDebugRender::AnimationDebugRender():
 debugSphere(make_game_object())
 {
@@ -83,9 +85,16 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   transform = debugSphere->get_component<Transform>();
   if (!meshRender || ! transform)
     return;
+
   MaterialPtr material = meshRender->get_material();
   const auto& feature = index.first.get_feature();
   
+  /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
+  Ray ray(man, vec3(0,-1,0), 100);
+  Collision collision = ray_cast(ray);
+  
+  draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
+*/
   u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
 
   material->set_property(Property("Ambient", vec3(1,1,1)));

@@ -37,7 +37,7 @@ void AnimationRender::render(const Transform &transform, const Camera& mainCam, 
   material->unbind_to_shader(shader);
   light.unbind_to_shader(shader);
   if (renderBones)
-    boneRender.render(transform.get_transform(), tree, mainCam, light);
+    boneRender.render(transform.get_transform(), tree);
 }
 MaterialPtr AnimationRender::get_material() const
 {

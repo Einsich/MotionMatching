@@ -7,7 +7,7 @@
 class Scene
 {
 private:
-  vector<GameObject*> gameObjects;
+  vector<GameObjectPtr> gameObjects;
   AnimationDataBasePtr dataBase;
   DirectionLight sun;
 public:
