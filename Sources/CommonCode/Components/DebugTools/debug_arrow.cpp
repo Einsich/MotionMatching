@@ -128,6 +128,8 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
   light.bind_to_shader(arrowShader);
   mainCam.set_to_shader(arrowShader);
   arrowMaterial->bind_to_shader(arrowShader);
+  glDisable(GL_CULL_FACE);
+  if (depthIgnore.arrowTransforms.size() > 0)
   {
     glDepthFunc(GL_ALWAYS);
     glDepthMask(GL_FALSE);
@@ -137,6 +139,7 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
     depthIgnore.arrowTransforms.clear();
     depthIgnore.arrowColors.clear();
   }
+  if (depthNotIgnore.arrowTransforms.size() > 0)
   {
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
@@ -148,5 +151,5 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
   }
   arrowMaterial->unbind_to_shader(arrowShader);
   light.unbind_to_shader(arrowShader);
-  
+  glEnable(GL_CULL_FACE);
 }

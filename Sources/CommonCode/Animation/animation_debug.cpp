@@ -72,6 +72,7 @@ void AnimationDebugRender::ui_render()
 
 void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
+  return;
   AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
   if (!player)
     return;
@@ -96,7 +97,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
 */
   u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
-
+  onGround = player->onGround;
   material->set_property(Property("Ambient", vec3(1,1,1)));
   transform->set_scale(vec3(0.1f));
   for (vec3 v: feature.features)

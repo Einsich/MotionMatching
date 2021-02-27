@@ -9,8 +9,7 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
 {
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
-    const AnimationNode &node = tree.nodes[i];
-    boneOffsets[i] = vec3(node.get_transform()[3]);
+    boneOffsets[i] = vec3(tree.get_transform(i)[3]);
   }
   mat4 flip = mat4(1.f);
   flip[0] = vec4(0,1,0,0);

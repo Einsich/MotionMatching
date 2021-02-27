@@ -87,9 +87,9 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *ro
     int cadr_count = animDatabase->cadr_count();
     debug_log("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
   }
-  for (const AnimationClip &animation : animDatabase->clips)
-    debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
-  debug_log("Animation at all: %d", animDatabase->clips.size());
+  //for (const AnimationClip &animation : animDatabase->clips)
+  //  debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
+  //debug_log("Animation at all: %d", animDatabase->clips.size());
 
   animDatabase->load_runtime_parameters();
   pose_matching_norma_weights(animDatabase->featureWeights);

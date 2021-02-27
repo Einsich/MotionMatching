@@ -3,24 +3,20 @@
 
 
 
-AnimationNode::AnimationNode(const AnimationNodeData &data, const mat4 &animationTransform):
-data(data), animationTransform(animationTransform){}
+AnimationNode::AnimationNode(const AnimationNodeData &data):
+data(data){}
 
 mat4 AnimationNode::get_transform() const
 {
-  return animationTransform;
-}
-void AnimationNode::set_transform(const mat4& parent_transformation, const mat4& local_transformation)
-{
-  animationTransform = parent_transformation * local_transformation;
-}
-mat4 AnimationNode::get_bone_transform() const
-{
-  return animationTransform * data.meshToBone;
+  return translation * rotation;
 }
 const string &AnimationNode::get_name() const
 {
   return data.name;
+}
+const AnimationNodeData &AnimationNode::get_data() const
+{
+  return data;
 }
 int AnimationNode::parent() const
 {
@@ -29,13 +25,11 @@ int AnimationNode::parent() const
 
 
 AnimationTree::AnimationTree(const AnimationTreeData &tree_data):
-  data(tree_data)
+  data(tree_data), transforms(tree_data.nodes.size(), mat4(1.f))
 {
   for (uint i = 0; i < tree_data.nodes.size(); i++)
-  {
-    mat4 parent = data.nodes[i].parent < 0 ? mat4(1.f) : nodes[data.nodes[i].parent].get_transform();
-    
-    nodes.push_back(AnimationNode(data.nodes[i], parent * data.nodes[i].transform));
+  {    
+    nodes.push_back(AnimationNode(data.nodes[i]));
   }
 }
 int AnimationTree::get_child(const string& name) const
@@ -49,10 +43,26 @@ void AnimationTree::set_cadr(const AnimationCadr &cadr)
   {
     const AnimationNodeData& node = data.nodes[i];
     mat4 transform = node.transform;
-    mat4 parent = node.parent >= 0 ? nodes[node.parent].get_transform() : mat4(1.f);
     mat4 rotation = glm::toMat4(cadr.nodeRotation[i]);
     mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(transform)) : transform;
-    nodes[i].set_transform(parent, translation * rotation);
-    
+    nodes[i].translation = translation;
+    nodes[i].rotation = rotation;
   }
+}
+void AnimationTree::calculate_bone_transforms()
+{
+  for (uint i = 0; i < nodes.size(); i++)
+  {
+    const mat4 &parent = nodes[i].parent() >= 0 ? transforms[nodes[i].parent()] : mat4(1.f);
+    transforms[i] = parent * nodes[i].get_transform();
+  }
+
+}
+mat4 AnimationTree::get_bone_transform(int node) const
+{
+  return transforms[node] * data.nodes[node].meshToBone;;
+}
+mat4 AnimationTree::get_transform(int node) const
+{
+  return transforms[node];
 }

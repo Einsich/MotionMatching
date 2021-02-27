@@ -16,13 +16,14 @@ void AnimationRender::render(const Camera& mainCam, const DirectionLight& light,
 }
 void AnimationRender::render(const Transform &transform, const Camera& mainCam, const DirectionLight& light, const AnimationTree &tree, bool wire_frame)
 {
+  
   curTransform.resize(mesh->bonesMap.size());
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
     auto it2 = mesh->bonesMap.find(tree.nodes[i].get_name());
     if (it2 != mesh->bonesMap.end())
     {
-      curTransform[it2->second] = tree.nodes[i].get_bone_transform();
+      curTransform[it2->second] = tree.get_bone_transform(i);
     }
   }
   shader.use();

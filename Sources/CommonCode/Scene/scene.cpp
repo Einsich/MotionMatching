@@ -70,11 +70,11 @@ void Scene::init()
   MaterialPtr material;
   {
     GameObjectPtr man = make_game_object();
-    man->add_component<Transform>(vec3(1.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1));
+    man->add_component<Transform>(vec3(0.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1));
     man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
-      get_shader("animation_normal_uv"), true);
+      get_shader("animation_normal_uv"), false);
 
     man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
 
@@ -119,6 +119,22 @@ void Scene::init()
       material->set_property(Property("Specular", vec3(0.f)));
       gameObjects.push_back(cube);
       add_collider(cube, make_collider<BoxCollider>());
+    }
+    for (int i = 0; i < 4; i++)
+    {
+      float rx = i % 2 ? (i / 2 ? 1 : -1) : 0;
+      float ry = i % 2 ? 0 : (i / 2 ? 1 : -1);
+      vec3 rotation = radians(vec3(0,ry * 30, -rx * 30));
+      float scale = 15;
+      vec3 offset = -vec3(rx * scale * 0.5f, -2, ry * scale * 0.5f);
+      GameObjectPtr plane = make_game_object();
+      plane->add_component<Transform>(offset, rotation, vec3(scale,scale,scale));
+      plane->add_component<MeshRender>(create_plane(true));
+      material = plane->get_component<MeshRender>()->get_material();
+      material->set_property(Property("mainTex", tex1));
+      material->set_property(Property("Specular", vec3(0.f)));
+      gameObjects.push_back(plane);
+      add_collider(plane, make_collider<PlaneCollider>());
     }
   }
   {
