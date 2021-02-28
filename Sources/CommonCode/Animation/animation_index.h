@@ -12,6 +12,7 @@ public:
   void increase_cadr();
   bool operator()() const;
   bool chack_data_base(AnimationDataBasePtr other_data_base) const;
+  bool last_cadr() const;
   int get_clip_index() const;
   int get_cadr_index() const;
   const AnimationClip &get_clip() const;

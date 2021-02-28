@@ -120,7 +120,7 @@ void Scene::init()
       gameObjects.push_back(cube);
       add_collider(cube, make_collider<BoxCollider>());
     }
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 0; i++)
     {
       float rx = i % 2 ? (i / 2 ? 1 : -1) : 0;
       float ry = i % 2 ? 0 : (i / 2 ? 1 : -1);

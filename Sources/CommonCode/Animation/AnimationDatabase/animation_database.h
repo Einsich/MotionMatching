@@ -25,6 +25,7 @@ public:
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_lerped_cadr(int cadr, float t) const;
+  bool contains_tag(AnimationTag tag) const;
 };
 class AnimationDataBase : public ISerializable
 {

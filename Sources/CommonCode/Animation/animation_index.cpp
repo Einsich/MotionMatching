@@ -32,11 +32,6 @@ void AnimationIndex::increase_cadr()
     if (cadr >= (int)dataBase->clips[clip].cadres.size())
     {
       cadr = 0;
-      //clip++;
-      if (clip >= (int)dataBase->clips.size())
-      {
-        clip = 0;
-      }
     }
   }
 }
@@ -47,6 +42,10 @@ bool AnimationIndex::operator()() const
 bool AnimationIndex::chack_data_base(AnimationDataBasePtr other_data_base) const
 {
   return dataBase == other_data_base;
+}
+bool AnimationIndex::last_cadr() const
+{
+  return valid() && (int)dataBase->clips[clip].cadres.size() == cadr + 1;
 }
 int AnimationIndex::get_clip_index() const
 {

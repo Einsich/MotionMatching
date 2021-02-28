@@ -2,7 +2,7 @@
 #include "AnimationDatabase/animation_path_feature.h"
 enum class AnimationTag
 {
-  Stay, Crouch, Jump
+  Stay, Crouch, Jump, Loopable
 };
 class AnimationGoal
 {

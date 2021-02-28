@@ -96,9 +96,10 @@ void AnimationPlayer::update()
     if (raycast_in_point(t * vec4(hips, 1), dh, normal))
     {
       dh -= hips.y;
-      dh *= 5;
+      dh *= 15;
       rootDeltaTranslation.y += dh;
     }
+    
     mat4 inv_t = inverse(t);
     leftToeNormal = inv_t * vec4(leftToeNormal, 0);
     rightToeNormal = inv_t * vec4(rightToeNormal, 0);
@@ -106,6 +107,7 @@ void AnimationPlayer::update()
       process_IK(tree, cadr, t, leftToe, leftToeNormal, tree.get_child("LeftToeBase"), tree.get_child("Hips"));
     if (onGround & 2)
       process_IK(tree, cadr, t, rightToe, rightToeNormal, tree.get_child("RightToeBase"), tree.get_child("Hips"));
+    
   }
   tree.calculate_bone_transforms();
 }

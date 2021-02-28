@@ -3,12 +3,12 @@ static map<string, vector<AnimationTag>> tagMap = {
 {"MOB1_Crouch_To_Stand_Relaxed", {AnimationTag::Stay}},
 {"MOB1_Stand_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Stay}},
 {"MOB1_Crouch_R_90", {AnimationTag::Crouch}},
-{"MOB1_Walk_F_Loop", {AnimationTag::Stay}},
+{"MOB1_Walk_F_Loop", {AnimationTag::Stay, AnimationTag::Loopable}},
 {"MOB1_Walk_F_Jump_RU", {AnimationTag::Jump}},
-{"MOB1_Stand_Relaxed_R_90", {AnimationTag::Stay}},
-{"MOB1_Jog_F_Loop", {AnimationTag::Stay}},
+{"MOB1_Stand_Relaxed_R_90", {}},
+{"MOB1_Jog_F_Loop", {AnimationTag::Stay, AnimationTag::Loopable}},
 {"MOB1_Crouch_L_90", {AnimationTag::Crouch}},
-{"MOB1_Crouch_Idle_V2", {AnimationTag::Crouch}},
+{"MOB1_Crouch_Idle_V2", {AnimationTag::Crouch, AnimationTag::Loopable}},
 {"MOB1_Stand_Relaxed_To_Jog_F", {AnimationTag::Stay}},
 {"MOB1_Crouch_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Crouch}},
 {"MOB1_Crouch_To_CrouchWalk_F", {AnimationTag::Crouch}},
@@ -17,11 +17,11 @@ static map<string, vector<AnimationTag>> tagMap = {
 {"MOB1_Walk_F_Jump", {AnimationTag::Jump}},
 {"MOB1_Stand_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Stay}},
 {"MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Crouch}},
-{"MOB1_Stand_Relaxed_Idle_v2", {AnimationTag::Stay}},
+{"MOB1_Stand_Relaxed_Idle_v2", {AnimationTag::Stay, AnimationTag::Loopable}},
 {"MOB1_Walk_F_To_Stand_Relaxed_RU", {AnimationTag::Stay}},
 {"MOB1_Jog_F_Jump_RU", {AnimationTag::Jump}},
 {"MOB1_Jog_F_Jump", {AnimationTag::Jump}},
-{"MOB1_Stand_Relaxed_L_90", {AnimationTag::Stay}},
+{"MOB1_Stand_Relaxed_L_90", {}},
 {"MOB1_Stand_Relaxed_To_Walk_F", {AnimationTag::Stay}},
 {"MOB1_CrouchWalk_F_Loop", {AnimationTag::Crouch}}
 };
@@ -126,6 +126,10 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
 AnimationCadr AnimationClip::get_lerped_cadr(int cadr, float t) const
 {
   return cadr < (int)cadres.size() + 1 ? lerped_cadr(cadres[cadr], cadres[cadr + 1], t) : cadres[cadr];
+}
+bool AnimationClip::contains_tag(AnimationTag tag) const
+{
+  return std::find(tags.begin(), tags.end(), tag) != tags.end();
 }
 void AnimationClip::leg_process(int leg_index, u8 leg)
 {

@@ -14,7 +14,7 @@ private:
   AnimationDataBasePtr dataBase;
   MotionMatchingSolverPtr solver;
   AnimationLerpedIndex index;
-
+  int skip_count;
 public:
   MotionMatching(AnimationDataBasePtr dataBase, int first_anim, MotionMatchingSolverType solverType);
 
