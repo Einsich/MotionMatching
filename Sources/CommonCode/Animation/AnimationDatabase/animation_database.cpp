@@ -138,9 +138,10 @@ void AnimationClip::leg_process(int leg_index, u8 leg)
   for (uint i = 0; i < h.size(); i++)
     h[i] = features[i].features[leg_index].y;
 
-  g[0] = abs(h[0]) < 0.07f ? 1 : 0;
+  constexpr float ground_value = 0.04f;
+  g[0] = abs(h[0]) < ground_value ? 1 : 0;
   for (uint i = 1; i < h.size(); i++)
-    if (abs(h[i]) < 0.07f)
+    if (abs(h[i]) < ground_value)
       g[i] = g[i - 1] + 1;
   
   for(int j = h.size() - 1; j >= 0; j--)

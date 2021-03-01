@@ -10,8 +10,10 @@ weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(RightForeArm),
     FEATURE(RightHand),
     FEATURE(LeftLeg),
+    FEATURE(LeftFoot),
     FEATURE(LeftToeBase),
     FEATURE(RightLeg),
+    FEATURE(RightFoot),
     FEATURE(RightToeBase),
     FEATURE(Head)})
 {}

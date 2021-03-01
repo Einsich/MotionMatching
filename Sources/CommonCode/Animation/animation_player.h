@@ -20,6 +20,14 @@ private:
   MotionMatching motionMatching;
   AnimationTree tree;
   AnimationLerpedIndex index;
+  struct IKFoot
+  {
+    bool onGround = false;
+    vec3 footPosition, toePosition;
+    int footNode, toeNode;
+  };
+  IKFoot ikFoot[2];
+  void set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, const char *foot_name, const char *toe_name);
 public:
   uint8 onGround;
   vec3 rootDeltaTranslation = vec3(0.f);
