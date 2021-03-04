@@ -7,8 +7,7 @@
 struct Joint
 {
   int node;
-  mat4 worldTransform;
-  mat3 worldRotation;
+  quat worldRotation;
   vec3 worldPosition;
   vec3 worldDir;
   float length;
@@ -18,10 +17,19 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
 {
   vector<Joint> joints;
   mat4 toRoot = mat4(1.f);
+  vec3 rootPos = vec3(0.f);
+  quat rootRot = quat(1,0,0,0);
+  AnimationTreeData originalTree = tree.get_original_tree();
+  int hipsID = originalTree.get_child("Hips");
   for (int i = node_static_node; i >= 0; i = tree.nodes[i].parent())
   {
-    toRoot = tree.nodes[i].get_transform() * toRoot;
+    rootRot = cadr.nodeRotation[i] * rootRot;
+    rootPos = (hipsID == i ? cadr.nodeTranslation : originalTree.nodes[i].translation) + cadr.nodeRotation[i] * rootPos;
+
   }
+
+    toRoot = translate(mat4(1.f),rootPos) * toMat4(rootRot);
+
   for (int i = node; i!= node_static_node; i = tree.nodes[i].parent())
   {
     joints.push_back(Joint());
@@ -31,19 +39,21 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
   std::reverse(joints.begin(), joints.end());
   for (uint i = 0; i < joints.size(); i++)
   {
-    mat4 parent = i == 0 ? toRoot : joints[i - 1].worldTransform;
-    joints[i].worldTransform = parent * tree.nodes[joints[i].node].get_transform();
-    joints[i].worldRotation = mat3(joints[i].worldTransform);
-    joints[i].worldPosition = joints[i].worldTransform[3];
+    vec3 parentPos = i == 0 ? rootPos : joints[i - 1].worldPosition;
+    quat parentRot = i == 0 ? rootRot : joints[i - 1].worldRotation;
+    int k = joints[i].node;
+    joints[i].worldRotation = parentRot * cadr.nodeRotation[k];
+    joints[i].worldPosition = parentPos + parentRot * originalTree.nodes[k].translation;
+
   }
-  for (uint i = 0; i < joints.size() - 1; i++)
+  for (uint i = 0; i < (int)joints.size() - 1; i++)
   {
     joints[i].worldDir = joints[i + 1].worldPosition - joints[i].worldPosition;
     joints[i].length = length(joints[i].worldDir);
     joints[i].worldDir /= joints[i].length;
   }
 
-  constexpr int iterations = 10;
+  constexpr int iterations = 4;
   vec3 corner = joints[0].worldPosition;
   for (int k = 0; k < iterations; k++)
   {
@@ -59,7 +69,7 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
       float l = length(d);
       vec3 v = d / l;
       quat q = quat(u, v);
-      joints[i].worldRotation = toMat3(q) * joints[i].worldRotation;
+      joints[i].worldRotation = joints[i].worldRotation * q;
       joints[i].worldPosition += v * (l - joints[i].length);
       joints[i].worldDir = v;
     }
@@ -70,36 +80,36 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
       vec3 d = joints[i].worldPosition - joints[i + 1].worldPosition;
       float l = length(d);
       vec3 v = d / l;
-      joints[i].worldRotation = toMat3(quat(-u, -v)) * joints[i].worldRotation ;
+      joints[i].worldRotation = joints[i].worldRotation * quat(-u, -v) ;
       joints[i + 1].worldPosition += v * (l - joints[i].length);
       joints[i].worldDir = -v;
     }
   }
 
+  vector<mat4> worldTransform(joints.size());
   for (uint i = 0; i < joints.size(); i++)
   {
-    joints[i].worldTransform = translate(mat4(1.f), joints[i].worldPosition) * mat4(joints[i].worldRotation);
+    worldTransform[i] = translate(mat4(1.f), joints[i].worldPosition) * mat4(joints[i].worldRotation);
   }
   for (uint i = 0; i < joints.size(); i++)
   {
     int n = joints[i].node;
-    mat4 parent_inv = i > 0 ? inverse(joints[i - 1].worldTransform) : inverse(toRoot);
-    mat4 localTransform = parent_inv * joints[i].worldTransform;
-    tree.nodes[n].translation = translate(mat4(1.f), vec3(localTransform[3]));
-    tree.nodes[n].rotation = mat4(mat3(localTransform));
+    
+    quat q = joints[i].worldRotation;
+      q = inverse(i != 0 ? joints[i - 1].worldRotation : rootRot)  * q;
+    cadr.nodeRotation[n] = q;
   }
-  int j = joints.size() - 2;
+  int j = joints.size() - 1;
   int k = joints[j].node;
-  mat3 toBone = inverse(mat3(joints[j].worldTransform));
-  mat4 rot = toMat4(quat(toBone * vec3(0, 1, 0), toBone * target_normal));
-
-  //tree.nodes[k].rotation *= rot;
+  mat3 toBone = inverse(mat3(worldTransform[j]));
+  quat q = quat(toBone * vec3(0, 1, 0), toBone * target_normal);
+  cadr.nodeRotation[k] = q * cadr.nodeRotation[k];
   constexpr bool draw_arrows = false;
   if (draw_arrows)
   {
     for (uint i = 0; i < joints.size(); i++)
     {
-      const mat4 &n = joints[i].worldTransform;
+      const mat4 &n = worldTransform[i];
       vec3 p = toWorld * vec4(vec3(n[3]), 1);
       vec3 d[3] = {vec3(1,0,0), vec3(0,1,0), vec3(0,0,1)};
       for (int j = 0; j < 3; j ++)

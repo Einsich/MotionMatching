@@ -33,7 +33,7 @@ vec3 get_vec3(const map<string, vector<vec3>>& vecs, const string& name, uint i)
 quat get_quat(const map<string, vector<quat>>& vecs, const string& name, uint i)
 {
   auto it = vecs.find(name);
-  return (it == vecs.cend() || i < 0 || it->second.size() <= i) ? quat() : it->second[i];
+  return (it == vecs.cend() || i < 0 || it->second.size() <= i) ? quat(1, 0, 0, 0) : it->second[i];
 }
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
@@ -62,10 +62,11 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
         cadr.rootRotationDelta = x;
         rotation = quat_cast(m);
       }
+      rotation = node.rotation * rotation;
       cadr.nodeRotation[j] = rotation;
       mat4 nodeTransform = tree.nodes[j].transform;
       mat4 rotationM = glm::toMat4(rotation);
-      mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(nodeTransform)) : nodeTransform;
+      mat4 translation =  glm::translate(mat4(1.f), (node.name == "Hips") ? cadr.nodeTranslation : node.translation);
       nodeTransform = translation * rotationM;
       if (tree.nodes[j].parent >= 0)
         nodeTransform = transfroms[tree.nodes[j].parent] * nodeTransform;

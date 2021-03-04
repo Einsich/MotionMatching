@@ -11,6 +11,8 @@ public:
   const mat4 transform;
   const mat4 meshToBone;
   const int parent;
+  const quat rotation;
+  const vec3 translation;
   vec3 localPosition, worldPosition;
   vector<int> childs;
   AnimationNodeData(string && name, const mat4 &transform,  const mat4 &meshToBone, int parent);

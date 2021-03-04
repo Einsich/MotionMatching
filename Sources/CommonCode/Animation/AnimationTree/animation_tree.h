@@ -30,5 +30,6 @@ public:
   void calculate_bone_transforms();
   mat4 get_bone_transform(int node) const;
   mat4 get_transform(int node) const;
+  const AnimationTreeData & get_original_tree() const;
 };
 using AnimationTreePtr = shared_ptr<AnimationTree>;

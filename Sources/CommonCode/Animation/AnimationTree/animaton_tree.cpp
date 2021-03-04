@@ -1,6 +1,6 @@
 #include "animation_tree.h"
 
-
+#include <cmath>
 
 
 AnimationNode::AnimationNode(const AnimationNodeData &data):
@@ -42,9 +42,8 @@ void AnimationTree::set_cadr(const AnimationCadr &cadr)
   for (uint i = 0; i < nodes.size(); i++)
   {
     const AnimationNodeData& node = data.nodes[i];
-    mat4 transform = node.transform;
     mat4 rotation = glm::toMat4(cadr.nodeRotation[i]);
-    mat4 translation = (node.name == "Hips") ? glm::translate(mat4(1.f), cadr.nodeTranslation) * mat4(mat3(transform)) : transform;
+    mat4 translation =  glm::translate(mat4(1.f), (node.name == "Hips") ? cadr.nodeTranslation : node.translation);
     nodes[i].translation = translation;
     nodes[i].rotation = rotation;
   }
@@ -65,4 +64,9 @@ mat4 AnimationTree::get_bone_transform(int node) const
 mat4 AnimationTree::get_transform(int node) const
 {
   return transforms[node];
+}
+
+const AnimationTreeData &AnimationTree::get_original_tree() const
+{
+  return data;
 }

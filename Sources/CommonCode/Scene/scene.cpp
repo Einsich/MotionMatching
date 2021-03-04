@@ -120,13 +120,13 @@ void Scene::init()
       gameObjects.push_back(cube);
       add_collider(cube, make_collider<BoxCollider>());
     }
-    for (int i = 0; i < 0; i++)
+    for (int i = 0; i < 4; i++)
     {
       float rx = i % 2 ? (i / 2 ? 1 : -1) : 0;
       float ry = i % 2 ? 0 : (i / 2 ? 1 : -1);
-      vec3 rotation = radians(vec3(0,ry * 30, -rx * 30));
+      vec3 rotation = radians(vec3(0,ry, -rx) * 25.f);
       float scale = 15;
-      vec3 offset = -vec3(rx * scale * 0.5f, -2, ry * scale * 0.5f);
+      vec3 offset = -vec3(rx * scale * 0.5f, 0.0f, ry * scale * 0.5f);
       GameObjectPtr plane = make_game_object();
       plane->add_component<Transform>(offset, rotation, vec3(scale,scale,scale));
       plane->add_component<MeshRender>(create_plane(true));

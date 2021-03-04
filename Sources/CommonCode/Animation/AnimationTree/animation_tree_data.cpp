@@ -2,7 +2,7 @@
 
 
 AnimationNodeData::AnimationNodeData(string && name, const mat4 &transform,  const mat4 &meshToBone, int parent):
-  name(name), transform(transform), meshToBone(meshToBone), parent(parent){}
+  name(name), transform(transform), meshToBone(meshToBone), parent(parent), rotation(transform), translation(transform[3]){}
 
 
 AnimationTreeData::AnimationTreeData(aiNode * node)
