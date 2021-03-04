@@ -4,6 +4,7 @@
 #include "../../Serialization/serialization.h"
 #include "../../Time/time_scope.h"
 #include <assimp/postprocess.h>
+#include "CommonCode/Application/config.h"
 
 string normalName(const string& badName)
 {
@@ -21,9 +22,8 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
 
 AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *root)
 {
-  bool fromFile = true;
   AnimationDataBasePtr animDatabase = make_shared<AnimationDataBase>(root);
-  if (fromFile)
+  if (get_bool_config("loadDataBaseFromFBX"))
   {
     TimeScope scope("Animation Reading from fbx file");
     string path = join_recources_path("MocapOnlineMobilityStarterPack/Animation/Root_Motion");

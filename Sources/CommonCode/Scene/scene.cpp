@@ -18,6 +18,8 @@
 #include "../Animation/animation_debug.h"
 #include "CommonCode/Components/DebugTools/debug_arrow.h"
 #include "CommonCode/Physics/physics.h"
+#include "CommonCode/Application/config.h"
+
 void read_tree(aiNode * node, int depth = 0)
 {
   string tab(depth, ' ');
@@ -74,7 +76,7 @@ void Scene::init()
     man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
-      get_shader("animation_normal_uv"), false);
+      get_shader("animation_normal_uv"), get_bool_config("showBones"));
 
     man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
 

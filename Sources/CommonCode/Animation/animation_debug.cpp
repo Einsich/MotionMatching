@@ -4,6 +4,8 @@
 #include "animation_player.h"
 #include "CommonCode/Components/DebugTools/debug_arrow.h"
 #include "CommonCode/Physics/physics.h"
+#include "CommonCode/Application/config.h"
+
 AnimationDebugRender::AnimationDebugRender():
 debugSphere(make_game_object())
 {
@@ -19,6 +21,8 @@ debugSphere(make_game_object())
 
 void AnimationDebugRender::ui_render()
 {
+  if (!get_bool_config("showMatchingStatistic"))
+    return;
   AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
   MotionMatchingBruteSolver* solver;
   AnimationDataBasePtr dataBase;
@@ -72,7 +76,8 @@ void AnimationDebugRender::ui_render()
 
 void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
-  return;
+  if (!get_bool_config("showGoal"))
+    return;
   AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
   if (!player)
     return;

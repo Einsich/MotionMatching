@@ -10,9 +10,8 @@
 .vscode/*
 *.cmake
 *.make
-MainApplication/CMakeFiles/*
-MainApplication/CMakeCache.txt
-MainApplication/Makefile
+MainApplication/Debug/*
+MainApplication/Release/*
 ShaderPrecompiler/CMakeFiles/*
 ShaderPrecompiler/CMakeCache.txt
 ShaderPrecompiler/Makefile

@@ -23,6 +23,8 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
   int hipsID = originalTree.get_child("Hips");
   for (int i = node_static_node; i >= 0; i = tree.nodes[i].parent())
   {
+    if (cadr.nodeRotation[i] == quat())
+      cadr.nodeRotation[i] = quat(1,0,0,0);
     rootRot = cadr.nodeRotation[i] * rootRot;
     rootPos = (hipsID == i ? cadr.nodeTranslation : originalTree.nodes[i].translation) + cadr.nodeRotation[i] * rootPos;
 
@@ -46,7 +48,7 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
     joints[i].worldPosition = parentPos + parentRot * originalTree.nodes[k].translation;
 
   }
-  for (uint i = 0; i < (int)joints.size() - 1; i++)
+  for (int i = 0; i < (int)joints.size() - 1; i++)
   {
     joints[i].worldDir = joints[i + 1].worldPosition - joints[i].worldPosition;
     joints[i].length = length(joints[i].worldDir);
@@ -74,7 +76,7 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
       joints[i].worldDir = v;
     }
     joints[0].worldPosition = corner;
-    for (int i = 0; i < joints.size() - 1; i++)
+    for (int i = 0; i < (int)joints.size() - 1; i++)
     {
       vec3 u = -joints[i].worldDir;
       vec3 d = joints[i].worldPosition - joints[i + 1].worldPosition;
