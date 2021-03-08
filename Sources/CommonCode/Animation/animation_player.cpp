@@ -57,6 +57,7 @@ void AnimationPlayer::set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, 
 }
 void AnimationPlayer::update()
 {
+  
   float dt = speed * Time::delta_time();
   
   if (playerType ==  AnimationPlayerType::StateMachine)
@@ -142,9 +143,8 @@ void AnimationPlayer::update()
         draw_arrow(ikFoot[i].toePosition, ikFoot[i].toePosition + norm * 0.3f, vec3(10,0,0), 0.02f, false);
       }
     }
-    
   }
-  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks*2.f);
+  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks*2.5f);
   tree.set_cadr(currentCadr);
   tree.calculate_bone_transforms();
 }

@@ -16,7 +16,7 @@ public:
   int get_clip_index() const;
   int get_cadr_index() const;
   const AnimationClip &get_clip() const;
-  const AnimationCadr &get_cadr() const;
+  AnimationCadr get_cadr() const;
   const AnimationFeatures &get_feature() const;
 };
 class AnimationLerpedIndex

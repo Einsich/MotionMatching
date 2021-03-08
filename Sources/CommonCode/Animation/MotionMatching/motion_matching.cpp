@@ -33,7 +33,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
   if (!solver)
     return;
   index.t += dt * index.ticks_per_second();
-  if (index.t > 1.f)
+  while (index.t > 1.f)
   {
     bool play_next_cadr = skip_count < max_skip_cadr && (!index.second.last_cadr() || index.second.get_clip().contains_tag(AnimationTag::Loopable));
     if (play_next_cadr)

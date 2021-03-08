@@ -7,13 +7,13 @@ dataBase(dataBase), clip(-1), cadr(-1)
 }
 bool AnimationIndex::valid() const
 {
-  return dataBase && 0 <= clip && clip < (int)dataBase->clips.size() && 0 <= cadr && cadr < (int)dataBase->clips[clip].cadres.size();
+  return dataBase && 0 <= clip && clip < (int)dataBase->clips.size() && 0 <= cadr && cadr < (int)dataBase->clips[clip].duration;
 }
 void AnimationIndex::set_index(int clip, int cadr)
 {
   if (dataBase)
   {
-    if (0 <= clip && clip < (int)dataBase->clips.size() && 0 <= cadr && cadr < (int)dataBase->clips[clip].cadres.size())
+    if (0 <= clip && clip < (int)dataBase->clips.size() && 0 <= cadr && cadr < (int)dataBase->clips[clip].duration)
     {
       this->clip = clip;
       this->cadr = cadr;
@@ -29,7 +29,7 @@ void AnimationIndex::increase_cadr()
   if (valid())
   {
     cadr++;
-    if (cadr >= (int)dataBase->clips[clip].cadres.size())
+    if (cadr >= (int)dataBase->clips[clip].duration)
     {
       cadr = 0;
     }
@@ -45,7 +45,7 @@ bool AnimationIndex::chack_data_base(AnimationDataBasePtr other_data_base) const
 }
 bool AnimationIndex::last_cadr() const
 {
-  return valid() && (int)dataBase->clips[clip].cadres.size() == cadr + 1;
+  return valid() && (int)dataBase->clips[clip].duration == cadr + 1;
 }
 int AnimationIndex::get_clip_index() const
 {
@@ -59,9 +59,9 @@ const AnimationClip &AnimationIndex::get_clip() const
 {
   return dataBase->clips[clip];
 }
-const AnimationCadr &AnimationIndex::get_cadr() const
+AnimationCadr AnimationIndex::get_cadr() const
 {
-  return dataBase->clips[clip].cadres[cadr];
+  return dataBase->clips[clip].get_frame(cadr);
 }
 const AnimationFeatures &AnimationIndex::get_feature() const
 {

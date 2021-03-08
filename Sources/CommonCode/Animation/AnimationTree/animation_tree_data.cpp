@@ -9,12 +9,12 @@ AnimationTreeData::AnimationTreeData(aiNode * node)
 {
   build_tree(node, mat4(1.f), 0, -1);
   vector<mat4> worldTransforms(nodes.size());
-  for (int i = 0; i < nodes.size(); i++)
+  for (uint i = 0; i < nodes.size(); i++)
   {
     mat4 parent = nodes[i].parent >= 0 ? worldTransforms[nodes[i].parent] : mat4(1.f);
     worldTransforms[i] = parent * nodes[i].transform;
   }
-  for (int i = 0; i < nodes.size(); i++)
+  for (uint i = 0; i < nodes.size(); i++)
   {
     mat4 parent = nodes[i].parent >= 0 ? worldTransforms[nodes[i].parent] : mat4(1.f);
     nodes[i].worldPosition = parent * nodes[i].transform[3];

@@ -60,18 +60,32 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *ro
             auto &vecs = translation[name];
             if (animNode->mNumPositionKeys == duration + 1)
             {
+              vecs.resize(duration);
               for (uint j = 0; j < duration; j++)
-                vecs.push_back(to_vec3(animNode->mPositionKeys[j + 1].mValue));
+                vecs[j] = to_vec3(animNode->mPositionKeys[j + 1].mValue);
             }
+            else
+            {
+              if (vecs.size() != duration)
+                vecs = {vec3(0.f)};
+            }
+            
             if (animNode->mNumRotationKeys == duration + 1)
             {
+              quats.resize(duration);
               for (uint j = 0; j < duration; j++)
-                quats.push_back(to_quat(animNode->mRotationKeys[j + 1].mValue));
+                quats[j] = to_quat(animNode->mRotationKeys[j + 1].mValue);
+            }
+            else
+            {
+              if (quats.size() != duration)
+                quats = {quat(1,0,0,0)};
             }
           }
 
-          animDatabase->clips.push_back(AnimationClip(duration, animation->mTicksPerSecond, string(animation->mName.C_Str()),
-              animDatabase->tree, rotation, translation));
+          animDatabase->clips.emplace_back(duration, animation->mTicksPerSecond, string(animation->mName.C_Str()),
+              animDatabase->tree, rotation, translation);
+
         }
         
       }

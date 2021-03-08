@@ -26,7 +26,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
       const AnimationClip &clip = dataBase->clips[nextClip];
       float pose_match = pose_matching_norma(clip.features[nextCadr], feature);
       float goal_match = goal_matching_norma(clip.features[nextCadr].path, clip.tags, goal);
-      float next_cadr_match = next_cadr_norma(curClip, curCadr, nextClip, nextCadr, clip.cadres.size());
+      float next_cadr_match = next_cadr_norma(curClip, curCadr, nextClip, nextCadr, clip.duration);
       float matching = pose_match + goal_match + next_cadr_match;
       matchingScore[nextClip][nextCadr] = matching;
       if (matching > best)

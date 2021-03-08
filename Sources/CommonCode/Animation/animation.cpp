@@ -16,7 +16,7 @@ float Animation::ticksPerSecond() const
 }
 AnimationCadr Animation::get_lerped_cadr() const
 {
-  return clip.get_lerped_cadr(cadr, t);
+  return clip.get_frame(cadr);
 }
 
 
