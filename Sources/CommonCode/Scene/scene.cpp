@@ -99,7 +99,7 @@ void Scene::init()
   }
   {
     GameObjectPtr plane = make_game_object();
-    plane->add_component<Transform>(vec3(0.f,0.0f,0.1f), vec3(), vec3(500,1,500));
+    plane->add_component<Transform>(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));
     plane->add_component<MeshRender>(create_plane(true));
     material = plane->get_component<MeshRender>()->get_material();
     material->set_property(Property("mainTex", floor));

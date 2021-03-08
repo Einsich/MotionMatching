@@ -38,6 +38,10 @@ public:
   {
     return timer->secondDelta;
   }
+  static float udelta_time()
+  {
+    return timer->millisecondDelta;
+  }
   static float fps()
   {
     const int N  = 60;

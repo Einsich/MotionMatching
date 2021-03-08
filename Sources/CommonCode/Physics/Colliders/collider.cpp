@@ -43,7 +43,7 @@ bool plane_raycast_hit(Collision &collision, const mat4 &transform, const mat3 &
   offset = transform * vec4(offset * scale, 1);
   for (uint i = 0; i < 4; ++i)
     corners[i] = transform * vec4(corners[i], 1);
-  vec3 normal;
+  vec3 normal(0.f);
   normal[axis] = side ? -1 : 1;
   
   normal = rotation * normal;
