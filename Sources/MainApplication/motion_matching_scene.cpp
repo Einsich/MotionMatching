@@ -10,7 +10,7 @@
 #include "CommonCode/Animation/AnimationDatabase/animation_preprocess.h"
 #include "CommonCode/Components/MeshRender/mesh_render.h"
 #include "CommonCode/Components/AnimationRender/animation_render.h"
-#include "CommonCode/PersonController/person_controller.h"
+#include "CommonCode/PersonController/third_person_controller.h"
 #include "CommonCode/Animation/animation_player.h"
 #include "CommonCode/Animation/animation_debug.h"
 #include "CommonCode/Components/DebugTools/debug_arrow.h"
@@ -34,20 +34,26 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   //create_sky_box("Textures/Skyboxes/Village");
   //create_sky_box("Textures/Skyboxes/DesertSky");
   create_sky_box("Textures/Skyboxes/CloudSky");
+  shared_ptr<ArcballCamera> arcballCam;
   sun = DirectionLight(vec3(0.1f, -0.5f, 0.1f));
-
-  shared_ptr<ArcballCamera> arcballCam = make_shared<ArcballCamera>(vec3(10.f,50.f,-150.f), 40, vec2(0.f, 30.f*DegToRad));
-  arcballCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
-  add_camera(arcballCam);
-  input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
-  input.mouse_click_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_click_handler);
-
-  shared_ptr<FreeCamera> freeCam = make_shared<FreeCamera>(vec3(0,100,0), vec2(0,0));
-  freeCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
-  add_camera(freeCam);
-  input.mouse_move_event() += createMethodEventHandler(*freeCam, &FreeCamera::mouse_move_handler);
-  input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*freeCam, &FreeCamera::space_button_handler);
-  
+  {
+    GameObjectPtr camera = make_game_object();
+    arcballCam = camera->add_component<ArcballCamera>(vec3(10.f,50.f,-150.f), 40, vec2(0.f, 30.f*DegToRad));
+    arcballCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    add_camera(arcballCam);
+    input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
+    input.mouse_click_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_click_handler);
+    gameObjects.push_back(camera);
+  }
+  {
+    GameObjectPtr camera = make_game_object();
+    shared_ptr<FreeCamera> freeCam = camera->add_component<FreeCamera>(vec3(0,100,0), vec2(0,0));
+    freeCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    add_camera(freeCam);
+    input.mouse_move_event() += createMethodEventHandler(*freeCam, &FreeCamera::mouse_move_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*freeCam, &FreeCamera::space_button_handler);
+    gameObjects.push_back(camera);
+  }
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
@@ -74,7 +80,8 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   }
   {
     GameObjectPtr man = make_game_object();
-    man->add_component<Transform>(vec3(0.f, 0.f,-1.f), vec3(0.f), vec3(1,1,1));
+    vec2 rotation = vec2(0,0);
+    man->add_component<Transform>(vec3(0.f, 0.f,-1.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
     man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
@@ -83,16 +90,17 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
 
 
-    AnimationPlayer *animPlayer = man->add_component<AnimationPlayer>(dataBase, 0, AnimationPlayerType::MotionMatching);
+    auto animPlayer = man->add_component<AnimationPlayer>(dataBase, 0, AnimationPlayerType::MotionMatching);
     input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
     input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
-    TestPersonController *personController = man->add_component<TestPersonController>();
-    input.keyboard_event(KeyAction::Down, SDLK_z) += createMethodEventHandler(*personController, &TestPersonController::crouch);
-    input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*personController, &TestPersonController::jump);
-    input.keyboard_event(KeyAction::Down, SDLK_a) += createMethodEventHandler(*personController, &TestPersonController::rotate);
-    input.keyboard_event(KeyAction::Down, SDLK_d) += createMethodEventHandler(*personController, &TestPersonController::rotate);
+    auto personController = man->add_component<ThirdPersonController>(rotation + vec2(PI*0.5f,0), 1.2f, 2.f);
+    input.mouse_move_event() += createMethodEventHandler(*personController, &ThirdPersonController::mouse_move_handler);
 
+    auto cam = man->add_component<Camera>();
+    cam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    cam->set_priority(1);
+    add_camera(cam);
     man->add_component<AnimationDebugRender>();
 
     gameObjects.push_back(man);
