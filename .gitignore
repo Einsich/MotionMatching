@@ -7,7 +7,7 @@
 *.o
 *.obj
 
-.vscode/*
+#.vscode/*
 *.cmake
 *.make
 MainApplication/Debug/*

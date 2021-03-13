@@ -1,0 +1,78 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Start openGL application",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/yan/Documents/MotionMatching/MainApplication/${config:launchOption.currentConfig.BuildType}/MainApplication.exe",
+            "args": [
+                "-build -${config:launchOption.currentConfig.BuildType}",
+                "-showBones -${config:launchOption.currentConfig.showBones}",
+                "-showGoal -${config:launchOption.currentConfig.showGoal}",
+                "-showMatchingStatistic -${config:launchOption.currentConfig.showMatchingStatistic}",
+                "-loadDataBaseFromFBX -${config:launchOption.currentConfig.loadDataBaseFromFBX}",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compile main application",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Start Codegen",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/yan/Documents/MotionMatching/ECSCodeGenerator/ECSCodeGenerator.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compile codegen",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Start shader precompiler",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/yan/Documents/MotionMatching/ShaderPrecompiler/ShaderPrecompiler.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compile shader precompiler",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ]
+}
