@@ -63,8 +63,9 @@
   },
   "launchOption.options": {
     "BuildType": [
-        {"name": "Debug","value": "Debug"},
-        {"name": "Release", "value": "Release"}
+        {"name": "Debug","value": "dbg"},
+        {"name": "Develop", "value": "dev"},
+        {"name": "Release", "value": "rel"}
     ],
     "showBones": ["yes", "no"],
     "showGoal": ["yes", "no"],
@@ -72,7 +73,7 @@
     "loadDataBaseFromFBX": ["yes", "no"],
 },
 "launchOption.currentConfig": {
-  "BuildType": "Debug",
+  "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",
   "showGoal": "yes",

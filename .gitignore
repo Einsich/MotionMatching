@@ -8,13 +8,9 @@
 *.obj
 
 #.vscode/*
-*.cmake
-*.make
-MainApplication/Debug/*
-MainApplication/Release/*
-ShaderPrecompiler/CMakeFiles/*
-ShaderPrecompiler/CMakeCache.txt
-ShaderPrecompiler/Makefile
+*/dbg
+*/dev
+*/rel
 # Precompiled Headers
 *.gch
 *.pch
