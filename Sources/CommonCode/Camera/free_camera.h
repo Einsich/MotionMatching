@@ -2,7 +2,7 @@
 #include "camera.h"
 
 
-class FreeCamera: public Camera, public std::enable_shared_from_this<FreeCamera>
+class FreeCamera: public Camera, public IUpdatable
 {
  private:
   vec2 rotation;

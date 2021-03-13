@@ -41,7 +41,7 @@ Collision ray_cast(const Ray &ray)
     {
       result = collision;
       result.collider = collider.collider;
-      result.gameObject = collider.collider->get_game_object();
+      result.gameObject = collider.collider->game_object();
     }
   }
   return result;

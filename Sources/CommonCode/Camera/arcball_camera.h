@@ -2,7 +2,7 @@
 #include "camera.h"
 
 
-class ArcballCamera: public Camera, public std::enable_shared_from_this<ArcballCamera>
+class ArcballCamera: public Camera, public IUpdatable
 {
  private:
   float maxdistance, zoom, distance;

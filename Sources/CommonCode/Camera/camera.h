@@ -4,7 +4,8 @@
 #include "CommonCode/Transform/transform.h"
 #include "CommonCode/Event/input.h"
 #include "CommonCode/Shader/shader.h"
-class Camera
+#include "CommonCode/component.h"
+class Camera : public Component
 {
 protected:
   Transform transform;
@@ -21,7 +22,6 @@ public:
   void set_priority(int priority);
   int get_priority() const;
   void set_to_shader(const Shader& shader, bool sky_box = false) const;
-  virtual void update() = 0;
 };
 
 typedef shared_ptr<Camera> CameraPtr;

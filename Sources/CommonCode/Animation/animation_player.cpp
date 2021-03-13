@@ -81,7 +81,7 @@ void AnimationPlayer::update()
   rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
 
   
-  Transform* transform = gameObject->get_component<Transform>();
+  Transform* transform = game_object()->get_component<Transform>();
   if (transform)
   {
     mat4 t = transform->get_transform();

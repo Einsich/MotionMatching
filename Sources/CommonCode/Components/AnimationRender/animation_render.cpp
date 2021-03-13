@@ -9,8 +9,8 @@ AnimationRender::AnimationRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, con
 
 void AnimationRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
-  AnimationPlayer *player = gameObject->get_component<AnimationPlayer>();
-  Transform *transform = gameObject->get_component<Transform>();
+  AnimationPlayer *player = game_object()->get_component<AnimationPlayer>();
+  Transform *transform = game_object()->get_component<Transform>();
   if (player && transform)
     render(*transform, mainCam, light, player->get_tree(), wire_frame);
 }

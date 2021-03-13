@@ -23,7 +23,7 @@ void AnimationDebugRender::ui_render()
 {
   if (!get_bool_config("showMatchingStatistic"))
     return;
-  AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
+  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
   MotionMatchingBruteSolver* solver;
   AnimationDataBasePtr dataBase;
   if (!player || !player->get_motion_matching() ||
@@ -78,17 +78,17 @@ void AnimationDebugRender::ui_render()
   ImGui::End();
 }
 
-void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
+void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool)
 {
   if (!get_bool_config("showGoal"))
     return;
-  AnimationPlayer * player = gameObject->get_component<AnimationPlayer>();
+  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
   if (!player)
     return;
   AnimationLerpedIndex index = player->get_motion_matching() ? player->get_motion_matching()->get_index() : player->get_index();
 
   
-  Transform* transform = gameObject->get_component<Transform>();
+  Transform* transform = game_object()->get_component<Transform>();
   mat4 transformation = transform ? transform->get_transform() : mat4(1.f);
 
   MeshRender * meshRender = debugSphere->get_component<MeshRender>();

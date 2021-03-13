@@ -7,8 +7,8 @@
 
 void TestPersonController::update()
 {
-  AnimationPlayer* player = gameObject->get_component<AnimationPlayer>();
-  Transform* transform = gameObject->get_component<Transform>();
+  AnimationPlayer* player = game_object()->get_component<AnimationPlayer>();
+  Transform* transform = game_object()->get_component<Transform>();
   if (!player || !transform)
     return;
   float speed = Input::input().get_key(SDLK_w, 0.5f) * (1.f + 2*Input::input().get_key(SDLK_LSHIFT, 0.8f)) * 1.2f;

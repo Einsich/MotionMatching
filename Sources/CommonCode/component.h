@@ -5,12 +5,12 @@ class Camera;
 class DirectionLight;
 class Component
 {
-protected:
+private:
   std::shared_ptr<GameObject> gameObject;
 public:
   virtual ~Component(){}
   friend class GameObject;
-  std::shared_ptr<GameObject> get_game_object() const
+  std::shared_ptr<GameObject> game_object() const
   {
     return gameObject;
   }

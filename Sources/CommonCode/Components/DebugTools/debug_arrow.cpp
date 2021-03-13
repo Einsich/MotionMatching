@@ -122,7 +122,7 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
   }  
 }
 
-void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
+void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool)
 {
   arrowShader.use();
   light.bind_to_shader(arrowShader);

@@ -28,25 +28,25 @@ public:
     return i < 0 ? nullptr : dynamic_cast<T*>(components[i].get());
   }
   template<typename T, typename... Args>
-  T *add_component(Args... args)
+  std::shared_ptr<T> add_component(Args... args)
   {
     static_assert(std::is_base_of_v<Component, T>);
 
-    T *t = new T(args...);
+    std::shared_ptr<T> t = std::make_shared<T>(args...);
     t->gameObject = std::shared_ptr<GameObject>(this);
     int i = find_component<T>();
     if (i < 0)
     {
-      components.push_back(std::shared_ptr<Component>((Component*)t));
+      components.push_back(t);
     }
     else
     {
-      components[i] = std::shared_ptr<Component>((Component*)t);
+      components[i] = t;
     }    
     return t;
   }
   template<typename T>
-  T *add_component(std::shared_ptr<Component> ptr)
+  std::shared_ptr<T> add_component(std::shared_ptr<T> ptr)
   {
     static_assert(std::is_base_of_v<Component, T>);
     int i = find_component<T>();
@@ -62,7 +62,7 @@ public:
         components[i] = ptr;
       }   
     } 
-    return (T*)ptr.get();
+    return ptr;
   }
 };
 

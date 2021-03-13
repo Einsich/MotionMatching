@@ -50,7 +50,6 @@ void Camera::set_to_shader(const Shader& shader, bool sky_box) const
   shader.set_vec3("CameraPosition", cameraPosition);
 }
 
-
 void add_camera(CameraPtr camera)
 {
   cameras.emplace_back(camera);

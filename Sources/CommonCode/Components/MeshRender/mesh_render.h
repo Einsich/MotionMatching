@@ -18,6 +18,6 @@ public:
   void render(const Transform &transform, const Camera& mainCam, const DirectionLight& light, bool wire_frame = false);
   MaterialPtr get_material() const;
 };
-ComponentPtr create_plane(bool create_uv = false);
-ComponentPtr create_cube(bool create_uv = false);
-ComponentPtr create_sphere(int detailed = 1, bool smooth = false, bool create_uv = false);
+shared_ptr<MeshRender> create_plane(bool create_uv = false);
+shared_ptr<MeshRender> create_cube(bool create_uv = false);
+shared_ptr<MeshRender> create_sphere(int detailed = 1, bool smooth = false, bool create_uv = false);

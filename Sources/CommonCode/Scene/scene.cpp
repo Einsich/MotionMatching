@@ -10,14 +10,13 @@
 
 void Scene::init(void init_f(vector<GameObjectPtr>&, DirectionLight&))
 {
-  init_f(gameObjects, sun);
+  if (init_f != nullptr)
+    init_f(gameObjects, sun);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 }
 void Scene::update()
-{ 
-  main_camera()->update();
-  
+{   
   for (auto objects : gameObjects)
   {
     for (auto component : objects->get_components())
@@ -27,7 +26,6 @@ void Scene::update()
         updatable->update();
     }
   }
-
 }
 void Scene::render()
 {
