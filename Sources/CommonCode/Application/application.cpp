@@ -44,11 +44,6 @@ void Application::main_loop()
   bool running = true;
   while(running){
     timer.update();
-    uint accumulated_time = Time::udelta_time();
-    if(accumulated_time < 1)
-    {
-      SDL_Delay(1);
-    }
     
 		running = sdl_event_handler();
     if (running)
