@@ -75,10 +75,6 @@ map<string, vector<AnimationTag>> read_tag_map(const string &path)
         {
           get_tag(words[j].first, tags);
         }
-        for (auto tag: tags)
-        {
-          debug_log("%s", get_tag_name(tag).c_str());
-        }
       }
     }
   }

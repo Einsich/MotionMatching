@@ -30,8 +30,9 @@ endif()
 file(GLOB IMGUI_SRC "${ROOT}/imgui/*.cpp")
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/CommonCode/*.cpp")
 file(GLOB_RECURSE C_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/glad/*.c")
+file(GLOB_RECURSE PROJ_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${ROOT}/MainApplication/*.cpp")
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${C_SOURCES} ${IMGUI_SRC} ${ROOT}/MainApplication/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES} ${C_SOURCES} ${IMGUI_SRC} ${PROJ_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} assimp ${CMAKE_DL_LIBS})
 

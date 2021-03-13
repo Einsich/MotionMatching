@@ -30,21 +30,11 @@ void AnimationDebugRender::ui_render()
   !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching()->get_solver().get())) 
       || !(dataBase = solver->get_data_base()))
     return;
-  ImGui::Begin("Pose matching");
+  ImGui::Begin("Sliders");
   const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
-  const vector<AnimationClip> &animations = dataBase->clips;
-  const auto &matchingScore = solver->get_matching_scores();
 
   MotionMatching &mm = *player->get_motion_matching();
-  AnimationIndex cur = mm.get_index().first;
-  AnimationIndex next = mm.get_index().second;
-  ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-  ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
-  for(const AnimationClip &animation : animations)
-  {
-    ImGui::Text("%s", animation.name.c_str());
-  }
   ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 1.f);
   ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 5.f);
   ImGui::SliderFloat("goal scale", &weights->goal_weight, 0, 5.f);
@@ -54,7 +44,20 @@ void AnimationDebugRender::ui_render()
   ImGui::SliderFloat("next cadr weight", &weights->next_cadr_weight, 0, 5.f);
   for (const auto &p : weights->featureMap)
     ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);
+  ImGui::End();
   
+  ImGui::Begin("Scores");
+  const vector<AnimationClip> &animations = dataBase->clips;
+  const auto &matchingScore = solver->get_matching_scores();
+  AnimationIndex cur = mm.get_index().first;
+  AnimationIndex next = mm.get_index().second;
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+  ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
+  for(const AnimationClip &animation : animations)
+  {
+    ImGui::Text("%s", animation.name.c_str());
+  }
   ImVec2 stringsPos = ImGui::GetWindowPos();
   stringsPos.y -= ImGui::GetScrollY();
   ImVec2 pos = ImVec2(stringsPos.x + stringsSize.x, stringsPos.y + 1.75f * ImGui::GetTextLineHeightWithSpacing());

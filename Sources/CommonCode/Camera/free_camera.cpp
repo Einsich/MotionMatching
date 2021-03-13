@@ -16,7 +16,7 @@ void FreeCamera::mouse_move_handler(const MouseMoveEvent &e)
     calculate_transform();
   }
 }
-void FreeCamera::space_button_handler(const KeyboardEvent &e)
+void FreeCamera::space_button_handler(const KeyboardEvent &)
 {
   rotationEnable = !rotationEnable;
 }

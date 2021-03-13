@@ -8,7 +8,7 @@ private:
   SDL_GLContext gl_context;
   int width, height;
 public:
-  Context(string window_name, int width, int height);
+  Context(string window_name, int width, int height, bool full_screen = false);
   void start_imgui();
   void swap_buffer();
   int get_width() const;

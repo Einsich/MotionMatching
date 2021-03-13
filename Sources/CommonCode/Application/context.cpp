@@ -2,7 +2,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_sdl.h"
 
-Context::Context(string window_name, int width, int height):
+Context::Context(string window_name, int width, int height, bool full_screen):
   width(width), height(height)
 {
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -15,6 +15,17 @@ Context::Context(string window_name, int width, int height):
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+  if (full_screen)
+  {
+    SDL_DisplayMode dm;
+
+    if (SDL_GetDesktopDisplayMode(0, &dm))
+    {
+      throw std::runtime_error {"Error getting desktop display mode\n"};
+    }
+    width = dm.w, height = dm.h;
+  } 
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
   gl_context = SDL_GL_CreateContext(window);

@@ -9,18 +9,22 @@ class Application
 {
 private:
   inline static Application *application;
-  shared_ptr<Scene> scene;
+  Scene scene;
   Context context;
   Time timer;
   Input input;
 public:
-  Application(string window_name, int width, int height);
+  Application(string window_name, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
   void main_loop();
   void exit();
   static Application& instance()
   {
     return *application;
+  }
+  static Scene& get_scene()
+  {
+    return application->scene;
   }
   static Context& get_context()
   {
@@ -34,5 +38,4 @@ public:
   {
     return application->input;
   }
-  
 };

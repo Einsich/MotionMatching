@@ -31,6 +31,11 @@ class IUIRenderable
 public:
     virtual void ui_render() = 0;
 };
+class ISaveable
+{
+public:
+    virtual void save() = 0;
+};
 using ComponentPtr = std::shared_ptr<Component>;
 
 template<typename T>

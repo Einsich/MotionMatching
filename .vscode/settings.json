@@ -73,7 +73,7 @@
     "loadDataBaseFromFBX": ["yes", "no"],
 },
 "launchOption.currentConfig": {
-  "BuildType": "rel",
+  "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",
   "showGoal": "yes",

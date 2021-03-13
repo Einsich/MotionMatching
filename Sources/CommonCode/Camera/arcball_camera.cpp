@@ -34,7 +34,7 @@ void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
     rotationEnable = e.action == MouseButtonAction::Down;
   }
 }
-void ArcballCamera::mouse_wheel_handler(const MouseWheelEvent &e)
+void ArcballCamera::mouse_wheel_handler(const MouseWheelEvent &)
 {
 }
 

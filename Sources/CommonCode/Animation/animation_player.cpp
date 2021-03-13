@@ -137,8 +137,8 @@ void AnimationPlayer::update()
       {
         vec3 footPosition = inv_t * vec4(ikFoot[i].footPosition, 1);
         vec3 toePosition = inv_t * vec4(ikFoot[i].toePosition, 1);
-        //process_IK(tree, targetCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
-        //process_IK(tree, cadr, t, toePosition, vec3(0,1,0), ikFoot[i].toeNode, hipsNode);
+        process_IK(tree, targetCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
+        //process_IK(tree, targetCadr, t, toePosition, vec3(0,1,0), ikFoot[i].toeNode, hipsNode);
         vec3 norm = t * vec4(ikFoot[i].normal, 0);
         draw_arrow(ikFoot[i].toePosition, ikFoot[i].toePosition + norm * 0.3f, vec3(10,0,0), 0.02f, false);
       }
