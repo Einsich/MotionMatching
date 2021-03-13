@@ -71,6 +71,7 @@ void Input::event_process(const SDL_MouseButtonEvent& event)
   {
     case SDL_BUTTON_LEFT: e.buttonType = MouseButtonType::LeftButton; break;
     case SDL_BUTTON_RIGHT: e.buttonType = MouseButtonType::RightButton; break;
+    case SDL_BUTTON_MIDDLE: e.buttonType = MouseButtonType::MiddleButton; break;
     default: break;
   }
   switch (event.type)

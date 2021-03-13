@@ -54,7 +54,7 @@ void Scene::init()
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-  string manPath = join_recources_path("MocapOnlineMobilityStarterPack/MotusMan_v55/MotusMan_v55.fbx");
+  string manPath = join_recources_path("MocapOnline/MotusMan_v55/MotusMan_v55.fbx");
   importer.ReadFile(manPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_FlipUVs | aiPostProcessSteps::aiProcess_LimitBoneWeights |
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale);
   const aiScene* scene = importer.GetScene();
@@ -66,7 +66,7 @@ void Scene::init()
 
   MeshPtr mesh = make_mesh(scene->mMeshes[0]);
   dataBase = animation_preprocess(importer, root);
-  TexturePtr tex = make_texture2d("MocapOnlineMobilityStarterPack/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
+  TexturePtr tex = make_texture2d("MocapOnline/MotusMan_v55/MCG_diff.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr floor = make_texture2d("Textures/ground.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   TexturePtr tex1 = make_texture2d("Textures/screen.jpg", TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
   MaterialPtr material;
@@ -109,7 +109,7 @@ void Scene::init()
     add_collider(plane, make_collider<PlaneCollider>());
   }
   {
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 0; i++)
     {
       vec3 rotation = radians(vec3(0, 0, 0));
       vec3 offset = vec3(0, i* 0.2f, i);
@@ -122,7 +122,7 @@ void Scene::init()
       gameObjects.push_back(cube);
       add_collider(cube, make_collider<BoxCollider>());
     }
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 0; i++)
     {
       float rx = i % 2 ? (i / 2 ? 1 : -1) : 0;
       float ry = i % 2 ? 0 : (i / 2 ? 1 : -1);

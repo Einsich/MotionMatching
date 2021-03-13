@@ -1,37 +1,11 @@
 #include "animation_clip.h"
 
-static map<string, vector<AnimationTag>> tagMap = {
-{"MOB1_Crouch_To_Stand_Relaxed", {AnimationTag::Stay}},
-{"MOB1_Stand_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Stay}},
-{"MOB1_Crouch_R_90", {AnimationTag::Crouch}},
-{"MOB1_Walk_F_Loop", {AnimationTag::Stay, AnimationTag::Loopable}},
-{"MOB1_Walk_F_Jump_RU", {AnimationTag::Jump}},
-{"MOB1_Stand_Relaxed_R_90", {}},
-{"MOB1_Jog_F_Loop", {AnimationTag::Stay, AnimationTag::Loopable}},
-{"MOB1_Crouch_L_90", {AnimationTag::Crouch}},
-{"MOB1_Crouch_Idle_V2", {AnimationTag::Crouch, AnimationTag::Loopable}},
-{"MOB1_Stand_Relaxed_To_Jog_F", {AnimationTag::Stay}},
-{"MOB1_Crouch_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Crouch}},
-{"MOB1_Crouch_To_CrouchWalk_F", {AnimationTag::Crouch}},
-{"MOB1_CrouchWalk_F_To_Crouch_RU", {AnimationTag::Crouch}},
-{"MOB1_Stand_Relaxed_To_Crouch", {AnimationTag::Crouch}},
-{"MOB1_Walk_F_Jump", {AnimationTag::Jump}},
-{"MOB1_Stand_Rlx_Turn_In_Place_R_Loop", {AnimationTag::Stay}},
-{"MOB1_Crouch_Rlx_Turn_In_Place_L_Loop", {AnimationTag::Crouch}},
-{"MOB1_Stand_Relaxed_Idle_v2", {AnimationTag::Stay, AnimationTag::Loopable}},
-{"MOB1_Walk_F_To_Stand_Relaxed_RU", {AnimationTag::Stay}},
-{"MOB1_Jog_F_Jump_RU", {AnimationTag::Jump}},
-{"MOB1_Jog_F_Jump", {AnimationTag::Jump}},
-{"MOB1_Stand_Relaxed_L_90", {}},
-{"MOB1_Stand_Relaxed_To_Walk_F", {AnimationTag::Stay}},
-{"MOB1_CrouchWalk_F_Loop", {AnimationTag::Crouch}}
-};
 
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs):
+ AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const vector<AnimationTag> &tags):
  rootTranslationDelta(duration), rootRotationDelta(duration),
- duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tagMap[name]), features(duration)
+ duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tags), features(duration)
 {
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
@@ -80,6 +54,11 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
+  {
+    quat R0(vec3(0, -rootRotationDelta[0], 0));
+    for (uint i = 0; i < duration; i++)
+      rootTranslationDelta[i] = R0 * rootTranslationDelta[i];
+  }
   ground_calculate();
   float pathLength = 0;
   for (uint i = 1; i < duration; i++)
@@ -99,6 +78,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     rootRotationDelta[i] -= rootRotationDelta[i - 1];
     rootTranslationDelta[i] -= rootTranslationDelta[i - 1];
   }
+
   rootRotationDelta[0] = 0;
   rootTranslationDelta[0] = vec3(0.f);
 
@@ -188,6 +168,7 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, rootTranslationDelta);
   size += write(os, rootRotationDelta);
   size += write(os, features);
+  size += write(os, tags);
   return size;
 }
 size_t AnimationClip::deserialize(std::istream& is)
@@ -201,7 +182,7 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, rootTranslationDelta);
   size += read(is, rootRotationDelta);
   size += read(is, features);
-  tags = tagMap[name];
+  size += read(is, tags);
   ground_calculate();
   return size;
 }

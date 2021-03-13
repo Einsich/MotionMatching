@@ -56,6 +56,7 @@ void AnimationDebugRender::ui_render()
     ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);
   
   ImVec2 stringsPos = ImGui::GetWindowPos();
+  stringsPos.y -= ImGui::GetScrollY();
   ImVec2 pos = ImVec2(stringsPos.x + stringsSize.x, stringsPos.y + 1.75f * ImGui::GetTextLineHeightWithSpacing());
   ImVec2 size = ImVec2(3, 10);
   for(uint i = 0; i < matchingScore.size(); i++)

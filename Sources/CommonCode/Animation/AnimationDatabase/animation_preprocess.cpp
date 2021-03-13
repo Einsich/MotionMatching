@@ -1,5 +1,6 @@
 #include "animation_preprocess.h"
 #include <filesystem>
+#include <fstream>
 #include "CommonCode/math.h"
 #include "../../Serialization/serialization.h"
 #include "../../Time/time_scope.h"
@@ -19,14 +20,82 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
   for (int child : node.childs)
     print_tree(tree, child, depth + 1);
 }
+void get_tag_from_name(const string &s, vector<AnimationTag> &tags)
+{
 
+  #define CHECK(SUBSTR, TAG) \
+  {size_t t = s.find("_To_"), r = s.find(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.push_back(AnimationTag::TAG);}
+
+  CHECK(Crouch, Crouch)
+  CHECK(CrouchWalk, Crouch)
+  CHECK(Stand_Relaxed, Stay)
+  CHECK(_Walk_, Stay)
+  CHECK(_Run_, Stay)
+  CHECK(_Jog_, Stay)
+  CHECK(Jump, Jump)
+  CHECK(Loop, Loopable)
+  CHECK(Death, Die)
+  CHECK(Conv, Speak)
+}
+void get_tag(const string &s, vector<AnimationTag> &tags)
+{
+  #define CHECK_TAG(TAG) if (s == #TAG) {tags.push_back(AnimationTag::TAG); return;}
+//Stay, Crouch, Jump, Loopable, Die, Speak
+  CHECK_TAG(Stay)
+  CHECK_TAG(Crouch)
+  CHECK_TAG(Jump)
+  CHECK_TAG(Loopable)
+  CHECK_TAG(Die)
+  CHECK_TAG(Speak)
+}
+map<string, vector<AnimationTag>> read_tag_map(const string &path)
+{
+  map<string, vector<AnimationTag>> tagMap;
+  try 
+  {
+    ifstream tagsFile;
+    tagsFile.exceptions(ifstream::badbit);
+    tagsFile.open(path);
+    vector<pair<string, bool>> words;
+    while (!tagsFile.eof())
+    {
+      string s;
+      tagsFile >> s;
+      words.push_back({s, s.substr(0, 4) == "MOB1"});
+    }
+    for (uint i = 0; i < words.size();)
+    {
+      if (words[i].second)
+      {
+        vector<AnimationTag> &tags = tagMap[words[i].first];
+        get_tag_from_name(words[i].first, tags);
+          debug_log("anim:%s", words[i].first.c_str());
+        i++;
+        for (uint j = i; j < words.size() && !words[j].second; j++, i++)
+        {
+          get_tag(words[j].first, tags);
+        }
+        for (auto tag: tags)
+        {
+          debug_log("%s", get_tag_name(tag).c_str());
+        }
+      }
+    }
+  }
+  catch(ifstream::failure &e)
+  {
+    debug_error("Can't open %s", path.c_str());
+  }
+  return tagMap;
+} 
 AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *root)
 {
   AnimationDataBasePtr animDatabase = make_shared<AnimationDataBase>(root);
+  auto tagMap = read_tag_map(join_recources_path("AnimationTags.txt"));
   if (get_bool_config("loadDataBaseFromFBX"))
   {
     TimeScope scope("Animation Reading from fbx file");
-    string path = join_recources_path("MocapOnlineMobilityStarterPack/Animation/Root_Motion");
+    string path = join_recources_path("MocapOnline/Root_Motion");
     uintmax_t animation_size = 0;
     for (const auto & entry : fs::directory_iterator(path))
     {
@@ -82,9 +151,9 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *ro
                 quats = {quat(1,0,0,0)};
             }
           }
-
-          animDatabase->clips.emplace_back(duration, animation->mTicksPerSecond, string(animation->mName.C_Str()),
-              animDatabase->tree, rotation, translation);
+          string animName = string(animation->mName.C_Str());
+          animDatabase->clips.emplace_back(duration, animation->mTicksPerSecond, animName,
+              animDatabase->tree, rotation, translation, tagMap[animName]);
 
         }
         

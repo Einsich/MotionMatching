@@ -10,6 +10,7 @@ enum class MouseButtonType
 {
   LeftButton,
   RightButton,
+  MiddleButton,
   Count
 };
 enum class MouseButtonAction

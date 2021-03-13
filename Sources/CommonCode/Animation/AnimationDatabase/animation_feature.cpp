@@ -79,3 +79,13 @@ float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, 
     return -1 * weights->next_cadr_weight;
   return 0;
 }
+
+const std::string &get_tag_name(AnimationTag tag)
+{
+  #define ADD_TAG(TAG) #TAG
+  static vector<string> tag_names = {
+    TAGS
+  };
+  return tag_names[(int)tag];
+  #undef ADD_TAG
+}

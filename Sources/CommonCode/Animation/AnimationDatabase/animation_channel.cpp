@@ -2,7 +2,7 @@
 #include <assert.h>
 
 AnimationChannel::AnimationChannel(uint duration, std::vector<vec3> & translations, std::vector<quat> & rotations):
-  translation(translations), rotation(rotations)
+  translation(std::move(translations)), rotation(std::move(rotations))
 {
   assert(translation.size() == 1 || translation.size() == duration);
   assert(rotation.size() == 1 || rotation.size() == duration);

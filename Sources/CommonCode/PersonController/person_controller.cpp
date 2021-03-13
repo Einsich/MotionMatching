@@ -35,11 +35,10 @@ void TestPersonController::update()
   for (int i = 0; i < AnimationPathFeature::PathLength; i++)
     player->inputGoal.path.path[i] = vec3(0, 0, 1) * speed * (i + 1.f) * (float)AnimationPathFeature::SkipCadres / 30.f;
 
-  
   transform->get_position() -= 
   (player->rootDeltaTranslation.z * transform->get_forward() + 
   player->rootDeltaTranslation.y * transform->get_up()+ 
-  player->rootDeltaTranslation.x * transform->get_right()) * Time::delta_time() ;
+  -player->rootDeltaTranslation.x * transform->get_right()) * Time::delta_time() ;
   transform->set_rotation(rotation); 
   
   //transform->set_rotation(rotation); 

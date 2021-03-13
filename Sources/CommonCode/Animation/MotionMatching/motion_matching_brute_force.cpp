@@ -1,5 +1,5 @@
 #include "motion_matching_brute_force.h"
-
+#include <cstdlib>
 MotionMatchingBruteSolver::MotionMatchingBruteSolver(AnimationDataBasePtr dataBase):
 dataBase(dataBase)
 {
@@ -27,7 +27,8 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
       float pose_match = pose_matching_norma(clip.features[nextCadr], feature);
       float goal_match = goal_matching_norma(clip.features[nextCadr].path, clip.tags, goal);
       float next_cadr_match = next_cadr_norma(curClip, curCadr, nextClip, nextCadr, clip.duration);
-      float matching = pose_match + goal_match + next_cadr_match;
+      float noise = (1.f * std::rand() / RAND_MAX) * best * 0.15f;
+      float matching = pose_match + goal_match + next_cadr_match + noise;
       matchingScore[nextClip][nextCadr] = matching;
       if (matching > best)
       {
@@ -37,6 +38,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
       }
     }
   }
+  debug_log("best %f", best);
   return AnimationIndex(dataBase, bestClip, bestCadr);
 }
 const vector<vector<float>> &MotionMatchingBruteSolver::get_matching_scores() const

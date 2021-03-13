@@ -18,7 +18,7 @@ private:
 public:
   AnimationClip(){}
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
-  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs);
+  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const vector<AnimationTag> &tags);
   uint duration;
   float ticksPerSecond;
   string name;

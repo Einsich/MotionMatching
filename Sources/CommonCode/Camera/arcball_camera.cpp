@@ -29,7 +29,7 @@ void ArcballCamera::mouse_move_handler(const MouseMoveEvent &e)
 }
 void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
 {
-  if (e.buttonType == MouseButtonType::LeftButton)
+  if (e.buttonType == MouseButtonType::MiddleButton)
   {
     rotationEnable = e.action == MouseButtonAction::Down;
   }
