@@ -59,9 +59,12 @@
     "bitset": "cpp",
     "condition_variable": "cpp",
     "set": "cpp",
-    "shared_mutex": "cpp"
+    "shared_mutex": "cpp",
+    "glm": "cpp"
+
   },
   "launchOption.options": {
+    "Project": [ "MotionMatching", "ECSCodeGen", "RayTracing"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
         {"name": "Develop", "value": "dev"},
@@ -73,6 +76,7 @@
     "loadDataBaseFromFBX": ["yes", "no"],
 },
 "launchOption.currentConfig": {
+  "Project": "MotionMatching",
   "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",

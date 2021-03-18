@@ -6,11 +6,14 @@
     "configurations": [
 
         {
-            "name": "Start openGL application",
+            "name": "Run project",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/yan/Documents/MotionMatching/MainApplication/${config:launchOption.currentConfig.BuildType}/MainApplication.exe",
+            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.BuildType}/${config:launchOption.currentConfig.Project}.exe",
             "args": [
+                "-projectPath -${workspaceFolder}/Projects/${config:launchOption.currentConfig.Project}",
+                "-commonPath -${workspaceFolder}/Common",
+                "-project -${config:launchOption.currentConfig.Project}",
                 "-build -${config:launchOption.currentConfig.BuildType}",
                 "-showBones -${config:launchOption.currentConfig.showBones}",
                 "-showGoal -${config:launchOption.currentConfig.showGoal}",
@@ -18,7 +21,7 @@
                 "-loadDataBaseFromFBX -${config:launchOption.currentConfig.loadDataBaseFromFBX}",
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -29,49 +32,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Build main application",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
-        {
-            "name": "Start Codegen",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "/home/yan/Documents/MotionMatching/ECSCodeGenerator/ECSCodeGenerator.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "Compile codegen",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
-        {
-            "name": "Start shader precompiler",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "/home/yan/Documents/MotionMatching/ShaderPrecompiler/ShaderPrecompiler.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "Compile shader precompiler",
+            "preLaunchTask": "Build project",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

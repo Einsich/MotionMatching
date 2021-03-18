@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/Common/Sources/",
+                "${workspaceFolder}/Projects/**",
                 "/usr/include/SDL2/",
                 "/usr/include/glm/"
             ],

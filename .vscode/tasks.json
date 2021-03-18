@@ -2,13 +2,13 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build main application",
+            "label": "Build project",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "command": "./build_script.sh",
             "args": [
-                "MainApplication",
+                "${config:launchOption.currentConfig.Project}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "no"
             ],
@@ -19,47 +19,13 @@
         },
         {
             "type": "shell",
-            "label": "Rebuild main application",
+            "label": "Rebuild project",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "command": "./build_script.sh",
             "args": [
-                "MainApplication",
-                "${config:launchOption.currentConfig.BuildType}",
-                "yes"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Compile codegen",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "./build_script.sh",
-            "args": [
-                "ECSCodeGenerator",
-                "${config:launchOption.currentConfig.BuildType}",
-                "yes"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Compile shader precompiler",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "./build_script.sh",
-            "args": [
-                "ShaderPrecompiler",
+                "${config:launchOption.currentConfig.Project}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "yes"
             ],
