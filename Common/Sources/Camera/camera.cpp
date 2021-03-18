@@ -1,6 +1,6 @@
 #include "camera.h"
 #include <vector>
-
+#include "Application/application.h"
 static vector<CameraPtr> cameras;
 
 
@@ -14,9 +14,9 @@ void Camera::set_perspective(float fieldOfView, float aspectRatio, float zNear, 
   projection = perspective(fieldOfView, aspectRatio, zNear, zFar);
 }
 
-void Camera::set_perspective(float fieldOfView, float width, float height, float zNear, float zFar)
+void Camera::set_perspective(float fieldOfView, float zNear, float zFar)
 {
-  const float aspectRatio = width / height;
+  const float aspectRatio = (float)Application::get_context().get_width() / Application::get_context().get_height();
   projection = perspective(fieldOfView, aspectRatio, zNear, zFar);
 }
 const mat4x4& Camera::get_projection() const

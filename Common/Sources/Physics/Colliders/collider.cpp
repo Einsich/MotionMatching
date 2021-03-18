@@ -1,6 +1,6 @@
 #include "collider.h"
 #include "common.h"
-bool SphereCollider::raycast_hit(Collision &collision,const mat4 &transform, const mat3 &rotation, const Ray &ray)
+bool SphereCollider::raycast_hit(Collision &collision,const mat4 &transform, const mat3 &, const Ray &ray)
 {
   vec3 center = ray.from - (vec3)transform[3];
   float c = dot(center, center) - radius * radius;

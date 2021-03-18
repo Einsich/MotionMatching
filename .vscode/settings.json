@@ -76,7 +76,7 @@
     "loadDataBaseFromFBX": ["yes", "no"],
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
+  "Project": "RayTracing",
   "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",

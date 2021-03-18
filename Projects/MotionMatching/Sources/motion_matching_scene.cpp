@@ -39,7 +39,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   {
     GameObjectPtr camera = make_game_object();
     arcballCam = camera->add_component<ArcballCamera>(vec3(10.f,50.f,-150.f), 40, vec2(0.f, 30.f*DegToRad));
-    arcballCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    arcballCam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
     add_camera(arcballCam);
     input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
     input.mouse_click_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_click_handler);
@@ -48,7 +48,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   {
     GameObjectPtr camera = make_game_object();
     shared_ptr<FreeCamera> freeCam = camera->add_component<FreeCamera>(vec3(0,100,0), vec2(0,0));
-    freeCam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    freeCam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
     add_camera(freeCam);
     input.mouse_move_event() += createMethodEventHandler(*freeCam, &FreeCamera::mouse_move_handler);
     input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*freeCam, &FreeCamera::space_button_handler);
@@ -104,7 +104,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*personController, &ThirdPersonController::disable_events_handler);
 
     auto cam = man->add_component<Camera>();
-    cam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);
+    cam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
     cam->set_priority(1);
     add_camera(cam);
     man->add_component<AnimationDebugRender>();

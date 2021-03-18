@@ -14,7 +14,7 @@ protected:
 public:
   void set_orthographic(float width, float height, float zNear, float zFar);
   void set_perspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
-  void set_perspective(float fieldOfView, float width, float height, float zNear, float zFar);
+  void set_perspective(float fieldOfView, float zNear, float zFar);
 
   const mat4x4& get_projection() const;
   Transform& get_transform();
