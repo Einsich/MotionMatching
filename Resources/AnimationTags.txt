@@ -1,13 +1,13 @@
-MOB1_Crouch_Idle Loopable
-MOB1_Crouch_Idle_V2 Loopable
-MOB1_Crouch_L_135 Loopable
-MOB1_Crouch_L_180 Loopable
-MOB1_Crouch_L_45 Loopable
-MOB1_Crouch_L_90 Loopable
-MOB1_Crouch_R_135 Loopable
-MOB1_Crouch_R_180 Loopable
-MOB1_Crouch_R_45 Loopable
-MOB1_Crouch_R_90 Loopable
+MOB1_Crouch_Idle
+MOB1_Crouch_Idle_V2
+MOB1_Crouch_L_135
+MOB1_Crouch_L_180
+MOB1_Crouch_L_45
+MOB1_Crouch_L_90
+MOB1_Crouch_R_135
+MOB1_Crouch_R_180
+MOB1_Crouch_R_45
+MOB1_Crouch_R_90
 MOB1_Crouch_Rlx_Turn_In_Place_L_Loop
 MOB1_Crouch_Rlx_Turn_In_Place_R_Loop
 MOB1_Crouch_To_CrouchWalk_B
@@ -115,10 +115,6 @@ MOB1_Stand_Relaxed_Conv_v1
 MOB1_Stand_Relaxed_Conv_v2
 MOB1_Stand_Relaxed_Conv_v3
 MOB1_Stand_Relaxed_Conv_v4
-MOB1_Stand_Relaxed_Death_B
-MOB1_Stand_Relaxed_Death_F
-MOB1_Stand_Relaxed_Death_L
-MOB1_Stand_Relaxed_Death_R
 MOB1_Stand_Relaxed_Fgt_v1
 MOB1_Stand_Relaxed_Fgt_v2
 MOB1_Stand_Relaxed_Fgt_v3
@@ -128,21 +124,20 @@ MOB1_Stand_Relaxed_Hop
 MOB1_Stand_Relaxed_Hop_F
 MOB1_Stand_Relaxed_Hop_L
 MOB1_Stand_Relaxed_Hop_R
-MOB1_Stand_Relaxed_Idle Loopable
-MOB1_Stand_Relaxed_Idle_v2 Loopable
+MOB1_Stand_Relaxed_Idle_v2
 MOB1_Stand_Relaxed_Jump_B
 MOB1_Stand_Relaxed_Jump
 MOB1_Stand_Relaxed_Jump_F
 MOB1_Stand_Relaxed_Jump_L
 MOB1_Stand_Relaxed_Jump_R
-MOB1_Stand_Relaxed_L_135 Loopable
-MOB1_Stand_Relaxed_L_180 Loopable
-MOB1_Stand_Relaxed_L_45 Loopable
-MOB1_Stand_Relaxed_L_90 Loopable
-MOB1_Stand_Relaxed_R_135 Loopable
-MOB1_Stand_Relaxed_R_180 Loopable
-MOB1_Stand_Relaxed_R_45 Loopable
-MOB1_Stand_Relaxed_R_90 Loopable
+MOB1_Stand_Relaxed_L_135
+MOB1_Stand_Relaxed_L_180
+MOB1_Stand_Relaxed_L_45
+MOB1_Stand_Relaxed_L_90
+MOB1_Stand_Relaxed_R_135
+MOB1_Stand_Relaxed_R_180
+MOB1_Stand_Relaxed_R_45
+MOB1_Stand_Relaxed_R_90
 MOB1_Stand_Relaxed_To_Crouch
 MOB1_Stand_Relaxed_To_Jog_B
 MOB1_Stand_Relaxed_To_Jog_F

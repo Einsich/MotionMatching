@@ -3,7 +3,7 @@
 
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const vector<AnimationTag> &tags):
+ AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
  rootTranslationDelta(duration), rootRotationDelta(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tags), features(duration)
 {
@@ -26,7 +26,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     {
       const AnimationNodeData& node = tree.nodes[j];
       quat rotation = channels[j].get_rotation(i);
-      vec nodeTranslation = node.translation;
+      vec3 nodeTranslation = node.translation;
       if (node.name == "Hips")
       {
         vec3 translation = channels[j].get_translation(i);

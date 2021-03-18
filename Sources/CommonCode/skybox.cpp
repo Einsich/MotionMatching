@@ -33,8 +33,8 @@ void create_sky_box(string path_to_folder)
 						b = tb;
 						vertecs.push_back(v);
 				}
-				indices.push_back(ind); indices.push_back(ind + 2);indices.push_back(ind + 1);
-				indices.push_back(ind); indices.push_back(ind + 3); indices.push_back(ind + 2);
+				indices.push_back(ind); indices.push_back(ind + 1);indices.push_back(ind + 2);
+				indices.push_back(ind); indices.push_back(ind + 2); indices.push_back(ind + 3);
 		}
 	}
 	skyboxVAO = VertexArrayObject(indices, vertecs);

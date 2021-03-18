@@ -18,34 +18,24 @@ debugSphere(make_game_object())
   material->set_property(Property("Specular", vec3(0,0,0)));
 }
 
-
-void AnimationDebugRender::ui_render()
+void show_sliders(const AnimationFeaturesWeightsPtr weights)
 {
-  if (!get_bool_config("showMatchingStatistic"))
-    return;
-  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
-  MotionMatchingBruteSolver* solver;
-  AnimationDataBasePtr dataBase;
-  if (!player || !player->get_motion_matching() ||
-  !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching()->get_solver().get())) 
-      || !(dataBase = solver->get_data_base()))
-    return;
   ImGui::Begin("Sliders");
-  const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
-
-  MotionMatching &mm = *player->get_motion_matching();
-
   ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 1.f);
-  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 5.f);
-  ImGui::SliderFloat("goal scale", &weights->goal_weight, 0, 5.f);
-  ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 5.f);
+  ImGui::SliderFloat("lerp scale", &weights->animation_lerp, 0.f, 1.f);
+  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 10.f);
+  ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 10.f);
   ImGui::SliderFloat("goal rotation", &weights->goal_rotation, 0, 15.f);
   ImGui::SliderFloat("goal tag weight", &weights->goal_tag_weight, 0, 25.f);
-  ImGui::SliderFloat("next cadr weight", &weights->next_cadr_weight, 0, 5.f);
+  ImGui::SliderFloat("next cadr weight", &weights->next_cadr_weight, 0, 10.f);
+  ImGui::SliderFloat("noise_scale", &weights->noise_scale, 0, 10.f);
   for (const auto &p : weights->featureMap)
     ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);
   ImGui::End();
-  
+}
+void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWeightsPtr weights, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
+{
+
   ImGui::Begin("Scores");
   const vector<AnimationClip> &animations = dataBase->clips;
   const auto &matchingScore = solver->get_matching_scores();
@@ -76,6 +66,84 @@ void AnimationDebugRender::ui_render()
   p = ImVec2(pos.x + cur.get_cadr_index() * size.x, pos.y + cur.get_clip_index() * ImGui::GetTextLineHeightWithSpacing()); 
   draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f, 1.f, 1.f ,1.f))); 
   ImGui::End();
+}
+string tags_to_text(const set<AnimationTag> &tags)
+{
+  string tagsString = "";
+  bool first = true;
+  for (AnimationTag tag : tags)
+  {
+    if (!first)
+      tagsString += ", ";
+    tagsString += get_tag_name(tag);
+    first = false;
+  }
+  return tagsString;
+}
+void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &tags)
+{
+  ImGui::Begin("Best score");
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  ImVec2 corner = ImGui::GetWindowPos();
+  constexpr int N = 6;
+  float scores[N];
+  const char*names[N];
+  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f), vec3(0.1f, 0.9f, 0.9f), vec3(0.6f,0.6f, 0.1f), vec3(0.2f, 0.99f, 0.2f)};
+  #define ADD_SCORE(i, SCORE) scores[i] = score.SCORE / score.full_score; names[i] = #SCORE;
+  ADD_SCORE(0, pose)
+  ADD_SCORE(1, goal_path)
+  ADD_SCORE(2, goal_rotation)
+  ADD_SCORE(3, goal_tag)
+  ADD_SCORE(4, next_cadr)
+  ADD_SCORE(5, noise)
+  auto index = mm.get_index().first;
+  ImGui::Text(" ");
+  ImGui::Text(" full score %.2f, final norma %.2f, clip %s, index %d",score.full_score, score.final_norma, index.get_clip().name.c_str());
+  for (int i = 0; i < N; i++)
+    ImGui::Text("   %s score %.2f", names[i], scores[i] * score.full_score);
+  float sum = 0;
+  ImVec2 barSize(300, 15);
+  float stringH =  ImGui::GetTextLineHeightWithSpacing();
+  ImVec2 barCorner(10, 30);
+  ImVec2 linesCorner(10, barCorner.y + barSize.y + stringH);
+  ImVec2 sqSize(stringH, stringH);
+
+  for (int i = 0; i < N; i++)
+  {
+    ImVec2 p = ImVec2(corner.x + barCorner.x, corner.y + barCorner.y);
+    p.x += sum * barSize.x;
+    ImVec2 q = ImVec2(p.x + scores[i] * barSize.x, p.y + barSize.y);
+    auto color = ImGui::ColorConvertFloat4ToU32(ImVec4(colors[i].x, colors[i].y, colors[i].z ,1.f));
+    draw_list->AddRectFilled(p, q, color);
+    sum += scores[i];
+    p = ImVec2(corner.x + linesCorner.x+1, corner.y + linesCorner.y + sqSize.y * i+1);
+    q = ImVec2(p.x + sqSize.x-2, p.y + sqSize.y-2);
+
+    draw_list->AddRectFilled(p, q, color);
+  }
+  
+  ImGui::Text(" goal tags { %s }", tags_to_text(tags).c_str());
+  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
+  
+  ImGui::End();
+}
+void AnimationDebugRender::ui_render()
+{
+  if (!get_bool_config("showMatchingStatistic"))
+    return;
+  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
+  MotionMatchingBruteSolver* solver;
+  AnimationDataBasePtr dataBase;
+  if (!player || !player->get_motion_matching() ||
+  !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching()->get_solver().get())) 
+      || !(dataBase = solver->get_data_base()))
+    return;
+  const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
+  MotionMatching &mm = *player->get_motion_matching();
+  show_sliders(weights);
+  show_scores(dataBase, weights, solver, mm);
+
+  show_best_score(solver->bestScore, mm, player->inputGoal.tags);
 }
 
 void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool)

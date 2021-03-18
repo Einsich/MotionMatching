@@ -26,9 +26,9 @@ void TestPersonController::update()
 
   player->inputGoal.tags.clear();
   if (Input::input().get_key(SDLK_SPACE) > 0)
-    player->inputGoal.tags.push_back(AnimationTag::Jump);
+    player->inputGoal.tags.insert(AnimationTag::Jump);
   else
-    player->inputGoal.tags.push_back(crouching ? AnimationTag::Crouch : AnimationTag::Stay);
+    player->inputGoal.tags.insert(crouching ? AnimationTag::Crouch : AnimationTag::Stay);
   
   player->inputGoal.path.rotation = rotationDelta;
 
@@ -55,12 +55,12 @@ void TestPersonController::rotate(const KeyboardEvent &event)
   if (event.keycode == SDLK_d)
     wantedRotation -= r;
 }
-void TestPersonController::crouch(const KeyboardEvent &event)
+void TestPersonController::crouch(const KeyboardEvent &)
 {
   crouching = !crouching;
   //player->get_state_machine().crouch(crouching);
 }
-void TestPersonController::jump(const KeyboardEvent &event)
+void TestPersonController::jump(const KeyboardEvent &)
 {
   //player->get_state_machine().jump();
 

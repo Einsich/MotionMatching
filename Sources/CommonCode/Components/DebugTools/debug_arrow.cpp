@@ -17,6 +17,17 @@ void draw_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool d
     arrow_instance->add_arrow(from, to, color, size, depth_ignore);
 
 }
+void draw_transform(const Transform &transform)
+{
+  vec3 p = transform.get_position();
+  mat3 rotation = transform.get_rotation();
+  for (int i = 0; i < 3; i++)
+  {
+    vec3 n(0.f);
+    n[i] = 1.f;
+    draw_arrow(p, p + rotation * n * 0.3f, n, 0.03f, false);
+  }
+}
 void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vector<vec3> &vert, vector<vec3> &normal)
 {
   uint k = vert.size();
@@ -64,43 +75,8 @@ mat4 directionMatrix(vec3 from, vec3 to) {
 
   from = normalize(from);
   to = normalize(to);
-  vec3 V = (cross(from, to));
-  if (length2(V) < 1e-6)
-  {
-    mat4 m(1.f);
-    for (uint i = 0; i < 3; i++)
-      m[i][i] = abs(from[i]) < 1e-4 ? 1 : to[i]/ from[i]; 
-    return m;
-  }
-  V = normalize(V);
-  float phi = -acos(dot(from, to));
-
-  float rcos = cos(phi);
-  float rsin = sin(phi);
-
-  mat4 M;
-
-  M[0].x =        rcos + V.x * V.x * (1.0 - rcos);
-  M[1].x =  V.z * rsin + V.y * V.x * (1.0 - rcos);
-  M[2].x = -V.y * rsin + V.z * V.x * (1.0 - rcos);
-  M[3].x = 0.0;
-
-  M[0].y = -V.z * rsin + V.x * V.y * (1.0 - rcos);
-  M[1].y =        rcos + V.y * V.y * (1.0 - rcos);
-  M[2].y = -V.x * rsin + V.z * V.y * (1.0 - rcos);
-  M[3].y = 0.0;
-
-  M[0].z =  V.y * rsin + V.x * V.z * (1.0 - rcos);
-  M[1].z = -V.x * rsin + V.y * V.z * (1.0 - rcos);
-  M[2].z =        rcos + V.z * V.z * (1.0 - rcos);
-  M[3].z = 0.0;
-
-  M[0].w = 0.0;
-  M[1].w = 0.0;
-  M[2].w = 0.0;
-  M[3].w = 1.0;
-
-    return M;
+  quat q(from, to);
+  return toMat4(q);
 }
 void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {

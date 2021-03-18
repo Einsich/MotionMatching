@@ -59,7 +59,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
   string manPath = join_recources_path("MocapOnline/MotusMan_v55/MotusMan_v55.fbx");
   importer.ReadFile(manPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_FlipUVs | aiPostProcessSteps::aiProcess_LimitBoneWeights |
-    aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale);
+    aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
   const aiScene* scene = importer.GetScene();
   
   
@@ -81,7 +81,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   {
     GameObjectPtr man = make_game_object();
     vec2 rotation = vec2(0,0);
-    man->add_component<Transform>(vec3(0.f, 0.f,-1.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
+    man->add_component<Transform>(vec3(0.f, 0.f,-12.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
     man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
@@ -94,8 +94,14 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
     input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
-    auto personController = man->add_component<ThirdPersonController>(rotation + vec2(PI*0.5f,0), 1.2f, 2.f);
+    auto personController = man->add_component<ThirdPersonController>(rotation + vec2(PI*0.5f,0), 3.f, 1.2f, 2.f);
     input.mouse_move_event() += createMethodEventHandler(*personController, &ThirdPersonController::mouse_move_handler);
+    input.mouse_wheel_event() += createMethodEventHandler(*personController, &ThirdPersonController::mouse_wheel_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*personController, &ThirdPersonController::view_offset_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*personController, &ThirdPersonController::view_offset_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_UP) += createMethodEventHandler(*personController, &ThirdPersonController::view_offset_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_DOWN) += createMethodEventHandler(*personController, &ThirdPersonController::view_offset_handler);
+    input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*personController, &ThirdPersonController::disable_events_handler);
 
     auto cam = man->add_component<Camera>();
     cam->set_perspective(70.f * DegToRad, context.get_width(), context.get_height(), 0.01f, 5000.f);

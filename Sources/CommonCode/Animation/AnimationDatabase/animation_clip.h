@@ -1,4 +1,5 @@
 #pragma once
+#include <set>
 #include "../../common.h"
 #include "../../Serialization/serialization.h"
 #include "../AnimationTree/animation_tree_data.h"
@@ -18,11 +19,11 @@ private:
 public:
   AnimationClip(){}
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
-  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const vector<AnimationTag> &tags);
+  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags);
   uint duration;
   float ticksPerSecond;
   string name;
-  vector<AnimationTag> tags;
+  set<AnimationTag> tags;
   vector<AnimationFeatures> features;
   vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;

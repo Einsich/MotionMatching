@@ -24,7 +24,7 @@ dataBase(dataBase), solver(nullptr), index(dataBase, first_anim, 0, first_anim, 
     solver = it->second;
   }
 }
-AnimationLerpedIndex MotionMatching::get_index()
+AnimationLerpedIndex MotionMatching::get_index() const
 {
   return index;
 }
@@ -45,7 +45,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
     }
     else
     {
-      index.t = 0.f;
+      index.t -= 1.f;
       index.first = index.second;
       index.second = solver->find_best_index(index.second, goal);
       skip_count = 0;

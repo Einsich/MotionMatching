@@ -1,8 +1,10 @@
 #include "animation_feature_weight.h"
 #define FEATURE(F) {#F, AnimationFeaturesNode::F}
 AnimationFeaturesWeights::AnimationFeaturesWeights():
-norma_function_weight(1.f), goal_path_weight(1.f), goal_rotation(1.f), goal_tag_weight(1.f), goal_weight(1.f), next_cadr_weight(1.f),
+norma_function_weight(1.f), goal_path_weight(1.f), goal_rotation(1.f), goal_tag_weight(1.f), next_cadr_weight(1.f),
+noise_scale(0.1f),
 debug_scale(1.f),
+animation_lerp(1.f),
 weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(Hips),
     FEATURE(LeftForeArm),
@@ -29,9 +31,10 @@ size_t AnimationFeaturesWeights::serialize(std::ostream& os) const
   size += write(os, norma_function_weight);
   size += write(os, goal_path_weight);
   size += write(os, goal_tag_weight);
-  size += write(os, goal_weight);
+  size += write(os, noise_scale);
   size += write(os, goal_rotation);
   size += write(os, next_cadr_weight);
+  size += write(os, animation_lerp);
   return size;
 }
 size_t AnimationFeaturesWeights::deserialize(std::istream& is)
@@ -51,8 +54,9 @@ size_t AnimationFeaturesWeights::deserialize(std::istream& is)
   size += read(is, norma_function_weight);
   size += read(is, goal_path_weight);
   size += read(is, goal_tag_weight);
-  size += read(is, goal_weight);
+  size += read(is, noise_scale);
   size += read(is, goal_rotation);
   size += read(is, next_cadr_weight);
+  size += read(is, animation_lerp);
   return size;
 }

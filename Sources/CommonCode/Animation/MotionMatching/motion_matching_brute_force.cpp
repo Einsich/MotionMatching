@@ -1,5 +1,4 @@
 #include "motion_matching_brute_force.h"
-#include <cstdlib>
 MotionMatchingBruteSolver::MotionMatchingBruteSolver(AnimationDataBasePtr dataBase):
 dataBase(dataBase)
 {
@@ -19,26 +18,25 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   float best = 0;
   int bestClip = curClip;
   int bestCadr = curCadr;
-  for(uint nextClip = 0; nextClip < dataBase->clips.size(); nextClip++)
+  for(int nextClip = 0; nextClip < (int)dataBase->clips.size(); nextClip++)
   {
-    for (uint nextCadr = 0, n = dataBase->clips[nextClip].features.size(); nextCadr < n; nextCadr++)
+    for (int nextCadr = 0, n = dataBase->clips[nextClip].features.size(); nextCadr < n; nextCadr++)
     {
       const AnimationClip &clip = dataBase->clips[nextClip];
-      float pose_match = pose_matching_norma(clip.features[nextCadr], feature);
-      float goal_match = goal_matching_norma(clip.features[nextCadr].path, clip.tags, goal);
-      float next_cadr_match = next_cadr_norma(curClip, curCadr, nextClip, nextCadr, clip.duration);
-      float noise = (1.f * std::rand() / RAND_MAX) * best * 0.15f;
-      float matching = pose_match + goal_match + next_cadr_match + noise;
+      MatchingScores score = get_score(clip.features[nextCadr], feature, clip.tags, goal, curClip, curCadr, nextClip, nextCadr, clip.duration);
+      float matching = score.full_score;
       matchingScore[nextClip][nextCadr] = matching;
-      if (matching > best)
+      bool nearToCurrentClip = curClip == nextClip && abs(nextCadr - curCadr) < 10;
+      bool nearPose = score.pose > 0.000001f;
+      if (!nearToCurrentClip  && matching > best)
       {
         best = matching;
         bestClip = nextClip;
         bestCadr = nextCadr;
+        bestScore = score;
       }
     }
   }
-  debug_log("best %f", best);
   return AnimationIndex(dataBase, bestClip, bestCadr);
 }
 const vector<vector<float>> &MotionMatchingBruteSolver::get_matching_scores() const

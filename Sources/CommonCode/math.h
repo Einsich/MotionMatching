@@ -1,14 +1,16 @@
 #pragma once
+#define GLM_FORCE_LEFT_HANDED
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/vector_angle.hpp>
 using namespace glm;
 
-const float PI = 3.1415926535897932384626433832795f;
-const float DegToRad = PI / 180.f;
+constexpr float PI = 3.1415926535897932384626433832795f;
+constexpr float DegToRad = PI / 180.f;
 
 template<typename T>
 vec2 to_vec2(const T& t)

@@ -37,7 +37,7 @@ shared_ptr<MeshRender> create_plane(bool create_uv)
   {
     vector<vec3> vertices = {vec3(-1,0,-1), vec3(1,0,-1), vec3(1,0,1), vec3(-1,0,1)};
     vector<vec3> normals(4, vec3(0,1,0));
-    vector<uint> indices = {0,2,1,0,3,2};
+    vector<uint> indices = {0,1,2,0,2,3};
     vector<vec2> uv =  {vec2(0,0), vec2(1,0), vec2(1,1),vec2(0,1)};
     uvMesh = make_mesh(VertexArrayObject(indices, vertices, normals, uv));
     notUvMesh = make_mesh(VertexArrayObject(indices, vertices, normals));
@@ -93,8 +93,8 @@ shared_ptr<MeshRender> create_cube(bool create_uv)
           normals.push_back(norm);
           uv.push_back(u);
         }
-        indices.push_back(ind); indices.push_back(ind + 1);indices.push_back(ind + 2);
-        indices.push_back(ind); indices.push_back(ind + 2); indices.push_back(ind + 3);
+        indices.push_back(ind); indices.push_back(ind + 2);indices.push_back(ind + 1);
+        indices.push_back(ind); indices.push_back(ind + 3); indices.push_back(ind + 2);
       }
     }
     uvMesh = make_mesh(VertexArrayObject(indices, vertices, normals, uv));
@@ -145,8 +145,8 @@ shared_ptr<MeshRender> create_sphere(int detailed, bool smooth, bool create_uv)
         int b = a + 1;
         int c = a + n + 1;
         int d = c + 1;
-        indices.push_back(a); indices.push_back(b); indices.push_back(d);
-        indices.push_back(a); indices.push_back(d); indices.push_back(c);
+        indices.push_back(a); indices.push_back(d); indices.push_back(b);
+        indices.push_back(a); indices.push_back(c); indices.push_back(d);
       }
     mesh = spheres[t] =  make_mesh(VertexArrayObject(indices, vertices, normals, uv));
   }

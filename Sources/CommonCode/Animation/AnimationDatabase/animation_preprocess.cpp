@@ -1,6 +1,7 @@
 #include "animation_preprocess.h"
 #include <filesystem>
 #include <fstream>
+#include <set>
 #include "CommonCode/math.h"
 #include "../../Serialization/serialization.h"
 #include "../../Time/time_scope.h"
@@ -20,11 +21,11 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
   for (int child : node.childs)
     print_tree(tree, child, depth + 1);
 }
-void get_tag_from_name(const string &s, vector<AnimationTag> &tags)
+void get_tag_from_name(const string &s, set<AnimationTag> &tags)
 {
 
   #define CHECK(SUBSTR, TAG) \
-  {size_t t = s.find("_To_"), r = s.find(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.push_back(AnimationTag::TAG);}
+  {size_t t = s.find("_To_"), r = s.find(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
 
   CHECK(Crouch, Crouch)
   CHECK(CrouchWalk, Crouch)
@@ -33,24 +34,21 @@ void get_tag_from_name(const string &s, vector<AnimationTag> &tags)
   CHECK(_Run_, Stay)
   CHECK(_Jog_, Stay)
   CHECK(Jump, Jump)
-  CHECK(Loop, Loopable)
   CHECK(Death, Die)
   CHECK(Conv, Speak)
 }
-void get_tag(const string &s, vector<AnimationTag> &tags)
+void get_tag(const string &s, set<AnimationTag> &tags)
 {
-  #define CHECK_TAG(TAG) if (s == #TAG) {tags.push_back(AnimationTag::TAG); return;}
-//Stay, Crouch, Jump, Loopable, Die, Speak
+  #define CHECK_TAG(TAG) if (s == #TAG) {tags.insert(AnimationTag::TAG); return;}
   CHECK_TAG(Stay)
   CHECK_TAG(Crouch)
   CHECK_TAG(Jump)
-  CHECK_TAG(Loopable)
   CHECK_TAG(Die)
   CHECK_TAG(Speak)
 }
-map<string, vector<AnimationTag>> read_tag_map(const string &path)
+map<string, set<AnimationTag>> read_tag_map(const string &path)
 {
-  map<string, vector<AnimationTag>> tagMap;
+  map<string, set<AnimationTag>> tagMap;
   try 
   {
     ifstream tagsFile;
@@ -67,9 +65,8 @@ map<string, vector<AnimationTag>> read_tag_map(const string &path)
     {
       if (words[i].second)
       {
-        vector<AnimationTag> &tags = tagMap[words[i].first];
+        set<AnimationTag> &tags = tagMap[words[i].first];
         get_tag_from_name(words[i].first, tags);
-          debug_log("anim:%s", words[i].first.c_str());
         i++;
         for (uint j = i; j < words.size() && !words[j].second; j++, i++)
         {

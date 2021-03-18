@@ -1,6 +1,6 @@
 #include "animation_ik.h"
 #include "CommonCode/common.h"
-#include <glm/gtx/quaternion.hpp>
+#include "CommonCode/math.h"
 #include "CommonCode/Components/DebugTools/debug_arrow.h"
 
 #include <vector>

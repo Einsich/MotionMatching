@@ -76,7 +76,7 @@
   "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",
-  "showGoal": "yes",
+  "showGoal": "no",
   "showMatchingStatistic": "yes"
 },
 }

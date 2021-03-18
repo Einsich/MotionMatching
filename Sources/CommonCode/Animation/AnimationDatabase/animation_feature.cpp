@@ -1,5 +1,6 @@
 #include "animation_feature.h"
 #include <cmath>
+#include <cstdlib>
 
 AnimationFeatures::AnimationFeatures():
   features((int)AnimationFeaturesNode::Count, vec3(NAN)){}
@@ -37,36 +38,30 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
   float norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
     norma += weights->weights[i] * length(feature1.features[i] - feature2.features[i]);
-  return 1.f - weights->norma_function_weight * norma;
+  return weights->norma_function_weight * exp(-norma);
 }
-bool contains(const vector<AnimationTag> &target, const vector<AnimationTag> &set)
+float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
 {
-  //if (target.size() != set.size())
-  //  return 0;
-  for (AnimationTag tag1 : target)
+  if (goal.size() != clips_tag.size())
+    return 0;
+  for (AnimationTag tag1 : goal)
   {
-    bool exist = false;
-    for (AnimationTag tag2 : set)
-      if (tag2 == tag1)
-      {
-        exist = true;
-        break;
-      }
+    bool exist = clips_tag.find(tag1) != clips_tag.end();
     if (!exist)
       return 0;
   }
-  return 1;
+  return weights->goal_tag_weight;
 }
-float goal_matching_norma(const AnimationPathFeature &path, const vector<AnimationTag> &tags, const AnimationGoal &goal)
+float rotation_norma(const AnimationPathFeature &path, const AnimationGoal &goal)
 {
-  float path_norma = 0.f, rotation_norma = 0.f;
+  return (length(goal.path.path[0]) < 0.1f) ?  weights->goal_rotation * exp(-abs(goal.path.rotation - path.rotation)) : 0.f;
+}
+float goal_path_norma(const AnimationPathFeature &path, const AnimationGoal &goal)
+{
+  float path_norma = 0.f;
   for (uint i = 0; i < AnimationPathFeature::PathLength; i++)
     path_norma += length(path.path[i] - goal.path.path[i]);
-  path_norma *= weights->goal_path_weight;
-  if (length(goal.path.path[0]) < 0.1f)
-    rotation_norma = weights->goal_rotation * abs(goal.path.rotation - path.rotation);
-  
-  return (1.f - path_norma - rotation_norma + contains(goal.tags, tags) * weights->goal_tag_weight) * weights->goal_weight;
+  return weights->goal_path_weight * exp(-path_norma);
 }
 
 float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght)
@@ -74,12 +69,26 @@ float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, 
   int d = (next_cadr - cur_cadr - 1 + clip_lenght) % clip_lenght ;
   if (next_anim == cur_anim && d < 8)
     return glm::clamp(1.f - d * 0.125f, 0.f, 1.f) * weights->next_cadr_weight;
-  d -= clip_lenght;
-  if (next_anim == cur_anim && d > -15)
-    return -1 * weights->next_cadr_weight;
+  //d -= clip_lenght;
+  //if (next_anim == cur_anim && d > -15)
+  // return -1 * weights->next_cadr_weight;
   return 0;
 }
 
+MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const set<AnimationTag> &target, const AnimationGoal &goal,
+  int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght)
+{
+  MatchingScores score;
+  score.pose = pose_matching_norma(feature1, feature2);
+  score.goal_path = goal_path_norma(feature1.path, goal);
+  score.goal_rotation = rotation_norma(feature1.path, goal);
+  score.goal_tag = goal_tag_norma(goal.tags, target);
+  score.next_cadr = next_cadr_norma(cur_anim, cur_cadr, next_anim, next_cadr, clip_lenght);
+  score.noise = (1.f * std::rand() / RAND_MAX) * weights->noise_scale;
+  score.full_score = score.pose + score.goal_path + score.goal_rotation + score.goal_tag + score.next_cadr + score.noise ;
+  score.final_norma = score.full_score > 0.f ? 1.f / score.full_score : 0;
+  return score;
+}
 const std::string &get_tag_name(AnimationTag tag)
 {
   #define ADD_TAG(TAG) #TAG

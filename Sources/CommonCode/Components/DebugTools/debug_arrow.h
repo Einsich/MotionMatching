@@ -5,7 +5,7 @@
 #include "CommonCode/Camera/camera.h"
 #include "CommonCode/Light/direction_light.h"
 #include "CommonCode/Mesh/vertex_array_object.h"
-
+#include "CommonCode/Transform/transform.h"
 class DebugArrow : public Component, public IRenderable
 {
 private:
@@ -28,3 +28,4 @@ public:
 };
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore = true);
 void draw_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore = true);
+void draw_transform(const Transform &transform);

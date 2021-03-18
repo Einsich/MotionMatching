@@ -79,7 +79,6 @@ void AnimationPlayer::update()
   AnimationCadr targetCadr = index.get_lerped_cadr();
   rootDeltaTranslation = targetCadr.rootTranslationDelta * ticks;
   rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
-
   
   Transform* transform = game_object()->get_component<Transform>();
   if (transform)
@@ -137,14 +136,15 @@ void AnimationPlayer::update()
       {
         vec3 footPosition = inv_t * vec4(ikFoot[i].footPosition, 1);
         vec3 toePosition = inv_t * vec4(ikFoot[i].toePosition, 1);
-        process_IK(tree, targetCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
+        //process_IK(tree, targetCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
         //process_IK(tree, targetCadr, t, toePosition, vec3(0,1,0), ikFoot[i].toeNode, hipsNode);
         vec3 norm = t * vec4(ikFoot[i].normal, 0);
         draw_arrow(ikFoot[i].toePosition, ikFoot[i].toePosition + norm * 0.3f, vec3(10,0,0), 0.02f, false);
       }
     }
   }
-  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks*2.5f);
+  float lerp_strength = index.get_data_base()->featureWeights->animation_lerp;
+  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks*lerp_strength);
   tree.set_cadr(currentCadr);
   tree.calculate_bone_transforms();
 }
