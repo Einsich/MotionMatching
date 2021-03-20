@@ -4,6 +4,7 @@
 enum TextureType
 {
   Texture2DType = GL_TEXTURE_2D,
+  Texture3DType = GL_TEXTURE_3D,
   CubeMapType = GL_TEXTURE_CUBE_MAP
 };
 enum TextureColorFormat
@@ -45,18 +46,20 @@ protected:
   TextureType textureType;
   TextureColorFormat colorFormat;
   TextureFormat textureFormat;
-  int textureWidth, textureHeight;
+  int textureWidth, textureHeight, textureDepth;
   string textureName;
+  GLenum get_internal_format(TextureColorFormat colorFormat, TextureFormat textureFormat);
 private:
   GLuint activationUnit;
 public:
-  Texture():textureObject(0){}
+  Texture():textureObject(0), textureDepth(1){}
   void bind(const Shader &shader, const char * textureName);
   const string &get_name() const;
   void unbind() const;
   void dispose();
   int width() const;
   int height() const;
+  int depth() const;
   
 };
 using TexturePtr = shared_ptr<Texture>;

@@ -33,7 +33,7 @@ public:
     static_assert(std::is_base_of_v<Component, T>);
 
     std::shared_ptr<T> t = std::make_shared<T>(args...);
-    t->gameObject = std::shared_ptr<GameObject>(this);
+    t->gameObject = this;
     int i = find_component<T>();
     if (i < 0)
     {
@@ -52,7 +52,7 @@ public:
     int i = find_component<T>();
     if (ptr)
     {
-      ptr->gameObject = std::shared_ptr<GameObject>(this);
+      ptr->gameObject = this;
       if (i < 0)
       {
         components.push_back(ptr);

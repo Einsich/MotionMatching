@@ -8,7 +8,7 @@ class Collision
 public:
   float distance;
   vec3 collisionPoint, collisionNormal;
-  GameObjectPtr gameObject;
+  GameObject *gameObject;
   std::shared_ptr<Collider> collider;
   Collision():
   distance(INFINITY), collisionPoint(vec3(NAN)), collisionNormal(vec3(NAN)), 

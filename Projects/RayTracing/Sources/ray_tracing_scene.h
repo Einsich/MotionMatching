@@ -7,6 +7,7 @@ class RayTracingScene : public PostFX
 {
 private:
   CubeMap skyBox;
+  Texture3D perlinNoise3D;
 public:
   RayTracingScene(Shader shader);
   void postfx_render() override;

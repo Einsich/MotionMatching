@@ -6,11 +6,11 @@ class DirectionLight;
 class Component
 {
 private:
-  std::shared_ptr<GameObject> gameObject;
+  GameObject *gameObject = nullptr;
 public:
-  virtual ~Component(){}
+  virtual ~Component(){  }
   friend class GameObject;
-  std::shared_ptr<GameObject> game_object() const
+  GameObject *game_object() const
   {
     return gameObject;
   }

@@ -8,6 +8,11 @@ RayTracingScene::RayTracingScene(Shader shader):PostFX(shader)
 {
   SkyBox sky(common_resources_path("Textures/Skyboxes/CloudSky"));
   skyBox = sky.skybox;
+  perlinNoise3D = Texture3D(256, 256, 256, "perlinNoise3D");
+  Shader perlinNoise3dGeneration = get_shader("perlin3d_generation");
+  perlinNoise3dGeneration.use();
+  perlinNoise3D.execute_dispatch();
+
 }
 void RayTracingScene::postfx_render() 
 {
@@ -21,10 +26,12 @@ void RayTracingScene::postfx_render()
   vec3 camPos = camTransform[3];
   shader.set_vec3("CameraPos", camPos);
   skyBox.bind(shader, "skybox");
+  perlinNoise3D.bind(shader, "perlin3D");
 }
 void RayTracingScene::postfx_unbind()
 {
   skyBox.unbind();
+  perlinNoise3D.unbind();
 }
 
 void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight&)
@@ -49,10 +56,6 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight&)
     postfx->add_component<RayTracingScene>(get_shader("ray_tracing_scene"));
     gameObjects.push_back(postfx);
   }
-      GameObjectPtr sphere = make_game_object();
-      sphere->add_component<Transform>(vec3(0.f), vec3(), vec3(0.4f));
-      sphere->add_component<MeshRender>(create_sphere(20, true, false));
-      gameObjects.push_back(sphere);
 
 
 }
