@@ -1,14 +1,7 @@
 #include <vector>
-#include <string>
 #include "skybox.h"
-#include "Shader/shader.h"
-#include "Texture/textures.h"
-#include "Camera/camera.h"
-#include "Mesh/vertex_array_object.h"
-static CubeMap skybox;
-static Shader skyboxShader;
-static VertexArrayObject skyboxVAO;
-void create_sky_box(string path_to_folder)
+
+SkyBox::SkyBox(string path_to_folder)
 {
 	skybox = CubeMap(path_to_folder);
 	skyboxShader = get_shader("sky_box");
@@ -40,16 +33,15 @@ void create_sky_box(string path_to_folder)
 	skyboxVAO = VertexArrayObject(indices, vertecs);
 }
 
-void render_sky_box()
+void SkyBox::render(const Camera& mainCam, const DirectionLight& ,bool wire_frame)
 {
-	CameraPtr camera = main_camera();
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.use();
-	camera->set_to_shader(skyboxShader, true);
+	mainCam.set_to_shader(skyboxShader, true);
 
 	skybox.bind(skyboxShader, "skybox");
-	skyboxVAO.render();
+	skyboxVAO.render(wire_frame);
 	skybox.unbind();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);

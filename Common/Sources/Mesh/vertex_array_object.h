@@ -64,4 +64,8 @@ public:
     glDrawElementsInstancedBaseVertex(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, instance, 0);
     glBindVertexArray(0);
   }
+  bool is_valid() const
+  {
+    return vertexArrayBufferObject > 0 && numIndices > 0;
+  }
 };

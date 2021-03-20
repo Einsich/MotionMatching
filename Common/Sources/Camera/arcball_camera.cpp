@@ -4,11 +4,11 @@
 void ArcballCamera::calculate_transform()
 {
   float y = rotation.y;
-  float x = rotation.x + PI*0.5;
+  float x = rotation.x ;
   vec3 direction = vec3(cos(x) * cos(y), sin(y), sin(x) * cos(y));
   
-  transform.set_position(target_position + distance * direction);
-  transform.set_rotation(-rotation.x, -rotation.y, 0);
+  transform.set_position(target_position - distance * direction);
+  transform.set_rotation(PI*0.5-rotation.x, -rotation.y, 0);
 }
 
 void ArcballCamera::set_target(vec3 target)

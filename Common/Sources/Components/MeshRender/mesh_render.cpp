@@ -8,17 +8,16 @@ MeshRender::MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader&
 }
 void MeshRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
-  Transform *transform = game_object()->get_component<Transform>();
-  if (transform)
-    render(*transform, mainCam, light, wire_frame);
+  render(game_object()->get_component<Transform>(), mainCam, light, wire_frame);
 }
-void MeshRender::render(const Transform &transform, const Camera& mainCam, const DirectionLight& light, bool wire_frame)
+void MeshRender::render(const Transform *transform, const Camera& mainCam, const DirectionLight& light, bool wire_frame)
 {
   shader.use();
   light.bind_to_shader(shader);
   mainCam.set_to_shader(shader);
   material->bind_to_shader(shader);
-  transform.set_to_shader(shader);
+  if (transform)
+    transform->set_to_shader(shader);
 
   mesh->render(wire_frame);
 
@@ -28,6 +27,14 @@ void MeshRender::render(const Transform &transform, const Camera& mainCam, const
 MaterialPtr MeshRender::get_material() const
 {
   return material;
+}
+const Shader& MeshRender::get_shader() const
+{
+  return shader;
+}
+Shader& MeshRender::get_shader()
+{
+  return shader;
 }
 shared_ptr<MeshRender> create_plane(bool create_uv)
 {

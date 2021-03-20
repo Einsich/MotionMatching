@@ -42,7 +42,6 @@ void Scene::render()
     }
   }
 
-  render_sky_box();
   glFlush(); 
 }
 void Scene::render_ui()

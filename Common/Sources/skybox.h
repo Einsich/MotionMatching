@@ -1,7 +1,16 @@
 #pragma once
-#include <string>
 #include "common.h"
-
-void create_sky_box(string path);
-
-void render_sky_box();
+#include "component.h"
+#include "Shader/shader.h"
+#include "Texture/textures.h"
+#include "Camera/camera.h"
+#include "Mesh/vertex_array_object.h"
+class SkyBox : public Component, public IRenderable
+{
+public:
+  Shader skyboxShader;
+  VertexArrayObject skyboxVAO;
+  CubeMap skybox;
+  SkyBox(string path);
+  void render(const Camera& mainCam, const DirectionLight& light, bool wire_frame = false) override;
+};
