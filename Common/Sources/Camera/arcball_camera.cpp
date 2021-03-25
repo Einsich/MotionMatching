@@ -1,6 +1,6 @@
 #include "arcball_camera.h"
 #include "Event/input.h"
-
+#include "Time/time.h"
 void ArcballCamera::calculate_transform()
 {
   float y = rotation.y;
@@ -24,7 +24,7 @@ void ArcballCamera::mouse_move_handler(const MouseMoveEvent &e)
   if (rotationEnable)
   {
     float const pixToRad = PI / 180.f * 0.2f;
-    rotation += vec2(e.dx, e.dy) * pixToRad;
+    targetRotation += vec2(e.dx, e.dy) * pixToRad;
   }
 }
 void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
@@ -34,8 +34,10 @@ void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
     rotationEnable = e.action == MouseButtonAction::Down;
   }
 }
-void ArcballCamera::mouse_wheel_handler(const MouseWheelEvent &)
+void ArcballCamera::mouse_wheel_handler(const MouseWheelEvent &e)
 {
+  targetZoom -= e.wheel * 0.03f;
+  targetZoom = glm::clamp(targetZoom, 0.05f, 1.f);
 }
 
 void ArcballCamera::update()
@@ -45,12 +47,8 @@ void ArcballCamera::update()
     target_position = target_transform->get_position();
   }
 
-  const float arcballCameraZoomSpeed = 0.007f;
-  zoom -= Input::input().get_wheel() * arcballCameraZoomSpeed;
-  if (zoom < 0.f)
-    zoom = 0.f;
-  if (zoom > 1.f)
-    zoom = 1.f;
+  zoom = lerp(zoom, targetZoom, Time::delta_time() * 10);
+  rotation = lerp(rotation, targetRotation, Time::delta_time() * 10);
   distance = maxdistance * zoom;
   calculate_transform();
 }

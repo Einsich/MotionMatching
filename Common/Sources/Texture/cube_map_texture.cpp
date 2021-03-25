@@ -48,6 +48,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   for (int i = 0; i < 6; i++)
   {
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, colorFormat, textureWidth, textureHeight, 0, colorFormat, textureFormat, images[i]);
+    stbi_image_free(images[i]);
   }
   glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

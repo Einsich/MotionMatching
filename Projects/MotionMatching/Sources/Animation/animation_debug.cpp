@@ -166,6 +166,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
 
   MaterialPtr material = meshRender->get_material();
   const auto& feature = index.first.get_feature();
+  AnimationTrajectory trajectory = index.first.get_trajectory();
   
   /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
   Ray ray(man, vec3(0,-1,0), 100);
@@ -180,24 +181,16 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   for (vec3 v: feature.features)
   {
     transform->get_position() = transformation * vec4(v, 1.f);
-    meshRender->render(*transform, mainCam, light, true);
+    meshRender->render(transform, mainCam, light, true);
   }
 
-  float r = feature.path.rotation;
-  material->set_property(Property("Ambient", vec3(r,0,0)));
-  transform->get_position() = transformation * vec4(0.1f,2,0, 1.f);
-  meshRender->render(*transform, mainCam, light, true);
-
-  material->set_property(Property("Ambient", vec3(-r,0,0)));
-  transform->get_position() = transformation * vec4(-0.1f,2,0, 1.f);
-  meshRender->render(*transform, mainCam, light, true);
   if (onGround & 1)
   {
     material->set_property(Property("Ambient", vec3(1,0,0)));
     transform->set_scale(vec3(0.11f));
     
     transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
-    meshRender->render(*transform, mainCam, light, true);
+    meshRender->render(transform, mainCam, light, true);
   }
   if (onGround & 2)
   {
@@ -205,21 +198,28 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
     transform->set_scale(vec3(0.11f));
     
     transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
-    meshRender->render(*transform, mainCam, light, true);
+    meshRender->render(transform, mainCam, light, true);
   }
 
   transform->set_scale(vec3(0.02f));
   material->set_property(Property("Ambient", vec3(0,1,0)));
-  for (vec3 v: feature.path.path)
+  constexpr float dirLength = 0.3f;
+  for (TrajectoryPoint &p: trajectory.trajectory)
   {
-    transform->get_position() = transformation * vec4(v, 1.f);
-    meshRender->render(*transform, mainCam, light, true);
+    vec3 v = vec3(transformation * vec4(p.point, 1.f));
+    vec3 w = vec3(transformation * vec4(p.rotation * vec3(0,0,dirLength*2), 0.f));
+    transform->get_position() = v;
+    meshRender->render(transform, mainCam, light, true);
+    draw_arrow(v, v + w, vec3(0,1,0), 0.02f, false);
   }
   material->set_property(Property("Ambient", vec3(1,0,0)));
-  for (vec3 v: player->inputGoal.path.path)
+  for (TrajectoryPoint &p: player->inputGoal.path.trajectory)
   {
-    transform->get_position() = transformation * vec4(v, 1.f);
-    meshRender->render(*transform, mainCam, light, true);
+    vec3 v = vec3(transformation * vec4(p.point, 1.f));
+    vec3 w = vec3(vec4(p.rotation * vec3(0,0,dirLength*4), 0.f));
+    transform->get_position() = v;
+    meshRender->render(transform, mainCam, light, true);
+    draw_arrow(v, v + w, vec3(1,0,0), 0.02f, false);
   }
     
   

@@ -13,9 +13,13 @@ private:
   void ground_calculate();
   void leg_process(int leg_index, u8 leg);
   vector<AnimationChannel> channels;
-  vector<vec3> rootTranslationDelta;
-  vector<float> rootRotationDelta;
+  vector<vec3> hipsTranslation;
+  vector<quat> hipsRotation;
+
+
   uint hipsChannelIndex;
+  vec3 get_root_traslation(uint i) const;
+  float get_root_rotation(uint i) const;
 public:
   AnimationClip(){}
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
@@ -25,9 +29,11 @@ public:
   string name;
   set<AnimationTag> tags;
   vector<AnimationFeatures> features;
+
   vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_frame(uint frame) const;
+  AnimationTrajectory get_frame_trajectory(uint frame) const;
   bool contains_tag(AnimationTag tag) const;
 };

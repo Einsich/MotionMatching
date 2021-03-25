@@ -49,6 +49,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight&)
     add_camera(arcballCam);
     input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
     input.mouse_click_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_click_handler);
+    input.mouse_wheel_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_wheel_handler);
     gameObjects.push_back(camera);
   }
   {

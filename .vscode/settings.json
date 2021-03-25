@@ -70,17 +70,17 @@
         {"name": "Develop", "value": "dev"},
         {"name": "Release", "value": "rel"}
     ],
-    "showBones": ["yes", "no"],
-    "showGoal": ["yes", "no"],
-    "showMatchingStatistic": ["yes", "no"],
-    "loadDataBaseFromFBX": ["yes", "no"],
+    "loadDataBaseFromFBX":["yes","no"],
+    "showBones":["yes","no"],
+    "showGoal":["yes","no"],
+    "showMatchingStatistic":["yes","no"],
 },
 "launchOption.currentConfig": {
-  "Project": "RayTracing",
+  "Project": "MotionMatching",
   "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",
-  "showGoal": "no",
+  "showGoal": "yes",
   "showMatchingStatistic": "yes"
 },
 }

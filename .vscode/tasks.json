@@ -9,8 +9,7 @@
             "command": "./build_script.sh",
             "args": [
                 "${config:launchOption.currentConfig.Project}",
-                "${config:launchOption.currentConfig.BuildType}",
-                "no"
+                "${config:launchOption.currentConfig.BuildType}"
             ],
             "group": {
                 "kind": "build",

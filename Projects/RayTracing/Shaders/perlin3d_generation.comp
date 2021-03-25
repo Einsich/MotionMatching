@@ -41,12 +41,16 @@ float lerp(float t, float a, float b)
 {
     return a + t * (b - a);
 }
-float noise(float x, float y, float z)
+int mod(int x, int m)
+{
+  return (x + m) % m;
+}
+float noise(float x, float y, float z, int m)
 {
 #pragma optionNV (unroll all)
-  int x1 = int(floor(x)) & 255,
-      y1 = int(floor(y)) & 255,
-      z1 = int(floor(z)) & 255;
+  int x1 = int(floor(x)) % m,
+      y1 = int(floor(y)) % m,
+      z1 = int(floor(z)) % m;
 
   x -= floor(x);
   y -= floor(y);
@@ -55,18 +59,36 @@ float noise(float x, float y, float z)
   float x2 = fade(x),
           y2 = fade(y),
           z2 = fade(z);
+  float g[2][2][2];
+  int h0[2];
+  int h1[2][2];
+  int h2[2][2][2];
+  for (int i = 0; i < 2; i++)
+    h0[i] = p(mod(x1 + i, m));
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+     h1[i][j] = p(h0[i] + mod(y1 + j, m));
 
-  int A = p(x1) + y1, AA = p(A) + z1, AB = p(A + 1) + z1,      // HASH COORDINATES OF
-      B = p(x1 + 1) + y1, BA = p(B) + z1, BB = p(B + 1) + z1;      // THE 8 CUBE CORNERS,
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+      for (int k = 0; k < 2; k++)
+        h2[i][j][k] = p(h1[i][j] + mod(z1 + k, m));
 
-  return lerp(z2, lerp(y2, lerp(x2, gradient(p(AA), x, y, z),
-                                    gradient(p(BA), x - 1, y, z)),
-                          lerp(x2, gradient(p(AB), x, y - 1, z),
-                                    gradient(p(BB), x - 1, y - 1, z))),
-                  lerp(y2, lerp(x2, gradient(p(AA + 1), x, y, z - 1),
-                                    gradient(p(BA + 1), x - 1, y, z - 1)),
-                          lerp(x2, gradient(p(AB + 1), x, y - 1, z - 1),
-                                    gradient(p(BB + 1), x - 1, y - 1, z - 1))));
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+      for (int k = 0; k < 2; k++)
+        g[i][j][k] = gradient(h2[i][j][k], x - i, y - j, z - k);
+
+  for (int i = 0; i < 2; i++)
+    for (int j = 0; j < 2; j++)
+      g[i][j][0] = mix(g[i][j][0], g[i][j][1], z2);
+
+  for (int i = 0; i < 2; i++)
+    g[i][0][0] = mix(g[i][0][0], g[i][1][0], y2);
+  
+  g[0][0][0] = mix(g[0][0][0], g[1][0][0], x2);
+
+  return g[0][0][0];
 }
 
 void main()
@@ -80,9 +102,10 @@ void main()
   float a = 0;
   for (int l = 0; l < oct; l++)
   {
-    k = pow(2, l);
+    int m = 1 << l;
+    k = m;
     mx += 1 / k;
-    a += noise(x * k , y * k, z * k) / k;
+    a += noise(x * k , y * k, z * k, m) / k;
   }
   a = (a / mx + 1) / 2;
   float h = clamp(a, 0.0f, 1.0f);

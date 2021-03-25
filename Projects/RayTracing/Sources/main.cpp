@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv)
 {
-  add_configs(argc - 1, (const char**)(argv + 1));
+  add_configs(argc, (const char**)argv);
   
   Application application(get_config("project"), 1848, 1016, true);
   application.get_scene().init(init_scene);

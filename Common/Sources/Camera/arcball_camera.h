@@ -5,20 +5,20 @@
 class ArcballCamera: public Camera, public IUpdatable
 {
  private:
-  float maxdistance, zoom, distance;
-  vec2 rotation;
+  float maxdistance, zoom, targetZoom, distance;
+  vec2 rotation, targetRotation;
   vec3 target_position;
   Transform *target_transform;
   void calculate_transform();
   bool rotationEnable = false;
 public: 
   ArcballCamera(Transform *target, float distance, vec2 rotation):
-  maxdistance(distance), zoom(0.2f), distance(zoom * maxdistance), rotation(rotation), target_position(vec3()), target_transform(target)
+  maxdistance(distance), zoom(0.2f), targetZoom(zoom), distance(zoom * maxdistance), rotation(rotation), targetRotation(rotation), target_position(vec3()), target_transform(target)
   { 
     calculate_transform();
   }
   ArcballCamera(vec3 target, float distance, vec2 rotation):
-  maxdistance(distance), zoom(0.2f), distance(zoom * maxdistance), rotation(rotation), target_position(target), target_transform(nullptr)
+  maxdistance(distance), zoom(0.2f), targetZoom(zoom), distance(zoom * maxdistance), rotation(rotation), targetRotation(rotation), target_position(target), target_transform(nullptr)
   { 
     calculate_transform();
   }

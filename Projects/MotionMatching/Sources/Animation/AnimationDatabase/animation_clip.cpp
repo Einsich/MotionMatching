@@ -4,7 +4,7 @@
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
  AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
- rootTranslationDelta(duration), rootRotationDelta(duration),
+ hipsTranslation(duration), hipsRotation(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tags), features(duration)
 {
   for (uint i = 0; i < tree.nodes.size(); i++)
@@ -30,14 +30,14 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       if (node.name == "Hips")
       {
         vec3 translation = channels[j].get_translation(i);
-        rootTranslationDelta[i] = vec3(translation.x, 0, translation.z);
         channels[j].get_translation(i) = nodeTranslation = vec3(0, translation.y, 0);
       
         mat4 m = toMat4(rotation);
         float x, y, z;
         glm::extractEulerAngleXYZ(m, x, y, z);
         m = glm::eulerAngleXYZ(0.f, y, z);
-        rootRotationDelta[i] = x;
+        hipsRotation[i] =  rotation;
+        hipsTranslation[i] = translation;
         rotation = quat_cast(m);
       }
       rotation = node.rotation * rotation;
@@ -52,61 +52,27 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
         nodeTransform = transfroms[tree.nodes[j].parent] * nodeTransform;
       transfroms[j] = nodeTransform;
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
+
+      if (node.name == "Hips")
+      {
+      }
     }    
   }
-  {
-    quat R0(vec3(0, -rootRotationDelta[0], 0));
-    for (uint i = 0; i < duration; i++)
-      rootTranslationDelta[i] = R0 * rootTranslationDelta[i];
-  }
   ground_calculate();
-  float pathLength = 0;
-  for (uint i = 1; i < duration; i++)
-    pathLength += length(rootTranslationDelta[i] - rootTranslationDelta[i-1]);
-  if(pathLength < 0.3f)
-  {
-    for (uint i = 0; i < duration; i++)
-    {
-      channels[hipsChannelIndex].get_translation(i) += rootTranslationDelta[i];
-      for (vec3 &f:features[i].features)
-        f += rootTranslationDelta[i];
-      rootTranslationDelta[i] = vec3(0.f);
-    }
-  }
-  for (int i = duration - 1; i > 0; i--)
-  {
-    rootRotationDelta[i] -= rootRotationDelta[i - 1];
-    rootTranslationDelta[i] -= rootTranslationDelta[i - 1];
-  }
+}
 
-  rootRotationDelta[0] = 0;
-  rootTranslationDelta[0] = vec3(0.f);
-
-  for (uint i = 0; i < duration; i++)
-  {
-    vec3 dt = rootTranslationDelta[i];
-    float dr = rootRotationDelta[i];
-    AnimationPathFeature &pathFeature = features[i].path;
-    pathFeature.rotation = 0;
-    for (uint j = 0; j < AnimationPathFeature::PathLength; j++)
-    {
-      if (j != 0)
-      {
-        pathFeature.path[j] = pathFeature.path[j - 1];
-      }
-      for (uint k = 0; k < AnimationPathFeature::SkipCadres; k++)
-      {
-        uint nextInd = i + j * AnimationPathFeature::SkipCadres + k;
-        if (nextInd < rootTranslationDelta.size())
-        {
-          dt = rootTranslationDelta[nextInd];
-          dr = rootRotationDelta[nextInd];
-        }
-        pathFeature.path[j] += dt;
-        pathFeature.rotation += dr;
-      }
-    }
-  }
+vec3 AnimationClip::get_root_traslation(uint i) const
+{
+  i = i < duration ? i : duration - 1;
+  return vec3(hipsTranslation[i].x, 0, hipsTranslation[i].z);
+}
+float AnimationClip::get_root_rotation(uint i) const
+{
+  i = i < duration ? i : duration - 1;
+  mat4 m = toMat4(hipsRotation[i]);
+  float x, y, z;
+  glm::extractEulerAngleXYZ(m, x, y, z);
+  return x;
 }
 AnimationCadr AnimationClip::get_frame(uint i) const
 {
@@ -117,9 +83,27 @@ AnimationCadr AnimationClip::get_frame(uint i) const
     frame.nodeRotation.push_back(channels[j].get_rotation_c(i));
   }
   frame.nodeTranslation = channels[hipsChannelIndex].get_translation_c(i);
-  frame.rootRotationDelta = rootRotationDelta[i];
-  frame.rootTranslationDelta = rootTranslationDelta[i];
+  
+  frame.rootRotationDelta = get_root_rotation(i + 1) - get_root_rotation(i);
+  frame.rootTranslationDelta = get_root_traslation(i + 1) - get_root_traslation(i);
   return frame;
+}
+
+AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
+{
+  AnimationTrajectory pathFeature;
+  vec3 point0 = -hipsTranslation[frame];
+  point0.y = 0;
+  quat rotation0 = inverse(hipsRotation[frame]);
+  for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
+  {
+    uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
+    next = next < duration ? next : duration - 1;
+    pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
+    pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
+    pathFeature.trajectory[j].timeDelay = AnimationTrajectory::timeDelays[j];
+  }
+  return pathFeature;
 }
 bool AnimationClip::contains_tag(AnimationTag tag) const
 {
@@ -165,8 +149,8 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, ticksPerSecond);
   size += write(os, name);
   size += write(os, channels);
-  size += write(os, rootTranslationDelta);
-  size += write(os, rootRotationDelta);
+  size += write(os, hipsTranslation);
+  size += write(os, hipsRotation);
   size += write(os, features);
   size += write(os, tags);
   return size;
@@ -179,8 +163,8 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, ticksPerSecond);
   size += read(is, name);
   size += read(is, channels);
-  size += read(is, rootTranslationDelta);
-  size += read(is, rootRotationDelta);
+  size += read(is, hipsTranslation);
+  size += read(is, hipsRotation);
   size += read(is, features);
   size += read(is, tags);
   ground_calculate();

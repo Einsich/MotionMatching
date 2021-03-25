@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.7)
 
-set(PROJECT_NAME ${PROJECT}.exe)
+set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
 project(${PROJECT_NAME})
 
 find_package(SDL2 REQUIRED)
 find_package(assimp REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-get_filename_component(PARENT_DIR ${CMAKE_SOURCE_DIR} DIRECTORY)
+set(PARENT_DIR ${CMAKE_SOURCE_DIR}/../)
 set(COMMON_ROOT ${PARENT_DIR}/Common/Sources)
 set(PROJECT_ROOT ${PARENT_DIR}/Projects/${PROJECT}/Sources)
 

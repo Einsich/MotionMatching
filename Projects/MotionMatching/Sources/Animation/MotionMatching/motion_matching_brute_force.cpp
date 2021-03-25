@@ -15,7 +15,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   const AnimationFeatures &feature = index.get_feature();
   int curClip = index.get_clip_index();
   int curCadr = index.get_cadr_index();
-  float best = 0;
+  float best = INFINITY;
   int bestClip = curClip;
   int bestCadr = curCadr;
   for(int nextClip = 0; nextClip < (int)dataBase->clips.size(); nextClip++)
@@ -23,12 +23,11 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
     for (int nextCadr = 0, n = dataBase->clips[nextClip].features.size(); nextCadr < n; nextCadr++)
     {
       const AnimationClip &clip = dataBase->clips[nextClip];
-      MatchingScores score = get_score(clip.features[nextCadr], feature, clip.tags, goal, curClip, curCadr, nextClip, nextCadr, clip.duration);
+      MatchingScores score = get_score(clip.features[nextCadr], feature, clip.get_frame_trajectory(nextCadr), goal, curClip, curCadr, nextClip, nextCadr, clip.duration);
       float matching = score.full_score;
       matchingScore[nextClip][nextCadr] = matching;
       bool nearToCurrentClip = curClip == nextClip && abs(nextCadr - curCadr) < 10;
-      bool nearPose = score.pose > 0.000001f;
-      if (!nearToCurrentClip  && matching > best)
+      if (!nearToCurrentClip  && matching < best)
       {
         best = matching;
         bestClip = nextClip;

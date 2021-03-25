@@ -46,29 +46,26 @@ void ThirdPersonController::update()
   float dirAngle = (length(dir) < 0.1f)? 0 : glm::angle(vec3(0,0,1), normalize(dir));
   
   float speed = (1.f + runSpeedUp * Input::input().get_key(SDLK_LSHIFT, 0.8f)) * walkSpeed;
-  const float skipSecond = (AnimationPathFeature::SkipCadres * AnimationPathFeature::PathLength) / 30.f;
   float rotationSpeed = 60 * DegToRad;
-  float rotationDelta = wantedCameraRotation.x - currentRotation;
-  rotationDelta += dirAngle;
-  player->inputGoal.path.rotation = rotationDelta;
-  if (glm::abs(rotationDelta) > skipSecond * rotationSpeed)
-    rotationDelta = glm::clamp(rotationDelta, -skipSecond * rotationSpeed, skipSecond * rotationSpeed);
+  float rotationDelta = (wantedCameraRotation.x + dirAngle) - currentRotation;
   
-  if (glm::abs(player->rootDeltaRotation) > glm::abs(rotationDelta / skipSecond))
-    currentRotation +=  rotationDelta / skipSecond * Time::delta_time();
-  else
-    currentRotation += player->rootDeltaRotation * Time::delta_time();
+  currentRotation += rotationDelta  * Time::delta_time();
 
   player->inputGoal.tags.clear();
   if (Input::input().get_key(SDLK_SPACE) > 0)
-    player->inputGoal.tags.insert(AnimationTag::Jump);
-  else
-    player->inputGoal.tags.insert(crouching ? AnimationTag::Crouch : AnimationTag::Stay);
+  {
+
+  }
   
-
-  for (int i = 0; i < AnimationPathFeature::PathLength; i++)
-    player->inputGoal.path.path[i] = dir * speed * (i + 1.f) * (float)AnimationPathFeature::SkipCadres / 30.f;
-
+  float T = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
+  vec3 hipsPoint = vec3(0, 0.96f, 0);
+  for (int i = 0; i < AnimationTrajectory::PathLength; i++)
+  {
+    float t = AnimationTrajectory::timeDelays[i];
+    player->inputGoal.path.trajectory[i].point = hipsPoint + dir * speed * t;
+    float x = -currentRotation - rotationDelta * (t / T); 
+    player->inputGoal.path.trajectory[i].rotation = quat(vec3(0,x +PI * 0.5f ,0));
+  }
   transform->get_position() -= 
   (player->rootDeltaTranslation.z * transform->get_forward() + 
   player->rootDeltaTranslation.y * transform->get_up()+ 

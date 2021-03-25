@@ -18,6 +18,7 @@ public:
   const AnimationClip &get_clip() const;
   AnimationCadr get_cadr() const;
   const AnimationFeatures &get_feature() const;
+  AnimationTrajectory get_trajectory() const;
 };
 class AnimationLerpedIndex
 {

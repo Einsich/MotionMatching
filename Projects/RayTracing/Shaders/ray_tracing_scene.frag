@@ -149,11 +149,12 @@ void create_rays_spheres(in Ray ray, in Collision collision, in int sphereInd, i
   bool outedRay = dot(ray.dir, normal) > 0;
   float refractionFactor = outedRay ? 1 / material.refractionFactor : material.refractionFactor;
 
-    float noise = textureLod(perlin3D, ray.pos.xzy * 10.7, 0).x;
-  noise *= noise;
-  normal.xyz += (vec3(noise) - vec3(0.5))*0.5;
-  normal = normalize(normal);
+  float noise = textureLod(perlin3D, ray.pos.xzy * 2.7, 0).x;
 
+  normal.xyz += (vec3(noise) - vec3(0.5))*0.3;
+  normal = normalize(normal);
+color = vec4(noise,0,0, 1);
+return;
   vec3 reflected = reflect(ray.dir, normal);
   if (outedRay)
     normal = -normal;

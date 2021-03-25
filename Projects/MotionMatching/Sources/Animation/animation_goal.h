@@ -1,6 +1,6 @@
 #pragma once
 #include <set>
-#include "AnimationDatabase/animation_path_feature.h"
+#include "AnimationDatabase/animation_trajectory.h"
 
 #define TAGS ADD_TAG(Stay), ADD_TAG(Crouch), ADD_TAG(Jump), ADD_TAG(Loopable), ADD_TAG(Die), ADD_TAG(Speak), ADD_TAG(BadTag)
 
@@ -13,7 +13,7 @@ enum class AnimationTag
 class AnimationGoal
 {
 public:
-  AnimationPathFeature path;
+  AnimationTrajectory path;
   set<AnimationTag> tags;
 };
 

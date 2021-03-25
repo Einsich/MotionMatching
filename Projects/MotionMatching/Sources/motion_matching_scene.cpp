@@ -9,7 +9,7 @@
 #include <assimp/postprocess.h>
 #include "Animation/AnimationDatabase/animation_preprocess.h"
 #include "Components/MeshRender/mesh_render.h"
-#include "Components/AnimationRender/animation_render.h"
+#include "Animation/AnimationRender/animation_render.h"
 #include "PersonController/third_person_controller.h"
 #include "Animation/animation_player.h"
 #include "Animation/animation_debug.h"
@@ -31,9 +31,6 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   Context &context = Application::get_context();
   Input &input = Application::get_input();
 
-  //create_sky_box("Textures/Skyboxes/Village");
-  //create_sky_box("Textures/Skyboxes/DesertSky");
-  create_sky_box(common_resources_path("Textures/Skyboxes/CloudSky"));
   shared_ptr<ArcballCamera> arcballCam;
   sun = DirectionLight(vec3(0.1f, -0.5f, 0.1f));
   {
@@ -173,6 +170,11 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     GameObjectPtr debug_arrow = make_game_object();
     debug_arrow->add_component<DebugArrow>();
     gameObjects.push_back(debug_arrow);
+  }
+  {
+    GameObjectPtr skyBox = make_game_object();
+    skyBox->add_component<SkyBox>(common_resources_path("Textures/Skyboxes/CloudSky"));
+    gameObjects.push_back(skyBox);
   }
 }
 

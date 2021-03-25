@@ -9,12 +9,9 @@
             "name": "Run project",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.BuildType}/${config:launchOption.currentConfig.Project}.exe",
+            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
             "args": [
-                "-projectPath -${workspaceFolder}/Projects/${config:launchOption.currentConfig.Project}",
-                "-commonPath -${workspaceFolder}/Common",
                 "-project -${config:launchOption.currentConfig.Project}",
-                "-build -${config:launchOption.currentConfig.BuildType}",
                 "-showBones -${config:launchOption.currentConfig.showBones}",
                 "-showGoal -${config:launchOption.currentConfig.showGoal}",
                 "-showMatchingStatistic -${config:launchOption.currentConfig.showMatchingStatistic}",
