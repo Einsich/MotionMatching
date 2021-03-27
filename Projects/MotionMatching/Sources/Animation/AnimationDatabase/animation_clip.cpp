@@ -5,7 +5,9 @@
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
  AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
  hipsTranslation(duration), hipsRotation(duration),
- duration(duration), ticksPerSecond(ticksPerSecond), name(name), tags(tags), features(duration)
+ duration(duration), ticksPerSecond(ticksPerSecond), 
+ loopable(std::find(tags.begin(), tags.end(), AnimationTag::Loopable) != tags.end()), 
+ name(name), tags(tags), features(duration)
 {
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
@@ -98,9 +100,27 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
-    next = next < duration ? next : duration - 1;
-    pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-    pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
+    if (!loopable)
+    {
+      next = next < duration ? next : duration - 1;
+      pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
+      pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
+    }
+    else
+    {
+      if (next < duration)
+      {
+        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
+        pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
+      }
+      else
+      {
+        next -= duration;
+        pathFeature.trajectory[j].point = hipsTranslation[frame] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
+        pathFeature.trajectory[j].rotation = hipsRotation[frame]*inverse(hipsRotation[0])*hipsRotation[duration - 1]*rotation0;
+      }
+      next = next < duration ? next : duration - 1;
+    }
     pathFeature.trajectory[j].timeDelay = AnimationTrajectory::timeDelays[j];
   }
   return pathFeature;

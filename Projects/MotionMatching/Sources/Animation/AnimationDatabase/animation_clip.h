@@ -26,6 +26,7 @@ public:
   map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags);
   uint duration;
   float ticksPerSecond;
+  bool loopable;
   string name;
   set<AnimationTag> tags;
   vector<AnimationFeatures> features;

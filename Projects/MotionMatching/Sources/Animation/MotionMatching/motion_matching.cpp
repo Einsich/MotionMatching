@@ -35,20 +35,20 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
   index.t += dt * index.ticks_per_second();
   while (index.t > 1.f)
   {
-    bool play_next_cadr = skip_count < max_skip_cadr && (!index.second.last_cadr() || index.second.get_clip().contains_tag(AnimationTag::Loopable));
-    if (play_next_cadr)
+    bool play_next_cadr = (!index.second.last_cadr() || index.second.get_clip().contains_tag(AnimationTag::Loopable));
+    AnimationIndex best_index = solver->find_best_index(index.second, goal);
+    if (true)//!best_index.near_frames(index.second))
     {
       index.t -= 1.f;
       index.first = index.second;
-      index.second.increase_cadr();
-      skip_count++;
+      index.second = best_index;
+
     }
     else
     {
       index.t -= 1.f;
       index.first = index.second;
-      index.second = solver->find_best_index(index.second, goal);
-      skip_count = 0;
+      index.second.increase_cadr();
     }
   }
 }

@@ -35,6 +35,17 @@ void AnimationIndex::increase_cadr()
     }
   }
 }
+bool AnimationIndex::near_frames(const AnimationIndex &other) const
+{
+  if (clip == other.clip)
+  {
+    auto &c = dataBase->clips[clip];
+    if (c.loopable)
+      return ((cadr - other.cadr + c.duration) % c.duration) < 10;
+    return abs(cadr - other.cadr) < 10;
+  }
+  return false;
+}
 bool AnimationIndex::operator()() const
 {
   return valid();
