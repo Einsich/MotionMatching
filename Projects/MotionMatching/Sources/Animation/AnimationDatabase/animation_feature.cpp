@@ -36,7 +36,7 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
   float norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
     norma += weights->weights[i] * length(feature1.features[i] - feature2.features[i]);
-  return weights->norma_function_weight * exp(-norma);
+  return weights->norma_function_weight * norma;
 }
 float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
 {
@@ -81,14 +81,14 @@ float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, 
 MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal,
   int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght)
 {
-  MatchingScores score;
+  MatchingScores score{0};
   score.pose = pose_matching_norma(feature1, feature2);
   score.goal_path = goal_path_norma(frame_trajectory, goal);
   score.goal_rotation = rotation_norma(frame_trajectory, goal);
-  score.next_cadr = next_cadr_norma(cur_anim, cur_cadr, next_anim, next_cadr, clip_lenght);
+ // score.next_cadr = next_cadr_norma(cur_anim, cur_cadr, next_anim, next_cadr, clip_lenght);
   score.noise = (1.f * std::rand() / RAND_MAX) * weights->noise_scale;
-  score.full_score = score.pose + score.goal_path + score.goal_rotation + score.goal_tag + score.next_cadr + score.noise ;
-  score.final_norma = score.full_score > 0.f ? 1.f / score.full_score : 0;
+  score.full_score = score.pose + score.goal_path + score.goal_rotation + score.noise;
+  //score.final_norma = score.full_score > 0.f ? 1.f / score.full_score : 0;
   return score;
 }
 const std::string &get_tag_name(AnimationTag tag)

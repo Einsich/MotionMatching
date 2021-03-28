@@ -21,11 +21,11 @@ debugSphere(make_game_object())
 void show_sliders(const AnimationFeaturesWeightsPtr weights)
 {
   ImGui::Begin("Sliders");
-  ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 1.f);
+  ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 100.f);
   ImGui::SliderFloat("lerp scale", &weights->animation_lerp, 0.f, 1.f);
-  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 10.f);
-  ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 10.f);
-  ImGui::SliderFloat("goal rotation", &weights->goal_rotation, 0, 15.f);
+  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 100.f);
+  ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 100.f);
+  ImGui::SliderFloat("goal rotation", &weights->goal_rotation, 0, 105.f);
   ImGui::SliderFloat("goal tag weight", &weights->goal_tag_weight, 0, 25.f);
   ImGui::SliderFloat("next cadr weight", &weights->next_cadr_weight, 0, 10.f);
   ImGui::SliderFloat("noise_scale", &weights->noise_scale, 0, 10.f);
@@ -57,7 +57,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWei
     for (uint j = 0, n = matchingScore[i].size(); j < n; j++)
     {
       ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + i * ImGui::GetTextLineHeightWithSpacing()); 
-      float t = matchingScore[i][j] * weights->debug_scale;
+      float t = 1.f / matchingScore[i][j] * weights->debug_scale;
       draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f - t,t, 0 ,1.f)));
     }
   }
@@ -122,8 +122,11 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
     draw_list->AddRectFilled(p, q, color);
   }
   
-  ImGui::Text(" goal tags { %s }", tags_to_text(tags).c_str());
-  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
+ // ImGui::Text(" goal tags { %s }", tags_to_text(tags).c_str());
+  //ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
+  bool loopable = mm.get_index().first.get_clip().loopable;
+  if (loopable)
+    ImGui::Text("[loopable]");
   
   ImGui::End();
 }

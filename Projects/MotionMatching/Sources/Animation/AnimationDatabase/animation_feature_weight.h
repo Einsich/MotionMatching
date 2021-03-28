@@ -6,14 +6,10 @@
 enum class AnimationFeaturesNode
 {
   Hips,
-  LeftForeArm,
   LeftHand,
-  RightForeArm,
   RightHand,
-  LeftLeg,
   LeftFoot,
   LeftToeBase,
-  RightLeg,
   RightFoot,
   RightToeBase,
   Head,

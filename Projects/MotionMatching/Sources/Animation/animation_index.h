@@ -13,13 +13,13 @@ public:
   bool operator()() const;
   bool chack_data_base(AnimationDataBasePtr other_data_base) const;
   bool last_cadr() const;
-  bool near_frames(const AnimationIndex &other) const;
   int get_clip_index() const;
   int get_cadr_index() const;
   const AnimationClip &get_clip() const;
   AnimationCadr get_cadr() const;
   const AnimationFeatures &get_feature() const;
   AnimationTrajectory get_trajectory() const;
+  static bool can_jump(const AnimationIndex &from, const AnimationIndex &to);
 };
 class AnimationLerpedIndex
 {

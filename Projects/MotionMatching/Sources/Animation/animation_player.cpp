@@ -3,17 +3,17 @@
 #include "animation_ik.h"
 #include "Components/DebugTools/debug_arrow.h"
 #include "Physics/physics.h"
-AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, int first_anim, AnimationPlayerType playerType):
+AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f), 
 stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 
 motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
 tree(dataBase->tree), 
-index(dataBase, first_anim, 0, first_anim, 1),
+index(dataBase, 0, 0, 0, 1),
 currentCadr(index.get_lerped_cadr())
 {
   if (playerType ==  AnimationPlayerType::StateMachine)
   {
-    stateMachine.play_animation(first_anim);
+    stateMachine.play_animation(0);
   }
 }
 

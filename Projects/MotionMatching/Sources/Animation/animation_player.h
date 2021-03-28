@@ -34,7 +34,7 @@ public:
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;
-  AnimationPlayer(AnimationDataBasePtr dataBase, int first_anim, AnimationPlayerType playerType);
+  AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType);
   void update() override;
 
   void animation_selector(const KeyboardEvent &event);

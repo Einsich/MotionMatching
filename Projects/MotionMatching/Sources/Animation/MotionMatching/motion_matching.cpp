@@ -3,11 +3,19 @@
 
 static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
 constexpr int max_skip_cadr = 10;
-MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, int first_anim, MotionMatchingSolverType solverType):
-dataBase(dataBase), solver(nullptr), index(dataBase, first_anim, 0, first_anim, 0), skip_count(0)
+MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType):
+dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0, 0, 0), skip_count(0)
 {
   if (!dataBase)
     return;
+  for (int i = 0; i < dataBase->clips.size(); i++)
+  {
+    if (dataBase->clips[i].name == first_anim)
+    {
+      index = AnimationLerpedIndex(dataBase, i, 0, i, 0);
+      break;
+    }
+  }
   auto &solverMap = solvers[(int)solverType];
   auto it = solverMap.find(dataBase);
   if (it == solverMap.end())
@@ -33,23 +41,21 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
   if (!solver)
     return;
   index.t += dt * index.ticks_per_second();
-  while (index.t > 1.f)
+  if (index.t > 1.f)
   {
-    bool play_next_cadr = (!index.second.last_cadr() || index.second.get_clip().contains_tag(AnimationTag::Loopable));
     AnimationIndex best_index = solver->find_best_index(index.second, goal);
-    if (true)//!best_index.near_frames(index.second))
+    if (AnimationIndex::can_jump(index.second, best_index))
     {
-      index.t -= 1.f;
       index.first = index.second;
       index.second = best_index;
 
     }
     else
     {
-      index.t -= 1.f;
       index.first = index.second;
       index.second.increase_cadr();
     }
+    index.t -= (int)index.t;
   }
 }
 

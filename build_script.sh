@@ -11,5 +11,5 @@ then
 fi
 cmake -DPROJECT=$PROJECT -DBUILD_TYPE=$BUILD_TYPE -B $PROJECT/$BUILD_TYPE  
 cd $PROJECT/$BUILD_TYPE 
-time -p make -j 8
+time -p make -j $(nproc)
 mv $PROJECT-$BUILD_TYPE.exe ..

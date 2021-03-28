@@ -173,6 +173,7 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, hipsRotation);
   size += write(os, features);
   size += write(os, tags);
+  size += write(os, loopable);
   return size;
 }
 size_t AnimationClip::deserialize(std::istream& is)
@@ -187,6 +188,7 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, hipsRotation);
   size += read(is, features);
   size += read(is, tags);
+  size += read(is, loopable);
   ground_calculate();
   return size;
 }

@@ -87,7 +87,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
 
 
-    auto animPlayer = man->add_component<AnimationPlayer>(dataBase, 0, AnimationPlayerType::MotionMatching);
+    auto animPlayer = man->add_component<AnimationPlayer>(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
     input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
     input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
