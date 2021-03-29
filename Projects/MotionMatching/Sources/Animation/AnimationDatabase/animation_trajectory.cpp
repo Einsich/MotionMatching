@@ -2,7 +2,7 @@
 
 
 TrajectoryPoint::TrajectoryPoint():
-point(0), rotation(1, 0, 0, 0), timeDelay(0){}
+point(0), rotation(0), timeDelay(0){}
 size_t TrajectoryPoint::serialize(std::ostream& os) const 
 {
   size_t size = 0;

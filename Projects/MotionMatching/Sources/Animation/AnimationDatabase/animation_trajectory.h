@@ -6,7 +6,7 @@
 struct TrajectoryPoint : public ISerializable
 {
   vec3 point;
-  quat rotation;
+  float rotation;
   float timeDelay;
   TrajectoryPoint();
   virtual size_t serialize(std::ostream& os) const override;

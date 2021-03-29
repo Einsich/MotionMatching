@@ -27,7 +27,10 @@ void get_tag_from_name(const string &s, set<AnimationTag> &tags)
 
   #define CHECK(SUBSTR, TAG) \
   {size_t t = s.find("_To_"), r = s.find(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
-
+  #define FIND(SUBSTR, TAG) \
+  {size_t r = s.find(#SUBSTR);if (r < s.length()) tags.insert(AnimationTag::TAG);}
+  FIND(Loop, Loopable)
+  return;
   CHECK(Crouch, Crouch)
   CHECK(CrouchWalk, Crouch)
   CHECK(Stand_Relaxed, Stay)

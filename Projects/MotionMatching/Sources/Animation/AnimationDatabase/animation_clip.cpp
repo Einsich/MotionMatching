@@ -38,7 +38,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
         float x, y, z;
         glm::extractEulerAngleXYZ(m, x, y, z);
         m = glm::eulerAngleXYZ(0.f, y, z);
-        hipsRotation[i] =  rotation;
+        hipsRotation[i] = x;
         hipsTranslation[i] = translation;
         rotation = quat_cast(m);
       }
@@ -71,10 +71,7 @@ vec3 AnimationClip::get_root_traslation(uint i) const
 float AnimationClip::get_root_rotation(uint i) const
 {
   i = i < duration ? i : duration - 1;
-  mat4 m = toMat4(hipsRotation[i]);
-  float x, y, z;
-  glm::extractEulerAngleXYZ(m, x, y, z);
-  return x;
+  return hipsRotation[i];
 }
 AnimationCadr AnimationClip::get_frame(uint i) const
 {
@@ -96,31 +93,25 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   AnimationTrajectory pathFeature;
   vec3 point0 = -hipsTranslation[frame];
   point0.y = 0;
-  quat rotation0 = inverse(hipsRotation[frame]);
+  float rotation0 = hipsRotation[frame];
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
-    if (!loopable)
+   
+    if (next < duration)
     {
-      next = next < duration ? next : duration - 1;
       pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-      pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
+      pathFeature.trajectory[j].rotation = hipsRotation[next]-rotation0;
     }
     else
     {
-      if (next < duration)
-      {
-        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-        pathFeature.trajectory[j].rotation = hipsRotation[next]*rotation0;
-      }
-      else
-      {
-        next -= duration;
-        pathFeature.trajectory[j].point = hipsTranslation[frame] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
-        pathFeature.trajectory[j].rotation = hipsRotation[frame]*inverse(hipsRotation[0])*hipsRotation[duration - 1]*rotation0;
-      }
-      next = next < duration ? next : duration - 1;
+      next -= duration;
+      pathFeature.trajectory[j].point = hipsTranslation[next] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
+      pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1]-rotation0;
+
     }
+    next = next < duration ? next : duration - 1;
+    
     pathFeature.trajectory[j].timeDelay = AnimationTrajectory::timeDelays[j];
   }
   return pathFeature;

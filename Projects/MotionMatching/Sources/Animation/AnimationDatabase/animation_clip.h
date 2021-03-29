@@ -14,7 +14,7 @@ private:
   void leg_process(int leg_index, u8 leg);
   vector<AnimationChannel> channels;
   vector<vec3> hipsTranslation;
-  vector<quat> hipsRotation;
+  vector<float> hipsRotation;
 
 
   uint hipsChannelIndex;

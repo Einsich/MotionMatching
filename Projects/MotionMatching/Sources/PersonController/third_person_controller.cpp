@@ -42,12 +42,12 @@ void ThirdPersonController::update()
   currentCameraOrientation = rotation_to_orientation(currentCameraRotation);
 
   vec3 dir = vec3(Input::input().get_key(SDLK_d, sensitive) - Input::input().get_key(SDLK_a, sensitive), 0, Input::input().get_key(SDLK_w, sensitive) - Input::input().get_key(SDLK_s, sensitive));
-
-  float dirAngle = (length(dir) < 0.1f)? 0 : glm::angle(vec3(0,0,1), normalize(dir));
+  dir = length(dir) < 1.0f ? dir : normalize(dir);
+  float dirAngle = (length(dir) < 0.1f) ? 0 : glm::angle(vec3(0,0,1), normalize(dir));
   
   float speed = (1.f + runSpeedUp * Input::input().get_key(SDLK_LSHIFT, 0.8f)) * walkSpeed;
   float rotationSpeed = 60 * DegToRad;
-  float rotationDelta = (wantedCameraRotation.x + dirAngle) - currentRotation;
+  float rotationDelta = (wantedCameraRotation.x) - currentRotation;
   
   currentRotation += rotationDelta  * Time::delta_time();
 
@@ -63,8 +63,8 @@ void ThirdPersonController::update()
   {
     float t = AnimationTrajectory::timeDelays[i];
     player->inputGoal.path.trajectory[i].point = hipsPoint + dir * speed * t;
-    float x = -currentRotation - rotationDelta * (t / T); 
-    player->inputGoal.path.trajectory[i].rotation = quat(vec3(0,x +PI * 0.5f ,0));
+    float x = - rotationDelta * (t / T); 
+    player->inputGoal.path.trajectory[i].rotation = x;
   }
   transform->get_position() -= 
   (player->rootDeltaTranslation.z * transform->get_forward() + 

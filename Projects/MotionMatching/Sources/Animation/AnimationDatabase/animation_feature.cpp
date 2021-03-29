@@ -55,7 +55,7 @@ float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
   float rotation_norma = 0.f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
   {
-    rotation_norma += angle(inverse(path.trajectory[i].rotation)* goal.path.trajectory[i].rotation) * AnimationTrajectory::weights[i];
+    rotation_norma += abs(path.trajectory[i].rotation - goal.path.trajectory[i].rotation);
   }
   return weights->goal_rotation * rotation_norma;
 }
@@ -63,29 +63,16 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal
 {
   float path_norma = 0.f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-    path_norma += length(path.trajectory[i].point - goal.path.trajectory[i].point)* AnimationTrajectory::weights[i];
+    path_norma += length(path.trajectory[i].point - goal.path.trajectory[i].point);
   return weights->goal_path_weight * path_norma;
 }
 
-float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght)
-{
-  int d = (next_cadr - cur_cadr - 1 + clip_lenght) % clip_lenght ;
-  if (next_anim == cur_anim && d < 8)
-    return glm::clamp(1.f - d * 0.125f, 0.f, 1.f) * weights->next_cadr_weight;
-  //d -= clip_lenght;
-  //if (next_anim == cur_anim && d > -15)
-  // return -1 * weights->next_cadr_weight;
-  return 0;
-}
-
-MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal,
-  int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght)
+MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal)
 {
   MatchingScores score{0};
   score.pose = pose_matching_norma(feature1, feature2);
   score.goal_path = goal_path_norma(frame_trajectory, goal);
   score.goal_rotation = rotation_norma(frame_trajectory, goal);
- // score.next_cadr = next_cadr_norma(cur_anim, cur_cadr, next_anim, next_cadr, clip_lenght);
   score.noise = (1.f * std::rand() / RAND_MAX) * weights->noise_scale;
   score.full_score = score.pose + score.goal_path + score.goal_rotation + score.noise;
   //score.final_norma = score.full_score > 0.f ? 1.f / score.full_score : 0;
