@@ -38,7 +38,6 @@ void get_tag_from_name(const string &s, set<AnimationTag> &tags)
   CHECK(_Run_, Stay)
   CHECK(_Jog_, Stay)
   CHECK(Jump, Jump)
-  CHECK(Death, Die)
   CHECK(Conv, Speak)
 }
 void get_tag(const string &s, set<AnimationTag> &tags)
@@ -47,8 +46,8 @@ void get_tag(const string &s, set<AnimationTag> &tags)
   CHECK_TAG(Stay)
   CHECK_TAG(Crouch)
   CHECK_TAG(Jump)
-  CHECK_TAG(Die)
-  CHECK_TAG(Speak)
+  CHECK_TAG(Idle)
+  CHECK_TAG(Loopable)
 }
 map<string, set<AnimationTag>> read_tag_map(const string &path)
 {

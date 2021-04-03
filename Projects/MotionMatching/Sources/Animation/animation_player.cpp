@@ -81,7 +81,7 @@ void AnimationPlayer::update()
   rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
   
   Transform* transform = game_object()->get_component<Transform>();
-  if (transform)
+  if (false)//transform)
   {
     mat4 t = transform->get_transform();
     vec3 hips = index.first.get_feature().features[(int)AnimationFeaturesNode::Hips];

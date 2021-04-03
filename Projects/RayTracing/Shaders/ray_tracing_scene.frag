@@ -4,7 +4,7 @@ out vec4 FragColor;
 
 uniform mat4 ProjViewInv;
 uniform vec3 CameraPos;
-
+uniform float Time;
 uniform samplerCube skybox;
 uniform sampler3D perlin3D;
 
@@ -22,6 +22,10 @@ struct Sphere
 {
     vec3 pos;
     float radius;
+};
+struct Box
+{
+  vec3 position, scale;
 };
 struct Collision
 {
@@ -53,7 +57,7 @@ SphereMaterial spheresMat[SphereN] = SphereMaterial[SphereN](
   SphereMaterial(1, 0.5, 0.98, vec3(0.2,0.4,0.2)),
   SphereMaterial(0, 1, 1.1, vec3(0.9,0.6,0.9)),
   SphereMaterial(0, 0, 0.98, vec3(0.4,0.9,0.9)));
-
+Box boxes[1] = Box[1](Box(vec3(0,0,0), vec3(1,2,4)));
 void clear_stack()
 {
   rayTracingStack.top = 0;
@@ -146,6 +150,7 @@ void create_rays_spheres(in Ray ray, in Collision collision, in int sphereInd, i
 {
   SphereMaterial material = spheresMat[sphereInd];
   vec3 normal = collision.normal;
+
   bool outedRay = dot(ray.dir, normal) > 0;
   float refractionFactor = outedRay ? 1 / material.refractionFactor : material.refractionFactor;
 
@@ -153,8 +158,8 @@ void create_rays_spheres(in Ray ray, in Collision collision, in int sphereInd, i
 
   normal.xyz += (vec3(noise) - vec3(0.5))*0.3;
   normal = normalize(normal);
-color = vec4(noise,0,0, 1);
-return;
+//color = vec4(noise,0,0, 1);
+//return;
   vec3 reflected = reflect(ray.dir, normal);
   if (outedRay)
     normal = -normal;
@@ -196,6 +201,7 @@ return;
   }
   color += vec4(material.color, 1) * transparent * (1 - material.reflectionFactor) * (1 - ray.transparent);
 }
+
 void main()
 {
   clear_stack();

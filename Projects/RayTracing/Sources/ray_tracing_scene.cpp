@@ -25,6 +25,7 @@ void RayTracingScene::postfx_render()
   shader.set_mat4x4("ProjViewInv", ProjViewInv);
   vec3 camPos = camTransform[3];
   shader.set_vec3("CameraPos", camPos);
+  shader.set_float("Time", Time::time());
   skyBox.bind(shader, "skybox");
   perlinNoise3D.bind(shader, "perlin3D");
 }

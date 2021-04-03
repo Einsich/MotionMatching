@@ -21,6 +21,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     if (nodeName == "Hips")
       hipsChannelIndex = i;
   }
+  bool idle = std::find(tags.begin(), tags.end(), AnimationTag::Idle) != tags.end();
   vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
   {
@@ -32,14 +33,21 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       if (node.name == "Hips")
       {
         vec3 translation = channels[j].get_translation(i);
-        channels[j].get_translation(i) = nodeTranslation = vec3(0, translation.y, 0);
+        nodeTranslation = vec3(0, translation.y, 0);
+        if (idle)
+        {
+          hipsTranslation[i] = nodeTranslation;
+          nodeTranslation = translation;
+        }
+        else
+          hipsTranslation[i] = translation;
+        channels[j].get_translation(i) = nodeTranslation;
       
         mat4 m = toMat4(rotation);
         float x, y, z;
         glm::extractEulerAngleXYZ(m, x, y, z);
         m = glm::eulerAngleXYZ(0.f, y, z);
-        hipsRotation[i] = x;
-        hipsTranslation[i] = translation;
+        hipsRotation[i] = idle ? 0 : x;
         rotation = quat_cast(m);
       }
       rotation = node.rotation * rotation;
@@ -55,11 +63,12 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       transfroms[j] = nodeTransform;
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
 
-      if (node.name == "Hips")
-      {
-      }
     }    
   }
+  float r0 = hipsRotation[0];
+  for (uint i = 0; i < duration; i++) 
+    hipsRotation[i] -= r0;
+
   ground_calculate();
 }
 
@@ -97,22 +106,37 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
-   
-    if (next < duration)
+    if (true)
     {
-      pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-      pathFeature.trajectory[j].rotation = hipsRotation[next]-rotation0;
+      if (next < duration)
+      {
+        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
+        pathFeature.trajectory[j].rotation = hipsRotation[next];
+      }
+      else
+      {
+        next -= duration;
+        pathFeature.trajectory[j].point = hipsTranslation[next] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
+        pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1];
+      }
     }
     else
     {
-      next -= duration;
-      pathFeature.trajectory[j].point = hipsTranslation[next] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
-      pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1]-rotation0;
-
+      if (next < duration)
+      {
+        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
+        pathFeature.trajectory[j].rotation = hipsRotation[next]-rotation0;
+      }
+      else
+      {
+        float times = next - duration + 1;
+        vec3 dt = hipsTranslation[duration - 1] - hipsTranslation[duration - 2];
+        float dr = hipsRotation[duration - 1] - hipsRotation[duration - 2];
+        pathFeature.trajectory[j].point = dt * times + hipsTranslation[duration - 1]+point0;
+        pathFeature.trajectory[j].rotation = dr * times + hipsRotation[duration - 1]-rotation0;
+      }
     }
-    next = next < duration ? next : duration - 1;
     
-    pathFeature.trajectory[j].timeDelay = AnimationTrajectory::timeDelays[j];
   }
   return pathFeature;
 }

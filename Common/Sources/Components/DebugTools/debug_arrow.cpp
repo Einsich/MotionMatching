@@ -97,7 +97,26 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
     depthNotIgnore.arrowColors.push_back(color);
   }  
 }
-
+void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &matrices, vector<vec3> &colors, const VertexArrayObject &arrow)
+{
+  assert(matrices.size() == colors.size());
+  glDepthFunc(ignoreDepth ? GL_ALWAYS : GL_LESS);
+  glDepthMask(ignoreDepth ? GL_FALSE : GL_TRUE);
+  constexpr int ARROW_DRAWCALL_LIMIT = 150;
+  for (int i = 0; i < matrices.size(); i += ARROW_DRAWCALL_LIMIT)
+  {
+    int k = glm::min(ARROW_DRAWCALL_LIMIT, (int)matrices.size() - i);
+    auto beginT = matrices.begin() + i;
+    auto endT = matrices.begin() + i + k;
+    shader.set_mat4x4("BoneTransforms", beginT, endT);
+    auto beginC = colors.begin() + i;
+    auto endC = colors.begin() + i + k;
+    shader.set_vec3("Colors", beginC, endC);
+    arrow.render_instances(k);
+  }
+  matrices.clear();
+  colors.clear();
+}
 void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool)
 {
   arrowShader.use();
@@ -105,26 +124,10 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
   mainCam.set_to_shader(arrowShader);
   arrowMaterial->bind_to_shader(arrowShader);
   glDisable(GL_CULL_FACE);
-  if (depthIgnore.arrowTransforms.size() > 0)
-  {
-    glDepthFunc(GL_ALWAYS);
-    glDepthMask(GL_FALSE);
-    arrowShader.set_mat4x4("BoneTransforms", depthIgnore.arrowTransforms);
-    arrowShader.set_vec3("Colors", depthIgnore.arrowColors);
-    arrow.render_instances(depthIgnore.arrowTransforms.size());
-    depthIgnore.arrowTransforms.clear();
-    depthIgnore.arrowColors.clear();
-  }
-  if (depthNotIgnore.arrowTransforms.size() > 0)
-  {
-    glDepthFunc(GL_LESS);
-    glDepthMask(GL_TRUE);
-    arrowShader.set_mat4x4("BoneTransforms", depthNotIgnore.arrowTransforms);
-    arrowShader.set_vec3("Colors", depthNotIgnore.arrowColors);
-    arrow.render_instances(depthNotIgnore.arrowTransforms.size());
-    depthNotIgnore.arrowTransforms.clear();
-    depthNotIgnore.arrowColors.clear();
-  }
+  
+  render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow);
+  render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow);
+
   arrowMaterial->unbind_to_shader(arrowShader);
   light.unbind_to_shader(arrowShader);
   glEnable(GL_CULL_FACE);

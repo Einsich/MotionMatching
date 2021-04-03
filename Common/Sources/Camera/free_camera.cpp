@@ -2,34 +2,55 @@
 #include "Event/input.h"
 #include "Time/time.h"
 
+FreeCamera::FreeCamera(vec3 position, vec2 rotation):
+curRotation(rotation), wantedRotation(rotation), curPosition(position), wantedPosition(position), rotationEnable(false)
+{ 
+  transform.set_position(curPosition);
+  calculate_transform();
+}
 void FreeCamera::calculate_transform()
 {
-  transform.set_rotation(-rotation.x, -rotation.y, 0);
+  if (!isMainCamera)
+    return;
+  transform.set_rotation(PI*0.5f-curRotation.x, -curRotation.y, 0);
 }
 void FreeCamera::mouse_move_handler(const MouseMoveEvent &e)
 {
+  if (!isMainCamera)
+    return;
   if (rotationEnable)
   {
     float const pixToRad = PI / 180.f * 0.2f;
-    rotation += vec2(e.dx, e.dy) * pixToRad;
+    wantedRotation += vec2(e.dx, e.dy) * pixToRad;
 
-    calculate_transform();
   }
 }
-void FreeCamera::space_button_handler(const KeyboardEvent &)
+void FreeCamera::mouse_click_handler(const MouseClickEvent &e)
 {
-  rotationEnable = !rotationEnable;
+  if (!isMainCamera)
+    return;
+  if (e.buttonType == MouseButtonType::MiddleButton)
+  {
+    rotationEnable = e.action == MouseButtonAction::Down;
+  }
 }
 
 void FreeCamera::update()
 {
+  if (!isMainCamera)
+    return;
   
-  vec3 delta = transform.get_forward() * (Input::input().get_key(SDLK_w) - Input::input().get_key(SDLK_s)) +
+  vec3 delta = -transform.get_forward() * (Input::input().get_key(SDLK_w) - Input::input().get_key(SDLK_s)) +
               transform.get_right() * (Input::input().get_key(SDLK_d) - Input::input().get_key(SDLK_a)) +
               transform.get_up() * (Input::input().get_key(SDLK_e) - Input::input().get_key(SDLK_c));
-  
-  const float minSpeed = 50.6f;
-  const float maxSpeed = 200.6f;
+  const float minSpeed = 5.6f;
+  const float maxSpeed = 20.6f;
   float speed = lerp(minSpeed, maxSpeed, Input::input().get_key(SDLK_LSHIFT));
-  transform.get_position() += delta * speed * Time::delta_time();
+  wantedPosition += delta * speed * Time::delta_time();
+
+  float lerpFactor = Time::delta_time() * 3;
+  curRotation = lerp(curRotation, wantedRotation, lerpFactor);
+  curPosition = lerp(curPosition, wantedPosition, lerpFactor);
+  transform.get_position() = curPosition;
+  calculate_transform();
 }

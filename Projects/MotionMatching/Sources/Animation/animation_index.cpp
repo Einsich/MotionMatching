@@ -42,6 +42,9 @@ bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &
   //  return false;
   if (from.clip == to.clip)
   {
+    const AnimationClip &clip = to.get_clip();
+    if (clip.loopable)
+      return ((to.cadr - from.cadr + clip.duration) % clip.duration) >= 10;
     return abs(from.cadr - to.cadr) >= 10;
   }
   return true;

@@ -4,14 +4,16 @@
 #include <assimp/scene.h>
 #include "animation_feature_weight.h"
 #include "animation_clip.h"
-
+#include "../Test/animation_test.h"
 
 class AnimationDataBase : public ISerializable
 {
+  void add_tests();
 public:
   AnimationDataBase(aiNode *root);
   AnimationTreeData tree;
   vector<AnimationClip> clips;
+  vector<AnimationTest> test;
   AnimationFeaturesWeightsPtr featureWeights;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;

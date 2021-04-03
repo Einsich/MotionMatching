@@ -31,7 +31,7 @@ void Scene::render()
 {
   glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  CameraPtr mainCamera = main_camera();
+  CameraPtr mainCamera = Camera::main_camera();
   for (auto objects : gameObjects)
   {
     for (auto component : objects->get_components())

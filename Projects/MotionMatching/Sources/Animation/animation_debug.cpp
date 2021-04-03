@@ -123,7 +123,7 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   }
   
  // ImGui::Text(" goal tags { %s }", tags_to_text(tags).c_str());
-  //ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
+  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
   bool loopable = mm.get_index().first.get_clip().loopable;
   if (loopable)
     ImGui::Text("[loopable]");
@@ -177,6 +177,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   
   draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
 */
+
   u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
   onGround = player->onGround;
   material->set_property(Property("Ambient", vec3(1,1,1)));
@@ -203,11 +204,10 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
     transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
     meshRender->render(transform, mainCam, light, true);
   }
-
   transform->set_scale(vec3(0.02f));
   constexpr float dirLength = 0.3f;
   constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};
-  constexpr float lenghts[2] = {2, 2.5f};
+  constexpr float lenghts[2] = {0.3f, 0.3f};
 
   std::array<TrajectoryPoint,AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &player->inputGoal.path.trajectory};
   for(int i = 0; i < 2; i++)

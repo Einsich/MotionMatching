@@ -21,6 +21,8 @@ void ArcballCamera::set_target(Transform* transform)
 }
 void ArcballCamera::mouse_move_handler(const MouseMoveEvent &e)
 {
+  if (!isMainCamera)
+    return;
   if (rotationEnable)
   {
     float const pixToRad = PI / 180.f * 0.2f;
@@ -29,6 +31,8 @@ void ArcballCamera::mouse_move_handler(const MouseMoveEvent &e)
 }
 void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
 {
+  if (!isMainCamera)
+    return;
   if (e.buttonType == MouseButtonType::MiddleButton)
   {
     rotationEnable = e.action == MouseButtonAction::Down;
@@ -36,12 +40,16 @@ void ArcballCamera::mouse_click_handler(const MouseClickEvent &e)
 }
 void ArcballCamera::mouse_wheel_handler(const MouseWheelEvent &e)
 {
+  if (!isMainCamera)
+    return;
   targetZoom -= e.wheel * 0.03f;
   targetZoom = glm::clamp(targetZoom, 0.05f, 1.f);
 }
 
 void ArcballCamera::update()
 {
+  if (!isMainCamera)
+    return;
   if (target_transform)
   {
     target_position = target_transform->get_position();

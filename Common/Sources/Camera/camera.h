@@ -10,7 +10,7 @@ class Camera : public Component
 protected:
   Transform transform;
   mat4x4 projection;
-  int priority = 0;
+  bool isMainCamera;
 public:
   void set_orthographic(float width, float height, float zNear, float zFar);
   void set_perspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
@@ -19,11 +19,14 @@ public:
   const mat4x4& get_projection() const;
   Transform& get_transform();
   mat4x4 get_transform_matrix() const;
-  void set_priority(int priority);
-  int get_priority() const;
   void set_to_shader(const Shader& shader, bool sky_box = false) const;
+typedef shared_ptr<Camera> CameraPtr;
+  static void add_camera(CameraPtr camera, bool is_main = false);
+  static void change_main_cam(CameraPtr camera);
+  static void set_main_camera(CameraPtr camera);
+  static void set_next_camera();
+  static CameraPtr  main_camera(); 
 };
 
 typedef shared_ptr<Camera> CameraPtr;
-void add_camera(CameraPtr camera);
-CameraPtr  main_camera(); 
+

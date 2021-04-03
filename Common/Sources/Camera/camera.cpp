@@ -1,6 +1,8 @@
 #include "camera.h"
 #include <vector>
 #include "Application/application.h"
+
+static CameraPtr mainCamera = nullptr;
 static vector<CameraPtr> cameras;
 
 
@@ -31,14 +33,6 @@ mat4x4 Camera::get_transform_matrix() const
 {
   return transform.get_transform();
 }
-void Camera::set_priority(int priority)
-{
-  this->priority = priority;
-}
-int Camera::get_priority() const
-{
-  return priority;
-}
 
 void Camera::set_to_shader(const Shader& shader, bool sky_box) const
 {
@@ -49,26 +43,44 @@ void Camera::set_to_shader(const Shader& shader, bool sky_box) const
   shader.set_mat4x4("ViewProjection", viewProjection);
   shader.set_vec3("CameraPosition", cameraPosition);
 }
-
-void add_camera(CameraPtr camera)
+void Camera::change_main_cam(CameraPtr camera)
 {
+  if (mainCamera)
+    mainCamera->isMainCamera = false;
+  mainCamera = camera;
+  mainCamera->isMainCamera = true;
+}
+void Camera::add_camera(CameraPtr camera, bool is_main)
+{
+  if (is_main)
+  {
+    change_main_cam(camera);
+  }
   cameras.emplace_back(camera);
 }
-CameraPtr main_camera()
+
+void Camera::set_main_camera(CameraPtr camera)
 {
-  CameraPtr camera;
-  if (cameras.size() > 0)
+  if (std::find(cameras.begin(), cameras.end(), camera) != cameras.end())
   {
-    int max_priority = cameras[0]->get_priority();
-    camera = cameras[0];
-    for (auto camera_ptr : cameras)
-    {
-      if (camera_ptr->get_priority() > max_priority)
-      {
-        max_priority = camera_ptr->get_priority();
-        camera = camera_ptr;
-      }
-    }
+    change_main_cam(camera);
   }
-  return camera;
+  else
+    debug_error("Can't set unregistred camera to main Camera");
+}
+void Camera::set_next_camera()
+{
+  auto it = std::find(cameras.begin(), cameras.end(), mainCamera);
+  if (it != cameras.end())
+  {
+    int i = it - cameras.begin();
+    i = (i + 1) % cameras.size();
+    change_main_cam(cameras[i]);
+  }
+  else
+    debug_error("Can't set next camera to main Camera");
+}
+CameraPtr Camera::main_camera()
+{
+  return mainCamera;
 }

@@ -42,6 +42,7 @@ void ThirdPersonController::update()
   currentCameraOrientation = rotation_to_orientation(currentCameraRotation);
 
   vec3 dir = vec3(Input::input().get_key(SDLK_d, sensitive) - Input::input().get_key(SDLK_a, sensitive), 0, Input::input().get_key(SDLK_w, sensitive) - Input::input().get_key(SDLK_s, sensitive));
+  
   dir = length(dir) < 1.0f ? dir : normalize(dir);
   float dirAngle = (length(dir) < 0.1f) ? 0 : glm::angle(vec3(0,0,1), normalize(dir));
   
@@ -49,7 +50,8 @@ void ThirdPersonController::update()
   float rotationSpeed = 60 * DegToRad;
   float rotationDelta = (wantedCameraRotation.x) - currentRotation;
   
-  currentRotation += rotationDelta  * Time::delta_time();
+  if (glm::abs(rotationDelta) > DegToRad * 5)
+    currentRotation += sign(rotationDelta) * rotationSpeed * Time::delta_time();
 
   player->inputGoal.tags.clear();
   if (Input::input().get_key(SDLK_SPACE) > 0)
@@ -59,12 +61,15 @@ void ThirdPersonController::update()
   
   float T = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
   vec3 hipsPoint = vec3(0, 0.96f, 0);
+  vec3 prevPoint = hipsPoint;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float t = AnimationTrajectory::timeDelays[i];
-    player->inputGoal.path.trajectory[i].point = hipsPoint + dir * speed * t;
+    float dt = i == 0 ? t : t - AnimationTrajectory::timeDelays[i - 1];
     float x = - rotationDelta * (t / T); 
+    player->inputGoal.path.trajectory[i].point = prevPoint + quat(vec3(0,x,0)) * (dir * speed * dt);
     player->inputGoal.path.trajectory[i].rotation = x;
+    prevPoint = player->inputGoal.path.trajectory[i].point;
   }
   transform->get_position() -= 
   (player->rootDeltaTranslation.z * transform->get_forward() + 
@@ -82,7 +87,7 @@ void ThirdPersonController::mouse_move_handler(const MouseMoveEvent &e)
     return;
   float const pixToRad = PI / 180.f * 0.2f;
   wantedCameraRotation += vec2(e.dx, -e.dy) * pixToRad;
-  wantedCameraRotation.y = glm::clamp(wantedCameraRotation.y, -PI * 0.1f, PI * 0.4f);
+  wantedCameraRotation.y = glm::clamp(wantedCameraRotation.y, -PI * 0.45f, -PI * 0.1f);
   wantedCameraOrientation = rotation_to_orientation(wantedCameraRotation);
 }
 void ThirdPersonController::mouse_wheel_handler(const MouseWheelEvent &e)

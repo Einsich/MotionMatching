@@ -16,6 +16,7 @@
 #include "Components/DebugTools/debug_arrow.h"
 #include "Physics/physics.h"
 #include "Application/config.h"
+#include "Animation/Test/animation_tester.h"
 void read_tree(aiNode * node, int depth = 0)
 {
   string tab(depth, ' ');
@@ -37,18 +38,19 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     GameObjectPtr camera = make_game_object();
     arcballCam = camera->add_component<ArcballCamera>(vec3(10.f,50.f,-150.f), 40, vec2(0.f, 30.f*DegToRad));
     arcballCam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
-    add_camera(arcballCam);
+    Camera::add_camera(arcballCam);
     input.mouse_move_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_move_handler);
     input.mouse_click_event() += createMethodEventHandler(*arcballCam, &ArcballCamera::mouse_click_handler);
     gameObjects.push_back(camera);
   }
   {
     GameObjectPtr camera = make_game_object();
-    shared_ptr<FreeCamera> freeCam = camera->add_component<FreeCamera>(vec3(0,100,0), vec2(0,0));
+    shared_ptr<FreeCamera> freeCam = camera->add_component<FreeCamera>(vec3(0,5,-5), radians(vec2(-270,0)));
     freeCam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
-    add_camera(freeCam);
+    
+    Camera::add_camera(freeCam);
     input.mouse_move_event() += createMethodEventHandler(*freeCam, &FreeCamera::mouse_move_handler);
-    input.keyboard_event(KeyAction::Down, SDLK_SPACE) += createMethodEventHandler(*freeCam, &FreeCamera::space_button_handler);
+    input.mouse_click_event() += createMethodEventHandler(*freeCam, &FreeCamera::mouse_click_handler);
     gameObjects.push_back(camera);
   }
   Assimp::Importer importer;
@@ -72,7 +74,8 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   MaterialPtr material;
   {
     GameObjectPtr mmScene = make_game_object();
-    mmScene->add_component<MotionMatchingScene>(dataBase);
+    auto scene = mmScene->add_component<MotionMatchingScene>(dataBase);
+    input.keyboard_event(KeyAction::Down, SDLK_F1) += createMethodEventHandler(*scene, &MotionMatchingScene::toggle_main_camera_handler);
     gameObjects.push_back(mmScene);
   }
   {
@@ -102,13 +105,36 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
 
     auto cam = man->add_component<Camera>();
     cam->set_perspective(70.f * DegToRad, 0.01f, 5000.f);
-    cam->set_priority(1);
-    add_camera(cam);
+    Camera::add_camera(cam, true);
     man->add_component<AnimationDebugRender>();
 
     gameObjects.push_back(man);
 
     arcballCam->set_target(man->get_component<Transform>());
+  }
+  if (dataBase->test.size() > 0)
+  {
+    int testN = 4;
+    float testSq = 5;
+    for (int i = 0; i < testN; i++)
+    {
+      GameObjectPtr man = make_game_object();
+      vec2 rotation = vec2(0,0);
+      man->add_component<Transform>(vec3(0.f, 0.f,-12.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
+      man->add_component<AnimationRender>(
+      mesh,
+      standart_textured_material(tex),
+      get_shader("animation_normal_uv"), get_bool_config("showBones"));
+    
+      man->get_component<AnimationRender>()->get_material()->set_property(Property("Shininess", 100.f));
+
+      auto animPlayer = man->add_component<AnimationPlayer>(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
+
+      man->add_component<AnimationTester>(dataBase, i * (dataBase->test.size() / testN), vec3(i / testN, 0, i % testN) * testSq)
+      ->start_test();
+
+      gameObjects.push_back(man);
+    }
   }
   {
     GameObjectPtr plane = make_game_object();
@@ -184,4 +210,8 @@ dataBase(dataBase){}
 void MotionMatchingScene::save()
 {
   dataBase->save_runtime_parameters();
+}
+void MotionMatchingScene::toggle_main_camera_handler(const KeyboardEvent &e)
+{
+  Camera::set_next_camera();
 }
