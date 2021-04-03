@@ -28,8 +28,6 @@ void read_tree(aiNode * node, int depth = 0)
 
 void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
 {
-  
-  Context &context = Application::get_context();
   Input &input = Application::get_input();
 
   shared_ptr<ArcballCamera> arcballCam;
@@ -211,7 +209,7 @@ void MotionMatchingScene::save()
 {
   dataBase->save_runtime_parameters();
 }
-void MotionMatchingScene::toggle_main_camera_handler(const KeyboardEvent &e)
+void MotionMatchingScene::toggle_main_camera_handler(const KeyboardEvent &)
 {
   Camera::set_next_camera();
 }

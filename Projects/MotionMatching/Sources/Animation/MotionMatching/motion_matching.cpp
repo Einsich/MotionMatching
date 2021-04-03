@@ -8,7 +8,7 @@ dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0, 0, 0), skip_count(0)
 {
   if (!dataBase)
     return;
-  for (int i = 0; i < dataBase->clips.size(); i++)
+  for (uint i = 0; i < dataBase->clips.size(); i++)
   {
     if (dataBase->clips[i].name == first_anim)
     {

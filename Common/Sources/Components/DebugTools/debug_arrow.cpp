@@ -103,7 +103,7 @@ void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &mat
   glDepthFunc(ignoreDepth ? GL_ALWAYS : GL_LESS);
   glDepthMask(ignoreDepth ? GL_FALSE : GL_TRUE);
   constexpr int ARROW_DRAWCALL_LIMIT = 150;
-  for (int i = 0; i < matrices.size(); i += ARROW_DRAWCALL_LIMIT)
+  for (int i = 0; i < (int)matrices.size(); i += ARROW_DRAWCALL_LIMIT)
   {
     int k = glm::min(ARROW_DRAWCALL_LIMIT, (int)matrices.size() - i);
     auto beginT = matrices.begin() + i;
@@ -124,7 +124,7 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
   mainCam.set_to_shader(arrowShader);
   arrowMaterial->bind_to_shader(arrowShader);
   glDisable(GL_CULL_FACE);
-  
+
   render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow);
   render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow);
 

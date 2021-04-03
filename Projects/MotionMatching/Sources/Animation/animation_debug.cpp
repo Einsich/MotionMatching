@@ -80,25 +80,24 @@ string tags_to_text(const set<AnimationTag> &tags)
   }
   return tagsString;
 }
-void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &tags)
+void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &)
 {
   ImGui::Begin("Best score");
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
   ImVec2 corner = ImGui::GetWindowPos();
-  constexpr int N = 6;
+  constexpr int N = 5;
   float scores[N];
   const char*names[N];
-  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f), vec3(0.1f, 0.9f, 0.9f), vec3(0.6f,0.6f, 0.1f), vec3(0.2f, 0.99f, 0.2f)};
+  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f), vec3(0.1f, 0.9f, 0.9f), vec3(0.2f, 0.99f, 0.2f)};
   #define ADD_SCORE(i, SCORE) scores[i] = score.SCORE / score.full_score; names[i] = #SCORE;
   ADD_SCORE(0, pose)
   ADD_SCORE(1, goal_path)
   ADD_SCORE(2, goal_rotation)
   ADD_SCORE(3, goal_tag)
-  ADD_SCORE(4, next_cadr)
-  ADD_SCORE(5, noise)
+  ADD_SCORE(4, noise)
   auto index = mm.get_index().first;
   ImGui::Text(" ");
-  ImGui::Text(" full score %.2f, final norma %.2f, clip %s",score.full_score, score.final_norma, index.get_clip().name.c_str());
+  ImGui::Text(" full score %.2f, clip %s",score.full_score,  index.get_clip().name.c_str());
   for (int i = 0; i < N; i++)
     ImGui::Text("   %s score %.2f", names[i], scores[i] * score.full_score);
   float sum = 0;
@@ -213,7 +212,6 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   for(int i = 0; i < 2; i++)
   {
     material->set_property(Property("Ambient", colors[i]));
-    quat q0 = quat(vec3(0, (*trajectories[i])[0].rotation, 0));
     for (TrajectoryPoint &p: *trajectories[i])
     {
       vec3 v = vec3(transformation * vec4(p.point, 1.f));

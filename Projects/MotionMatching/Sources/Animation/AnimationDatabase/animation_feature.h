@@ -19,8 +19,8 @@ public:
 };
 struct MatchingScores
 {
-  float pose, goal_tag, goal_rotation, goal_path, next_cadr, noise;
-  float full_score, final_norma;
+  float pose, goal_tag, goal_rotation, goal_path, noise;
+  float full_score;
 };
 void pose_matching_norma_weights(AnimationFeaturesWeightsPtr weights_ptr);
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2);

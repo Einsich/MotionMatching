@@ -7,9 +7,9 @@ AnimationTest::AnimationTest(const std::vector<TestPoint> &p):
 
 TestPoint AnimationTest::get_lerped_point(int index, float time)
 {
-  while (index + 1 < points.size() && points[index + 1].time <= time)
+  while (index + 1 < (int)points.size() && points[index + 1].time <= time)
     index++;
-  if (index + 1 >= points.size())
+  if (index + 1 >= (int)points.size())
     return points.back();
   const TestPoint &p0 = points[index];
   const TestPoint &p1 = points[index +1];

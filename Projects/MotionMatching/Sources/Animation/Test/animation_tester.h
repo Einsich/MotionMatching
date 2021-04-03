@@ -9,8 +9,8 @@ private:
   int testInd;
   int curPoint;
   float curTime;
-  vec3 offset;
   float curRotation, wantedRotation;
+  vec3 offset;
 public:
   AnimationTester(AnimationDataBasePtr dataBase, int cur_test, vec3 test_offset);
   void update() override;

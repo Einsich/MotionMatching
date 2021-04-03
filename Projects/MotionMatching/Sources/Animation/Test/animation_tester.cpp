@@ -5,7 +5,7 @@
 #include "Time/time.h"
 #include "Components/DebugTools/debug_arrow.h"
 AnimationTester::AnimationTester(AnimationDataBasePtr dataBase, int cur_test, vec3 test_offset):
-dataBase(dataBase), testInd(cur_test), offset(test_offset), curPoint(0), curTime(0), curRotation(0), wantedRotation(0)
+dataBase(dataBase), testInd(cur_test), curPoint(0), curTime(0), curRotation(0), wantedRotation(0), offset(test_offset)
 {
 
 }
@@ -38,7 +38,7 @@ void AnimationTester::update()
   curTime += dt;
   if (test.points[curPoint].time <= curTime)
   {
-    if (curPoint + 1 < test.points.size())
+    if (curPoint + 1 < (int)test.points.size())
     {
       curPoint++;
     }
@@ -73,7 +73,7 @@ void AnimationTester::render(const Camera&, const DirectionLight&, bool)
     return;
   mat4 transformation = transform->get_transform();
   AnimationTest &test = dataBase->test[testInd];
-  for (int i = 0; i < test.points.size(); i++)
+  for (int i = 0; i < (int)test.points.size(); i++)
   {
     vec3 p0 = test.points[i].point + offset;
     vec3 d = rotateY(vec3(0,0,1), test.points[i].rotation);

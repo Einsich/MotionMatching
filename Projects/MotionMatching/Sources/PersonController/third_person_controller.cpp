@@ -44,7 +44,6 @@ void ThirdPersonController::update()
   vec3 dir = vec3(Input::input().get_key(SDLK_d, sensitive) - Input::input().get_key(SDLK_a, sensitive), 0, Input::input().get_key(SDLK_w, sensitive) - Input::input().get_key(SDLK_s, sensitive));
   
   dir = length(dir) < 1.0f ? dir : normalize(dir);
-  float dirAngle = (length(dir) < 0.1f) ? 0 : glm::angle(vec3(0,0,1), normalize(dir));
   
   float speed = (1.f + runSpeedUp * Input::input().get_key(SDLK_LSHIFT, 0.8f)) * walkSpeed;
   float rotationSpeed = 60 * DegToRad;

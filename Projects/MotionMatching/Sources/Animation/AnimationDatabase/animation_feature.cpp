@@ -69,13 +69,12 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal
 
 MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal)
 {
-  MatchingScores score{0};
+  MatchingScores score{0, 0, 0, 0, 0, 0};
   score.pose = pose_matching_norma(feature1, feature2);
   score.goal_path = goal_path_norma(frame_trajectory, goal);
   score.goal_rotation = rotation_norma(frame_trajectory, goal);
   score.noise = (1.f * std::rand() / RAND_MAX) * weights->noise_scale;
   score.full_score = score.pose + score.goal_path + score.goal_rotation + score.noise;
-  //score.final_norma = score.full_score > 0.f ? 1.f / score.full_score : 0;
   return score;
 }
 const std::string &get_tag_name(AnimationTag tag)

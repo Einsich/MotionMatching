@@ -90,7 +90,7 @@ bool BoxCollider::raycast_hit(Collision &collision, const mat4 &transform, const
   }
   return false;
 }
-bool CapsuleCollider::raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray)
+bool CapsuleCollider::raycast_hit(Collision &, const mat4 &, const mat3 &, const Ray &)
 {
   return false;
 }
