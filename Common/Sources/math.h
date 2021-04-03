@@ -32,3 +32,4 @@ quat to_quat(const T& t)
 {
   return quat(t.w, t.x, t.y, t.z);
 }
+#define float_equal(x, y) (abs((x) - (y)) < 1e-8f)

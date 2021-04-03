@@ -126,6 +126,20 @@ float Input::get_key(SDL_Keycode keycode, float reaction_time)
     return t < 1 ? t : 1;
   }
 }
+float Input::get_key_derivative(SDL_Keycode keycode, float reaction_time)
+{
+  auto p = keyMap[keycode];
+  if (p.first == 0)
+  {
+    float t = 1.f - (Time::time() - p.second) / reaction_time;
+    return t < 0 ? 0 : -1;
+  }
+  else
+  {
+    float t = (Time::time() - p.second) / reaction_time;
+    return t < 1 ? 1 : 0;
+  }
+}
 float Input::get_wheel()
 {
   float dt = Time::time() - wheelData.lastTime;

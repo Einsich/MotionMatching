@@ -10,13 +10,15 @@ private:
   float wantedRotation, currentRotation;
   float currentZoom, wantedZoom;
   bool crouching, disableEvents;
-  float walkSpeed, runSpeedUp;
   float view_offset;
+  vec3 speed;
 public:
-  ThirdPersonController(vec2 rotation, float zoom, float walk_speed, float run_speed_up);
+  ThirdPersonController(vec2 rotation, float zoom);
   void update() override;
   void mouse_move_handler(const MouseMoveEvent &e);
   void mouse_wheel_handler(const MouseWheelEvent &e);
   void view_offset_handler(const KeyboardEvent &e);
   void disable_events_handler(const KeyboardEvent &e);
+  void crouch_event_handler(const KeyboardEvent &e);
+
 };
