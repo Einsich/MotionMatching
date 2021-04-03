@@ -94,7 +94,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
     input.keyboard_event(KeyAction::Down, SDLK_RIGHT) += createMethodEventHandler(*animPlayer, &AnimationPlayer::animation_selector);
 
-    auto personController = man->add_component<ThirdPersonController>(rotation + vec2(PI*0.5f,0), 3.f, 1.2f, 2.f);
+    auto personController = man->add_component<ThirdPersonController>(rotation + vec2(PI*0.5f,0), 3.f, 1.2f, 1.7f);
     input.mouse_move_event() += createMethodEventHandler(*personController, &ThirdPersonController::mouse_move_handler);
     input.mouse_wheel_event() += createMethodEventHandler(*personController, &ThirdPersonController::mouse_wheel_handler);
     input.keyboard_event(KeyAction::Down, SDLK_LEFT) += createMethodEventHandler(*personController, &ThirdPersonController::view_offset_handler);

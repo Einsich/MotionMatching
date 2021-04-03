@@ -213,6 +213,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
   for(int i = 0; i < 2; i++)
   {
     material->set_property(Property("Ambient", colors[i]));
+    quat q0 = quat(vec3(0, (*trajectories[i])[0].rotation, 0));
     for (TrajectoryPoint &p: *trajectories[i])
     {
       vec3 v = vec3(transformation * vec4(p.point, 1.f));

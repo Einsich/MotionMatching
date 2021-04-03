@@ -50,9 +50,9 @@ void ThirdPersonController::update()
   float rotationSpeed = 60 * DegToRad;
   float rotationDelta = (wantedCameraRotation.x) - currentRotation;
   
-  if (glm::abs(rotationDelta) > DegToRad * 5)
-    currentRotation += sign(rotationDelta) * rotationSpeed * Time::delta_time();
-
+  //if (glm::abs(rotationDelta) > DegToRad * 5)
+  //  currentRotation += sign(rotationDelta) * rotationSpeed * Time::delta_time();
+  currentRotation -= player->rootDeltaRotation;
   player->inputGoal.tags.clear();
   if (Input::input().get_key(SDLK_SPACE) > 0)
   {

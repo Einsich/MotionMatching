@@ -78,7 +78,7 @@ void AnimationPlayer::update()
   
   AnimationCadr targetCadr = index.get_lerped_cadr();
   rootDeltaTranslation = targetCadr.rootTranslationDelta * ticks;
-  rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
+  rootDeltaRotation = targetCadr.rootRotationDelta ;
   
   Transform* transform = game_object()->get_component<Transform>();
   if (false)//transform)
@@ -144,7 +144,7 @@ void AnimationPlayer::update()
     }
   }
   float lerp_strength = index.get_data_base()->featureWeights->animation_lerp;
-  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks*lerp_strength);
+  currentCadr = targetCadr;//lerped_cadr(currentCadr, targetCadr, dt * ticks*lerp_strength);
   tree.set_cadr(currentCadr);
   tree.calculate_bone_transforms();
 }

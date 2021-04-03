@@ -65,9 +65,6 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
 
     }    
   }
-  float r0 = hipsRotation[0];
-  for (uint i = 0; i < duration; i++) 
-    hipsRotation[i] -= r0;
 
   ground_calculate();
 }
@@ -92,8 +89,17 @@ AnimationCadr AnimationClip::get_frame(uint i) const
   }
   frame.nodeTranslation = channels[hipsChannelIndex].get_translation_c(i);
   
+  quat q0 = quat(vec3(0, -get_root_rotation(i), 0));
   frame.rootRotationDelta = get_root_rotation(i + 1) - get_root_rotation(i);
-  frame.rootTranslationDelta = get_root_traslation(i + 1) - get_root_traslation(i);
+  if ((frame.rootRotationDelta) > PI)
+  {
+    frame.rootRotationDelta -= 2 * PI;
+  }
+  if ((frame.rootRotationDelta) < -PI)
+  {
+    frame.rootRotationDelta += 2 * PI;
+  }
+  frame.rootTranslationDelta = q0 * (get_root_traslation(i + 1) - get_root_traslation(i));
   return frame;
 }
 
@@ -102,7 +108,10 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   AnimationTrajectory pathFeature;
   vec3 point0 = -hipsTranslation[frame];
   point0.y = 0;
-  float rotation0 = hipsRotation[frame];
+  float rotation1 = hipsRotation[frame];
+  float rotation0 = hipsRotation[0];
+  quat q0 = quat(vec3(0, -rotation0, 0));
+  quat q1 = quat(vec3(0, -rotation1, 0));
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
@@ -110,14 +119,14 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
     {
       if (next < duration)
       {
-        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-        pathFeature.trajectory[j].rotation = hipsRotation[next];
+        pathFeature.trajectory[j].point = q1*(hipsTranslation[next]+point0);
+        pathFeature.trajectory[j].rotation = hipsRotation[next] - rotation1;
       }
       else
       {
-        next -= duration;
-        pathFeature.trajectory[j].point = hipsTranslation[next] - hipsTranslation[0] + hipsTranslation[duration - 1]+point0;
-        pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1];
+        next -= duration - 1;
+        pathFeature.trajectory[j].point = q0*(hipsTranslation[next] - hipsTranslation[0]) + q1*(hipsTranslation[duration - 1]+point0);
+        pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1] - rotation1;
       }
     }
     else

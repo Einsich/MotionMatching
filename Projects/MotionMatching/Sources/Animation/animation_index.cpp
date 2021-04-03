@@ -115,7 +115,7 @@ void AnimationLerpedIndex::update(float dt)
     {
       first = second;
       second.increase_cadr();
-      t -= 1;
+      t -= (int)t;
     }
   }
 }
