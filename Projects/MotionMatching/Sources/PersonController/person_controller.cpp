@@ -5,11 +5,11 @@
 #include "math.h"
 #include "Components/DebugTools/debug_arrow.h"
 PersonController::PersonController(vec3 position) :
-realRotation(0), simulatedRotation(0),
+simulatedRotation(0), realRotation(0),
 speed(0),
-realPosition(position), simulatedPosition(position)
+simulatedPosition(position), realPosition(position)
 {}
-  constexpr float maxErrorRadius = 1.f;
+  constexpr float maxErrorRadius = 0.5f;
 
 void PersonController::update_from_speed(vec3 speed_set, float dt)
 {

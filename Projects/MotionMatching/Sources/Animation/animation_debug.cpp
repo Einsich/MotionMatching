@@ -179,6 +179,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
 
   u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
   onGround = player->onGround;
+  /*
   material->set_property(Property("Ambient", vec3(1,1,1)));
   transform->set_scale(vec3(0.1f));
   for (vec3 v: feature.features)
@@ -186,6 +187,7 @@ void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& l
     transform->get_position() = transformation * vec4(v, 1.f);
     meshRender->render(transform, mainCam, light, true);
   }
+  */
 
   if (onGround & 1)
   {

@@ -116,13 +116,14 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   }
   if (dataBase->test.size() > 0)
   {
-    int testN = 4;
+    int testN = 9;
+    int testK = (int)sqrt(testN);
     float testSq = 5;
     for (int i = 0; i < testN; i++)
     {
       GameObjectPtr man = make_game_object();
       vec2 rotation = vec2(0,0);
-      vec3 pos = vec3(i / testN, 0, i % testN) * testSq;
+      vec3 pos = vec3(i / testK, 0, i % testK) * testSq;
       man->add_component<Transform>(vec3(0.f, 0.f,-12.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
       man->add_component<PersonController>(pos);
 
@@ -184,7 +185,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     }
   }
   {
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 0; i++)
     {
       vec3 offset = vec3(-1.f,0.f,-1.f) + vec3(-i, i*0.5, i)*0.4f;
       GameObjectPtr sphere = make_game_object();

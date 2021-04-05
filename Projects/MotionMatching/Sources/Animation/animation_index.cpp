@@ -37,15 +37,15 @@ void AnimationIndex::increase_cadr()
 }
 bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &to)
 {
-
-  //if (!to.get_clip().loopable && to.cadr + 10 >= to.get_clip().duration)
-  //  return false;
+  constexpr int N = 10;
+  #define ABS_L(k, n) (((k + n) % n) >= N)
   if (from.clip == to.clip)
   {
+    int k = from.cadr - to.cadr;
     const AnimationClip &clip = to.get_clip();
     if (clip.loopable)
-      return ((to.cadr - from.cadr + clip.duration) % clip.duration) >= 10;
-    return abs(from.cadr - to.cadr) >= 10;
+      return ABS_L(k, clip.duration) && ABS_L(-k, clip.duration);
+    return abs(k) >= N;
   }
   return true;
 }

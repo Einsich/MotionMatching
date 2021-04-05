@@ -64,8 +64,8 @@ void AnimationDataBase::add_tests()
   for (int i = -1; i <= 1; i++)
     for (int j = -1; j <= 1; j++)
     {
-      test.push_back(walk_test(vec3(i, 0, j), walkSpeed , 5));
-      test.push_back(walk_test(vec3(i, 0, j), runSpeeds[1 - j], 5));
+      test.push_back(walk_test(vec3(i, 0, j), walkSpeeds[1 - j] , 3));
+      test.push_back(walk_test(vec3(i, 0, j), runSpeeds[1 - j], 3));
     }
 }
 

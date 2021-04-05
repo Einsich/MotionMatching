@@ -35,18 +35,17 @@ vec3 get_boost_dt(vec3 speed, float dt)
   bool onPlace = float_equal(right, 0) && float_equal(forward, 0);
   float run = Input::input().get_key(SDLK_LSHIFT);
   vec3 wantedSpeed(right, 0, forward);
-  float speedLength = length(speed);
   if (!onPlace)
   {
     wantedSpeed = normalize(wantedSpeed);
+    int moveIndex = forward > 0 ? 0 : forward < 0 ? 2 : 1;
     if(run > 0)
     {
-      int runIndex = forward > 0 ? 0 : forward < 0 ? 2 : 1;
-      wantedSpeed *= runSpeeds[runIndex];
+      wantedSpeed *= runSpeeds[moveIndex];
     }
     else
     {
-      wantedSpeed *= walkSpeed;
+      wantedSpeed *= walkSpeeds[moveIndex];
     }
   }
   vec3 dv = (wantedSpeed - speed);
@@ -80,7 +79,6 @@ void ThirdPersonController::update()
   personController->update_from_speed(personController->speed + get_boost_dt(personController->speed, dt), dt);
 
 
-  float rotationSpeed = 60 * DegToRad;
   float rotationDelta = (wantedCameraRotation.x) + personController->realRotation;
   
 
