@@ -8,11 +8,8 @@ enum class AnimationFeaturesNode
   Hips,
   LeftHand,
   RightHand,
-  LeftFoot,
   LeftToeBase,
-  RightFoot,
   RightToeBase,
-  Head,
   Count
 };
 class AnimationFeaturesWeights : public ISerializable

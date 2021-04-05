@@ -11,6 +11,7 @@
 #include "Components/MeshRender/mesh_render.h"
 #include "Animation/AnimationRender/animation_render.h"
 #include "PersonController/third_person_controller.h"
+#include "PersonController/person_controller.h"
 #include "Animation/animation_player.h"
 #include "Animation/animation_debug.h"
 #include "Components/DebugTools/debug_arrow.h"
@@ -78,8 +79,10 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
   }
   {
     GameObjectPtr man = make_game_object();
-    vec2 rotation = vec2(0,0);
-    man->add_component<Transform>(vec3(0.f, 0.f,-12.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
+    vec2 rotation(0,0);
+    vec3 pos(0.f, 0.f,-12.f);
+    man->add_component<Transform>(pos, vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
+    man->add_component<PersonController>(pos);
     man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
@@ -119,7 +122,10 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
     {
       GameObjectPtr man = make_game_object();
       vec2 rotation = vec2(0,0);
+      vec3 pos = vec3(i / testN, 0, i % testN) * testSq;
       man->add_component<Transform>(vec3(0.f, 0.f,-12.f), vec3(rotation.x, rotation.y ,0), vec3(1,1,1));
+      man->add_component<PersonController>(pos);
+
       man->add_component<AnimationRender>(
       mesh,
       standart_textured_material(tex),
@@ -129,7 +135,7 @@ void init_scene(vector<GameObjectPtr>&gameObjects, DirectionLight& sun)
 
       auto animPlayer = man->add_component<AnimationPlayer>(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
 
-      man->add_component<AnimationTester>(dataBase, i * (dataBase->test.size() / testN), vec3(i / testN, 0, i % testN) * testSq)
+      man->add_component<AnimationTester>(dataBase, i * (dataBase->test.size() / testN), pos)
       ->start_test();
 
       gameObjects.push_back(man);

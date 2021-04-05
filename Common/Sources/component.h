@@ -15,6 +15,7 @@ public:
     return gameObject;
   }
 };
+#define REQUIRE(Type, name) Type *name = game_object()->get_component<Type>(); if (name == nullptr) {debug_error("[%s:%d] Isn't component %s on game object", __FILE__, __LINE__, #Type); return;}
 
 class IUpdatable
 {

@@ -9,7 +9,6 @@ private:
   int testInd;
   int curPoint;
   float curTime;
-  float curRotation, wantedRotation;
   vec3 offset;
 public:
   AnimationTester(AnimationDataBasePtr dataBase, int cur_test, vec3 test_offset);

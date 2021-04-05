@@ -79,7 +79,7 @@ void AnimationPlayer::update()
   
   AnimationCadr targetCadr = index.get_lerped_cadr();
   rootDeltaTranslation = targetCadr.rootTranslationDelta * ticks;
-  rootDeltaRotation = targetCadr.rootRotationDelta ;
+  rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
   
   Transform* transform = game_object()->get_component<Transform>();
   if (transform && get_bool_config("UseIK"))
@@ -87,9 +87,7 @@ void AnimationPlayer::update()
     mat4 t = transform->get_transform();
     vec3 hips = index.first.get_feature().features[(int)AnimationFeaturesNode::Hips];
     vec3 leftToe = index.first.get_feature().features[(int)AnimationFeaturesNode::LeftToeBase];
-    vec3 leftFoot = index.first.get_feature().features[(int)AnimationFeaturesNode::LeftFoot];
     vec3 rightToe = index.first.get_feature().features[(int)AnimationFeaturesNode::RightToeBase];
-    vec3 rightFoot = index.first.get_feature().features[(int)AnimationFeaturesNode::RightFoot];
     
     onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
     float h = 0;
@@ -104,7 +102,6 @@ void AnimationPlayer::update()
         onGround |= 1;
       }
       leftToe.y -= h;
-      leftFoot.y -= h;
     }
     if (!ikFoot[1].onGround && raycast_in_point(t * vec4(rightToe, 1), h, rightToeNormal))
     { 
@@ -114,7 +111,6 @@ void AnimationPlayer::update()
         onGround |= 2;
       }
       rightToe.y -= h;
-      rightFoot.y -= h;
     }
     float dh = 0;
     if (raycast_in_point(t * vec4(hips, 1), dh, normal))
@@ -127,8 +123,8 @@ void AnimationPlayer::update()
     mat4 inv_t = inverse(t);
     leftToeNormal = inv_t * vec4(leftToeNormal, 0);
     rightToeNormal = inv_t * vec4(rightToeNormal, 0);
-    set_data_to_IK(t, 0, leftFoot, leftToe, leftToeNormal, "LeftFoot", "LeftToeBase");
-    set_data_to_IK(t, 1, rightFoot, rightToe, rightToeNormal, "RightFoot", "RightToeBase");
+    //set_data_to_IK(t, 0, leftFoot, leftToe, leftToeNormal, "LeftFoot", "LeftToeBase");
+    //set_data_to_IK(t, 1, rightFoot, rightToe, rightToeNormal, "RightFoot", "RightToeBase");
     
     int hipsNode = tree.get_child("Hips");
     for (int i = 0; i < 2; i++)

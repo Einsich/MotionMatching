@@ -9,11 +9,8 @@ weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(Hips),
     FEATURE(LeftHand),
     FEATURE(RightHand),
-    FEATURE(LeftFoot),
     FEATURE(LeftToeBase),
-    FEATURE(RightFoot),
-    FEATURE(RightToeBase),
-    FEATURE(Head)})
+    FEATURE(RightToeBase)})
 {}
 size_t AnimationFeaturesWeights::serialize(std::ostream& os) const
 {

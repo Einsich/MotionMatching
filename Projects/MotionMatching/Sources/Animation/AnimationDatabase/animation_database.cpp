@@ -1,5 +1,5 @@
 #include "animation_database.h"
-
+#include "../man_property.h"
 AnimationDataBase::AnimationDataBase(aiNode *root):
 tree(root), featureWeights(make_shared<AnimationFeaturesWeights>())
 {
@@ -34,41 +34,38 @@ void AnimationDataBase::load_runtime_parameters()
 }
 constexpr float dt = 0.2f;
 
-constexpr vec3 hipsPoint = vec3(0, 0.96f, 0);
 AnimationTest walk_test(vec3 dir, float speed, float max_t)
 {
   dir = normalize(dir);
   AnimationTest test;
-  float a = speed;
+  float a = speed * 3;
   float s = 0;
   float t = 0;
-  vec3 p = hipsPoint;
+  vec3 p = vec3(0, hipsHeightStand, 0);
   float stop_time = max_t * 0.8f;
   for (; t <= stop_time; t+= dt)
   {
     s = glm::clamp(s + a * dt, 0.f, speed);
     p += dir * s * dt;
-    test.points.push_back({p, 0, t});
+    test.points.push_back({p, dir * s, 0, t});
   }
   for (; t <= max_t; t+= dt)
   {
     s = glm::clamp(s - a * dt, 0.f, speed);
     p += dir * s * dt;
-    test.points.push_back({p, 0, t});
+    test.points.push_back({p, dir * s, 0, t});
   }
   return test;
 }
 void AnimationDataBase::add_tests()
 {
-  constexpr float walkSpeed = 1.2f;
-  constexpr float runSpeed = walkSpeed * 2.f;
+  
 
   for (int i = -1; i <= 1; i++)
     for (int j = -1; j <= 1; j++)
     {
-      float c = j == 1 ? 1 : j == 0 ? 0.9f : 0.8f;
-      test.push_back(walk_test(vec3(i, 0, j), walkSpeed * c, 5));
-      test.push_back(walk_test(vec3(i, 0, j), runSpeed * c, 5));
+      test.push_back(walk_test(vec3(i, 0, j), walkSpeed , 5));
+      test.push_back(walk_test(vec3(i, 0, j), runSpeeds[1 - j], 5));
     }
 }
 

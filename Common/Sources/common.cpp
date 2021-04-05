@@ -12,7 +12,7 @@ struct Message
   bool status;
 };
 list<Message> q;
-const int messageLen = 200, timeLen = 10;
+constexpr int messageLen = 500, timeLen = 20;
 char messageBuf[messageLen], timeBuf[timeLen];
 
 void debug_common(const char *fmt, int status, va_list args)
@@ -27,8 +27,7 @@ void debug_common(const char *fmt, int status, va_list args)
 
   q.push_back({string(timeBuf) + string(messageBuf), (bool)status});
 
-  printf("%s%s\n", timeBuf, messageBuf);
-
+  fprintf(stdout, "%s%s\n", timeBuf, messageBuf);
 }
 void debug_error(const char *fmt, ...)
 {

@@ -4,22 +4,23 @@
 #include "GameObject/game_object.h"
 #include "Time/time.h"
 #include "Components/DebugTools/debug_arrow.h"
+#include "../../PersonController/person_controller.h"
 AnimationTester::AnimationTester(AnimationDataBasePtr dataBase, int cur_test, vec3 test_offset):
-dataBase(dataBase), testInd(cur_test), curPoint(0), curTime(0), curRotation(0), wantedRotation(0), offset(test_offset)
+dataBase(dataBase), testInd(cur_test), curPoint(0), curTime(0), offset(test_offset)
 {
 
 }
 void AnimationTester::update()
 {
-  AnimationPlayer* player = game_object()->get_component<AnimationPlayer>();
-  Transform* transform = game_object()->get_component<Transform>();
-  if (!player || !transform)
-    return;
+  REQUIRE(AnimationPlayer, player)
+  REQUIRE(Transform, transform)
+  REQUIRE(PersonController, personController);
 
   float dt = Time::delta_time();
   AnimationGoal &goal = player->inputGoal;
   AnimationTest &test = dataBase->test[testInd];
-  vec3 p0 = test.get_lerped_point(curPoint, curTime).point;
+  TestPoint testPoint = test.get_lerped_point(curPoint, curTime);
+  vec3 p0 = testPoint.point;
   p0.y = 0;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
@@ -27,13 +28,7 @@ void AnimationTester::update()
     goal.path.trajectory[i].point = p.point - p0;
     goal.path.trajectory[i].rotation = p.rotation;
   }
-  transform->get_position() -= 
-  (player->rootDeltaTranslation.z * transform->get_forward() + 
-  player->rootDeltaTranslation.y * transform->get_up()+ 
-  -player->rootDeltaTranslation.x * transform->get_right()) * dt ;
-  
-  curRotation += player->rootDeltaRotation;
-  //transform->set_rotation(curRotation); 
+  personController->update_from_speed(testPoint.velocity, dt);
 
   curTime += dt;
   if (test.points[curPoint].time <= curTime)
@@ -50,15 +45,13 @@ void AnimationTester::update()
 }
 void AnimationTester::start_test(int test)
 {
-  Transform* transform = game_object()->get_component<Transform>();
-  if (!transform)
-    return;
+  REQUIRE(Transform, transform)
+  REQUIRE(PersonController, personController);
+
   testInd = test >= 0 ? test % dataBase->test.size() : testInd;
   curPoint = 0;
   curTime = 0;
-  curRotation = wantedRotation = 0;
-  transform->get_position() = offset;
-  transform->set_rotation(curRotation); 
+  personController->set_pos_rotation(offset, 0);
 }
 void AnimationTester::render(const Camera&, const DirectionLight&, bool)
 {

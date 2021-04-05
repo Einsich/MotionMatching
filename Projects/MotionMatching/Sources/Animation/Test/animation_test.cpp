@@ -14,5 +14,5 @@ TestPoint AnimationTest::get_lerped_point(int index, float time)
   const TestPoint &p0 = points[index];
   const TestPoint &p1 = points[index +1];
   float t = (time - p0.time) / (p1.time - p0.time);
-  return {lerp(p0.point, p1.point, t), lerp(p0.rotation, p1.rotation, t), time};
+  return {lerp(p0.point, p1.point, t), lerp(p0.velocity, p1.velocity, t), lerp(p0.rotation, p1.rotation, t), time};
 }

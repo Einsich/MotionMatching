@@ -1,16 +1,16 @@
 #pragma once
-#include "Event/input.h"
+#include "math.h"
 #include "component.h"
-class TestPersonController : public Component, public IUpdatable
+class PersonController : public Component
 {
 private:
-  float rotation = 0, wantedRotation = 0;
-  bool crouching = false;
-public:
+  void update(float dt);
 
-  void update() override;
-  void crouch(const KeyboardEvent &event);
-  void jump(const KeyboardEvent &event);
-  void rotate(const KeyboardEvent &event);
+public:
+  float simulatedRotation, realRotation;
+  vec3 speed, simulatedPosition, realPosition;
+  PersonController(vec3 position);
+  void update_from_speed(vec3 speed, float dt);
+  void set_pos_rotation(vec3 position, float rotation);
 };
 

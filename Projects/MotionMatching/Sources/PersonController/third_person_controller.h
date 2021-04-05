@@ -7,11 +7,9 @@ class ThirdPersonController: public Component, public IUpdatable
 private:
   vec3 wantedCameraOrientation, currentCameraOrientation;
   vec2 wantedCameraRotation, currentCameraRotation;
-  float wantedRotation, currentRotation;
   float currentZoom, wantedZoom;
   bool crouching, disableEvents;
   float view_offset;
-  vec3 speed;
 public:
   ThirdPersonController(vec2 rotation, float zoom);
   void update() override;

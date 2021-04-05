@@ -10,6 +10,8 @@
 using namespace glm;
 
 constexpr float PI = 3.1415926535897932384626433832795f;
+constexpr float PIHALF = PI * 0.5f;
+constexpr float PITWO = PI * 2.0f;
 constexpr float DegToRad = PI / 180.f;
 
 template<typename T>

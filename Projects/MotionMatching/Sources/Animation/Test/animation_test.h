@@ -4,7 +4,7 @@
 #include <vector>
 struct TestPoint
 {
-  vec3 point;
+  vec3 point, velocity;
   float rotation;
   float time;
 };
