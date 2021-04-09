@@ -76,11 +76,11 @@
     "showMatchingStatistic":["yes","no"],
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
+  "Project": "ECSCodeGen",
   "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
   "showBones": "no",
-  "showGoal": "yes",
-  "showMatchingStatistic": "yes"
+  "showGoal": "no",
+  "showMatchingStatistic": "no"
 },
 }

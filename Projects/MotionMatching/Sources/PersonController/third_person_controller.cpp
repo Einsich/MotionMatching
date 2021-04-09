@@ -31,7 +31,7 @@ vec3 get_boost_dt(vec3 speed, float dt)
 {
   float right = Input::input().get_key(SDLK_d) - Input::input().get_key(SDLK_a);
   float forward = Input::input().get_key(SDLK_w) - Input::input().get_key(SDLK_s);
-
+  //forward *= 1.3f;
   bool onPlace = float_equal(right, 0) && float_equal(forward, 0);
   float run = Input::input().get_key(SDLK_LSHIFT);
   vec3 wantedSpeed(right, 0, forward);

@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <assert.h>
+#include <unordered_map>
+#include "hash_string.h"
 using namespace std;
 namespace ecs
 {
@@ -16,43 +18,66 @@ namespace ecs
     unsigned int array_index() const;
 
   };
-  class TypeDescription
+  struct FullTypeDescription
   {
-  public:
-    string name;
-    int size, uniqueID;
-    TypeDescription(const char* name, unsigned long size, int uniqueID)
-    :name(name), size(size), uniqueID(uniqueID){}
+    string name; 
+    string_hash hash;
+    uint sizeOf;
+  };
+  struct TypeDescription
+  {
+    string_hash name_hash;
+    uint typeId;
   };
 
   class ComponentContainer
   {
     void* data;
-    const TypeDescription& type;
-    int componentCount;
   public:
-    ComponentContainer(const TypeDescription& type, int count);
+    uint typeID;
+    int componentCount;
+    ComponentContainer() = delete;
+    ComponentContainer(uint type, int count);
     void* get_component(int i);
-    const TypeDescription& get_description() const;
   };
 
-  struct SystemArchetypes
+  struct ComponentTypes
   {
-    vector<vector<ComponentContainer*>> archetypes;
+    vector<TypeDescription> componentsTypes;
   };
+  
   class Archetype
   {
-    map<string, ComponentContainer> components;
+    unordered_map<string_hash, ComponentContainer*> components;
   public: 
-    Archetype(vector<pair<string, pair<TypeDescription, int>>> types);
-    ComponentContainer* get_container(const string& name);
+    Archetype(const ComponentTypes &types, int count);
+    ComponentContainer *get_container(const char *name);
+    ComponentContainer *get_container(string_hash name);
   };
+  struct SystemArchetypes
+  {
+    vector<Archetype*> archetypes;
+  };
+
+  struct FunctionArgument
+  {
+    TypeDescription descr;
+    bool optional = false;
+  };
+  struct SystemDescription
+  {
+    std::vector<FunctionArgument> args;
+    SystemArchetypes
+  };
+
   template<typename T>
-  T* get_component(Entity entity, const string& name);
+  T* get_component(Entity entity, const char *name);
+
+  template<typename T>
+  TypeDescription get_type_description(const char *name);
 
   void initialize_ecs();
 
-  SystemArchetypes register_system(const SystemDesription& descr);
-
+  SystemArchetypes register_system(const SystemDescription& descr);
 
 }

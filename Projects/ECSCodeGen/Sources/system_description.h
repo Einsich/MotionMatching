@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
 #include <string>
-#
-struct FunctionArgument
+#include "hash_string.h"
+struct ParserFunctionArgument
 {
-    std::string type = "none", name = "none";
+    std::string type, name;
     bool optional = false;
 };
-struct SystemDesription
+struct ParserSystemDescription
 {
     std::string sys_file, sys_name;
-    std::vector<FunctionArgument> args;
+    std::vector<ParserFunctionArgument> args;
 };

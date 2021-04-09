@@ -32,9 +32,9 @@ bool erase_substr(std::string& str, const std::string& to_erase)
     }
     return false;
 }
-FunctionArgument clear_arg(std::string str)
+ParserFunctionArgument clear_arg(std::string str)
 {
-    FunctionArgument arg;
+    ParserFunctionArgument arg;
     arg.optional = erase_substr(str, "*");
     erase_substr(str, "&");
     erase_substr(str, "const");
@@ -68,7 +68,7 @@ void process_inl_file(const fs::path& path)
     static const std::regex args_regex("[(][a-zA-Z0-9_&*,: \n\t\r\a\f\v]+[)]");
     static const std::regex arg_regex("[a-zA-Z0-9_&*: \n\t\r\a\f\v]+");
 
-    std::vector<SystemDesription>  systemsDescriptions;
+    std::vector<ParserSystemDescription>  systemsDescriptions;
     auto systems = get_matches(str, sys_regex);
     for (auto& system : systems)
     {
@@ -78,7 +78,7 @@ void process_inl_file(const fs::path& path)
             return;
         args[0] = args[0].substr(1, args[0].size() - 2);
 
-        SystemDesription descr;
+        ParserSystemDescription descr;
         descr.sys_file = path.string();
         descr.sys_name = sys_name[0];
         args = get_matches(args[0], arg_regex);
