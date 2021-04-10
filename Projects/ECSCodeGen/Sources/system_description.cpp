@@ -14,4 +14,30 @@ namespace ecs
   {
     function();
   }
+
+  SystemIterator SystemDescription::begin()
+  {
+    return SystemIterator(*this, 0, 0);
+  }
+  SystemIterator SystemDescription::end()
+  {
+    return SystemIterator(*this, archetypes.size(), 0);
+  }
+
+  SystemIterator::SystemIterator(const SystemDescription &system, int archetype, int component):
+    system(system), archetypeIndex(archetype), componentIndex(component){}
+
+  bool SystemIterator::operator!=(SystemIterator const& other) const
+  {
+    return archetypeIndex != other.archetypeIndex || componentIndex != other.componentIndex;
+  }
+  void SystemIterator::operator++()
+  {
+    componentIndex++;
+    if (system.archetypes[archetypeIndex].archetype->componentCount <= componentIndex)
+    {
+      componentIndex = 0;
+      archetypeIndex++;
+    }
+  }
 }
