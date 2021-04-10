@@ -1,4 +1,5 @@
 #include "test_header.h"
+#include "ecs_core.h"
 
 void test_system  
 ( int a, float  &b)

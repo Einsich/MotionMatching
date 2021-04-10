@@ -1,5 +1,4 @@
 #include "system_example.inl"
-#include "ecs_core.h"
 
 void test_system_func();
 void Lol_system_func();

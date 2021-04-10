@@ -1,14 +1,26 @@
 #pragma once
-#include <vector>
-#include <string>
-#include "hash_string.h"
-struct ParserFunctionArgument
+#include "type_description.h"
+#include "archetype.h"
+
+namespace ecs
 {
-    std::string type, name;
+  struct FunctionArgument
+  {
+    TypeDescription descr;
     bool optional = false;
-};
-struct ParserSystemDescription
-{
-    std::string sys_file, sys_name;
-    std::vector<ParserFunctionArgument> args;
-};
+  };
+  struct SystemCashedArchetype
+  {
+    Archetype *archetype;
+    std::vector<ComponentContainer*> containers;
+    SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers);
+  };
+  struct SystemDescription
+  {
+    std::vector<FunctionArgument> args;
+    std::vector<SystemCashedArchetype> archetypes;
+    void (*function)();
+    SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)());
+    void execute();
+  };
+}
