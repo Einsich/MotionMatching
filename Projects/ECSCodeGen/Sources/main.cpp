@@ -104,8 +104,16 @@ void process_inl_file(const fs::path& path)
     outFile << "*/\n";
 
 }
+#include "ecs_core.h"
 int main()
 {
+  ecs::initialize_ecs();
+  ecs::update_systems();
+  ecs::update_systems();
+  ecs::update_systems();
+  ecs::update_systems();
+  ecs::free_ecs();
+  return 0;
     const fs::path workdir = fs::current_path();
     std::cout << workdir.string() << std::endl;
     for (auto& p : fs::recursive_directory_iterator("Sources/ECSCodeGenerator/ecs"))

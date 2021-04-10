@@ -1,13 +1,44 @@
 #include "ecs_core.h"
 #include "ecs_types.h"
 #include "system_description.h"
+#include "ecs/test_header.h"
 namespace ecs
 {
-  static uint globalTypeIndex = 0;
-  vector<FullTypeDescription> types;
-  vector<Archetype*> archetypes;
+  struct Core
+  {
+    uint globalTypeIndex = 0;
+    vector<FullTypeDescription> types;
+    vector<Archetype*> archetypes;
+    std::vector<SystemDescription*> systems;
+    Core()
+    {
+    }
+    ~Core()
+    {
+      for (Archetype *archetype : archetypes)
+        archetype->~Archetype();
+    }
+  };
+  static Core &core()
+  {
+    static Core *singleton = new Core();
+    return *singleton;
+  }
 
-  std::unordered_map<string_hash, int> l;
+  static ComponentContainer *dummyContainer = new ComponentContainer();
+  
+  
+  template<typename T>
+  uint type_index()
+  {
+    static uint index = core().globalTypeIndex++;
+    return index;
+  };
+  template<class T>
+  void* template_constructor(void *memory)
+  {
+    return new (memory) T();
+  }
 
   unsigned int Entity::archetype_index() const
   {
@@ -18,69 +49,105 @@ namespace ecs
     return index & index_mask;
   }
 
-  Archetype::Archetype(const ComponentTypes &types, int count)
+  FullTypeDescription::FullTypeDescription(string &&name, string_hash hash, uint size_of, void *(*constructor)(void*)):
+  name(name), hash(hash), sizeOf(size_of), constructor(constructor)
+  {
+  }
+  TypeDescription::TypeDescription(string_hash name_hash, uint typeId):
+    name_hash(name_hash), typeId(typeId){}
+  template<typename T>
+  TypeDescription::TypeDescription(const char *name):
+    name_hash(HashedString(name)), typeId(type_index<T>()){}
+  
+  string_hash TypeDescription::hash() const
+  {
+    return name_hash ^ (typeId * 16397816463u);
+  }
+  Archetype::Archetype(const ComponentTypes &types, int count):
+    components(), componentCount(count)
   {
     for(const auto& t : types.componentsTypes)
-      components[t.name_hash] = new ComponentContainer(t.typeId, count);
+    components.try_emplace(t.hash(), t.typeId, count);
   }
+  ComponentContainer *Archetype::get_container(const TypeDescription &type)
+  {
+    auto it = components.find(type.hash());
+    return it == components.end() ? dummyContainer : &it->second;
+  }
+  template<typename T>
   ComponentContainer *Archetype::get_container(const char *name)
   {
-    return components[HashedString(name)];
+    auto it = components.find(TypeDescription::TypeDescription<T>(name).hash());
+    return it == components.end() ? dummyContainer : &it->second;
   }
-  ComponentContainer *Archetype::get_container(string_hash name)
-  {
-    return components[name];
-  }
-  ComponentContainer::ComponentContainer(uint type, int count):
-  data(calloc(count, types[type].sizeOf)), typeID(type), componentCount(count)
+  ComponentContainer::ComponentContainer():
+  data(nullptr), typeID(-1), componentCount(0)
   {  }
+  ComponentContainer::ComponentContainer(uint type, int count):
+  data(malloc(count * core().types[type].sizeOf)), typeID(type), componentCount(count)
+  { 
+    for (int i = 0; i < componentCount; ++i)
+      core().types[typeID].constructor((char*)data + core().types[type].sizeOf * i);
+  }
   void* ComponentContainer::get_component(int i)
   {
     if (0 <= i && i < componentCount)
-      return ((char*)data + i * types[typeID].sizeOf);
+      return ((char*)data + i * core().types[typeID].sizeOf);
     return nullptr;
+  }
+  ComponentContainer::~ComponentContainer()
+  {
+    free(data);
   }
   
   
   template<typename T>
   T* get_component(Entity entity, const char *name)
   {
-    Archetype& archetype = archetypes[entity.archetype_index()];
-    ComponentContainer *container = archetype.components[HashedString(name)];
+    Archetype& archetype = core().archetypes[entity.archetype_index()];
+    
+    ComponentContainer *container = archetype.components[TypeDescription::TypeDescription<T>(name).hash()];
     return container ? container->get_component(entity.array_index()) : nullptr;
   }
 
-  template<typename T>
-  uint type_index()
+
+
+  SystemCashedArchetype::SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers):
+    archetype(archetype), containers(containers){}
+
+  SystemDescription::SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)()):
+    args(std::move(args)), archetypes(), function(function_pointer)
   {
-    static uint index = globalTypeIndex++;
-    return index;
-  };
-
-
+    core().systems.push_back(this);
+  }
+  void SystemDescription::execute()
+  {
+    if (function)
+      function();
+  }
   template<typename T>
   TypeDescription get_type_description(const char *name)
   {
+    uint globalTypeIndexCopy = core().globalTypeIndex;
     TypeDescription type = {HashedString(name), type_index<T>()};
-    if (globalTypeIndex != type.typeId)
+    if (core().globalTypeIndex != globalTypeIndexCopy)
     {
-      types.emplace_back();
-      types.back() = {std::string(name), type.name_hash, sizeof(T)};
+      core().types.emplace_back(std::move(std::string(name)), type.name_hash, sizeof(T), template_constructor<T>);
     }
     return type;
   }
   
-  SystemArchetypes register_system(const SystemDescription& descr)
+  void register_archetype(Archetype *archetype)
   {
-    SystemArchetypes sys_archetypes;
-    for (Archetype *archetype: archetypes)
+    for (SystemDescription *system: core().systems)
     {
-      vector<ComponentContainer*> containers(descr.args.size());
+      std::vector<SystemCashedArchetype> &sys_archetypes = system->archetypes;
+      vector<ComponentContainer*> containers(system->args.size());
       bool breaked = false;
       int i = 0;
-      for(auto& arg : descr.args)
+      for(auto& arg : system->args)
       {
-        ComponentContainer* container = archetype->get_container(arg.descr.name_hash);
+        ComponentContainer* container = archetype->get_container(arg.descr);
         if (!arg.optional)
         {
           if (container == nullptr || container->typeID != arg.descr.typeId)
@@ -93,20 +160,37 @@ namespace ecs
         i++;
       }
       if (!breaked)
-        sys_archetypes.archetypes.push_back(archetype);
+        sys_archetypes.emplace_back(archetype, std::move(containers));
     }
-    return sys_archetypes;
+    
   }
   void initialize_ecs()
   {
     
     ComponentTypes c1 = {{get_type_description<int>("a"), get_type_description<float>("b")}};
     ComponentTypes c2 = {{get_type_description<string>("s"), get_type_description<float>("f")}};
-    archetypes.push_back(new Archetype(c1, 1));
-    archetypes.push_back(new Archetype(c2, 2));
-    
-    //init archetypes??
+    ComponentTypes c3 = {{get_type_description<A>("v"), get_type_description<B>("w")}};
+    ComponentTypes c4 = {{get_type_description<A>("v")}};
+    core().archetypes.push_back(new Archetype(c1, 1));
+    core().archetypes.push_back(new Archetype(c2, 2));
+    core().archetypes.push_back(new Archetype(c3, 1));
+    core().archetypes.push_back(new Archetype(c4, 1));
 
+    for (Archetype * archetype : core().archetypes)
+      register_archetype(archetype);
+
+  }
+
+  void update_systems()
+  {
+    for (SystemDescription *system : core().systems)
+    {
+      system->execute();
+    }
+  }
+
+  void free_ecs()
+  {
   }
 }
 
