@@ -28,11 +28,16 @@ int main(int argc, char** argv)
     niceCock = ecs::create_entity(list);
   }
   {
-    ecs::ComponentInitializerList list;
-    list.add<A>("v") = A("Alone");
-    ecs::create_entity(list);
+    for (int i = 0; i < 5; i++)
+    {
+      ecs::ComponentInitializerList list;
+      list.add<A>("v") = A(std::string("\\0_0/", i +1));
+      ecs::create_entity(list);
+    }
   }
+  printf("\n");
   ecs::destroy_entity(niceCock);
+  printf("\n");
   ecs::update_systems();
   ecs::send_event<MyEvent>({10});
   ecs::free_ecs();

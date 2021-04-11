@@ -5,10 +5,12 @@ namespace ecs
 {
   typedef void *(*Constructor)(void*);
   typedef void *(*CopyConstructor)(void*, void*);
+  typedef void (*Destructor)(void*);
   uint type_sizeof(uint type);
   Constructor type_constructor(uint type);
   CopyConstructor type_copy_constructor(uint type);
-
+  Destructor type_destructor(uint type);
+  
   uint &global_type_index();
   template<typename T>
   uint type_index()

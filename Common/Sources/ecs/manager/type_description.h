@@ -12,7 +12,9 @@ namespace ecs
     uint sizeOf;
     Constructor constructor;
     CopyConstructor copy_constructor;
-    FullTypeDescription(std::string &&name, string_hash hash, uint sizeOf, Constructor constructor, CopyConstructor copy_constructor);
+    Destructor destructor;
+    FullTypeDescription(std::string &&name, string_hash hash, uint sizeOf,
+      Constructor constructor, CopyConstructor copy_constructor, Destructor destructor);
     ~FullTypeDescription() = default;
   };
   struct TypeDescription
@@ -37,6 +39,11 @@ namespace ecs
   {
     return new (memory) T();
   }
+  template<class T>
+  void template_destructor(void *memory)
+  {
+    return ((T*)(memory))->~T();
+  }
   template<typename T>
   void* template_copy_constructor(void *src, void *dst)
   {
@@ -50,7 +57,7 @@ namespace ecs
     if (global_type_index() != globalTypeIndexCopy)
     {
       full_description().emplace_back(std::move(std::string(name)), type.name_hash, sizeof(T),
-        template_constructor<T>, template_copy_constructor<T>);
+        template_constructor<T>, template_copy_constructor<T>, template_destructor<T>);
     }
     return type;
   }

@@ -77,7 +77,7 @@
 },
 "launchOption.currentConfig": {
   "Project": "ECSExample",
-  "BuildType": "dev",
+  "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
   "showBones": "no",
   "showGoal": "no",

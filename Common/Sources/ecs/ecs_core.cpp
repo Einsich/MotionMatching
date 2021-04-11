@@ -10,7 +10,9 @@ namespace ecs
   Core::~Core()
   {
     for (Archetype *archetype : archetypes)
-      archetype->~Archetype();
+    {  
+      delete archetype;
+    }
   }
   Core &core()
   {
@@ -128,6 +130,7 @@ namespace ecs
 
   void free_ecs()
   {
+    core().~Core();
   }
 }
 

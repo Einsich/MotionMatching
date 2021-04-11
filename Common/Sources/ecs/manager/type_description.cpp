@@ -3,8 +3,9 @@ namespace ecs
 {
 
   FullTypeDescription::FullTypeDescription(std::string &&name, string_hash hash, uint size_of,
-   Constructor constructor, CopyConstructor copy_constructor):
-  name(name), hash(hash), sizeOf(size_of), constructor(constructor), copy_constructor(copy_constructor)
+   Constructor constructor, CopyConstructor copy_constructor, Destructor destructor):
+  name(name), hash(hash), sizeOf(size_of),
+  constructor(constructor), copy_constructor(copy_constructor), destructor(destructor)
   {
   }
   TypeDescription::TypeDescription(string_hash name_hash, uint typeId):

@@ -14,6 +14,10 @@ namespace ecs
   {
     return core().types[type].copy_constructor;
   }
+  Destructor type_destructor(uint type)
+  {
+    return core().types[type].destructor;
+  }
 
   void add_system(SystemDescription *system_description)
   {

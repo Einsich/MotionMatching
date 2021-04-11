@@ -15,6 +15,19 @@ namespace ecs
   }
   ComponentContainer::~ComponentContainer()
   {
+    Destructor destructor = type_destructor(typeID);
+    uint sizeOf = type_sizeof(typeID);
+    for (int i = 0, j = 0; i * binSize + j < count;)
+    {
+      void *removed = (char*)data[i] + sizeOf * j;
+      destructor(removed);
+      j++;
+      if (j >= binSize)
+      {
+        j = 0;
+        i++;
+      }
+    }
     for (uint i = 0; i < data.size(); ++i)
       free(data[i]);
   }
@@ -38,10 +51,10 @@ namespace ecs
   {
     count--;
     CopyConstructor copyConstructor = type_copy_constructor(typeID);
-
+    Destructor destructor = type_destructor(typeID);
     int j = count;
     void *removed = (char*)data[i / binSize] + type_sizeof(typeID) * (i % binSize);
-    //destructor(removed)
+    destructor(removed);
     if (j != i)
     {
       void *copied = (char*)data[j / binSize] + type_sizeof(typeID) * (j % binSize);

@@ -8,13 +8,14 @@ namespace ecs
   struct ComponentInitializer
   {
     void *data = nullptr;
-    int sizeOf;
+    int sizeOf, typeId;
     template<typename T>
     void operator=(const T &value)
     {
       if (data == nullptr)
       {
         sizeOf = sizeof(T);
+        typeId = type_index<T>();
         data = malloc(sizeOf);
       }
       else
@@ -25,7 +26,11 @@ namespace ecs
     }
     ~ComponentInitializer()
     {
-      free(data);
+      if (data)
+      {
+        type_destructor(typeId)(data);
+        free(data);
+      }
     }
   };
   struct ComponentInitializerList
