@@ -4,16 +4,21 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "config.h"
 
-Application::Application(string window_name, int width, int height, bool full_screen):
-scene(), context(window_name, width, height, full_screen), timer(), input(),
+Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
+scene(scene), context(window_name, width, height, full_screen), timer(), input(),
 projectPath(string(get_config("projectPath"))),
 projectResourcesPath(string(get_config("projectPath")) + "/Resources"),
 projectShaderPath(string(get_config("projectPath")) + "/Shaders"),
 commonResourcesPath(string(get_config("commonPath")) + "/Resources"),
 commonShaderPath(string(get_config("commonPath")) + "/Shaders")
 {
+  assert(scene);
   application = this;
-  compile_shaders(); 
+  compile_shaders();
+}
+void Application::start()
+{
+  scene->start_scene();
 }
 bool Application::sdl_event_handler()
 {
@@ -52,19 +57,20 @@ void Application::main_loop()
 		running = sdl_event_handler();
     if (running)
     {
-      scene.update();
-      scene.render();
+      scene->update_logic();
+      scene->update_render();
       context.start_imgui();
-      scene.render_ui();
+      scene->update_ui();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();
+      scene->process_events();
     }
 	}
 }
 void Application::exit()
 {
-  scene.exit();
+  scene->destroy_scene();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();

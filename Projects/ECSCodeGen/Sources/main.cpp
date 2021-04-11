@@ -386,7 +386,7 @@ int main(int argc, char** argv)
         fs::file_time_type last_write;
         if (fs::exists(cpp_file))
             last_write = fs::last_write_time(cpp_file);
-        //if (last_write < p.last_write_time())
+        if (last_write < p.last_write_time())
             process_inl_file(p.path());
         }
     }

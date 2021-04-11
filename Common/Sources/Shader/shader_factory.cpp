@@ -25,6 +25,10 @@ map<string, SHADER_TYPE> shaderTypeMap = {{"vert", VERTEX_SHADER}, {"frag", FRAG
 map<string, vector<pair<SHADER_TYPE, string>>> shaderMap;
 void read_directories(string path)
 {
+  if (!fs::exists(path))
+  {
+    return;
+  }
   for (const auto & entry : fs::directory_iterator(path))
   {
     string nextPath = entry.path();

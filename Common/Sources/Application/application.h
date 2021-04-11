@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "Scene/scene.h"
+#include "Scene/iscene.h"
 #include "context.h"
 #include "Event/input.h"
 #include "Time/time.h"
@@ -9,23 +9,20 @@ class Application
 {
 private:
   inline static Application *application;
-  Scene scene;
+  IScene *scene;
   Context context;
   Time timer;
   Input input;
 public:
   const string projectPath, projectResourcesPath, projectShaderPath, commonResourcesPath, commonShaderPath;
-  Application(string window_name, int width, int height, bool full_screen = false);
+  Application(IScene *scene, string window_name, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
+  void start();
   void main_loop();
   void exit();
   static Application& instance()
   {
     return *application;
-  }
-  static Scene& get_scene()
-  {
-    return application->scene;
   }
   static Context& get_context()
   {

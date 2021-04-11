@@ -7,15 +7,17 @@
 #include "imgui/imgui.h"
 
 
-
+void Scene::start_scene()
+{
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+}
 void Scene::init(void init_f(vector<GameObjectPtr>&, DirectionLight&))
 {
   if (init_f != nullptr)
     init_f(gameObjects, sun);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
 }
-void Scene::update()
+void Scene::update_logic()
 {   
   for (auto objects : gameObjects)
   {
@@ -27,7 +29,7 @@ void Scene::update()
     }
   }
 }
-void Scene::render()
+void Scene::update_render()
 {
   glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,7 +46,7 @@ void Scene::render()
 
   glFlush(); 
 }
-void Scene::render_ui()
+void Scene::update_ui()
 {
   ImGui::Begin("Debug");
   debug_show();
@@ -62,8 +64,11 @@ void Scene::render_ui()
   ImGui::Text("%.1f", Time::fps());
   ImGui::End();
 }
-
-void Scene::exit()
+void Scene::process_events()
+{
+  
+}
+void Scene::destroy_scene()
 { 
   for (auto objects : gameObjects)
   {

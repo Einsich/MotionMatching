@@ -4,20 +4,20 @@
 struct A
 {
   std::string x = "It's A";
-  A() {printf("(");};
-  A(const A &a) {printf("(");};
-  ~A() {printf(")");};
+  A() {};
+  A(const A &a) {};
+  ~A() {};
   A(const std::string &s):
-  x(std::move(s)){printf("(");}
+  x(std::move(s)){}
 };
 struct B
 {
   std::string x = "It's B";
-  B() {printf("[");};
-  B(const B &a) {printf("[");};
-  ~B() {printf("]");};
+  B() {};
+  B(const B &a) {};
+  ~B() {};
   B(const std::string &s):
-  x(std::move(s)){printf("[");}
+  x(std::move(s)){}
 };
 class C
 {

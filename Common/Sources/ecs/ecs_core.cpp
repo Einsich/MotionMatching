@@ -79,23 +79,6 @@ namespace ecs
     return archetype;
   }
 
-  bool system_comparator(const SystemDescription *a, const SystemDescription *b)
-  {
-    return a->order < b->order;
-  }
-  void initialize_ecs()
-  {
-    get_type_description<EntityId>("eid");
-    std::sort(core().systems.begin(), core().systems.end(), system_comparator);
-  }
-
-  void update_systems()
-  {
-    for (SystemDescription *system : core().systems)
-    {
-      system->execute();
-    }
-  }
   EntityId create_entity(ComponentInitializerList &list)
   {
     list.add<EntityId>("eid") = EntityId();
@@ -126,11 +109,6 @@ namespace ecs
     {
       core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index());
     }
-  }
-
-  void free_ecs()
-  {
-    core().~Core();
   }
 }
 
