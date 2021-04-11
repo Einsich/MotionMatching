@@ -28,23 +28,21 @@ struct ParserSystemDescription
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
-#define SYS_NAME "[" NAME_SYM "]+_system" 
-#define QUERY_NAME "[" NAME_SYM "]+_query" 
-#define NAME "[" NAME_SYM "]+"
 #define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]+"
 #define DEF_ARGS "[" NAME_SYM ",:" SPACE_SYM "]*"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
 #define SYSTEM "SYSTEM" SPACE "[(]" DEF_ARGS "[)]"
 #define QUERY "QUERY" SPACE "[(]" DEF_ARGS "[)]"
+#define EVENT "EVENT" SPACE "[(]" DEF_ARGS "[)]"
 
 static const std::regex name_regex(NAME);
-static const std::regex system_name_regex(SYS_NAME);
-static const std::regex query_name_regex(QUERY_NAME);
 static const std::regex system_full_regex(SYSTEM SPACE NAME SPACE ARGS_L);
 static const std::regex system_regex(SYSTEM);
 static const std::regex query_full_regex(QUERY SPACE NAME SPACE "[(]" SPACE ARGS_R SPACE ARGS_L);
 static const std::regex query_regex(QUERY);
+static const std::regex event_full_regex(EVENT SPACE NAME SPACE ARGS_L);
+static const std::regex event_regex(EVENT);
 static const std::regex args_regex(ARGS_L);
 static const std::regex arg_regex("[" NAME_SYM "&*:" SPACE_SYM "]+");
 
@@ -207,8 +205,10 @@ void process_inl_file(const fs::path& path)
 
   std::vector<ParserSystemDescription>  systemsDescriptions;
   std::vector<ParserSystemDescription>  queriesDescriptions;
+  std::vector<ParserSystemDescription>  eventsDescriptions;
   parse_system(systemsDescriptions, str, path.string(), system_full_regex, system_regex);
   parse_system(queriesDescriptions, str, path.string(), query_full_regex, query_regex);
+  parse_system(eventsDescriptions, str, path.string(), event_full_regex, event_regex);
 
 
   std::ofstream outFile;
@@ -301,6 +301,57 @@ void process_inl_file(const fs::path& path)
       snprintf(buffer, bufferSize,
       "      %sbegin.get_component<%s>(%d)%s\n",
       arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)system.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize,
+        "    );\n"
+        "  }\n"
+        "}\n\n\n");
+    outFile << buffer;
+  }
+
+  for (auto& event : eventsDescriptions)
+  {
+    std::string event_descr = event.sys_name + "_descr";
+    std::string event_handler = event.sys_name + "_handler";
+    std::string event_type = event.args[0].type;
+    snprintf(buffer, bufferSize,
+      "void %s(const %s &event);\n\n"
+      "ecs::EventDescription<%s> %s({\n",
+      event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 1; i < event.args.size(); i++)
+    {
+      auto& arg  = event.args[i];
+      snprintf(buffer, bufferSize,
+      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)event.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize, "}, %s);\n\n", event_handler.c_str());
+    outFile << buffer;
+
+    snprintf(buffer, bufferSize,
+      "void %s(const %s &event)\n"
+      "{\n"
+      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+      "  {\n"
+      "    %s(\n",
+      event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event_descr.c_str(), event.sys_name.c_str());
+    
+    outFile << buffer;
+
+    snprintf(buffer, bufferSize,
+      "      event%s\n", 1 == (uint)event.args.size() ? "" : ",");
+    outFile << buffer;
+
+    for (uint i = 1; i < event.args.size(); i++)
+    {
+      auto& arg  = event.args[i];
+      snprintf(buffer, bufferSize,
+      "      %sbegin.get_component<%s>(%d)%s\n",
+      arg.optional ? " " : "*", arg.type.c_str(), i - 1, i + 1 == (uint)event.args.size() ? "" : ",");
       outFile << buffer;
     }
     snprintf(buffer, bufferSize,

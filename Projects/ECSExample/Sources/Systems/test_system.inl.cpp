@@ -74,4 +74,22 @@ void math_system_func()
 }
 
 
+void event_test_handler(const MyEvent &event);
+
+ecs::EventDescription<MyEvent> event_test_descr({
+  {ecs::get_type_description<std::string>("s"), false}
+}, event_test_handler);
+
+void event_test_handler(const MyEvent &event)
+{
+  for (ecs::QueryIterator begin = event_test_descr.begin(), end = event_test_descr.end(); begin != end; ++begin)
+  {
+    event_test(
+      event,
+      *begin.get_component<std::string>(0)
+    );
+  }
+}
+
+
 
