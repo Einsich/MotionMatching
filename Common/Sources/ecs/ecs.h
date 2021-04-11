@@ -2,6 +2,6 @@
 #include "ecs_core.h"
 #include "system_order.h"
 
-#define SYSTEM(...)static void
+#define SYSTEM(...)static void 
 #define QUERY(...)
-#define EVENT(...)static void
+#define EVENT(...)static void 

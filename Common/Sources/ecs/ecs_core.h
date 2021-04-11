@@ -61,7 +61,7 @@ namespace ecs
   void update_systems();
 
   template<typename E>
-  void send_events(const E &event)
+  void send_event(const E &event)
   {
     for (EventDescription<E> *descr : core().events<E>())
       descr->eventHandler(event);

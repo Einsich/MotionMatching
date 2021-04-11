@@ -22,7 +22,7 @@ void test_system_func();
 ecs::SystemDescription test_system_descr({
   {ecs::get_type_description<int>("a"), false},
   {ecs::get_type_description<float>("b"), false}
-}, test_system_func, ecs::SystemOrder::INPUT_DEPEND);
+}, test_system_func, ecs::SystemOrder::LATE_RENDER);
 
 void test_system_func()
 {
@@ -36,18 +36,18 @@ void test_system_func()
 }
 
 
-void Lols_func();
+void system_with_query_func();
 
-ecs::SystemDescription Lols_descr({
+ecs::SystemDescription system_with_query_descr({
   {ecs::get_type_description<std::string>("s"), false},
   {ecs::get_type_description<float>("f"), false}
-}, Lols_func, ecs::SystemOrder::NO_ORDER);
+}, system_with_query_func, ecs::SystemOrder::NO_ORDER);
 
-void Lols_func()
+void system_with_query_func()
 {
-  for (ecs::QueryIterator begin = Lols_descr.begin(), end = Lols_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = system_with_query_descr.begin(), end = system_with_query_descr.end(); begin != end; ++begin)
   {
-    Lols(
+    system_with_query(
       *begin.get_component<std::string>(0),
       *begin.get_component<float>(1)
     );
@@ -55,18 +55,18 @@ void Lols_func()
 }
 
 
-void math_system_func();
+void nullable_system_func();
 
-ecs::SystemDescription math_system_descr({
+ecs::SystemDescription nullable_system_descr({
   {ecs::get_type_description<A>("v"), false},
   {ecs::get_type_description<B>("w"), true}
-}, math_system_func, ecs::SystemOrder::SPECIAL);
+}, nullable_system_func, ecs::SystemOrder::EARLY_RENDER);
 
-void math_system_func()
+void nullable_system_func()
 {
-  for (ecs::QueryIterator begin = math_system_descr.begin(), end = math_system_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = nullable_system_descr.begin(), end = nullable_system_descr.end(); begin != end; ++begin)
   {
-    math_system(
+    nullable_system(
       *begin.get_component<A>(0),
        begin.get_component<B>(1)
     );
@@ -74,17 +74,34 @@ void math_system_func()
 }
 
 
-void event_test_handler(const MyEvent &event);
+void event_sender_func();
 
-ecs::EventDescription<MyEvent> event_test_descr({
-  {ecs::get_type_description<std::string>("s"), false}
-}, event_test_handler);
+ecs::SystemDescription event_sender_descr({
+  {ecs::get_type_description<float>("b"), false}
+}, event_sender_func, ecs::SystemOrder::LATE_RENDER);
 
-void event_test_handler(const MyEvent &event)
+void event_sender_func()
 {
-  for (ecs::QueryIterator begin = event_test_descr.begin(), end = event_test_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = event_sender_descr.begin(), end = event_sender_descr.end(); begin != end; ++begin)
   {
-    event_test(
+    event_sender(
+      *begin.get_component<float>(0)
+    );
+  }
+}
+
+
+void test_handler_handler(const TestEvent &event);
+
+ecs::EventDescription<TestEvent> test_handler_descr({
+  {ecs::get_type_description<std::string>("s"), false}
+}, test_handler_handler);
+
+void test_handler_handler(const TestEvent &event)
+{
+  for (ecs::QueryIterator begin = test_handler_descr.begin(), end = test_handler_descr.end(); begin != end; ++begin)
+  {
+    test_handler(
       event,
       *begin.get_component<std::string>(0)
     );

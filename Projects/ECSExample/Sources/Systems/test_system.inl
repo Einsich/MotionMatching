@@ -1,48 +1,39 @@
 #include "ecs/ecs.h"
 #include "test_header.h"
 
-SYSTEM(ecs::SystemOrder::INPUT_DEPEND)
-test_system  
-( int a, float  &b)
+SYSTEM(ecs::SystemOrder::LATE_RENDER) test_system ( int a, float  &b)
 {
-	printf("[t] %d, %f\n", a, b);
-	b+=1;
+	b = 1;
+	printf("[test_system] %d, %f\n\n", a, b);
 }
 
 template<typename Callable>
 void b_plus_f_query(Callable func);
 
-SYSTEM()
-Lols(std::string& s, float f)
+SYSTEM() system_with_query(std::string &s, float f)
 {
-	printf("[l] %s, %f\n", s.c_str(), f);
-	s+=")";
-  QUERY()
-	b_plus_f_query([&] (float &b)
+  QUERY() b_plus_f_query([&] (float &b)
   {
     b += f;
-		printf("query works");
+		printf("[system_with_query] query works, s = %s, b = %f\n\n", s.c_str(), b);
   });
 }
-
-SYSTEM(ecs::SystemOrder::SPECIAL)
-math_system(A &v, B *w)
+SYSTEM(ecs::SystemOrder::EARLY_RENDER) nullable_system(A &v, B *w)
 {
-	v.x += ".";
-	if (w)
-	{
-		w->x += "_";
-		printf("[m] %s, %s\n", v.x.c_str(), w->x.c_str());
-	}
-	else
-	{
-		printf("[m] %s, (null)\n", v.x.c_str());
-	}
-	
+	printf("[nullable_system] %s, %s\n\n", v.x.c_str(), w ? w->x.c_str() : "(null)");
 }
 
-EVENT()
-event_test(const MyEvent &e, const std::string& s)
+struct TestEvent
 {
-	printf("Event %d to %s", e.x, s.c_str());
+	std::string message;
+};
+SYSTEM(ecs::SystemOrder::LATE_RENDER) event_sender(float  &b)
+{
+	TestEvent e; e.message = "b var is " + std::to_string(b);
+	printf("[event_sender] send %s\n\n", e.message.c_str());
+	ecs::send_event(e);
+}
+EVENT()test_handler(const TestEvent &e, std::string &s)
+{
+	printf("[test_handler] received %s in %s\n\n", e.message.c_str(), s.c_str());
 }
