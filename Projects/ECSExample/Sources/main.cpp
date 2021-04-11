@@ -33,6 +33,7 @@ int main(int argc, char** argv)
   }
   ecs::update_systems();
   ecs::update_systems();
+  ecs::send_events<MyEvent>({10});
   ecs::free_ecs();
   /*Application application(get_config("project"), 1848, 1016, true);
   application.get_scene().init(init_scene);

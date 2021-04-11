@@ -1,6 +1,4 @@
 #include "test_system.inl"
-#include "ecs/ecs_core.h"
-
 //Code-generator production
 
 ecs::QueryDescription b_plus_f_query_descr({
@@ -24,7 +22,7 @@ void test_system_func();
 ecs::SystemDescription test_system_descr({
   {ecs::get_type_description<int>("a"), false},
   {ecs::get_type_description<float>("b"), false}
-}, test_system_func);
+}, test_system_func, ecs::SystemOrder::INPUT_DEPEND);
 
 void test_system_func()
 {
@@ -38,18 +36,18 @@ void test_system_func()
 }
 
 
-void Lol_system_func();
+void Lols_func();
 
-ecs::SystemDescription Lol_system_descr({
+ecs::SystemDescription Lols_descr({
   {ecs::get_type_description<std::string>("s"), false},
   {ecs::get_type_description<float>("f"), false}
-}, Lol_system_func);
+}, Lols_func, ecs::SystemOrder::NO_ORDER);
 
-void Lol_system_func()
+void Lols_func()
 {
-  for (ecs::QueryIterator begin = Lol_system_descr.begin(), end = Lol_system_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = Lols_descr.begin(), end = Lols_descr.end(); begin != end; ++begin)
   {
-    Lol_system(
+    Lols(
       *begin.get_component<std::string>(0),
       *begin.get_component<float>(1)
     );
@@ -62,7 +60,7 @@ void math_system_func();
 ecs::SystemDescription math_system_descr({
   {ecs::get_type_description<A>("v"), false},
   {ecs::get_type_description<B>("w"), true}
-}, math_system_func);
+}, math_system_func, ecs::SystemOrder::SPECIAL);
 
 void math_system_func()
 {

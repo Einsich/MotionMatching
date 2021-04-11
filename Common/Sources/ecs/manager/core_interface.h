@@ -21,8 +21,7 @@ namespace ecs
   void add_system(SystemDescription *system_description);
   class QueryDescription;
   void add_query(QueryDescription *query_description);
-
-
+  
 
   class FullTypeDescription;
 

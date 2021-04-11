@@ -2,6 +2,25 @@
     "tasks": [
         {
             "type": "shell",
+            "label": "Build and configure project",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./build_script.sh",
+            "args": [
+                "${config:launchOption.currentConfig.Project}",
+                "${config:launchOption.currentConfig.BuildType}",
+                "no",
+                "yes",
+                "yes"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
             "label": "Build project",
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -11,7 +30,8 @@
                 "${config:launchOption.currentConfig.Project}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "no",
-                "yes"
+                "yes",
+                "no"
             ],
             "group": {
                 "kind": "build",
@@ -29,6 +49,7 @@
                 "${config:launchOption.currentConfig.Project}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "yes",
+                "yes",
                 "yes"
             ],
             "group": {
@@ -45,7 +66,7 @@
             "command": "./build_script.sh",
             "args": [
                 "ECSCodeGen",
-                "dev"
+                "rel"
             ],
             "group": {
                 "kind": "build",

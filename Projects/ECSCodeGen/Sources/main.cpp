@@ -6,34 +6,59 @@
 #include <filesystem>
 #include <vector>
 #include "Application/config.h"
-
+#include "ecs/system_order.h"
+enum class ArgType
+{
+  ReadWrite, // T &t, T *t
+  ReadOnly, // const T &t, const T *t
+  Copy// T t, const T t
+};
 struct ParserFunctionArgument
 {
   std::string type, name;
   bool optional = false;
+  ArgType argType; 
 };
 struct ParserSystemDescription
 {
-  std::string sys_file, sys_name;
+  std::string sys_file, sys_name, order;
   std::vector<ParserFunctionArgument> args;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
+#define SYS_NAME "[" NAME_SYM "]+_system" 
+#define QUERY_NAME "[" NAME_SYM "]+_query" 
+#define NAME "[" NAME_SYM "]+"
 #define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]+"
+#define DEF_ARGS "[" NAME_SYM ",:" SPACE_SYM "]*"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
+#define SYSTEM "SYSTEM" SPACE "[(]" DEF_ARGS "[)]"
+#define QUERY "QUERY" SPACE "[(]" DEF_ARGS "[)]"
 
-static const std::regex sys_regex("void" SPACE NAME "_system" SPACE ARGS_L);
-static const std::regex sys_name_regex(NAME "_system");
-static const std::regex que_regex(NAME "_query" SPACE "[(]" SPACE ARGS_R SPACE ARGS_L);
-static const std::regex que_name_regex(NAME "_query");
+static const std::regex name_regex(NAME);
+static const std::regex system_name_regex(SYS_NAME);
+static const std::regex query_name_regex(QUERY_NAME);
+static const std::regex system_full_regex(SYSTEM SPACE NAME SPACE ARGS_L);
+static const std::regex system_regex(SYSTEM);
+static const std::regex query_full_regex(QUERY SPACE NAME SPACE "[(]" SPACE ARGS_R SPACE ARGS_L);
+static const std::regex query_regex(QUERY);
 static const std::regex args_regex(ARGS_L);
 static const std::regex arg_regex("[" NAME_SYM "&*:" SPACE_SYM "]+");
 
 namespace fs = std::filesystem;
-std::vector<std::string> get_matches(const std::string& str, std::regex reg, int max_matches = 10000000)
+
+void log_success(const std::string &meassage)
+{
+  printf("[Codegen] \033[32m%s\033[39m\n", meassage.c_str());
+}
+void log_error(const std::string &meassage)
+{
+  printf("[Codegen] \033[31m%s\033[39m\n", meassage.c_str());
+}
+std::vector<std::string> get_matches(const std::string& str, const std::regex &reg, int max_matches = 10000000)
 {
   std::vector<std::string> v;
   std::sregex_iterator curMatch(str.begin(), str.end(), reg);
@@ -45,6 +70,37 @@ std::vector<std::string> get_matches(const std::string& str, std::regex reg, int
     curMatch++;
   }
   return v;
+}
+struct MatchRange
+{
+  std::string::iterator begin, end;
+  bool empty() const
+  {
+    return begin == end;
+  }
+  std::string str() const
+  {
+    return std::string(begin, end);
+  }
+};
+MatchRange get_match(const MatchRange& str, const std::regex &reg)
+{
+  std::vector<std::string> v;
+  std::sregex_iterator curMatch(str.begin, str.end, reg);
+  std::sregex_iterator lastMatch;
+
+  MatchRange range = str;
+  if (curMatch != lastMatch)
+  {
+    range.begin += curMatch->position(0);
+    range.end = range.begin + curMatch->length(0);
+  }
+  else
+  {
+    range.end = range.begin;
+  }
+  
+  return range;
 }
 bool erase_substr(std::string& str, const std::string& to_erase)
 {
@@ -61,9 +117,20 @@ bool erase_substr(std::string& str, const std::string& to_erase)
 ParserFunctionArgument clear_arg(std::string str)
 {
   ParserFunctionArgument arg;
-  arg.optional = erase_substr(str, "*");
-  erase_substr(str, "&");
-  erase_substr(str, "const");
+  
+  bool optional = erase_substr(str, "*");
+  bool ref = erase_substr(str, "&");
+  bool const_ = erase_substr(str, "const");
+  
+  if (optional || ref)
+  {
+    arg.argType = const_ ? ArgType::Copy : ArgType::ReadWrite;
+  }
+  else
+  {
+    arg.argType = ArgType::ReadOnly;
+  }
+  arg.optional = optional;
 
   const std::regex arg_regex("[A-Za-z0-9_:]+");
   auto args = get_matches(str, arg_regex, 3);
@@ -75,26 +142,52 @@ ParserFunctionArgument clear_arg(std::string str)
     arg.name = args[1];
   return arg;
 }
+void parse_definition(const std::string &str, ParserSystemDescription &parserDescr)
+{
+  const std::regex order_regex("ecs::SystemOrder::[A-Za-z0-9_]+");
+  auto args = get_matches(str, order_regex, 1);
+  parserDescr.order = args.empty() ? "ecs::SystemOrder::NO_ORDER" : args[0] ;
+
+}
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
-  const std::string &file, const std::string &file_path, const std::regex &system_reg, const std::regex &name)
+  const std::string &file, const std::string &file_path,
+  const std::regex &full_regex, const std::regex &def_regex)
 {
   
-  auto systems = get_matches(file, system_reg);
+  auto systems = get_matches(file, full_regex);
   for (auto& system : systems)
   {
-    auto args = get_matches(system, args_regex);
-    auto sys_name = get_matches(system, name);
-    if (args.size() != 1 || sys_name.size() != 1)
+    auto definition_range = get_match({system.begin(), system.end()}, def_regex);
+    auto name_range = get_match({definition_range.end, system.end()}, name_regex);
+    auto args_range = get_match({name_range.end, system.end()}, args_regex);
+    std::string definition, name, args;
+    if (definition_range.empty())
     {
+      log_error("System definition problem in " + system);
       return;
     }
-    args[0] = args[0].substr(1, args[0].size() - 2);
+    if (name_range.empty())
+    {
+      log_error("Name problem in " + system);
+      return;
+    }
+    if (args_range.empty())
+    {
+      log_error("Arguments problem in " + system);
+      return;
+    }
+    definition = definition_range.str();
+    name = name_range.str();
 
+    args_range.begin++;
+    args_range.end--;
+    args = args_range.str();
     ParserSystemDescription descr;
+    parse_definition(definition, descr);
     descr.sys_file = file_path;
-    descr.sys_name = sys_name[0];
-    args = get_matches(args[0], arg_regex);
-    for (auto& arg : args)
+    descr.sys_name = name;
+    auto matched_args = get_matches(args, arg_regex);
+    for (auto& arg : matched_args)
     {
       descr.args.push_back(clear_arg(arg));
     }
@@ -114,15 +207,14 @@ void process_inl_file(const fs::path& path)
 
   std::vector<ParserSystemDescription>  systemsDescriptions;
   std::vector<ParserSystemDescription>  queriesDescriptions;
-  parse_system(systemsDescriptions, str, path.string(), sys_regex, sys_name_regex);
-  parse_system(queriesDescriptions, str, path.string(), que_regex, que_name_regex);
+  parse_system(systemsDescriptions, str, path.string(), system_full_regex, system_regex);
+  parse_system(queriesDescriptions, str, path.string(), query_full_regex, query_regex);
 
 
   std::ofstream outFile;
-  std::cout << "[Codegen] \033[32m" << path.string() + ".cpp"<< "\033[39m" << std::endl;
+  log_success(path.string() + ".cpp");
   outFile.open(path.string() + ".cpp", std::ios::out);
   outFile << "#include " << path.filename() << "\n";
-  outFile << "#include \"ecs/ecs_core.h\"\n\n";
   outFile << "//Code-generator production\n\n";
 
   
@@ -191,7 +283,7 @@ void process_inl_file(const fs::path& path)
       arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)system.args.size() ? "" : ",");
       outFile << buffer;
     }
-    snprintf(buffer, bufferSize, "}, %s);\n\n", sys_func.c_str());
+    snprintf(buffer, bufferSize, "}, %s, %s);\n\n", sys_func.c_str(), system.order.c_str());
     outFile << buffer;
 
     snprintf(buffer, bufferSize,

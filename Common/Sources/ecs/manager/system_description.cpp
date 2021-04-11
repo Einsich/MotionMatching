@@ -5,9 +5,10 @@ namespace ecs
   SystemCashedArchetype::SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers):
     archetype(archetype), containers(containers){}
 
-  SystemDescription::SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)()):
+  SystemDescription::SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order):
     QueryDescription(args, false),
-    function(function_pointer)
+    function(function_pointer),
+    order((int)order)
   {
     add_system(this);
   }

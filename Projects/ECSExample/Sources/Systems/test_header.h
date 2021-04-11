@@ -23,3 +23,4 @@ class D
 {
 
 };
+struct MyEvent {int x;};

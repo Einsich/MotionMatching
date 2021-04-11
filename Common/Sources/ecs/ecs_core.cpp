@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "ecs_core.h"
 #include "manager/system_description.h"
 namespace ecs
@@ -71,6 +72,8 @@ namespace ecs
       register_archetype_to(query, archetype);
     for (SystemDescription *system: core().systems)
       register_archetype_to(system, archetype);
+    for (QueryDescription *system: core().event_queries)
+      register_archetype_to(system, archetype);
     
   }
 
@@ -82,9 +85,13 @@ namespace ecs
     return archetype;
   }
 
+  bool system_comparator(const SystemDescription *a, const SystemDescription *b)
+  {
+    return a->order < b->order;
+  }
   void initialize_ecs()
   {
-    
+    std::sort(core().systems.begin(), core().systems.end(), system_comparator);
   }
 
   void update_systems()

@@ -1,5 +1,6 @@
 #pragma once
 #include <iterator>
+#include "../system_order.h"
 #include "archetype.h"
 
 namespace ecs
@@ -30,9 +31,11 @@ namespace ecs
   struct SystemDescription : QueryDescription
   {
     void (*function)();
-    SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)());
+    int order;
+    SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order);
     void execute();
   };
+
   
   class QueryIterator
   {
