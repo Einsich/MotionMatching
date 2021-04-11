@@ -1,16 +1,19 @@
 #include "core_interface.h"
-#include "ecs_core.h"
+#include "../ecs_core.h"
 namespace ecs
 {
   uint type_sizeof(uint type)
   {
     return core().types[type].sizeOf;
   }
-  constructor type_constructor(uint type)
+  Constructor type_constructor(uint type)
   {
     return core().types[type].constructor;
   }
-
+  CopyConstructor type_copy_constructor(uint type)
+  {
+    return core().types[type].copy_constructor;
+  }
 
   void add_system(SystemDescription *system_description)
   {

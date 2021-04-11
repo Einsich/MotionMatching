@@ -34,7 +34,7 @@ namespace ecs
   void SystemIterator::operator++()
   {
     componentIndex++;
-    if (system.archetypes[archetypeIndex].archetype->componentCount <= componentIndex)
+    if (system.archetypes[archetypeIndex].archetype->count <= componentIndex)
     {
       componentIndex = 0;
       archetypeIndex++;

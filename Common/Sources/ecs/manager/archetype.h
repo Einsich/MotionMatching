@@ -2,23 +2,21 @@
 #include <unordered_map>
 #include <vector>
 #include "component_container.h"
-#include "type_description.h"
 namespace ecs
 {
-  struct ComponentTypes
-  {
-    std::vector<TypeDescription> componentsTypes;
-  };
 
   class Archetype
   {
     std::unordered_map<uint, ComponentContainer> components;
   public: 
-    int componentCount;
+    int count, capacity;
     Archetype(const ComponentTypes &types, int count);
+    bool in_archetype(const ComponentTypes &types);
     ComponentContainer *get_container(const TypeDescription &type);
     template<typename T>
     ComponentContainer *get_container(const char *name);
+    void add_entity(const ComponentInitializerList &list);
     ~Archetype() = default;
+    
   };
 }

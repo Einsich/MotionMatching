@@ -1,4 +1,6 @@
-#include "system_example.inl"
+#include "test_system.inl"
+#include "ecs/ecs_core.h"
+
 //Code-generator production
 
 void test_system_func();

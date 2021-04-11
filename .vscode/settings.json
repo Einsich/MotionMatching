@@ -64,7 +64,7 @@
 
   },
   "launchOption.options": {
-    "Project": [ "MotionMatching", "ECSCodeGen", "RayTracing"],
+    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
         {"name": "Develop", "value": "dev"},
@@ -76,8 +76,8 @@
     "showMatchingStatistic":["yes","no"],
 },
 "launchOption.currentConfig": {
-  "Project": "ECSCodeGen",
-  "BuildType": "dev",
+  "Project": "ECSExample",
+  "BuildType": "dbg",
   "loadDataBaseFromFBX": "no",
   "showBones": "no",
   "showGoal": "no",

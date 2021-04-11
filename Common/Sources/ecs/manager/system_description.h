@@ -1,6 +1,5 @@
 #pragma once
 #include <iterator>
-#include "type_description.h"
 #include "archetype.h"
 
 namespace ecs

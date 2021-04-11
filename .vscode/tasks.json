@@ -9,7 +9,9 @@
             "command": "./build_script.sh",
             "args": [
                 "${config:launchOption.currentConfig.Project}",
-                "${config:launchOption.currentConfig.BuildType}"
+                "${config:launchOption.currentConfig.BuildType}",
+                "no",
+                "yes"
             ],
             "group": {
                 "kind": "build",
@@ -26,13 +28,30 @@
             "args": [
                 "${config:launchOption.currentConfig.Project}",
                 "${config:launchOption.currentConfig.BuildType}",
+                "yes",
                 "yes"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-        }
+        },
+        {
+            "type": "shell",
+            "label": "Build Codegen",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./build_script.sh",
+            "args": [
+                "ECSCodeGen",
+                "rel"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
     ],
     "version": "2.0.0"
 }

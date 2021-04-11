@@ -1,7 +1,5 @@
 #include "ecs_core.h"
-#include "ecs_types.h"
-#include "system_description.h"
-#include "ecs/test_header.h"
+#include "manager/system_description.h"
 namespace ecs
 {
   
@@ -72,20 +70,18 @@ namespace ecs
     }
     
   }
+
+  Archetype *add_archetype(const ComponentTypes &types, int capacity)
+  {
+    Archetype *archetype = new Archetype(types, capacity);
+    core().archetypes.push_back(archetype);
+    register_archetype(archetype);
+    return archetype;
+  }
   void initialize_ecs()
   {
     
-    ComponentTypes c1 = {{get_type_description<int>("a"), get_type_description<float>("b")}};
-    ComponentTypes c2 = {{get_type_description<std::string>("s"), get_type_description<float>("f")}};
-    ComponentTypes c3 = {{get_type_description<A>("v"), get_type_description<B>("w")}};
-    ComponentTypes c4 = {{get_type_description<A>("v")}};
-    core().archetypes.push_back(new Archetype(c1, 1));
-    core().archetypes.push_back(new Archetype(c2, 2));
-    core().archetypes.push_back(new Archetype(c3, 1));
-    core().archetypes.push_back(new Archetype(c4, 1));
-
-    for (Archetype * archetype : core().archetypes)
-      register_archetype(archetype);
+    
 
   }
 
@@ -95,6 +91,23 @@ namespace ecs
     {
       system->execute();
     }
+  }
+  void create_entity(const ComponentInitializerList &list)
+  {
+    Archetype *found_archetype = nullptr;
+    for (Archetype *archetype : core().archetypes)
+    {
+      if (archetype->in_archetype(list.types))
+      {
+        found_archetype = archetype;
+        break;
+      }
+    }
+    if (!found_archetype)
+    {
+      found_archetype = add_archetype(list.types, 1);
+    }
+    found_archetype->add_entity(list);
   }
 
   void free_ecs()

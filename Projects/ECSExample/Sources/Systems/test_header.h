@@ -4,12 +4,16 @@
 struct A
 {
   std::string x = "It's A";
-  A(){printf("[A]%s\n", x.c_str());}
+  A() = default;
+  A(const std::string &s):
+  x(std::move(s)){}
 };
 struct B
 {
   std::string x = "It's B";
-  B(){printf("[B]%s\n", x.c_str());}
+  B() = default;
+  B(const std::string &s):
+  x(std::move(s)){}
 };
 class C
 {

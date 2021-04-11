@@ -5,8 +5,19 @@
 #include <regex>
 #include <filesystem>
 #include <vector>
-#include "parser_system_description.h"
 #include "Application/config.h"
+
+struct ParserFunctionArgument
+{
+  std::string type, name;
+  bool optional = false;
+};
+struct ParserSystemDescription
+{
+  std::string sys_file, sys_name;
+  std::vector<ParserFunctionArgument> args;
+};
+
 namespace fs = std::filesystem;
 std::vector<std::string> get_matches(const std::string& str, std::regex reg, int max_matches = 10000000)
 {
@@ -53,7 +64,6 @@ ParserFunctionArgument clear_arg(std::string str)
 
 void process_inl_file(const fs::path& path)
 {
-  std::cout << path.string() << std::endl;
   std::ifstream inFile;
   inFile.open(path); //open the input file
 
@@ -61,7 +71,6 @@ void process_inl_file(const fs::path& path)
   strStream << inFile.rdbuf(); //read the file
   std::string str = strStream.str(); //str holds the content of the file
 
-  //std::cout << "File is:\n" << str << "\n"; //you can do anything with the string!!!
 
   static const std::regex sys_regex("void[ \n\t\r\a\f\v]*[a-zA-Z0-9_]+_system[ \n\t\r\a\f\v]*[(][a-zA-Z0-9_&*,: \n\t\r\a\f\v]+[)]");
   static const std::regex sys_regex1("void[ \n\t\r\a\f\v]*[a-zA-Z0-9_]+_system[ \n\t\r\a\f\v]*");
@@ -90,12 +99,14 @@ void process_inl_file(const fs::path& path)
     systemsDescriptions.emplace_back(descr);
   }
   std::ofstream outFile;
-  std::cout << path.string() + ".cpp" << std::endl;
+  std::cout << "[Codegen] \033[32m" << path.string() + ".cpp"<< "\033[39m" << std::endl;
   outFile.open(path.string() + ".cpp", std::ios::out);
   outFile << "#include " << path.filename() << "\n";
+  outFile << "#include \"ecs/ecs_core.h\"\n\n";
   outFile << "//Code-generator production\n\n";
+
   
-  constexpr int bufferSize = 1000;
+  constexpr int bufferSize = 2000;
   char buffer[bufferSize];
 
   for (auto& system : systemsDescriptions)
@@ -145,44 +156,34 @@ void process_inl_file(const fs::path& path)
   }
   
   outFile << "\n";
-
+  std::cout << "Codegen finished work\n\n";
 }
-#include "ecs_core.h"
 int main(int argc, char** argv)
 {
   add_configs(argc, (const char**)(argv));
 
-  bool code_gen = false;
-  if (!code_gen)
+  const char *ecsPath = get_config("ecsPath");
+  if (!ecsPath)
   {
-    ecs::initialize_ecs();
-    ecs::update_systems();
-    ecs::update_systems();
-    ecs::update_systems();
-    ecs::update_systems();
-    ecs::free_ecs();
+    printf("No ecs path, add -ecsPath [path]\n");
+    return 0;
   }
-  else
+  std::string path(ecsPath);
+  for (auto& p : fs::recursive_directory_iterator(path))
   {
-    std::string path(get_config("projectPath"));
-    for (auto& p : fs::recursive_directory_iterator(path + "/Sources/ecs"))
+      
+    if (p.is_regular_file() && p.path().has_extension())
     {
-        
-      if (p.is_regular_file() && p.path().has_extension())
+      if (p.path().extension() == ".inl")
       {
-        if (p.path().extension() == ".inl")
-        {
-          fs::path cpp_file = fs::path(p.path().string() + ".cpp");
-          fs::file_time_type last_write;
-          if (fs::exists(cpp_file))
-              last_write = fs::last_write_time(cpp_file);
-          //if (last_write < p.last_write_time())
-              process_inl_file(p.path());
-          }
-      }
+        fs::path cpp_file = fs::path(p.path().string() + ".cpp");
+        fs::file_time_type last_write;
+        if (fs::exists(cpp_file))
+            last_write = fs::last_write_time(cpp_file);
+        if (last_write < p.last_write_time())
+            process_inl_file(p.path());
+        }
     }
   }
   return 0;
-    
-   
 }

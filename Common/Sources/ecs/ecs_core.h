@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "string_hash.h"
-#include "system_description.h"
+#include "manager/string_hash.h"
+#include "manager/system_description.h"
 namespace ecs
 {
   struct Core
@@ -31,6 +31,8 @@ namespace ecs
 
   void initialize_ecs();
 
+  Archetype *add_archetype(const ComponentTypes &types, int capacity);
+  void create_entity(const ComponentInitializerList &list);
   void update_systems();
 
   void free_ecs();
