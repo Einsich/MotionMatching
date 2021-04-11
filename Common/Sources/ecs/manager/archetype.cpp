@@ -48,5 +48,6 @@ namespace ecs
     {
       container.second.destroy_component(index);
     }
+    count--;
   }
 }

@@ -7,6 +7,7 @@
 int main(int argc, char** argv)
 {
   add_configs(argc, (const char**)(argv));
+  ecs::EntityId niceCock;
   ecs::initialize_ecs();
   {
     ecs::ComponentInitializerList list;
@@ -24,13 +25,14 @@ int main(int argc, char** argv)
     ecs::ComponentInitializerList list;
     list.add<A>("v") = A("Nice");
     list.add<B>("w") = B("Cock");
-    ecs::create_entity(list);
+    niceCock = ecs::create_entity(list);
   }
   {
     ecs::ComponentInitializerList list;
     list.add<A>("v") = A("Alone");
     ecs::create_entity(list);
   }
+  ecs::destroy_entity(niceCock);
   ecs::update_systems();
   ecs::send_event<MyEvent>({10});
   ecs::free_ecs();

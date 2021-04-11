@@ -49,7 +49,7 @@ namespace ecs
   void initialize_ecs();
 
   Archetype *add_archetype(const ComponentTypes &types, int capacity);
-  void create_entity(ComponentInitializerList &list);
+  EntityId create_entity(ComponentInitializerList &list);
   void destroy_entity(const EntityId &eid);
   void update_systems();
 

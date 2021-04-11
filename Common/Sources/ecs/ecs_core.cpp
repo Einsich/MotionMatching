@@ -94,7 +94,7 @@ namespace ecs
       system->execute();
     }
   }
-  void create_entity(ComponentInitializerList &list)
+  EntityId create_entity(ComponentInitializerList &list)
   {
     list.add<EntityId>("eid") = EntityId();
     Archetype *found_archetype = nullptr;
@@ -113,8 +113,10 @@ namespace ecs
       found_archetype = add_archetype(list.types, 1);
     }
     int index = found_archetype->count;
-    list.get<EntityId>("eid") = core().entityContainer.create_entity(archetype_ind, index);
+    EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
+    list.get<EntityId>("eid") = eid;
     found_archetype->add_entity(list);
+    return eid;
   }
   void destroy_entity(const EntityId &eid)
   {

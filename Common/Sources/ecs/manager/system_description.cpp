@@ -27,7 +27,9 @@ namespace ecs
 
   QueryIterator QueryDescription::begin()
   {
-    return QueryIterator(*this, 0, 0);
+    QueryIterator it(*this, 0, 0);
+    it.skip_empty_archetype();
+    return it;
   }
   QueryIterator QueryDescription::end()
   {
@@ -44,7 +46,12 @@ namespace ecs
   void QueryIterator::operator++()
   {
     componentIndex++;
-    if (query.archetypes[archetypeIndex].archetype->count <= componentIndex)
+    skip_empty_archetype();
+  }
+
+  void QueryIterator::skip_empty_archetype()
+  {
+    while ((uint)archetypeIndex < query.archetypes.size() && query.archetypes[archetypeIndex].archetype->count <= componentIndex)
     {
       componentIndex = 0;
       archetypeIndex++;

@@ -39,6 +39,7 @@ namespace ecs
   
   class QueryIterator
   {
+    friend class QueryDescription;
   public:
     QueryIterator(const QueryDescription &query, int archetype, int component);
 
@@ -53,5 +54,6 @@ namespace ecs
     const QueryDescription &query;
     int archetypeIndex;
     int componentIndex;
+    void skip_empty_archetype();
   };
 }
