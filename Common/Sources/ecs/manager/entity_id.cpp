@@ -1,5 +1,6 @@
 #include "entity_id.h"
 #include <assert.h>
+#include "common.h"
 namespace ecs
 {
   constexpr uint index_mask = 0x000fffff;
@@ -7,6 +8,8 @@ namespace ecs
   constexpr uint bad_eid = 0xffffffff;
   EntityId::EntityId():
     eid(nullptr){}
+    EntityId::EntityId(uint *id):
+    eid(id){}
   EntityId::EntityId(uint *id, uint archetype, uint index):
     eid(id)
   {
@@ -58,6 +61,31 @@ namespace ecs
 
 
   constexpr uint entityBinSize = 200;
+
+  EntityContainerIterator::EntityContainerIterator(const EntityContainer &container, int bin, int index):
+  container(container), bin(bin), index(index){}
+
+  bool EntityContainerIterator::operator!=(const EntityContainerIterator &other) const
+  {
+    return bin != other.bin || index != other.index;
+  }
+  void EntityContainerIterator::operator++()
+  {
+    index++;
+    if (index == entityBinSize)
+    {
+      index = 0;
+      bin++;
+    }
+  }
+  EntityId EntityContainerIterator::eid() const
+  {
+    return EntityId(&container.entities[bin][index]);
+  }
+
+
+
+
   EntityContainer::EntityContainer():
   entities(), totalCount(0), destroyCount(0), entityCapacity(0)
   {
@@ -76,7 +104,6 @@ namespace ecs
       entityCapacity += entityBinSize;
     }
     uint *eid = entities[totalCount / entityBinSize] + (totalCount % entityBinSize);
-    totalCount++;
     return eid;
   }
   EntityId EntityContainer::create_entity(uint archetype, uint index)
@@ -92,5 +119,13 @@ namespace ecs
       *eid.eid = bad_eid;
       destroyCount++;
     }
+  }
+  EntityContainerIterator EntityContainer::begin() const
+  {
+    return EntityContainerIterator(*this, 0, 0);
+  }
+  EntityContainerIterator EntityContainer::end() const
+  {
+    return EntityContainerIterator(*this, totalCount / entityBinSize, totalCount % entityBinSize);
   }
 }

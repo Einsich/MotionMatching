@@ -20,6 +20,18 @@ namespace ecs
     static Core *singleton = new Core();
     return *singleton;
   }
+  void Core::destroy_entities()
+  {
+    for (auto it = entityContainer.begin(), end = entityContainer.end(); it != end; ++it)
+    {
+      EntityId eid = it.eid();
+      if (eid)
+      {
+        send_event(eid, OnEntityDestroyed());
+        toDestroy.push(eid);
+      }
+    }
+  }
 
   
   template<typename T>
@@ -109,7 +121,8 @@ namespace ecs
   {
     if (eid)
     {
-      core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index());
+      send_event(eid, OnEntityDestroyed());
+      core().toDestroy.push(eid);
     }
   }
 

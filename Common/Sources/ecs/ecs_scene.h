@@ -17,6 +17,8 @@ namespace ecs
     void mouse_click_event_handler(const MouseClickEvent &event);
     void mouse_move_event_handler(const MouseMoveEvent &event);
     void mouse_wheel_event_handler(const MouseWheelEvent &event);
+    void destroy_entities(bool without_copy);
+    void process_only_events();
   public:
     void start_scene() override;
     void update_logic() override;

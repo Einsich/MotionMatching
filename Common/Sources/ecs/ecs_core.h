@@ -22,6 +22,7 @@ namespace ecs
     std::vector<QueryDescription*> event_queries;
     EntityContainer entityContainer;
     std::queue<std::function<void()>> events;
+    std::queue<EntityId> toDestroy;
     Core();
     ~Core();
     template<typename E>
@@ -36,6 +37,7 @@ namespace ecs
       static std::vector<SingleEventDescription<E>*> handlers;
       return handlers;
     }
+    void destroy_entities();
   };
   Core &core();
 

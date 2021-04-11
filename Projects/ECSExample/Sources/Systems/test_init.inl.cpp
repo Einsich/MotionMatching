@@ -71,6 +71,24 @@ void entity_created_handler(const ecs::OnEntityCreated &event)
 }
 
 
+void entity_destroyed_handler(const ecs::OnEntityDestroyed &event);
+
+ecs::EventDescription<ecs::OnEntityDestroyed> entity_destroyed_descr({
+  {ecs::get_type_description<std::string>("s"), false}
+}, entity_destroyed_handler);
+
+void entity_destroyed_handler(const ecs::OnEntityDestroyed &event)
+{
+  for (ecs::QueryIterator begin = entity_destroyed_descr.begin(), end = entity_destroyed_descr.end(); begin != end; ++begin)
+  {
+    entity_destroyed(
+      event,
+      *begin.get_component<std::string>(0)
+    );
+  }
+}
+
+
 void on_scene_create_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> on_scene_create_singl_descr({
@@ -93,6 +111,21 @@ ecs::SingleEventDescription<ecs::OnEntityCreated> entity_created_singl_descr({
 void entity_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {
   entity_created(
+    event,
+    *begin.get_component<std::string>(0)
+  );
+}
+
+
+void entity_destroyed_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityDestroyed> entity_destroyed_singl_descr({
+  {ecs::get_type_description<std::string>("s"), false}
+}, entity_destroyed_singl_handler);
+
+void entity_destroyed_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin)
+{
+  entity_destroyed(
     event,
     *begin.get_component<std::string>(0)
   );

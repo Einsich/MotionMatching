@@ -47,7 +47,7 @@ namespace ecs
     copyConstructor(component.data, (char*)data[j] + type_sizeof(typeID) * i);
     count++;
   }
-  void ComponentContainer::destroy_component(int i)
+  void ComponentContainer::destroy_component(int i, bool without_copy)
   {
     count--;
     CopyConstructor copyConstructor = type_copy_constructor(typeID);
@@ -55,7 +55,7 @@ namespace ecs
     int j = count;
     void *removed = (char*)data[i / binSize] + type_sizeof(typeID) * (i % binSize);
     destructor(removed);
-    if (j != i)
+    if (!without_copy && j != i)
     {
       void *copied = (char*)data[j / binSize] + type_sizeof(typeID) * (j % binSize);
       copyConstructor(copied, removed);

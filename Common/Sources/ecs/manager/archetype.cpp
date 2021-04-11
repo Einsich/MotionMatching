@@ -42,11 +42,11 @@ namespace ecs
     }
     count++;
   }
-  void Archetype::destroy_entity(int index)
+  void Archetype::destroy_entity(int index, bool without_copy)
   {
     for (auto &container : components)
     {
-      container.second.destroy_component(index);
+      container.second.destroy_component(index, without_copy);
     }
     count--;
   }

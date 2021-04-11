@@ -48,8 +48,14 @@ EVENT() entity_created(const ecs::OnEntityCreated &,
                         std::string &s)
 {
   s = "I was created!";
+  printf("I was created\n");
 }
-
+EVENT() entity_destroyed(const ecs::OnEntityDestroyed &,
+                        std::string &s)
+{
+  s = "I was destroyed!";
+  printf("I was destroyed\n");
+}
 template<typename Callable>
 void attsh_query_test(const ecs::EntityId&, Callable);
 
@@ -58,6 +64,6 @@ SYSTEM() attach_test(ecs::EntityId cock_attach)
   QUERY() attsh_query_test(cock_attach, [](
     const A &v,
     const B &w){
-    printf("[single query] %s %s\n", v.x.c_str(), w.x.c_str());
+    //printf("[single query] %s %s\n", v.x.c_str(), w.x.c_str());
   });
 }

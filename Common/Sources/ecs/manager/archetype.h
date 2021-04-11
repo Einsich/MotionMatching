@@ -16,7 +16,7 @@ namespace ecs
     template<typename T>
     ComponentContainer *get_container(const char *name);
     void add_entity(const ComponentInitializerList &list);
-    void destroy_entity(int index);
+    void destroy_entity(int index, bool without_copy = false);
     ~Archetype() = default;
     
   };

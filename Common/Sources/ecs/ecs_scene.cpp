@@ -59,7 +59,17 @@ namespace ecs
     update_range(ui);
 
   }
-  void Scene::process_events()
+  void Scene::destroy_entities(bool without_copy)
+  {
+    auto &toDestroy = core().toDestroy;
+    for (int i = 0, n = toDestroy.size(); i < n; i++)
+    {
+      EntityId &eid = toDestroy.front();
+      core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), without_copy);
+      toDestroy.pop();
+    }
+  }
+  void Scene::process_only_events()
   {
     auto &events = core().events;
     for (int i = 0, n = events.size(); i < n; i++)
@@ -68,8 +78,16 @@ namespace ecs
       events.pop();
     }
   }
+  void Scene::process_events()
+  {
+    process_only_events();
+    destroy_entities(false);
+  }
   void Scene::destroy_scene()
   {
+    core().destroy_entities();
+    process_only_events();
+    destroy_entities(true);
     core().~Core();
   }
   void Scene::keyboard_event_handler(const KeyboardEvent &event)
