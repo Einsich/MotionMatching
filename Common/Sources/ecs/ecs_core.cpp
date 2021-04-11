@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "ecs_core.h"
+#include "ecs_event.h"
 #include "manager/system_description.h"
 namespace ecs
 {
@@ -101,6 +102,7 @@ namespace ecs
     EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
     list.get<EntityId>("eid") = eid;
     found_archetype->add_entity(list);
+    send_event(eid, OnEntityCreated());
     return eid;
   }
   void destroy_entity(const EntityId &eid)

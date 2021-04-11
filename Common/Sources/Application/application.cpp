@@ -57,6 +57,7 @@ void Application::main_loop()
 		running = sdl_event_handler();
     if (running)
     {
+      scene->process_events();
       scene->update_logic();
       scene->update_render();
       context.start_imgui();
@@ -64,7 +65,6 @@ void Application::main_loop()
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();
-      scene->process_events();
     }
 	}
 }

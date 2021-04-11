@@ -10,7 +10,7 @@ SYSTEM(ecs::SystemOrder::LATE_RENDER) test_system ( int a, float  &b)
 template<typename Callable>
 void b_plus_f_query(Callable func);
 
-SYSTEM() system_with_query(std::string &s, float f)
+SYSTEM() system_with_query(float f, std::string &s)
 {
   QUERY() b_plus_f_query([&] (float &b)
   {

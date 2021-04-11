@@ -39,8 +39,8 @@ void test_system_func()
 void system_with_query_func();
 
 ecs::SystemDescription system_with_query_descr({
-  {ecs::get_type_description<std::string>("s"), false},
-  {ecs::get_type_description<float>("f"), false}
+  {ecs::get_type_description<float>("f"), false},
+  {ecs::get_type_description<std::string>("s"), false}
 }, system_with_query_func, ecs::SystemOrder::NO_ORDER);
 
 void system_with_query_func()
@@ -48,8 +48,8 @@ void system_with_query_func()
   for (ecs::QueryIterator begin = system_with_query_descr.begin(), end = system_with_query_descr.end(); begin != end; ++begin)
   {
     system_with_query(
-      *begin.get_component<std::string>(0),
-      *begin.get_component<float>(1)
+      *begin.get_component<float>(0),
+      *begin.get_component<std::string>(1)
     );
   }
 }
@@ -123,6 +123,21 @@ void test_handler_handler(const TestEvent &event)
       *begin.get_component<std::string>(0)
     );
   }
+}
+
+
+void test_handler_singl_handler(const TestEvent &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<TestEvent> test_handler_singl_descr({
+  {ecs::get_type_description<std::string>("s"), false}
+}, test_handler_singl_handler);
+
+void test_handler_singl_handler(const TestEvent &event, ecs::QueryIterator &begin)
+{
+  test_handler(
+    event,
+    *begin.get_component<std::string>(0)
+  );
 }
 
 

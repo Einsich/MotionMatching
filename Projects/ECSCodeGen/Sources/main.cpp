@@ -361,8 +361,56 @@ void process_inl_file(const fs::path& path)
     outFile << buffer;
   }
   
+  for (auto& event : eventsDescriptions)
+  {
+    std::string event_singl_descr = event.sys_name + "_singl_descr";
+    std::string event_singl_handler = event.sys_name + "_singl_handler";
+    std::string event_type = event.args[0].type;
+    snprintf(buffer, bufferSize,
+      "void %s(const %s &event, ecs::QueryIterator &begin);\n\n"
+      "ecs::SingleEventDescription<%s> %s({\n",
+      event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 1; i < event.args.size(); i++)
+    {
+      auto& arg  = event.args[i];
+      snprintf(buffer, bufferSize,
+      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)event.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize, "}, %s);\n\n", event_singl_handler.c_str());
+    outFile << buffer;
+
+    bool noAgrs = (uint)event.args.size() == 1;
+    snprintf(buffer, bufferSize,
+      "void %s(const %s &event, ecs::QueryIterator &%s)\n"
+      "{\n"
+      "  %s(\n",
+      event_singl_handler.c_str(), event_type.c_str(), noAgrs ? "" : "begin", event.sys_name.c_str());
+    
+    outFile << buffer;
+
+    snprintf(buffer, bufferSize,
+      "    event%s\n", noAgrs ? "" : ",");
+    outFile << buffer;
+
+    for (uint i = 1; i < event.args.size(); i++)
+    {
+      auto& arg  = event.args[i];
+      snprintf(buffer, bufferSize,
+      "    %sbegin.get_component<%s>(%d)%s\n",
+      arg.optional ? " " : "*", arg.type.c_str(), i - 1, i + 1 == (uint)event.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize,
+        "  );\n"
+        "}\n\n\n");
+    outFile << buffer;
+  }
+  
   outFile << "\n";
-  std::cout << "Codegen finished work\n\n";
 }
 int main(int argc, char** argv)
 {
@@ -375,6 +423,10 @@ int main(int argc, char** argv)
     return 0;
   }
   std::string path(ecsPath);
+  if (!fs::exists(path))
+  {
+    return 0;
+  }
   for (auto& p : fs::recursive_directory_iterator(path))
   {
       
@@ -388,8 +440,9 @@ int main(int argc, char** argv)
             last_write = fs::last_write_time(cpp_file);
         if (last_write < p.last_write_time())
             process_inl_file(p.path());
-        }
+      }
     }
   }
+  std::cout << "Codegen finished work\n\n";
   return 0;
 }

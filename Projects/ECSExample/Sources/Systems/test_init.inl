@@ -35,3 +35,11 @@ on_scene_create(const ecs::OnSceneCreated &)
   ecs::destroy_entity(niceCock);
   ecs::send_event<MyEvent>({10});
 }
+
+
+
+EVENT() entity_created(const ecs::OnEntityCreated &,
+                        std::string &s)
+{
+  s = "I was created!";
+}
