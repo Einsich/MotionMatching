@@ -31,6 +31,30 @@
             ],
             "preLaunchTask": "Build project",
             "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Test codeGen",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Builds/ECSCodeGen/ECSCodeGen-dev.exe",
+            "args": [
+                "-project -${config:launchOption.currentConfig.Project}",
+                "-ecsPath -${workspaceFolder}/Projects/ECSExample/Sources/Systems",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Builds/ECSCodeGen",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Codegen",
+            "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
 }

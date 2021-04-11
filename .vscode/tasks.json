@@ -45,7 +45,7 @@
             "command": "./build_script.sh",
             "args": [
                 "ECSCodeGen",
-                "rel"
+                "dev"
             ],
             "group": {
                 "kind": "build",

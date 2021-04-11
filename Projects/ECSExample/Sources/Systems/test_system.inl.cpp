@@ -3,6 +3,22 @@
 
 //Code-generator production
 
+ecs::QueryDescription b_plus_f_query_descr({
+  {ecs::get_type_description<float>("b"), false}
+});
+
+template<typename Callable>
+void b_plus_f_query(Callable lambda)
+{
+  for (ecs::QueryIterator begin = b_plus_f_query_descr.begin(), end = b_plus_f_query_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<float>(0)
+    );
+  }
+}
+
+
 void test_system_func();
 
 ecs::SystemDescription test_system_descr({
@@ -10,20 +26,6 @@ ecs::SystemDescription test_system_descr({
   {ecs::get_type_description<float>("b"), false}
 }, test_system_func);
 
-ecs::QueryDescription b_plus_f_query_descr({
-  {ecs::get_type_description<float>("b"), false}
-});
-
-template<typename Callable>
-void b_plus_f_query(Callable func)
-{
-  for (ecs::QueryIterator begin = b_plus_f_query_descr.begin(), end = b_plus_f_query_descr.end(); begin != end; ++begin)
-  {
-    func(
-      *begin.get_component<float>(0)
-    );
-  }
-}
 void test_system_func()
 {
   for (ecs::QueryIterator begin = test_system_descr.begin(), end = test_system_descr.end(); begin != end; ++begin)

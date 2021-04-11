@@ -15,7 +15,7 @@ Lol_system(std::string& s, float f)
 {
 	printf("[l] %s, %f\n", s.c_str(), f);
 	s+=")";
-  b_plus_f_query([&](float &b)
+  b_plus_f_query([&] (float &b)
   {
     b += f;
   });

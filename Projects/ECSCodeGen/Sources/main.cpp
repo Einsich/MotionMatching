@@ -17,6 +17,20 @@ struct ParserSystemDescription
   std::string sys_file, sys_name;
   std::vector<ParserFunctionArgument> args;
 };
+#define SPACE_SYM " \n\t\r\a\f\v"
+#define NAME_SYM "a-zA-Z0-9_"
+#define SPACE "[" SPACE_SYM "]*"
+#define NAME "[" NAME_SYM "]+"
+#define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]+"
+#define ARGS_L "[(]" ARGS "[)]"
+#define ARGS_R "[\\[]" ARGS "[\\]]"
+
+static const std::regex sys_regex("void" SPACE NAME "_system" SPACE ARGS_L);
+static const std::regex sys_name_regex(NAME "_system");
+static const std::regex que_regex(NAME "_query" SPACE "[(]" SPACE ARGS_R SPACE ARGS_L);
+static const std::regex que_name_regex(NAME "_query");
+static const std::regex args_regex(ARGS_L);
+static const std::regex arg_regex("[" NAME_SYM "&*:" SPACE_SYM "]+");
 
 namespace fs = std::filesystem;
 std::vector<std::string> get_matches(const std::string& str, std::regex reg, int max_matches = 10000000)
@@ -61,7 +75,32 @@ ParserFunctionArgument clear_arg(std::string str)
     arg.name = args[1];
   return arg;
 }
+void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
+  const std::string &file, const std::string &file_path, const std::regex &system_reg, const std::regex &name)
+{
+  
+  auto systems = get_matches(file, system_reg);
+  for (auto& system : systems)
+  {
+    auto args = get_matches(system, args_regex);
+    auto sys_name = get_matches(system, name);
+    if (args.size() != 1 || sys_name.size() != 1)
+    {
+      return;
+    }
+    args[0] = args[0].substr(1, args[0].size() - 2);
 
+    ParserSystemDescription descr;
+    descr.sys_file = file_path;
+    descr.sys_name = sys_name[0];
+    args = get_matches(args[0], arg_regex);
+    for (auto& arg : args)
+    {
+      descr.args.push_back(clear_arg(arg));
+    }
+    systemsDescriptions.emplace_back(descr);
+  }
+}
 void process_inl_file(const fs::path& path)
 {
   std::ifstream inFile;
@@ -72,32 +111,13 @@ void process_inl_file(const fs::path& path)
   std::string str = strStream.str(); //str holds the content of the file
 
 
-  static const std::regex sys_regex("void[ \n\t\r\a\f\v]*[a-zA-Z0-9_]+_system[ \n\t\r\a\f\v]*[(][a-zA-Z0-9_&*,: \n\t\r\a\f\v]+[)]");
-  static const std::regex sys_regex1("void[ \n\t\r\a\f\v]*[a-zA-Z0-9_]+_system[ \n\t\r\a\f\v]*");
-  static const std::regex sys_name_regex("[a-zA-Z0-9_]+_system");
-  static const std::regex args_regex("[(][a-zA-Z0-9_&*,: \n\t\r\a\f\v]+[)]");
-  static const std::regex arg_regex("[a-zA-Z0-9_&*: \n\t\r\a\f\v]+");
 
   std::vector<ParserSystemDescription>  systemsDescriptions;
-  auto systems = get_matches(str, sys_regex);
-  for (auto& system : systems)
-  {
-    auto args = get_matches(system, args_regex);
-    auto sys_name = get_matches(system, sys_name_regex);
-    if (args.size() != 1 || sys_name.size() != 1)
-        return;
-    args[0] = args[0].substr(1, args[0].size() - 2);
+  std::vector<ParserSystemDescription>  queriesDescriptions;
+  parse_system(systemsDescriptions, str, path.string(), sys_regex, sys_name_regex);
+  parse_system(queriesDescriptions, str, path.string(), que_regex, que_name_regex);
 
-    ParserSystemDescription descr;
-    descr.sys_file = path.string();
-    descr.sys_name = sys_name[0];
-    args = get_matches(args[0], arg_regex);
-    for (auto& arg : args)
-    {
-      descr.args.push_back(clear_arg(arg));
-    }
-    systemsDescriptions.emplace_back(descr);
-  }
+
   std::ofstream outFile;
   std::cout << "[Codegen] \033[32m" << path.string() + ".cpp"<< "\033[39m" << std::endl;
   outFile.open(path.string() + ".cpp", std::ios::out);
@@ -108,7 +128,50 @@ void process_inl_file(const fs::path& path)
   
   constexpr int bufferSize = 2000;
   char buffer[bufferSize];
+  for (auto& query : queriesDescriptions)
+  {
+    std::string query_descr = query.sys_name + "_descr";
+    snprintf(buffer, bufferSize,
+      "ecs::QueryDescription %s({\n",
+      query_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 0; i < query.args.size(); i++)
+    {
+      auto& arg  = query.args[i];
+      snprintf(buffer, bufferSize,
+      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)query.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize, "});\n\n");
+    outFile << buffer;
 
+    snprintf(buffer, bufferSize,
+      "template<typename Callable>\n"
+      "void %s(Callable lambda)\n"
+      "{\n"
+      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+      "  {\n"
+      "    lambda(\n",
+      query.sys_name.c_str(), query_descr.c_str(), query_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 0; i < query.args.size(); i++)
+    {
+      auto& arg  = query.args[i];
+      snprintf(buffer, bufferSize,
+      "      %sbegin.get_component<%s>(%d)%s\n",
+      arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)query.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize,
+        "    );\n"
+        "  }\n"
+        "}\n\n\n");
+    outFile << buffer;
+  }
+  
   for (auto& system : systemsDescriptions)
   {
     std::string sys_descr = system.sys_name + "_descr";
@@ -180,7 +243,7 @@ int main(int argc, char** argv)
         fs::file_time_type last_write;
         if (fs::exists(cpp_file))
             last_write = fs::last_write_time(cpp_file);
-        if (last_write < p.last_write_time())
+        //if (last_write < p.last_write_time())
             process_inl_file(p.path());
         }
     }
