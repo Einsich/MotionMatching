@@ -28,7 +28,8 @@ struct ParserSystemDescription
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
-#define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]+"
+#define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]*"
+#define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
 #define DEF_ARGS "[" NAME_SYM ",:" SPACE_SYM "]*"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
@@ -40,6 +41,7 @@ static const std::regex name_regex(NAME);
 static const std::regex system_full_regex(SYSTEM SPACE NAME SPACE ARGS_L);
 static const std::regex system_regex(SYSTEM);
 static const std::regex query_full_regex(QUERY SPACE NAME SPACE "[(]" SPACE ARGS_R SPACE ARGS_L);
+static const std::regex singl_query_full_regex(QUERY SPACE NAME SPACE "[(]" SPACE NAME SPACE "[,]" SPACE ARGS_R SPACE ARGS_L);
 static const std::regex query_regex(QUERY);
 static const std::regex event_full_regex(EVENT SPACE NAME SPACE ARGS_L);
 static const std::regex event_regex(EVENT);
@@ -205,9 +207,11 @@ void process_inl_file(const fs::path& path)
 
   std::vector<ParserSystemDescription>  systemsDescriptions;
   std::vector<ParserSystemDescription>  queriesDescriptions;
+  std::vector<ParserSystemDescription>  singlqueriesDescriptions;
   std::vector<ParserSystemDescription>  eventsDescriptions;
   parse_system(systemsDescriptions, str, path.string(), system_full_regex, system_regex);
   parse_system(queriesDescriptions, str, path.string(), query_full_regex, query_regex);
+  parse_system(singlqueriesDescriptions, str, path.string(), singl_query_full_regex, query_regex);
   parse_system(eventsDescriptions, str, path.string(), event_full_regex, event_regex);
 
 
@@ -263,6 +267,52 @@ void process_inl_file(const fs::path& path)
         "}\n\n\n");
     outFile << buffer;
   }
+
+  for (auto& query : singlqueriesDescriptions)
+  {
+    std::string query_descr = query.sys_name + "_descr";
+    snprintf(buffer, bufferSize,
+      "ecs::SingleQueryDescription %s({\n",
+      query_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 0; i < query.args.size(); i++)
+    {
+      auto& arg  = query.args[i];
+      snprintf(buffer, bufferSize,
+      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)query.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize, "});\n\n");
+    outFile << buffer;
+
+    snprintf(buffer, bufferSize,
+      "template<typename Callable>\n"
+      "void %s(const ecs::EntityId &eid, Callable lambda)\n"
+      "{\n"
+      "  ecs::QueryIterator begin;\n"
+      "  if (ecs::get_iterator(%s, eid, begin))\n"
+      "  {\n"
+      "    lambda(\n",
+      query.sys_name.c_str(), query_descr.c_str());
+    
+    outFile << buffer;
+    for (uint i = 0; i < query.args.size(); i++)
+    {
+      auto& arg  = query.args[i];
+      snprintf(buffer, bufferSize,
+      "      %sbegin.get_component<%s>(%d)%s\n",
+      arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)query.args.size() ? "" : ",");
+      outFile << buffer;
+    }
+    snprintf(buffer, bufferSize,
+        "    );\n"
+        "  }\n"
+        "}\n\n\n");
+    outFile << buffer;
+  }
+
   
   for (auto& system : systemsDescriptions)
   {
@@ -438,7 +488,7 @@ int main(int argc, char** argv)
         fs::file_time_type last_write;
         if (fs::exists(cpp_file))
             last_write = fs::last_write_time(cpp_file);
-        if (last_write < p.last_write_time())
+        //if (last_write < p.last_write_time())
             process_inl_file(p.path());
       }
     }

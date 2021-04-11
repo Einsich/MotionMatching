@@ -84,23 +84,21 @@ namespace ecs
   }
 
 
+  bool get_iterator(const QueryDescription &descr, const EntityId &eid, QueryIterator &iterator);
+  bool get_iterator(const SingleQueryDescription &descr, const EntityId &eid, QueryIterator &iterator);
+
+
   template<typename E>
-  void send_event(const EntityId &id, const E &event)
+  void send_event(const EntityId &eid, const E &event)
   {
-    if (id)
+    if (eid)
     {
-      core().events.emplace([id, event](){
-        int archetypeInd = id.archetype_index();
-        int index = id.array_index();
+      core().events.emplace([eid, event](){
         for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
         {
-          Archetype *archetype = core().archetypes[archetypeInd];
-
-          auto it = std::find_if(descr->archetypes.begin(), descr->archetypes.end(),
-            [archetype](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype == archetype;});
-          if (it != descr->archetypes.end())
+          QueryIterator iterator;
+          if (get_iterator(*((QueryDescription*)descr), eid, iterator))
           {
-            QueryIterator iterator(*((QueryDescription*)descr), it - descr->archetypes.begin(), index);
             descr->eventHandler(event, iterator);
           }
         } 

@@ -24,20 +24,30 @@ namespace ecs
     if (query)
       add_query(this);
   }
+  SingleQueryDescription::SingleQueryDescription(const std::vector<FunctionArgument> &args, bool query):
+    args(std::move(args)), archetypes()
+  {
+    if (query)
+      add_query((QueryDescription*)this);
+  }
 
   QueryIterator QueryDescription::begin()
   {
-    QueryIterator it(*this, 0, 0);
+    QueryIterator it(this, 0, 0);
     it.skip_empty_archetype();
     return it;
   }
   QueryIterator QueryDescription::end()
   {
-    return QueryIterator(*this, archetypes.size(), 0);
+    return QueryIterator(this, archetypes.size(), 0);
   }
 
-  QueryIterator::QueryIterator(const QueryDescription &query, int archetype, int component):
+  QueryIterator::QueryIterator():
+  query(nullptr), archetypeIndex(-1), componentIndex(0){}
+
+  QueryIterator::QueryIterator(const QueryDescription *query, int archetype, int component):
     query(query), archetypeIndex(archetype), componentIndex(component){}
+
 
   bool QueryIterator::operator!=(QueryIterator const& other) const
   {
@@ -51,7 +61,7 @@ namespace ecs
 
   void QueryIterator::skip_empty_archetype()
   {
-    while ((uint)archetypeIndex < query.archetypes.size() && query.archetypes[archetypeIndex].archetype->count <= componentIndex)
+    while ((uint)archetypeIndex < query->archetypes.size() && query->archetypes[archetypeIndex].archetype->count <= componentIndex)
     {
       componentIndex = 0;
       archetypeIndex++;

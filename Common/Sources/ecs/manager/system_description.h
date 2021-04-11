@@ -28,6 +28,15 @@ namespace ecs
     QueryIterator begin();
     QueryIterator end();
   };
+  struct SingleQueryDescription
+  {
+    std::vector<FunctionArgument> args;
+    std::vector<SystemCashedArchetype> archetypes;
+    void (*function)();
+    SingleQueryDescription(const std::vector<FunctionArgument> &args, bool query = true);
+    QueryIterator begin();
+    QueryIterator end();
+  };
   struct SystemDescription : QueryDescription
   {
     void (*function)();
@@ -41,17 +50,18 @@ namespace ecs
   {
     friend class QueryDescription;
   public:
-    QueryIterator(const QueryDescription &query, int archetype, int component);
+    QueryIterator();
+    QueryIterator(const QueryDescription *query, int archetype, int component);
 
-    bool operator!=(QueryIterator const& other) const;
+    bool operator!=(const QueryIterator &other) const;
     void operator++();
     template<typename T>
     T *get_component(int ind)
     {
-      return query.archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
+      return query->archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
     }
   private:
-    const QueryDescription &query;
+    const QueryDescription *query;
     int archetypeIndex;
     int componentIndex;
     void skip_empty_archetype();

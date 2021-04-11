@@ -112,5 +112,28 @@ namespace ecs
       core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index());
     }
   }
+
+  bool get_iterator(const QueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
+  {
+    if (eid)
+    {
+      int index = eid.array_index();
+      int archetypeInd = eid.archetype_index();
+      Archetype *archetype = core().archetypes[archetypeInd];
+
+      auto it = std::find_if(descr.archetypes.begin(), descr.archetypes.end(),
+        [archetype](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype == archetype;});
+      if (it != descr.archetypes.end())
+      {
+        iterator = QueryIterator(&descr, it - descr.archetypes.begin(), index);
+        return true;
+      }
+    }
+    return false;
+  }
+  bool get_iterator(const SingleQueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
+  {
+    return get_iterator((const QueryDescription &)descr, eid, iterator);
+  }
 }
 

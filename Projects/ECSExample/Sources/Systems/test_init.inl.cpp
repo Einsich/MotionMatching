@@ -1,6 +1,42 @@
 #include "test_init.inl"
 //Code-generator production
 
+ecs::SingleQueryDescription attsh_query_test_descr({
+  {ecs::get_type_description<A>("v"), false},
+  {ecs::get_type_description<B>("w"), false}
+});
+
+template<typename Callable>
+void attsh_query_test(const ecs::EntityId &eid, Callable lambda)
+{
+  ecs::QueryIterator begin;
+  if (ecs::get_iterator(attsh_query_test_descr, eid, begin))
+  {
+    lambda(
+      *begin.get_component<A>(0),
+      *begin.get_component<B>(1)
+    );
+  }
+}
+
+
+void attach_test_func();
+
+ecs::SystemDescription attach_test_descr({
+  {ecs::get_type_description<ecs::EntityId>("cock_attach"), false}
+}, attach_test_func, ecs::SystemOrder::NO_ORDER);
+
+void attach_test_func()
+{
+  for (ecs::QueryIterator begin = attach_test_descr.begin(), end = attach_test_descr.end(); begin != end; ++begin)
+  {
+    attach_test(
+      *begin.get_component<ecs::EntityId>(0)
+    );
+  }
+}
+
+
 void on_scene_create_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> on_scene_create_descr({
