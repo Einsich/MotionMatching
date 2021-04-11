@@ -10,9 +10,23 @@ ecs::SystemDescription test_system_descr({
   {ecs::get_type_description<float>("b"), false}
 }, test_system_func);
 
+ecs::QueryDescription b_plus_f_query_descr({
+  {ecs::get_type_description<float>("b"), false}
+});
+
+template<typename Callable>
+void b_plus_f_query(Callable func)
+{
+  for (ecs::QueryIterator begin = b_plus_f_query_descr.begin(), end = b_plus_f_query_descr.end(); begin != end; ++begin)
+  {
+    func(
+      *begin.get_component<float>(0)
+    );
+  }
+}
 void test_system_func()
 {
-  for (ecs::SystemIterator begin = test_system_descr.begin(), end = test_system_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = test_system_descr.begin(), end = test_system_descr.end(); begin != end; ++begin)
   {
     test_system(
       *begin.get_component<int>(0),
@@ -31,7 +45,7 @@ ecs::SystemDescription Lol_system_descr({
 
 void Lol_system_func()
 {
-  for (ecs::SystemIterator begin = Lol_system_descr.begin(), end = Lol_system_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = Lol_system_descr.begin(), end = Lol_system_descr.end(); begin != end; ++begin)
   {
     Lol_system(
       *begin.get_component<std::string>(0),
@@ -50,7 +64,7 @@ ecs::SystemDescription math_system_descr({
 
 void math_system_func()
 {
-  for (ecs::SystemIterator begin = math_system_descr.begin(), end = math_system_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = math_system_descr.begin(), end = math_system_descr.end(); begin != end; ++begin)
   {
     math_system(
       *begin.get_component<A>(0),

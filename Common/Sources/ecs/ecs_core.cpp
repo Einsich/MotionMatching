@@ -40,34 +40,37 @@ namespace ecs
   }
 
 
-
+  static void register_archetype_to(QueryDescription *query, Archetype *archetype)
+  {
+    std::vector<SystemCashedArchetype> &sys_archetypes = query->archetypes;
+    std::vector<ComponentContainer*> containers(query->args.size());
+    bool breaked = false;
+    int i = 0;
+    for(auto& arg : query->args)
+    {
+      ComponentContainer* container = archetype->get_container(arg.descr);
+      if (!arg.optional)
+      {
+        if (container == nullptr || container->typeID != arg.descr.typeId)
+        {
+          breaked = true;
+          break;
+        }
+      }
+      containers[i] = container;
+      i++;
+    }
+    if (!breaked)
+      sys_archetypes.emplace_back(archetype, std::move(containers));
+  }
 
   
   void register_archetype(Archetype *archetype)
   {
+    for (QueryDescription *query: core().queries)
+      register_archetype_to(query, archetype);
     for (SystemDescription *system: core().systems)
-    {
-      std::vector<SystemCashedArchetype> &sys_archetypes = system->archetypes;
-      std::vector<ComponentContainer*> containers(system->args.size());
-      bool breaked = false;
-      int i = 0;
-      for(auto& arg : system->args)
-      {
-        ComponentContainer* container = archetype->get_container(arg.descr);
-        if (!arg.optional)
-        {
-          if (container == nullptr || container->typeID != arg.descr.typeId)
-          {
-            breaked = true;
-            break;
-          }
-        }
-        containers[i] = container;
-        i++;
-      }
-      if (!breaked)
-        sys_archetypes.emplace_back(archetype, std::move(containers));
-    }
+      register_archetype_to(system, archetype);
     
   }
 
@@ -78,11 +81,10 @@ namespace ecs
     register_archetype(archetype);
     return archetype;
   }
+
   void initialize_ecs()
   {
     
-    
-
   }
 
   void update_systems()

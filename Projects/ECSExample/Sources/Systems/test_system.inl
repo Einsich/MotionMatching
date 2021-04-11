@@ -7,12 +7,18 @@ void test_system
 	b+=1;
 }
 
+template<typename Callable>
+void b_plus_f_query(Callable func);
 
 void 
 Lol_system(std::string& s, float f)
 {
 	printf("[l] %s, %f\n", s.c_str(), f);
 	s+=")";
+  b_plus_f_query([&](float &b)
+  {
+    b += f;
+  });
 }
 
 void math_system(A &v, B *w)

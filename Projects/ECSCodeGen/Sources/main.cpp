@@ -134,7 +134,7 @@ void process_inl_file(const fs::path& path)
     snprintf(buffer, bufferSize,
       "void %s()\n"
       "{\n"
-      "  for (ecs::SystemIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
       "  {\n"
       "    %s(\n",
       sys_func.c_str(), sys_descr.c_str(), sys_descr.c_str(), system.sys_name.c_str());

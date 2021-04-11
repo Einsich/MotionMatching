@@ -16,32 +16,38 @@ namespace ecs
     SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers);
   };
 
-  class SystemIterator;
-  struct SystemDescription
+  class QueryIterator;
+
+  struct QueryDescription
   {
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
+    QueryDescription(const std::vector<FunctionArgument> &args, bool query = true);
+    QueryIterator begin();
+    QueryIterator end();
+  };
+  struct SystemDescription : QueryDescription
+  {
+    void (*function)();
     SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)());
     void execute();
-    SystemIterator begin();
-    SystemIterator end();
   };
   
-  class SystemIterator
+  class QueryIterator
   {
   public:
-    SystemIterator(const SystemDescription &system, int archetype, int component);
+    QueryIterator(const QueryDescription &query, int archetype, int component);
 
-    bool operator!=(SystemIterator const& other) const;
+    bool operator!=(QueryIterator const& other) const;
     void operator++();
     template<typename T>
     T *get_component(int ind)
     {
-      return system.archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
+      return query.archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
     }
   private:
-    const SystemDescription &system;
+    const QueryDescription &query;
     int archetypeIndex;
     int componentIndex;
   };

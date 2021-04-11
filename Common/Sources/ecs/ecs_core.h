@@ -10,6 +10,7 @@ namespace ecs
     std::vector<FullTypeDescription> types;
     std::vector<Archetype*> archetypes;
     std::vector<SystemDescription*> systems;
+    std::vector<QueryDescription*> queries;
     Core() = default;
     ~Core();
   };

@@ -6,7 +6,8 @@ namespace ecs
     archetype(archetype), containers(containers){}
 
   SystemDescription::SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)()):
-    args(std::move(args)), archetypes(), function(function_pointer)
+    QueryDescription(args, false),
+    function(function_pointer)
   {
     add_system(this);
   }
@@ -15,26 +16,34 @@ namespace ecs
     function();
   }
 
-  SystemIterator SystemDescription::begin()
+
+  QueryDescription::QueryDescription(const std::vector<FunctionArgument> &args, bool query):
+    args(std::move(args)), archetypes()
   {
-    return SystemIterator(*this, 0, 0);
-  }
-  SystemIterator SystemDescription::end()
-  {
-    return SystemIterator(*this, archetypes.size(), 0);
+    if (query)
+      add_query(this);
   }
 
-  SystemIterator::SystemIterator(const SystemDescription &system, int archetype, int component):
-    system(system), archetypeIndex(archetype), componentIndex(component){}
+  QueryIterator QueryDescription::begin()
+  {
+    return QueryIterator(*this, 0, 0);
+  }
+  QueryIterator QueryDescription::end()
+  {
+    return QueryIterator(*this, archetypes.size(), 0);
+  }
 
-  bool SystemIterator::operator!=(SystemIterator const& other) const
+  QueryIterator::QueryIterator(const QueryDescription &query, int archetype, int component):
+    query(query), archetypeIndex(archetype), componentIndex(component){}
+
+  bool QueryIterator::operator!=(QueryIterator const& other) const
   {
     return archetypeIndex != other.archetypeIndex || componentIndex != other.componentIndex;
   }
-  void SystemIterator::operator++()
+  void QueryIterator::operator++()
   {
     componentIndex++;
-    if (system.archetypes[archetypeIndex].archetype->count <= componentIndex)
+    if (query.archetypes[archetypeIndex].archetype->count <= componentIndex)
     {
       componentIndex = 0;
       archetypeIndex++;
