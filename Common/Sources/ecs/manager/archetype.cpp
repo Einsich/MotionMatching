@@ -42,4 +42,11 @@ namespace ecs
     }
     count++;
   }
+  void Archetype::destroy_entity(int index)
+  {
+    for (auto &container : components)
+    {
+      container.second.destroy_component(index);
+    }
+  }
 }

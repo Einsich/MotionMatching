@@ -37,3 +37,7 @@ EVENT()test_handler(const TestEvent &e, std::string &s)
 {
 	printf("[test_handler] received %s in %s\n\n", e.message.c_str(), s.c_str());
 }
+SYSTEM() eid_test(const ecs::EntityId &eid)
+{
+	printf("[eid_test] archtype %u, index %u\n\n", eid.archetype_index(), eid.array_index());
+}

@@ -3,6 +3,9 @@
 #include "manager/system_description.h"
 namespace ecs
 {
+  Core::Core()
+  {
+  }
   
   Core::~Core()
   {
@@ -16,28 +19,17 @@ namespace ecs
   }
 
   
-  
-  
-
-
-  unsigned int Entity::archetype_index() const
-  {
-    return index >> 16;
-  }
-  unsigned int Entity::array_index() const
-  {
-    return index & index_mask;
-  }
-
-  
-  
   template<typename T>
-  T* get_component(Entity entity, const char *name)
+  T* get_component(const EntityId &entity, const char *name)
   {
-    Archetype& archetype = core().archetypes[entity.archetype_index()];
-    
-    ComponentContainer *container = archetype.components[TypeDescription::TypeDescription<T>(name).hash()];
-    return container ? container->get_component<T>(entity.array_index()) : nullptr;
+    if (entity)
+    {
+      Archetype& archetype = core().archetypes[entity.archetype_index()];
+      
+      ComponentContainer *container = archetype.components[TypeDescription::TypeDescription<T>(name).hash()];
+      return container ? container->get_component<T>(entity.array_index()) : nullptr;
+    }
+    return nullptr;
   }
 
 
@@ -91,6 +83,7 @@ namespace ecs
   }
   void initialize_ecs()
   {
+    get_type_description<EntityId>("eid");
     std::sort(core().systems.begin(), core().systems.end(), system_comparator);
   }
 
@@ -101,9 +94,11 @@ namespace ecs
       system->execute();
     }
   }
-  void create_entity(const ComponentInitializerList &list)
+  void create_entity(ComponentInitializerList &list)
   {
+    list.add<EntityId>("eid") = EntityId();
     Archetype *found_archetype = nullptr;
+    int archetype_ind = 0;
     for (Archetype *archetype : core().archetypes)
     {
       if (archetype->in_archetype(list.types))
@@ -111,12 +106,22 @@ namespace ecs
         found_archetype = archetype;
         break;
       }
+      archetype_ind++;
     }
     if (!found_archetype)
     {
       found_archetype = add_archetype(list.types, 1);
     }
+    int index = found_archetype->count;
+    list.get<EntityId>("eid") = core().entityContainer.create_entity(archetype_ind, index);
     found_archetype->add_entity(list);
+  }
+  void destroy_entity(const EntityId &eid)
+  {
+    if (eid)
+    {
+      core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index());
+    }
   }
 
   void free_ecs()

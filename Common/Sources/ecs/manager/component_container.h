@@ -32,7 +32,6 @@ namespace ecs
   {
     std::unordered_map<uint, ComponentInitializer> components;
     ComponentTypes types;
-    
     template<typename T>
     ComponentInitializer &add(const char *name)
     {
@@ -40,6 +39,11 @@ namespace ecs
       types.componentsTypes.push_back(type);
       uint hash = type.hash();
       return components[hash];
+    }
+    template<typename T>
+    ComponentInitializer &get(const char *name)
+    {
+      return add<T>(name);
     }
   };
   constexpr int binSize = 500;
@@ -62,6 +66,7 @@ namespace ecs
       }
       return nullptr;
     }
+    void destroy_component(int i);
     void add_component(const ComponentInitializer &component);
     ~ComponentContainer();
   };

@@ -91,6 +91,23 @@ void event_sender_func()
 }
 
 
+void eid_test_func();
+
+ecs::SystemDescription eid_test_descr({
+  {ecs::get_type_description<ecs::EntityId>("eid"), false}
+}, eid_test_func, ecs::SystemOrder::NO_ORDER);
+
+void eid_test_func()
+{
+  for (ecs::QueryIterator begin = eid_test_descr.begin(), end = eid_test_descr.end(); begin != end; ++begin)
+  {
+    eid_test(
+      *begin.get_component<ecs::EntityId>(0)
+    );
+  }
+}
+
+
 void test_handler_handler(const TestEvent &event);
 
 ecs::EventDescription<TestEvent> test_handler_descr({

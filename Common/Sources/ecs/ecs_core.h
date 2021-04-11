@@ -2,6 +2,7 @@
 #include <vector>
 #include "manager/string_hash.h"
 #include "manager/system_description.h"
+#include "manager/entity_id.h"
 namespace ecs
 {
   template<typename E>
@@ -15,7 +16,8 @@ namespace ecs
     std::vector<SystemDescription*> systems;
     std::vector<QueryDescription*> queries;
     std::vector<QueryDescription*> event_queries;
-    Core() = default;
+    EntityContainer entityContainer;
+    Core();
     ~Core();
     template<typename E>
     std::vector<EventDescription<E>*> &events()
@@ -39,25 +41,16 @@ namespace ecs
     }
   };
 
-  class Entity
-  {
-  private:
-    const static unsigned int index_mask = 0x0000ffff;
-    unsigned int index;//archetype index + index in archetype
-  public:
-    unsigned int archetype_index() const;
-    unsigned int array_index() const;
-
-  };
 
   template<typename T>
-  T* get_component(Entity entity, const char *name);
+  T* get_component(const EntityId &entity, const char *name);
 
 
   void initialize_ecs();
 
   Archetype *add_archetype(const ComponentTypes &types, int capacity);
-  void create_entity(const ComponentInitializerList &list);
+  void create_entity(ComponentInitializerList &list);
+  void destroy_entity(const EntityId &eid);
   void update_systems();
 
   template<typename E>
