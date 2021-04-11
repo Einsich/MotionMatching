@@ -27,6 +27,10 @@ namespace ecs
       list.add<std::string>("project") = std::string(get_config("project"));
       ecs::create_entity(list);
     }
+    Input::input().keyboard_event(KeyAction::Down) += createMethodEventHandler(*this, &Scene::keyboard_event_handler);
+    Input::input().mouse_click_event() += createMethodEventHandler(*this, &Scene::mouse_click_event_handler);
+    Input::input().mouse_move_event() += createMethodEventHandler(*this, &Scene::mouse_move_event_handler);
+    Input::input().mouse_wheel_event() += createMethodEventHandler(*this, &Scene::mouse_wheel_event_handler);
     send_event(OnSceneCreated());
 
     glEnable(GL_CULL_FACE);
@@ -67,5 +71,21 @@ namespace ecs
   void Scene::destroy_scene()
   {
     core().~Core();
+  }
+  void Scene::keyboard_event_handler(const KeyboardEvent &event)
+  {
+    ecs::send_event(event);
+  }
+  void Scene::mouse_click_event_handler(const MouseClickEvent &event)
+  {
+    ecs::send_event(event);
+  }
+  void Scene::mouse_move_event_handler(const MouseMoveEvent &event)
+  {
+    ecs::send_event(event);
+  }
+  void Scene::mouse_wheel_event_handler(const MouseWheelEvent &event)
+  {
+    ecs::send_event(event);
   }
 }

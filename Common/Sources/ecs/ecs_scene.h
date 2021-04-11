@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include "Scene/iscene.h"
-#include "../manager/system_description.h"
+#include "manager/system_description.h"
+#include "Event/input.h"
 namespace ecs
 {
   class Scene : IScene
@@ -11,6 +12,11 @@ namespace ecs
     struct SystemRange { SystemIterator begin, end; };
     SystemRange logic, render, ui;
     void update_range(const SystemRange &range);
+
+    void keyboard_event_handler(const KeyboardEvent &event);
+    void mouse_click_event_handler(const MouseClickEvent &event);
+    void mouse_move_event_handler(const MouseMoveEvent &event);
+    void mouse_wheel_event_handler(const MouseWheelEvent &event);
   public:
     void start_scene() override;
     void update_logic() override;

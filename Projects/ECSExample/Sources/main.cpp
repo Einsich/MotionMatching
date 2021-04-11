@@ -3,7 +3,7 @@
 #include "Application/config.h"
 #include "ecs/ecs_core.h"
 #include "Systems/test_header.h"
-#include "ecs/scene/ecs_scene.h"
+#include "ecs/ecs_scene.h"
 
 int main(int argc, char** argv)
 {
