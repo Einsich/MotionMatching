@@ -15,7 +15,7 @@ namespace ecs
   struct Core
   {
     uint globalTypeIndex = 0;
-    std::vector<FullTypeDescription> types;
+    std::unordered_map<uint, FullTypeDescription> types;
     std::vector<Archetype*> archetypes;
     std::vector<SystemDescription*> systems;
     std::vector<QueryDescription*> queries;
@@ -79,7 +79,7 @@ namespace ecs
   template<typename E>
   void send_event(const E &event)
   {
-    core().events.emplace([event](){
+    core().events.push([event](){
     for (EventDescription<E> *descr : core().events_handler<E>())
       descr->eventHandler(event);
     });
@@ -95,7 +95,7 @@ namespace ecs
   {
     if (eid)
     {
-      core().events.emplace([eid, event](){
+      core().events.push([eid, event](){
         for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
         {
           QueryIterator iterator;

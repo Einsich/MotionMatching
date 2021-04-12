@@ -1,13 +1,12 @@
 #pragma once
 #include <sys/types.h>
-#include <vector>
+#include <unordered_map>
 namespace ecs
 {
   typedef void *(*Constructor)(void*);
   typedef void *(*CopyConstructor)(void*, void*);
   typedef void (*Destructor)(void*);
   uint type_sizeof(uint type);
-  Constructor type_constructor(uint type);
   CopyConstructor type_copy_constructor(uint type);
   Destructor type_destructor(uint type);
   
@@ -24,8 +23,8 @@ namespace ecs
   class QueryDescription;
   void add_query(QueryDescription *query_description);
   
-
+  void print_archetypes();
   class FullTypeDescription;
 
-  std::vector<FullTypeDescription> &full_description();
+  std::unordered_map<uint, FullTypeDescription> &full_description();
 }

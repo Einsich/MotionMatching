@@ -1,32 +1,56 @@
 #pragma once
 #include "common.h"
 #include "math.h"
-#include "Transform/transform.h"
-#include "Event/input.h"
 #include "Shader/shader.h"
-#include "component.h"
-class Camera : public Component
+#include "Transform/transform.h"
+#include "ecs/ecs.h"
+struct Camera
 {
-protected:
-  Transform transform;
+private:
   mat4x4 projection;
-  bool isMainCamera;
+
 public:
   void set_orthographic(float width, float height, float zNear, float zFar);
   void set_perspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
   void set_perspective(float fieldOfView, float zNear, float zFar);
 
   const mat4x4& get_projection() const;
-  Transform& get_transform();
-  mat4x4 get_transform_matrix() const;
-  void set_to_shader(const Shader& shader, bool sky_box = false) const;
-typedef shared_ptr<Camera> CameraPtr;
-  static void add_camera(CameraPtr camera, bool is_main = false);
-  static void change_main_cam(CameraPtr camera);
-  static void set_main_camera(CameraPtr camera);
-  static void set_next_camera();
-  static CameraPtr  main_camera(); 
+  void set_to_shader(const Shader& shader, const Transform &transform, bool sky_box = false) const;
 };
 
-typedef shared_ptr<Camera> CameraPtr;
 
+struct ArcballCamera
+{
+public: 
+  float maxdistance, zoom, targetZoom, distance;
+  vec2 rotation, targetRotation;
+  vec3 target_position;
+  bool rotationEnable;
+  ArcballCamera(float distance, vec2 rotation, vec3 target = vec3());
+  void set_target(vec3 target);
+  void calculate_transform(Transform &transform);
+};
+struct FreeCamera
+{
+public: 
+  vec2 curRotation, wantedRotation;
+  vec3 curPosition, wantedPosition;
+  bool rotationEnable;
+  FreeCamera(vec3 position, vec2 rotation);
+  void calculate_transform(Transform &transform);
+};
+struct OnSetMainCamera
+{
+  ecs::EntityId mainCamera;
+  OnSetMainCamera(ecs::EntityId camera):
+    mainCamera(camera){}
+};
+
+bool main_camera(mat4 &cam_transform, mat4 &cam_projection);
+
+ecs::EntityId create_camera_manager();
+
+ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target);
+ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target);
+
+ecs::EntityId create_free_camera(vec3 position, vec2 rotation);

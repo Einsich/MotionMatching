@@ -11,6 +11,7 @@ namespace ecs
   void Scene::start_scene()
   {
     get_type_description<EntityId>("eid");
+    get_type_description<std::string>("project");
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();

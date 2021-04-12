@@ -121,7 +121,7 @@ void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool
 {
   arrowShader.use();
   light.bind_to_shader(arrowShader);
-  mainCam.set_to_shader(arrowShader);
+  mainCam.set_to_shader(arrowShader, Transform());//FIXIT
   arrowMaterial->bind_to_shader(arrowShader);
   glDisable(GL_CULL_FACE);
 

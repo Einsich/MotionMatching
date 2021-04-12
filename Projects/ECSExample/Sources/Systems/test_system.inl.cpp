@@ -16,7 +16,6 @@ void b_plus_f_query(Callable lambda)
   }
 }
 
-
 void test_system_func();
 
 ecs::SystemDescription test_system_descr({
@@ -53,7 +52,6 @@ void system_with_query_func()
     );
   }
 }
-
 
 void nullable_system_func();
 

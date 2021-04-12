@@ -6,10 +6,6 @@ namespace ecs
   {
     return core().types[type].sizeOf;
   }
-  Constructor type_constructor(uint type)
-  {
-    return core().types[type].constructor;
-  }
   CopyConstructor type_copy_constructor(uint type)
   {
     return core().types[type].copy_constructor;
@@ -34,8 +30,24 @@ namespace ecs
   }
 
 
-  std::vector<FullTypeDescription> &full_description()
+  std::unordered_map<uint, FullTypeDescription> &full_description()
   {
     return core().types;
+  }
+  void print_archetypes()
+  {   
+    printf("\n");
+    for (const Archetype *archetype : core().archetypes)
+    {
+      printf("[A]{");
+      for (const auto &descr : archetype->components)
+      {
+        auto &type = core().types[descr.second.typeHash];
+        printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+      }
+
+      printf("}\n");
+    }
+    std::fflush(stdout);
   }
 }

@@ -14,7 +14,7 @@ void MeshRender::render(const Transform *transform, const Camera& mainCam, const
 {
   shader.use();
   light.bind_to_shader(shader);
-  mainCam.set_to_shader(shader);
+  mainCam.set_to_shader(shader, Transform());//FIX IT
   material->bind_to_shader(shader);
   if (transform)
     transform->set_to_shader(shader);

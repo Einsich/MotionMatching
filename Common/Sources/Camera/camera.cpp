@@ -2,9 +2,6 @@
 #include <vector>
 #include "Application/application.h"
 
-static CameraPtr mainCamera = nullptr;
-static vector<CameraPtr> cameras;
-
 
 void Camera::set_orthographic(float width, float height, float zNear, float zFar) 
 { 
@@ -25,16 +22,8 @@ const mat4x4& Camera::get_projection() const
 {
   return projection;
 }
-Transform& Camera::get_transform()
-{
-  return transform;
-}
-mat4x4 Camera::get_transform_matrix() const
-{
-  return transform.get_transform();
-}
 
-void Camera::set_to_shader(const Shader& shader, bool sky_box) const
+void Camera::set_to_shader(const Shader& shader, const Transform &transform, bool sky_box) const
 {
   vec3 cameraPosition = transform.get_position();
   mat4 view = inverse(transform.get_transform());
@@ -43,44 +32,38 @@ void Camera::set_to_shader(const Shader& shader, bool sky_box) const
   shader.set_mat4x4("ViewProjection", viewProjection);
   shader.set_vec3("CameraPosition", cameraPosition);
 }
-void Camera::change_main_cam(CameraPtr camera)
-{
-  if (mainCamera)
-    mainCamera->isMainCamera = false;
-  mainCamera = camera;
-  mainCamera->isMainCamera = true;
-}
-void Camera::add_camera(CameraPtr camera, bool is_main)
-{
-  if (is_main)
-  {
-    change_main_cam(camera);
-  }
-  cameras.emplace_back(camera);
-}
 
-void Camera::set_main_camera(CameraPtr camera)
+ArcballCamera::ArcballCamera(float distance, vec2 rotation, vec3 target):
+  maxdistance(distance),
+  zoom(0.2f),
+  targetZoom(zoom),
+  distance(zoom * maxdistance),
+  rotation(rotation),
+  targetRotation(rotation),
+  target_position(target),
+  rotationEnable(false)
+{}
+void ArcballCamera::set_target(vec3 target)
 {
-  if (std::find(cameras.begin(), cameras.end(), camera) != cameras.end())
-  {
-    change_main_cam(camera);
-  }
-  else
-    debug_error("Can't set unregistred camera to main Camera");
+  target_position = target;
 }
-void Camera::set_next_camera()
+void ArcballCamera::calculate_transform(Transform &transform)
 {
-  auto it = std::find(cameras.begin(), cameras.end(), mainCamera);
-  if (it != cameras.end())
-  {
-    int i = it - cameras.begin();
-    i = (i + 1) % cameras.size();
-    change_main_cam(cameras[i]);
-  }
-  else
-    debug_error("Can't set next camera to main Camera");
+  float y = rotation.y;
+  float x = rotation.x ;
+  vec3 direction = vec3(cos(x) * cos(y), sin(y), sin(x) * cos(y));
+  
+  transform.set_position(target_position - distance * direction);
+  transform.set_rotation(PI*0.5-rotation.x, -rotation.y, 0);
 }
-CameraPtr Camera::main_camera()
+FreeCamera::FreeCamera(vec3 position, vec2 rotation):
+  curRotation(rotation),
+  wantedRotation(rotation),
+  curPosition(position),
+  wantedPosition(position),
+  rotationEnable(false)
+{}
+void FreeCamera::calculate_transform(Transform &transform)
 {
-  return mainCamera;
+  transform.set_rotation(PI*0.5f-curRotation.x, -curRotation.y, 0);
 }

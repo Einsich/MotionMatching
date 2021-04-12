@@ -12,18 +12,7 @@ shader(shader)
   }
   vao = postFXvao;
 }
-void PostFX::render(const Camera&, const DirectionLight&, bool)
+void PostFX::render()
 {
-  shader.use();
-  postfx_render();
   vao.render(false);
-  postfx_unbind();
-}
-void PostFX::postfx_render()
-{
-
-}
-void PostFX::postfx_unbind()
-{
-
 }

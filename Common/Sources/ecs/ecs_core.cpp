@@ -33,6 +33,8 @@ namespace ecs
     }
   }
 
+
+
   
   template<typename T>
   T* get_component(const EntityId &entity, const char *name)
@@ -59,7 +61,7 @@ namespace ecs
       ComponentContainer* container = archetype->get_container(arg.descr);
       if (!arg.optional)
       {
-        if (container == nullptr || container->typeID != arg.descr.typeId)
+        if (container == nullptr || container->typeHash != arg.descr.type_hash())
         {
           breaked = true;
           break;

@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Application/application.h"
 #include "Application/config.h"
-#include "ecs/ecs_core.h"
 #include "Systems/test_header.h"
 #include "ecs/ecs_scene.h"
 

@@ -1,6 +1,6 @@
 #include "ecs/ecs.h"
 #include "test_header.h"
-
+#include "math.h"
 
 EVENT()
 on_scene_create(const ecs::OnSceneCreated &)
@@ -22,8 +22,8 @@ on_scene_create(const ecs::OnSceneCreated &)
   {
     ecs::ComponentInitializerList list;
     list.add<A>("v") = A("Nice");
-    list.add<B>("w") = B("Cock");
-    niceCock = ecs::create_entity(list);
+    list.add<B>("w") = B("...");
+    ecs::create_entity(list);
   }
   {
     for (int i = 0; i < 5; i++)
@@ -35,13 +35,35 @@ on_scene_create(const ecs::OnSceneCreated &)
   }
   {
     ecs::ComponentInitializerList list;
-    list.add<ecs::EntityId>("cock_attach") = niceCock;
+    list.add<ecs::EntityId>("attached_to") = niceCock;
     ecs::create_entity(list);
   }
   ecs::destroy_entity(ab);
   ecs::send_event<MyEvent>({10});
 }
 
+template<typename Callable>
+void query_instead_for(Callable);
+
+SYSTEM() N_Body(ecs::EntityId eid, vec3 &p, vec3 &v, float m)
+{
+  float dt = 0.1f;
+  ecs::EntityId currentEid = eid;
+  vec3 &curP = p;
+  vec3 &curV = v;
+  float curM = m;
+  QUERY()query_instead_for([&](ecs::EntityId eid, vec3 &p, vec3 &v, float m)
+    {
+      if (currentEid != eid)
+      {
+        vec3 dir = p - curP;
+        float r = length(dir);
+        vec3 F = dir * (m * curM / (r * r * r));
+        v += F / curM * dt;
+      }
+    }
+  );
+}
 
 
 EVENT() entity_created(const ecs::OnEntityCreated &,
@@ -59,11 +81,11 @@ EVENT() entity_destroyed(const ecs::OnEntityDestroyed &,
 template<typename Callable>
 void attsh_query_test(const ecs::EntityId&, Callable);
 
-SYSTEM() attach_test(ecs::EntityId cock_attach)
+SYSTEM() attach_test(ecs::EntityId attached_to)
 {
-  QUERY() attsh_query_test(cock_attach, [](
+  QUERY() attsh_query_test(attached_to, [](
     const A &v,
     const B &w){
-    //printf("[single query] %s %s\n", v.x.c_str(), w.x.c_str());
+    printf("[single query] %s %s\n", v.x.c_str(), w.x.c_str());
   });
 }

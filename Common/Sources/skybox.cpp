@@ -38,7 +38,7 @@ void SkyBox::render(const Camera& mainCam, const DirectionLight& ,bool wire_fram
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.use();
-	mainCam.set_to_shader(skyboxShader, true);
+	mainCam.set_to_shader(skyboxShader, Transform(), true);//FIXIT
 
 	skybox.bind(skyboxShader, "skybox");
 	skyboxVAO.render(wire_frame);

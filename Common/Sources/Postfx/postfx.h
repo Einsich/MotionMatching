@@ -1,16 +1,12 @@
 #pragma once
-#include "component.h"
 #include "Mesh/vertex_array_object.h"
 #include "Shader/shader.h"
-class PostFX : public Component, public IRenderable
+class PostFX
 {
 private:
   VertexArrayObject vao;
-protected:
-  Shader shader;
 public:
+  Shader shader;
   PostFX(Shader shader);
-  void render(const Camera& mainCam, const DirectionLight& light, bool wire_frame = false) override;
-  virtual void postfx_render(); 
-  virtual void postfx_unbind(); 
+  void render(); 
 };

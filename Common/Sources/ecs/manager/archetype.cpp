@@ -8,7 +8,7 @@ namespace ecs
     components(), count(0), capacity(capacity)
   {
     for(const auto& t : types.componentsTypes)
-      components.try_emplace(t.hash(), t.typeId, capacity);
+      components.try_emplace(t.type_hash(), t.type_hash(), capacity);
   }
   bool Archetype::in_archetype(const ComponentTypes &types)
   {
@@ -16,7 +16,7 @@ namespace ecs
       return false;
     for (const TypeDescription &descr : types.componentsTypes)
     {
-      auto it = components.find(descr.hash());
+      auto it = components.find(descr.type_hash());
       if (it == components.end())
         return false;
     }
@@ -24,7 +24,7 @@ namespace ecs
   }
   ComponentContainer *Archetype::get_container(const TypeDescription &type)
   {
-    auto it = components.find(type.hash());
+    auto it = components.find(type.type_hash());
     return it == components.end() ? dummyContainer : &it->second;
   }
   template<typename T>

@@ -2,7 +2,7 @@
 
 #include "glad/glad.h"
 #include "skybox.h"
-#include "Camera/cameras.h"
+#include "Camera/camera.h"
 #include "Time/time.h"
 #include "imgui/imgui.h"
 
@@ -33,14 +33,13 @@ void Scene::update_render()
 {
   glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  CameraPtr mainCamera = Camera::main_camera();
   for (auto objects : gameObjects)
   {
     for (auto component : objects->get_components())
     {
       IRenderable *renderable = dynamic_cast<IRenderable*>(component.get());
       if (renderable)
-        renderable->render(*mainCamera, sun);
+        renderable->render(Camera(), sun);
     }
   }
 

@@ -7,8 +7,8 @@ namespace ecs
 
   class Archetype
   {
-    std::unordered_map<uint, ComponentContainer> components;
   public: 
+    std::unordered_map<uint, ComponentContainer> components;
     int count, capacity;
     Archetype(const ComponentTypes &types, int count);
     bool in_archetype(const ComponentTypes &types);

@@ -28,7 +28,7 @@ struct ParserSystemDescription
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
-#define ARGS "[" NAME_SYM "&*,:" SPACE_SYM "]*"
+#define ARGS "[" NAME_SYM "&*,:<>" SPACE_SYM "]*"
 #define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
 #define DEF_ARGS "[" NAME_SYM ",:" SPACE_SYM "]*"
 #define ARGS_L "[(]" ARGS "[)]"
@@ -46,7 +46,7 @@ static const std::regex query_regex(QUERY);
 static const std::regex event_full_regex(EVENT SPACE NAME SPACE ARGS_L);
 static const std::regex event_regex(EVENT);
 static const std::regex args_regex(ARGS_L);
-static const std::regex arg_regex("[" NAME_SYM "&*:" SPACE_SYM "]+");
+static const std::regex arg_regex("[" NAME_SYM "&*:<>" SPACE_SYM "]+");
 
 namespace fs = std::filesystem;
 
@@ -132,7 +132,7 @@ ParserFunctionArgument clear_arg(std::string str)
   }
   arg.optional = optional;
 
-  const std::regex arg_regex("[A-Za-z0-9_:]+");
+  const std::regex arg_regex("[A-Za-z0-9_:<>]+");
   auto args = get_matches(str, arg_regex, 3);
 
   if (args.size() != 1 && args.size() != 2)
@@ -486,9 +486,10 @@ int main(int argc, char** argv)
       {
         fs::path cpp_file = fs::path(p.path().string() + ".cpp");
         fs::file_time_type last_write;
-        if (fs::exists(cpp_file))
+        bool exist = fs::exists(cpp_file);
+        if (exist)
             last_write = fs::last_write_time(cpp_file);
-        if (last_write < p.last_write_time())
+        if (!exist || last_write < p.last_write_time())
             process_inl_file(p.path());
       }
     }

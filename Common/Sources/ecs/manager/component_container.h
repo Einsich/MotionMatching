@@ -8,19 +8,22 @@ namespace ecs
   struct ComponentInitializer
   {
     void *data = nullptr;
-    int sizeOf, typeId;
+    int sizeOf;
+    Destructor descructor;
+
     template<typename T>
     void operator=(const T &value)
     {
       if (data == nullptr)
       {
         sizeOf = sizeof(T);
-        typeId = type_index<T>();
         data = malloc(sizeOf);
+        descructor = template_destructor<T>;
       }
       else
       {
-        assert(sizeOf == sizeof(T) && "ComponentInitializer was initialized by other type, but hashes was equal!");
+        auto destr = template_destructor<T>;
+        assert(descructor == destr && "ComponentInitializer was initialized by other type, but hashes was equal!");
       }
       data = new (data) T(std::move(value));
     }
@@ -28,7 +31,7 @@ namespace ecs
     {
       if (data)
       {
-        type_destructor(typeId)(data);
+        descructor(data);
         free(data);
       }
     }
@@ -42,7 +45,7 @@ namespace ecs
     {
       TypeDescription type(HashedString(name), type_index<T>());
       types.componentsTypes.push_back(type);
-      uint hash = type.hash();
+      uint hash = type.type_hash();
       return components[hash];
     }
     template<typename T>
@@ -56,7 +59,7 @@ namespace ecs
   {
     std::vector<void*> data;
   public:
-    uint typeID;
+    uint typeHash;
     int count, capacity;
     ComponentContainer();
     ComponentContainer(uint type, int capacity);
