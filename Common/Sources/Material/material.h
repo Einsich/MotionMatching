@@ -21,9 +21,9 @@ public:
     :Property(name, vec3(property, 0)) {vecType = 2;}
   Property(const string& name, float property)
     :Property(name, vec2(property, 0)) {vecType = 1;}
-  void bind_to_shader(const Shader &shader);
-  void unbind_to_shader(const Shader &shader);
-  bool operator== (const Property & other);
+  void bind_to_shader(const Shader &shader) const;
+  void unbind_to_shader(const Shader &shader) const;
+  bool operator== (const Property & other) const;
 };
 class Material
 {
@@ -33,8 +33,8 @@ public:
   Material(const vector<Property> & properties):
     properties(properties) { }
   void set_property(const Property &property);
-  void bind_to_shader(const Shader& shader);
-  void unbind_to_shader(const Shader &shader);
+  void bind_to_shader(const Shader& shader) const;
+  void unbind_to_shader(const Shader &shader) const;
 };
 using MaterialPtr = shared_ptr<Material>;
 

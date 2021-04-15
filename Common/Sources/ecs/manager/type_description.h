@@ -35,6 +35,7 @@ namespace ecs
       typeHash(hash(HashedString(name), type_index<T>())){}
 
     uint type_hash() const;
+    bool operator==(const TypeDescription &other);
   };
   struct ComponentTypes
   {

@@ -1,4 +1,5 @@
 #include "type_description.h"
+#include "common.h"
 namespace ecs
 {
   FullTypeDescription::FullTypeDescription():
@@ -13,6 +14,14 @@ namespace ecs
   hash(hash), sizeOf(size_of),
   copy_constructor(copy_constructor), destructor(destructor)
   {
+    if(destructor == nullptr)
+    {
+      debug_error("Hasn't copy constructor for %s %s", type, name);
+    }
+    if(copy_constructor == nullptr)
+    {
+      debug_error("Hasn't destructor for %s %s", type, name);
+    }
   }
 
   TypeDescription::TypeDescription(string_hash name_hash, uint typeId):
@@ -24,4 +33,8 @@ namespace ecs
     return typeHash;
   }  
   
+  bool TypeDescription::operator==(const TypeDescription &other)
+  {
+    return typeHash == other.typeHash;
+  }
 }

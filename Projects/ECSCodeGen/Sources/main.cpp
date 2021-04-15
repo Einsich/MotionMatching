@@ -228,8 +228,8 @@ void process_inl_file(const fs::path& path)
   {
     std::string query_descr = query.sys_name + "_descr";
     snprintf(buffer, bufferSize,
-      "ecs::QueryDescription %s({\n",
-      query_descr.c_str());
+      "ecs::QueryDescription %s(\"%s\", {\n",
+      query_descr.c_str(), query.sys_name.c_str());
     
     outFile << buffer;
     for (uint i = 0; i < query.args.size(); i++)
@@ -272,8 +272,8 @@ void process_inl_file(const fs::path& path)
   {
     std::string query_descr = query.sys_name + "_descr";
     snprintf(buffer, bufferSize,
-      "ecs::SingleQueryDescription %s({\n",
-      query_descr.c_str());
+      "ecs::SingleQueryDescription %s(\"%s\", {\n",
+      query_descr.c_str(), query.sys_name.c_str());
     
     outFile << buffer;
     for (uint i = 0; i < query.args.size(); i++)
@@ -321,8 +321,8 @@ void process_inl_file(const fs::path& path)
 
     snprintf(buffer, bufferSize,
       "void %s();\n\n"
-      "ecs::SystemDescription %s({\n",
-      sys_func.c_str(), sys_descr.c_str());
+      "ecs::SystemDescription %s(\"%s\", {\n",
+      sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
     outFile << buffer;
     for (uint i = 0; i < system.args.size(); i++)
@@ -367,8 +367,8 @@ void process_inl_file(const fs::path& path)
     std::string event_type = event.args[0].type;
     snprintf(buffer, bufferSize,
       "void %s(const %s &event);\n\n"
-      "ecs::EventDescription<%s> %s({\n",
-      event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str());
+      "ecs::EventDescription<%s> %s(\"%s\", {\n",
+      event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
     
     outFile << buffer;
     for (uint i = 1; i < event.args.size(); i++)
@@ -418,8 +418,8 @@ void process_inl_file(const fs::path& path)
     std::string event_type = event.args[0].type;
     snprintf(buffer, bufferSize,
       "void %s(const %s &event, ecs::QueryIterator &begin);\n\n"
-      "ecs::SingleEventDescription<%s> %s({\n",
-      event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str());
+      "ecs::SingleEventDescription<%s> %s(\"%s\", {\n",
+      event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str(), event.sys_name.c_str());
     
     outFile << buffer;
     for (uint i = 1; i < event.args.size(); i++)

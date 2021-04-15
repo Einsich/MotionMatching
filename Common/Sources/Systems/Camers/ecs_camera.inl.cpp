@@ -1,7 +1,7 @@
 #include "ecs_camera.inl"
 //Code-generator production
 
-ecs::QueryDescription get_main_cam_query_descr({
+ecs::QueryDescription get_main_cam_query_descr("get_main_cam_query", {
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 });
 
@@ -17,7 +17,7 @@ void get_main_cam_query(Callable lambda)
 }
 
 
-ecs::SingleQueryDescription set_main_cam_query_descr({
+ecs::SingleQueryDescription set_main_cam_query_descr("set_main_cam_query", {
   {ecs::get_type_description<bool>("isMainCamera"), false}
 });
 
@@ -34,7 +34,7 @@ void set_main_cam_query(const ecs::EntityId &eid, Callable lambda)
 }
 
 
-ecs::SingleQueryDescription check_arcball_target_descr({
+ecs::SingleQueryDescription check_arcball_target_descr("check_arcball_target", {
   {ecs::get_type_description<Transform>("transform"), false}
 });
 
@@ -51,7 +51,7 @@ void check_arcball_target(const ecs::EntityId &eid, Callable lambda)
 }
 
 
-ecs::SingleQueryDescription get_main_cam_property_query_descr({
+ecs::SingleQueryDescription get_main_cam_property_query_descr("get_main_cam_property_query", {
   {ecs::get_type_description<Camera>("camera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 });
@@ -72,7 +72,7 @@ void get_main_cam_property_query(const ecs::EntityId &eid, Callable lambda)
 
 void arcball_camera_update_func();
 
-ecs::SystemDescription arcball_camera_update_descr({
+ecs::SystemDescription arcball_camera_update_descr("arcball_camera_update", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false},
@@ -95,7 +95,7 @@ void arcball_camera_update_func()
 
 void arccam_update_func();
 
-ecs::SystemDescription arccam_update_descr({
+ecs::SystemDescription arccam_update_descr("arccam_update", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
@@ -116,7 +116,7 @@ void arccam_update_func()
 
 void set_main_camera_handler(const OnSetMainCamera &event);
 
-ecs::EventDescription<OnSetMainCamera> set_main_camera_descr({
+ecs::EventDescription<OnSetMainCamera> set_main_camera_descr("set_main_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_main_camera_handler);
@@ -136,7 +136,7 @@ void set_main_camera_handler(const OnSetMainCamera &event)
 
 void set_next_camera_handler(const KeyboardEvent &event);
 
-ecs::EventDescription<KeyboardEvent> set_next_camera_descr({
+ecs::EventDescription<KeyboardEvent> set_next_camera_descr("set_next_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_next_camera_handler);
@@ -156,7 +156,7 @@ void set_next_camera_handler(const KeyboardEvent &event)
 
 void arcball_created_handler(const ecs::OnEntityCreated &event);
 
-ecs::EventDescription<ecs::OnEntityCreated> arcball_created_descr({
+ecs::EventDescription<ecs::OnEntityCreated> arcball_created_descr("arcball_created", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_handler);
@@ -176,7 +176,7 @@ void arcball_created_handler(const ecs::OnEntityCreated &event)
 
 void arccam_mouse_move_handler_handler(const MouseMoveEvent &event);
 
-ecs::EventDescription<MouseMoveEvent> arccam_mouse_move_handler_descr({
+ecs::EventDescription<MouseMoveEvent> arccam_mouse_move_handler_descr("arccam_mouse_move_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_move_handler_handler);
@@ -196,7 +196,7 @@ void arccam_mouse_move_handler_handler(const MouseMoveEvent &event)
 
 void arccam_mouse_click_handler_handler(const MouseClickEvent &event);
 
-ecs::EventDescription<MouseClickEvent> arccam_mouse_click_handler_descr({
+ecs::EventDescription<MouseClickEvent> arccam_mouse_click_handler_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_handler);
@@ -216,7 +216,7 @@ void arccam_mouse_click_handler_handler(const MouseClickEvent &event)
 
 void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event);
 
-ecs::EventDescription<MouseWheelEvent> arccam_mouse_wheel_handler_descr({
+ecs::EventDescription<MouseWheelEvent> arccam_mouse_wheel_handler_descr("arccam_mouse_wheel_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_wheel_handler_handler);
@@ -236,7 +236,7 @@ void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event)
 
 void freecam_created_handler(const ecs::OnEntityCreated &event);
 
-ecs::EventDescription<ecs::OnEntityCreated> freecam_created_descr({
+ecs::EventDescription<ecs::OnEntityCreated> freecam_created_descr("freecam_created", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_handler);
@@ -256,7 +256,7 @@ void freecam_created_handler(const ecs::OnEntityCreated &event)
 
 void freecam_mouse_move_handler_handler(const MouseMoveEvent &event);
 
-ecs::EventDescription<MouseMoveEvent> freecam_mouse_move_handler_descr({
+ecs::EventDescription<MouseMoveEvent> freecam_mouse_move_handler_descr("freecam_mouse_move_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_move_handler_handler);
@@ -276,7 +276,7 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
 
 void freecam_mouse_click_handler_handler(const MouseClickEvent &event);
 
-ecs::EventDescription<MouseClickEvent> freecam_mouse_click_handler_descr({
+ecs::EventDescription<MouseClickEvent> freecam_mouse_click_handler_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_handler);
@@ -296,7 +296,7 @@ void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
 
 void set_main_camera_singl_handler(const OnSetMainCamera &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<OnSetMainCamera> set_main_camera_singl_descr({
+ecs::SingleEventDescription<OnSetMainCamera> set_main_camera_singl_descr("set_main_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_main_camera_singl_handler);
@@ -313,7 +313,7 @@ void set_main_camera_singl_handler(const OnSetMainCamera &event, ecs::QueryItera
 
 void set_next_camera_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> set_next_camera_singl_descr({
+ecs::SingleEventDescription<KeyboardEvent> set_next_camera_singl_descr("set_next_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_next_camera_singl_handler);
@@ -330,7 +330,7 @@ void set_next_camera_singl_handler(const KeyboardEvent &event, ecs::QueryIterato
 
 void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<ecs::OnEntityCreated> arcball_created_singl_descr({
+ecs::SingleEventDescription<ecs::OnEntityCreated> arcball_created_singl_descr("arcball_created", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_singl_handler);
@@ -347,7 +347,7 @@ void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 
 void arccam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseMoveEvent> arccam_mouse_move_handler_singl_descr({
+ecs::SingleEventDescription<MouseMoveEvent> arccam_mouse_move_handler_singl_descr("arccam_mouse_move_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_move_handler_singl_handler);
@@ -364,7 +364,7 @@ void arccam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::Q
 
 void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEvent> arccam_mouse_click_handler_singl_descr({
+ecs::SingleEventDescription<MouseClickEvent> arccam_mouse_click_handler_singl_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_singl_handler);
@@ -381,7 +381,7 @@ void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs:
 
 void arccam_mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseWheelEvent> arccam_mouse_wheel_handler_singl_descr({
+ecs::SingleEventDescription<MouseWheelEvent> arccam_mouse_wheel_handler_singl_descr("arccam_mouse_wheel_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_wheel_handler_singl_handler);
@@ -398,7 +398,7 @@ void arccam_mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs:
 
 void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<ecs::OnEntityCreated> freecam_created_singl_descr({
+ecs::SingleEventDescription<ecs::OnEntityCreated> freecam_created_singl_descr("freecam_created", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_singl_handler);
@@ -415,7 +415,7 @@ void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 
 void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseMoveEvent> freecam_mouse_move_handler_singl_descr({
+ecs::SingleEventDescription<MouseMoveEvent> freecam_mouse_move_handler_singl_descr("freecam_mouse_move_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_move_handler_singl_handler);
@@ -432,7 +432,7 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
 
 void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEvent> freecam_mouse_click_handler_singl_descr({
+ecs::SingleEventDescription<MouseClickEvent> freecam_mouse_click_handler_singl_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_singl_handler);

@@ -1,12 +1,20 @@
 #include "bone_render.h"
 #include "Components/DebugTools/debug_arrow.h"
 
+
+static vector<vec3> boneOffsets;
+
 BoneRender::BoneRender()
 {
 }
 
-void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree &tree)
+void BoneRender::render(const mat4& transform, const AnimationTree &tree) const
 {
+  uint n = tree.nodes.size();
+  if (boneOffsets.size() != n)
+  {
+    boneOffsets.resize(n);
+  }
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
     boneOffsets[i] = vec3(tree.get_transform(i)[3]);
@@ -20,13 +28,4 @@ void BoneRender::calculate_transforms(const mat4& transform, const AnimationTree
     float width = std::min(0.5f, length(boneOffsets[i] - p) * 0.05f);
     draw_arrow(transform, p, boneOffsets[i], vec3(0,0.8f,0), width);
   }
-}
-void BoneRender::render(const mat4& transform, const AnimationTree &tree)
-{
-  uint n = tree.nodes.size();
-  if (boneOffsets.size() != n)
-  {
-    boneOffsets.resize(n);
-  }
-  calculate_transforms(transform, tree);
 }

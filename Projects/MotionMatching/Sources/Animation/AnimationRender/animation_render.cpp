@@ -1,20 +1,12 @@
 #include "animation_render.h"
-#include "Animation/animation_player.h"
-#include "GameObject/game_object.h"
+#include "Camera/camera.h"
 
 static vector<mat4> curTransform;
-AnimationRender::AnimationRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader, bool renderBones):
-    mesh(mesh_ptr), material(materail_ptr), shader(shader), renderBones(renderBones)
+AnimationRender::AnimationRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader):
+    mesh(mesh_ptr), material(materail_ptr), shader(shader)
   {}
 
-void AnimationRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
-{
-  AnimationPlayer *player = game_object()->get_component<AnimationPlayer>();
-  Transform *transform = game_object()->get_component<Transform>();
-  if (player && transform)
-    render(*transform, mainCam, light, player->get_tree(), wire_frame);
-}
-void AnimationRender::render(const Transform &transform, const Camera& mainCam, const DirectionLight& light, const AnimationTree &tree, bool wire_frame)
+void AnimationRender::render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, const AnimationTree &tree, bool wire_frame) const
 {
   
   curTransform.resize(mesh->bonesMap.size());
@@ -29,7 +21,7 @@ void AnimationRender::render(const Transform &transform, const Camera& mainCam, 
   shader.use();
   shader.set_mat4x4("Bones", curTransform, false);
   light.bind_to_shader(shader);
-  mainCam.set_to_shader(shader);
+  set_camera_to_shader(shader, view_projection, camera_position);
   material->bind_to_shader(shader);
   transform.set_to_shader(shader);
 
@@ -37,8 +29,6 @@ void AnimationRender::render(const Transform &transform, const Camera& mainCam, 
 
   material->unbind_to_shader(shader);
   light.unbind_to_shader(shader);
-  if (renderBones)
-    boneRender.render(transform.get_transform(), tree);
 }
 MaterialPtr AnimationRender::get_material() const
 {

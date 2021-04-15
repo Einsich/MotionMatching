@@ -1,23 +1,19 @@
 #include "mesh_render.h"
-#include "GameObject/game_object.h"
+#include "Camera/camera.h"
 
 MeshRender::MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader):
   mesh(mesh_ptr), material(materail_ptr), shader(shader)
 {
   
 }
-void MeshRender::render(const Camera& mainCam, const DirectionLight& light, bool wire_frame)
-{
-  render(game_object()->get_component<Transform>(), mainCam, light, wire_frame);
-}
-void MeshRender::render(const Transform *transform, const Camera& mainCam, const DirectionLight& light, bool wire_frame)
+
+void MeshRender::render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame) const 
 {
   shader.use();
   light.bind_to_shader(shader);
-  mainCam.set_to_shader(shader, Transform());//FIX IT
+  set_camera_to_shader(shader, view_projection, camera_position);
   material->bind_to_shader(shader);
-  if (transform)
-    transform->set_to_shader(shader);
+  transform.set_to_shader(shader);
 
   mesh->render(wire_frame);
 
@@ -36,7 +32,7 @@ Shader& MeshRender::get_shader()
 {
   return shader;
 }
-shared_ptr<MeshRender> create_plane(bool create_uv)
+MeshRender create_plane(bool create_uv)
 {
   static MeshPtr uvMesh = nullptr;
   static MeshPtr notUvMesh = nullptr;
@@ -53,9 +49,9 @@ shared_ptr<MeshRender> create_plane(bool create_uv)
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
 
-  return make_shared<MeshRender>(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
+  return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
-shared_ptr<MeshRender> create_cube(bool create_uv)
+MeshRender create_cube(bool create_uv)
 {
   static MeshPtr uvMesh = nullptr;
   static MeshPtr notUvMesh = nullptr;
@@ -109,9 +105,9 @@ shared_ptr<MeshRender> create_cube(bool create_uv)
   }
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
-  return make_shared<MeshRender>(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
+  return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
-shared_ptr<MeshRender> create_sphere(int detailed, bool smooth, bool create_uv)
+MeshRender create_sphere(int detailed, bool smooth, bool create_uv)
 {
   detailed = glm::clamp(detailed, 1, 20);
   int t = (int)smooth;
@@ -158,5 +154,5 @@ shared_ptr<MeshRender> create_sphere(int detailed, bool smooth, bool create_uv)
     mesh = spheres[t] =  make_mesh(VertexArrayObject(indices, vertices, normals, uv));
   }
   MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
-  return make_shared<MeshRender>(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
+  return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }

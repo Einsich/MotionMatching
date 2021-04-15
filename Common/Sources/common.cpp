@@ -27,7 +27,12 @@ void debug_common(const char *fmt, int status, va_list args)
 
   q.push_back({string(timeBuf) + string(messageBuf), (bool)status});
 
-  fprintf(stdout, "%s%s\n", timeBuf, messageBuf);
+  if (!status)
+  {
+    fprintf(stdout, "\033[31m%s%s\033[39m\n", timeBuf, messageBuf);
+  }
+  else
+    fprintf(stdout, "%s%s\n", timeBuf, messageBuf);
 }
 void debug_error(const char *fmt, ...)
 {

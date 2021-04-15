@@ -1,6 +1,6 @@
 #include "material.h"
 #include <algorithm>
-void Property::bind_to_shader(const Shader &shader)
+void Property::bind_to_shader(const Shader &shader) const
 {
   switch (vecType)
   {
@@ -12,7 +12,7 @@ void Property::bind_to_shader(const Shader &shader)
     default:debug_error("Can't set %s to shader", name.c_str());break;
   }
 }
-void Property::unbind_to_shader(const Shader &shader)
+void Property::unbind_to_shader(const Shader &shader) const
 {
   switch (vecType)
   {
@@ -24,18 +24,18 @@ void Property::unbind_to_shader(const Shader &shader)
     default:debug_error("Can't unbind %s from shader", name.c_str());break;
   }
 }
-bool Property::operator== (const Property & other)
+bool Property::operator== (const Property & other) const
 {
   return name == other.name;
 }
-void Material::bind_to_shader(const Shader& shader)
+void Material::bind_to_shader(const Shader& shader) const
 {
-  for (Property & property : properties)
+  for (const Property & property : properties)
     property.bind_to_shader(shader);
 }
-void Material::unbind_to_shader(const Shader &shader)
+void Material::unbind_to_shader(const Shader &shader) const
 {
-  for (Property & property : properties)
+  for (const Property & property : properties)
     property.unbind_to_shader(shader);
 }
 

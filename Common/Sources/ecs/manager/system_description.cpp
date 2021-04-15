@@ -5,8 +5,8 @@ namespace ecs
   SystemCashedArchetype::SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers):
     archetype(archetype), containers(containers){}
 
-  SystemDescription::SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order):
-    QueryDescription(args, false),
+  SystemDescription::SystemDescription(const char *name, const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order):
+    QueryDescription(name, args, false),
     function(function_pointer),
     order((int)order)
   {
@@ -18,14 +18,14 @@ namespace ecs
   }
 
 
-  QueryDescription::QueryDescription(const std::vector<FunctionArgument> &args, bool query):
-    args(std::move(args)), archetypes()
+  QueryDescription::QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query):
+    name(name), args(std::move(args)), archetypes()
   {
     if (query)
       add_query(this);
   }
-  SingleQueryDescription::SingleQueryDescription(const std::vector<FunctionArgument> &args, bool query):
-    args(std::move(args)), archetypes()
+  SingleQueryDescription::SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query):
+    name(name), args(std::move(args)), archetypes()
   {
     if (query)
       add_query((QueryDescription*)this);

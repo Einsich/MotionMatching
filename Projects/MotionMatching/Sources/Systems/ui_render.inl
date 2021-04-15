@@ -1,22 +1,8 @@
-#include "animation_debug.h"
+
+#include "ecs/ecs.h"
 #include "imgui/imgui.h"
-#include "Components/MeshRender/mesh_render.h"
-#include "animation_player.h"
-#include "Components/DebugTools/debug_arrow.h"
-#include "Physics/physics.h"
-#include "Application/config.h"
+#include "Animation/animation_player.h"
 
-AnimationDebugRender::AnimationDebugRender():
-debugSphere(make_game_object())
-{
-  debugSphere->add_component<Transform>(vec3(0,0,0));
-  MaterialPtr material = 
-  debugSphere->add_component<MeshRender>(create_sphere(10))->get_material();
-
-  material->set_property(Property("Ambient", vec3(1,1,1)));
-  material->set_property(Property("Diffuse", vec3(0,0,0)));
-  material->set_property(Property("Specular", vec3(0,0,0)));
-}
 
 void show_sliders(const AnimationFeaturesWeightsPtr weights)
 {
@@ -129,100 +115,35 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   
   ImGui::End();
 }
-void AnimationDebugRender::ui_render()
+
+SYSTEM(ecs::SystemOrder::UI) ui_render(
+  const AnimationPlayer &animationPlayer,
+  bool showMatchingStatistic)
 {
-  if (!get_bool_config("showMatchingStatistic"))
+  if (!showMatchingStatistic)
     return;
-  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
-  MotionMatchingBruteSolver* solver;
-  AnimationDataBasePtr dataBase;
-  if (!player || !player->get_motion_matching() ||
-  !(solver = dynamic_cast<MotionMatchingBruteSolver*>(player->get_motion_matching()->get_solver().get())) 
-      || !(dataBase = solver->get_data_base()))
+  if (!animationPlayer.get_motion_matching())
+  {
+    debug_error("Hasn't motion matching realisation");
     return;
+  }
+  const MotionMatchingBruteSolver *solver 
+    = dynamic_cast<MotionMatchingBruteSolver*>(animationPlayer.get_motion_matching()->get_solver().get());
+  if (!solver)
+  {
+    debug_error("Hasn't motion matching colver");
+    return;
+  }
+  AnimationDataBasePtr dataBase = solver->get_data_base();
+  if(!dataBase)
+  {
+    debug_error("Hasn't database");
+    return;
+  }
   const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
-  MotionMatching &mm = *player->get_motion_matching();
+  const MotionMatching &mm = *animationPlayer.get_motion_matching();
   show_sliders(weights);
   show_scores(dataBase, weights, solver, mm);
 
-  show_best_score(solver->bestScore, mm, player->inputGoal.tags);
-}
-
-void AnimationDebugRender::render(const Camera& mainCam, const DirectionLight& light, bool)
-{
-  if (!get_bool_config("showGoal"))
-    return;
-  AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
-  if (!player)
-    return;
-  AnimationLerpedIndex index = player->get_motion_matching() ? player->get_motion_matching()->get_index() : player->get_index();
-
-  
-  Transform* transform = game_object()->get_component<Transform>();
-  mat4 transformation = transform ? transform->get_transform() : mat4(1.f);
-
-  MeshRender * meshRender = debugSphere->get_component<MeshRender>();
-  transform = debugSphere->get_component<Transform>();
-  if (!meshRender || ! transform)
-    return;
-
-  MaterialPtr material = meshRender->get_material();
-  const auto& feature = index.first.get_feature();
-  AnimationTrajectory trajectory = index.first.get_trajectory();
-  
-  /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
-  Ray ray(man, vec3(0,-1,0), 100);
-  Collision collision = ray_cast(ray);
-  
-  draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
-*/
-
-  u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
-  onGround = player->onGround;
-  /*
-  material->set_property(Property("Ambient", vec3(1,1,1)));
-  transform->set_scale(vec3(0.1f));
-  for (vec3 v: feature.features)
-  {
-    transform->get_position() = transformation * vec4(v, 1.f);
-    meshRender->render(transform, mainCam, light, true);
-  }
-  */
-
-  if (onGround & 1)
-  {
-    material->set_property(Property("Ambient", vec3(1,0,0)));
-    transform->set_scale(vec3(0.11f));
-    
-    transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
-    meshRender->render(transform, mainCam, light, true);
-  }
-  if (onGround & 2)
-  {
-    material->set_property(Property("Ambient", vec3(1,0,0)));
-    transform->set_scale(vec3(0.11f));
-    
-    transform->get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
-    meshRender->render(transform, mainCam, light, true);
-  }
-  transform->set_scale(vec3(0.02f));
-  constexpr float dirLength = 0.3f;
-  constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};
-  constexpr float lenghts[2] = {0.3f, 0.3f};
-
-  std::array<TrajectoryPoint,AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &player->inputGoal.path.trajectory};
-  for(int i = 0; i < 2; i++)
-  {
-    material->set_property(Property("Ambient", colors[i]));
-    for (TrajectoryPoint &p: *trajectories[i])
-    {
-      vec3 v = vec3(transformation * vec4(p.point, 1.f));
-      vec3 w = vec3(transformation * vec4(quat(vec3(0, p.rotation, 0)) * vec3(0, 0, dirLength * lenghts[i]), 0.f));
-      transform->get_position() = v;
-      meshRender->render(transform, mainCam, light, true);
-      draw_arrow(v, v + w, colors[i], 0.02f, false);
-    }
-  }
-    
-  
+  show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
 }

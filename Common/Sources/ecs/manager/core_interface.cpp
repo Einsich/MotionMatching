@@ -36,17 +36,17 @@ namespace ecs
   }
   void print_archetypes()
   {   
-    printf("\n");
+    printf("\n- - - - - \n");
     for (const Archetype *archetype : core().archetypes)
     {
-      printf("[A]{");
+      printf("{\n");
       for (const auto &descr : archetype->components)
       {
         auto &type = core().types[descr.second.typeHash];
         printf("  %s %s\n",type.type.c_str(), type.name.c_str());
       }
 
-      printf("}\n");
+      printf("},\n");
     }
     std::fflush(stdout);
   }

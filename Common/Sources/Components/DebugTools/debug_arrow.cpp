@@ -3,8 +3,9 @@
 #include "Mesh/vertex_array_object.h"
 #include "Light/direction_light.h"
 #include "Shader/shader.h"
+#include "Camera/camera.h"
 
-static DebugArrow* arrow_instance;
+static DebugArrow *arrow_instance = nullptr;
 
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {
@@ -68,8 +69,20 @@ DebugArrow::DebugArrow()
   add_triangle(p[0], p[1], p[2], indices, vert, normal);
   add_triangle(p[0], p[2], p[3], indices, vert, normal);
   arrow = VertexArrayObject(indices, vert, normal);
-  
-  
+}
+
+DebugArrow::DebugArrow(DebugArrow &&other)
+{
+  arrow_instance = this;
+  arrowShader = other.arrowShader;
+  arrowMaterial = other.arrowMaterial;
+}
+
+DebugArrow::DebugArrow(const DebugArrow &other)
+{
+  arrow_instance = this;
+  arrowShader = other.arrowShader;
+  arrowMaterial = other.arrowMaterial;
 }
 mat4 directionMatrix(vec3 from, vec3 to) {
 
@@ -97,7 +110,7 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
     depthNotIgnore.arrowColors.push_back(color);
   }  
 }
-void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &matrices, vector<vec3> &colors, const VertexArrayObject &arrow)
+void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &matrices, vector<vec3> &colors, const VertexArrayObject &arrow, bool wire_frame)
 {
   assert(matrices.size() == colors.size());
   glDepthFunc(ignoreDepth ? GL_ALWAYS : GL_LESS);
@@ -112,21 +125,21 @@ void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &mat
     auto beginC = colors.begin() + i;
     auto endC = colors.begin() + i + k;
     shader.set_vec3("Colors", beginC, endC);
-    arrow.render_instances(k);
+    arrow.render_instances(k, wire_frame);
   }
   matrices.clear();
   colors.clear();
 }
-void DebugArrow::render(const Camera& mainCam, const DirectionLight& light, bool)
+void DebugArrow::render(const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame)
 {
   arrowShader.use();
   light.bind_to_shader(arrowShader);
-  mainCam.set_to_shader(arrowShader, Transform());//FIXIT
+  set_camera_to_shader(arrowShader, view_projection, camera_position);
   arrowMaterial->bind_to_shader(arrowShader);
   glDisable(GL_CULL_FACE);
 
-  render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow);
-  render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow);
+  render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow, wire_frame);
+  render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow, wire_frame);
 
   arrowMaterial->unbind_to_shader(arrowShader);
   light.unbind_to_shader(arrowShader);

@@ -56,10 +56,9 @@ void AnimationPlayer::set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, 
     ikFoot[i].onGround = false;
   }
 }
-void AnimationPlayer::update()
+void AnimationPlayer::update(Transform &transform, float dt)
 {
-  
-  float dt = speed * Time::delta_time();
+  dt *= speed;
   
   if (playerType ==  AnimationPlayerType::StateMachine)
   {
@@ -81,10 +80,9 @@ void AnimationPlayer::update()
   rootDeltaTranslation = targetCadr.rootTranslationDelta * ticks;
   rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
   
-  Transform* transform = game_object()->get_component<Transform>();
-  if (transform && get_bool_config("UseIK"))
+  if (get_bool_config("UseIK"))
   {
-    mat4 t = transform->get_transform();
+    mat4 t = transform.get_transform();
     vec3 hips = index.first.get_feature().features[(int)AnimationFeaturesNode::Hips];
     vec3 leftToe = index.first.get_feature().features[(int)AnimationFeaturesNode::LeftToeBase];
     vec3 rightToe = index.first.get_feature().features[(int)AnimationFeaturesNode::RightToeBase];
@@ -167,6 +165,10 @@ AnimationStateMachine *AnimationPlayer::get_state_machine()
   return playerType ==  AnimationPlayerType::StateMachine ? &stateMachine : nullptr;
 }
 MotionMatching *AnimationPlayer::get_motion_matching()
+{
+  return playerType ==  AnimationPlayerType::MotionMatching ? &motionMatching : nullptr;
+}
+const MotionMatching *AnimationPlayer::get_motion_matching() const
 {
   return playerType ==  AnimationPlayerType::MotionMatching ? &motionMatching : nullptr;
 }

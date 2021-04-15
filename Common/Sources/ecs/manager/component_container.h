@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <assert.h>
 #include "type_description.h"
+#include <algorithm>
 namespace ecs
 {
   struct ComponentInitializer
@@ -43,15 +44,26 @@ namespace ecs
     template<typename T>
     ComponentInitializer &add(const char *name)
     {
-      TypeDescription type(HashedString(name), type_index<T>());
+      
+      TypeDescription type = get_type_description<T>(name);
+      if (std::find(types.componentsTypes.begin(), types.componentsTypes.end(), type) == types.componentsTypes.end())
+        types.componentsTypes.push_back(type);
+      uint hash = type.type_hash();
+      return components[hash];
+    }
+    //template<typename T>
+    ComponentInitializer &operator[](const char *name)
+    {
+      TypeDescription type(HashedString(name), type_index<int>());
       types.componentsTypes.push_back(type);
       uint hash = type.type_hash();
       return components[hash];
     }
+
     template<typename T>
-    ComponentInitializer &get(const char *name)
+    T &get(const char *name)
     {
-      return add<T>(name);
+      return *((T*)(add<T>(name).data));
     }
   };
   constexpr int binSize = 500;

@@ -46,8 +46,8 @@ namespace ecs
   {
     typedef  void (*EventHandler)(const E&);
     EventHandler eventHandler;
-    EventDescription(const std::vector<FunctionArgument> &args, EventHandler eventHandler):
-      QueryDescription(args, false), eventHandler(eventHandler)
+    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler):
+      QueryDescription(name, args, false), eventHandler(eventHandler)
     {
       core().events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);
@@ -58,8 +58,8 @@ namespace ecs
   {
     typedef  void (*EventHandler)(const E&, ecs::QueryIterator&);
     EventHandler eventHandler;
-    SingleEventDescription(const std::vector<FunctionArgument> &args, EventHandler eventHandler):
-      QueryDescription(args, false), eventHandler(eventHandler)
+    SingleEventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler):
+      QueryDescription(name, args, false), eventHandler(eventHandler)
     {
       core().single_events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);
@@ -107,6 +107,28 @@ namespace ecs
       });
     }
   }
+  template<typename E>
+  void send_event_immediate(const EntityId &eid, const E &event)
+  {
+    if (eid)
+    {
+      for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
+      {
+        QueryIterator iterator;
+        if (get_iterator(*((QueryDescription*)descr), eid, iterator))
+        {
+          descr->eventHandler(event, iterator);
+        }
+      } 
+    }
+  }
+  template<typename E>
+  void send_event_immediate(const E &event)
+  {
+    for (EventDescription<E> *descr : core().events_handler<E>())
+      descr->eventHandler(event);
+  }
 
+  void system_statistic();
 
 }

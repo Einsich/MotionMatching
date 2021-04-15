@@ -73,6 +73,19 @@
                 "isDefault": true
             },
         },
+        {
+            "type": "shell",
+            "label": "Remove codegen files",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./delete_codegen_files.sh",
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
     ],
     "version": "2.0.0"
 }

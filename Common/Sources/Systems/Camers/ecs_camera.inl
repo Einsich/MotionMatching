@@ -246,3 +246,13 @@ ecs::EntityId create_free_camera(vec3 position, vec2 rotation)
   list.add<bool>("isMainCamera") = false;
   return ecs::create_entity(list);
 }
+ecs::EntityId create_camera(vec3 position, vec2 rotation)
+{
+  Camera camera;
+  camera.set_perspective(90.f * DegToRad, 0.01f, 5000.f);
+  ecs::ComponentInitializerList list;
+  list.add<Camera>("camera") = camera;
+  list.add<Transform>("transform") = Transform(position, vec3(rotation.x, rotation.y, 0));
+  list.add<bool>("isMainCamera") = false;
+  return ecs::create_entity(list);
+}

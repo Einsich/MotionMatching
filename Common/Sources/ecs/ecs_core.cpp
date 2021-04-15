@@ -2,6 +2,7 @@
 #include "ecs_core.h"
 #include "ecs_event.h"
 #include "manager/system_description.h"
+#include "common.h"
 namespace ecs
 {
   Core::Core()
@@ -91,6 +92,12 @@ namespace ecs
     Archetype *archetype = new Archetype(types, capacity);
     core().archetypes.push_back(archetype);
     register_archetype(archetype);
+    printf("added\n");
+        for (const auto &component : archetype->components)
+        {
+          auto &type = core().types[component.second.typeHash];
+          printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+        }
     return archetype;
   }
 
@@ -116,14 +123,15 @@ namespace ecs
     EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
     list.get<EntityId>("eid") = eid;
     found_archetype->add_entity(list);
-    send_event(eid, OnEntityCreated());
+    send_event_immediate(eid, OnEntityCreated());
+
     return eid;
   }
   void destroy_entity(const EntityId &eid)
   {
     if (eid)
     {
-      send_event(eid, OnEntityDestroyed());
+      send_event_immediate(eid, OnEntityDestroyed());
       core().toDestroy.push(eid);
     }
   }
@@ -149,6 +157,27 @@ namespace ecs
   bool get_iterator(const SingleQueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
   {
     return get_iterator((const QueryDescription &)descr, eid, iterator);
+  }
+
+  void system_statistic()
+  {
+    debug_log("\nSystems statistics");
+    for (const SystemDescription *descr : core().systems)
+    {
+      int archetypesCount = descr->archetypes.size();
+      debug_log("%s has %d archetypes", descr->name.c_str(), archetypesCount);
+      printf("{\n");
+      for (const SystemCashedArchetype &archetype : descr->archetypes)
+      {
+        printf("---\n");
+        for (const auto &component : archetype.archetype->components)
+        {
+          auto &type = core().types[component.second.typeHash];
+          printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+        }
+      }
+      printf("}\n");
+    }
   }
 }
 

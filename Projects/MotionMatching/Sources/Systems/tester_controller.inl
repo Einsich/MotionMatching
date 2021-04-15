@@ -1,58 +1,63 @@
-#include "animation_tester.h"
-#include "../animation_player.h"
+#include "ecs/ecs.h"
+#include "Animation/Test/animation_tester.h"
+#include "Animation/animation_player.h"
 #include "Transform/transform.h"
 #include "GameObject/game_object.h"
 #include "Time/time.h"
 #include "Components/DebugTools/debug_arrow.h"
-#include "../../PersonController/person_controller.h"
-AnimationTester::AnimationTester(AnimationDataBasePtr dataBase, int cur_test, vec3 test_offset):
-dataBase(dataBase), testInd(cur_test), curPoint(0), curTime(0), offset(test_offset)
-{
+#include "PersonController/person_controller.h"
 
-}
-void AnimationTester::update()
-{
-  REQUIRE(AnimationPlayer, player)
-  REQUIRE(Transform, transform)
-  REQUIRE(PersonController, personController);
 
+
+SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
+  ecs::EntityId eid,
+  AnimationTester &animationTester,
+  AnimationPlayer &animationPlayer,
+  Transform &transform,
+  PersonController &personController)
+{
   float dt = Time::delta_time();
-  AnimationGoal &goal = player->inputGoal;
-  AnimationTest &test = dataBase->test[testInd];
-  TestPoint testPoint = test.get_lerped_point(curPoint, curTime);
+  animationPlayer.update(transform, dt);
+  AnimationGoal &goal = animationPlayer.inputGoal;
+  AnimationTest &test = animationTester.dataBase->test[animationTester.testInd];
+  TestPoint testPoint = test.get_lerped_point(animationTester.curPoint, animationTester.curTime);
   vec3 p0 = testPoint.point;
   p0.y = 0;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
-    TestPoint p = test.get_lerped_point(curPoint, curTime + AnimationTrajectory::timeDelays[i]);
+    TestPoint p = test.get_lerped_point(animationTester.curPoint, animationTester.curTime + AnimationTrajectory::timeDelays[i]);
     goal.path.trajectory[i].point = p.point - p0;
     goal.path.trajectory[i].rotation = p.rotation;
   }
-  personController->update_from_speed(testPoint.velocity, dt);
+  personController.update_from_speed(animationPlayer, transform, testPoint.velocity, dt);
 
-  curTime += dt;
-  if (test.points[curPoint].time <= curTime)
+  animationTester.curTime += dt;
+  if (test.points[animationTester.curPoint].time <= animationTester.curTime)
   {
-    if (curPoint + 1 < (int)test.points.size())
+    if (animationTester.curPoint + 1 < (int)test.points.size())
     {
-      curPoint++;
+      animationTester.curPoint++;
     }
     else
     {
-      start_test(testInd + 1);
+      ecs::send_event(eid, OnAnimationTestStart(animationTester.testInd + 1));
     }
   }
 }
-void AnimationTester::start_test(int test)
-{
-  REQUIRE(Transform, transform)
-  REQUIRE(PersonController, personController);
 
-  testInd = test >= 0 ? test % dataBase->test.size() : testInd;
-  curPoint = 0;
-  curTime = 0;
-  personController->set_pos_rotation(offset, 0);
+EVENT() start_test(
+  const OnAnimationTestStart &test,
+  AnimationTester &animationTester,
+  Transform &transform,
+  PersonController &personController)
+{
+
+  animationTester.testInd = test.test >= 0 ? test.test % animationTester.dataBase->test.size() : animationTester.testInd;
+  animationTester.curPoint = 0;
+  animationTester.curTime = 0;
+  personController.set_pos_rotation(transform, animationTester.offset, 0);
 }
+/*
 void AnimationTester::render(const Camera&, const DirectionLight&, bool)
 {
   AnimationPlayer * player = game_object()->get_component<AnimationPlayer>();
@@ -90,3 +95,4 @@ void AnimationTester::render(const Camera&, const DirectionLight&, bool)
     }
   }
 }
+*/

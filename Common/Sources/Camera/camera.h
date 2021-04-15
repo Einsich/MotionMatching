@@ -15,7 +15,6 @@ public:
   void set_perspective(float fieldOfView, float zNear, float zFar);
 
   const mat4x4& get_projection() const;
-  void set_to_shader(const Shader& shader, const Transform &transform, bool sky_box = false) const;
 };
 
 
@@ -46,6 +45,7 @@ struct OnSetMainCamera
     mainCamera(camera){}
 };
 
+void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition);
 bool main_camera(mat4 &cam_transform, mat4 &cam_projection);
 
 ecs::EntityId create_camera_manager();
@@ -54,3 +54,4 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target);
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target);
 
 ecs::EntityId create_free_camera(vec3 position, vec2 rotation);
+ecs::EntityId create_camera(vec3 position = vec3(0.f), vec2 rotation = vec2(0.f));

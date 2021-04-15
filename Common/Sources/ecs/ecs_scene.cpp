@@ -41,6 +41,7 @@ namespace ecs
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
     {
+      //debug_log("execute %s system", (*it)->name.c_str());
       (*it)->execute();
     }
   }
@@ -81,6 +82,7 @@ namespace ecs
   }
   void Scene::process_events()
   {
+    //debug_log("process events");
     process_only_events();
     destroy_entities(false);
   }

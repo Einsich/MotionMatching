@@ -21,19 +21,21 @@ namespace ecs
 
   struct QueryDescription
   {
+    std::string name;
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
-    QueryDescription(const std::vector<FunctionArgument> &args, bool query = true);
+    QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
   };
   struct SingleQueryDescription
   {
+    std::string name;
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
-    SingleQueryDescription(const std::vector<FunctionArgument> &args, bool query = true);
+    SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
   };
@@ -41,7 +43,7 @@ namespace ecs
   {
     void (*function)();
     int order;
-    SystemDescription(const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order);
+    SystemDescription(const char *name, const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order);
     void execute();
   };
 

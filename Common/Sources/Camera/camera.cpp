@@ -23,16 +23,6 @@ const mat4x4& Camera::get_projection() const
   return projection;
 }
 
-void Camera::set_to_shader(const Shader& shader, const Transform &transform, bool sky_box) const
-{
-  vec3 cameraPosition = transform.get_position();
-  mat4 view = inverse(transform.get_transform());
-
-  mat4x4 viewProjection = projection * (sky_box ? mat4(mat3(view)): view);
-  shader.set_mat4x4("ViewProjection", viewProjection);
-  shader.set_vec3("CameraPosition", cameraPosition);
-}
-
 ArcballCamera::ArcballCamera(float distance, vec2 rotation, vec3 target):
   maxdistance(distance),
   zoom(0.2f),
@@ -66,4 +56,10 @@ FreeCamera::FreeCamera(vec3 position, vec2 rotation):
 void FreeCamera::calculate_transform(Transform &transform)
 {
   transform.set_rotation(PI*0.5f-curRotation.x, -curRotation.y, 0);
+}
+
+void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition)
+{
+  shader.set_mat4x4("ViewProjection", viewProjection);
+  shader.set_vec3("CameraPosition", cameraPosition);
 }

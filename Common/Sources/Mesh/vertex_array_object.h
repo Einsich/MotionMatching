@@ -58,10 +58,10 @@ public:
     glDrawElementsBaseVertex(wire_frame ? GL_LINES : GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, 0);
     glBindVertexArray(0);
   }
-  void render_instances(int instance) const
+  void render_instances(int instance, bool wire_frame = false) const
   {
     glBindVertexArray(vertexArrayBufferObject);
-    glDrawElementsInstancedBaseVertex(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, instance, 0);
+    glDrawElementsInstancedBaseVertex(wire_frame ? GL_LINES : GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, instance, 0);
     glBindVertexArray(0);
   }
   bool is_valid() const
