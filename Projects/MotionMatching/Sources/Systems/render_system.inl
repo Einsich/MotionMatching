@@ -27,6 +27,7 @@ void render_debug_goal(Callable);
 template<typename Callable>
 void render_debug_goal_on_animplayer(Callable);
 
+
 SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRender)
 {
   mat4 camTransform, camProjection;
@@ -65,12 +66,6 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
     const Transform &transform)
   {
     meshRender.render(transform, viewProjection, cameraPosition, light, wire_frame);
-  });
-
-  QUERY() render_arrows([&](
-    DebugArrow &debugArrow)
-  {
-    debugArrow.render(viewProjection, cameraPosition, light, wire_frame);
   });
 
 
@@ -134,18 +129,22 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
           vec3 v = vec3(transformation * vec4(p.point, 1.f));
           vec3 w = vec3(transformation * vec4(quat(vec3(0, p.rotation, 0)) * vec3(0, 0, dirLength * lenghts[i]), 0.f));
           debugTransform.get_position() = v;
-          debugGoalSphere.render(transform, viewProjection, cameraPosition, light, true);
           draw_arrow(v, v + w, colors[i], 0.02f, false);
         }
       }
     });
   });
+  QUERY() render_arrows([&](
+    DebugArrow &debugArrows)
+  {
+    debugArrows.render(viewProjection, cameraPosition, light, wire_frame);
+  });
 
 
 
   QUERY() render_skybox([&](
-    SkyBox &skybox)
+    SkyBox &skyBox)
   {
-    skybox.render(viewProjectionSkybox, cameraPosition, wire_frame);
+    skyBox.render(viewProjectionSkybox, cameraPosition, wire_frame);
   });
 }

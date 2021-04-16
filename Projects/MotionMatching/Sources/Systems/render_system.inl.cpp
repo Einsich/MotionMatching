@@ -41,22 +41,6 @@ void render_meshes(Callable lambda)
 }
 
 
-ecs::QueryDescription render_arrows_descr("render_arrows", {
-  {ecs::get_type_description<DebugArrow>("debugArrow"), false}
-});
-
-template<typename Callable>
-void render_arrows(Callable lambda)
-{
-  for (ecs::QueryIterator begin = render_arrows_descr.begin(), end = render_arrows_descr.end(); begin != end; ++begin)
-  {
-    lambda(
-      *begin.get_component<DebugArrow>(0)
-    );
-  }
-}
-
-
 ecs::QueryDescription render_debug_goal_descr("render_debug_goal", {
   {ecs::get_type_description<Transform>("debugTransform"), false},
   {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
@@ -93,8 +77,24 @@ void render_debug_goal_on_animplayer(Callable lambda)
 }
 
 
+ecs::QueryDescription render_arrows_descr("render_arrows", {
+  {ecs::get_type_description<DebugArrow>("debugArrows"), false}
+});
+
+template<typename Callable>
+void render_arrows(Callable lambda)
+{
+  for (ecs::QueryIterator begin = render_arrows_descr.begin(), end = render_arrows_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<DebugArrow>(0)
+    );
+  }
+}
+
+
 ecs::QueryDescription render_skybox_descr("render_skybox", {
-  {ecs::get_type_description<SkyBox>("skybox"), false}
+  {ecs::get_type_description<SkyBox>("skyBox"), false}
 });
 
 template<typename Callable>

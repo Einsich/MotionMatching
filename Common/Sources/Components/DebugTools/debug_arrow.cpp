@@ -76,6 +76,7 @@ DebugArrow::DebugArrow(DebugArrow &&other)
   arrow_instance = this;
   arrowShader = other.arrowShader;
   arrowMaterial = other.arrowMaterial;
+  arrow = other.arrow;
 }
 
 DebugArrow::DebugArrow(const DebugArrow &other)
@@ -83,6 +84,7 @@ DebugArrow::DebugArrow(const DebugArrow &other)
   arrow_instance = this;
   arrowShader = other.arrowShader;
   arrowMaterial = other.arrowMaterial;
+  arrow = other.arrow;
 }
 mat4 directionMatrix(vec3 from, vec3 to) {
 
