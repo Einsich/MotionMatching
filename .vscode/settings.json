@@ -79,7 +79,7 @@
   "Project": "MotionMatching",
   "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
-  "showBones": "yes",
+  "showBones": "no",
   "showGoal": "yes",
   "showMatchingStatistic": "yes"
 },

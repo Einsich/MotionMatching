@@ -94,7 +94,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   }
   if (dataBase->test.size() > 0)
   {
-    int testN = 9;
+    int testN = std::min(18, (int)dataBase->test.size());
     int testK = (int)sqrt(testN);
     float testSq = 5;
     for (int i = 0; i < testN; i++)

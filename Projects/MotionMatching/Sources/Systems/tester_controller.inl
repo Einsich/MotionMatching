@@ -40,7 +40,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     }
     else
     {
-      ecs::send_event(eid, OnAnimationTestStart(animationTester.testInd + 1));
+      ecs::send_event(eid, OnAnimationTestStart(animationTester.testInd));
     }
   }
 }
