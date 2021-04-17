@@ -10,12 +10,14 @@ enum class AnimationFeaturesNode
   RightHand,
   LeftToeBase,
   RightToeBase,
+  LeftToeSpeed,
+  RightToeSpeed,
   Count
 };
 class AnimationFeaturesWeights : public ISerializable
 {
 public:
-  float norma_function_weight, goal_path_weight, goal_rotation, goal_tag_weight, next_cadr_weight, noise_scale, debug_scale, animation_lerp;
+  float norma_function_weight, goal_path_weight, goal_rotation, goal_tag_weight, y_norma_scale, noise_scale, debug_scale, animation_lerp;
   vector<float> weights;
   AnimationFeaturesWeights();
   map<string, AnimationFeaturesNode> featureMap;

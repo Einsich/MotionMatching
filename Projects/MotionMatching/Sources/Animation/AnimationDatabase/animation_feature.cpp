@@ -35,7 +35,7 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
 {
   float norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
-    norma += weights->weights[i] * length(feature1.features[i] - feature2.features[i]);
+    norma += weights->weights[i] * length((feature1.features[i] - feature2.features[i]) * vec3(1, weights->y_norma_scale, 1));
   return weights->norma_function_weight * norma;
 }
 float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)

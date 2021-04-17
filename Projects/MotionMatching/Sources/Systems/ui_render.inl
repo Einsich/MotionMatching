@@ -10,10 +10,10 @@ void show_sliders(const AnimationFeaturesWeightsPtr weights)
   ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 100.f);
   ImGui::SliderFloat("lerp scale", &weights->animation_lerp, 0.f, 1.f);
   ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 100.f);
+  ImGui::SliderFloat("y norma scale", &weights->y_norma_scale, 0, 100.f);
   ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 100.f);
   ImGui::SliderFloat("goal rotation", &weights->goal_rotation, 0, 105.f);
   ImGui::SliderFloat("goal tag weight", &weights->goal_tag_weight, 0, 25.f);
-  ImGui::SliderFloat("next cadr weight", &weights->next_cadr_weight, 0, 10.f);
   ImGui::SliderFloat("noise_scale", &weights->noise_scale, 0, 10.f);
   for (const auto &p : weights->featureMap)
     ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);

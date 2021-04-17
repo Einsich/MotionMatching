@@ -62,8 +62,23 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
         nodeTransform = transfroms[tree.nodes[j].parent] * nodeTransform;
       transfroms[j] = nodeTransform;
       features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
-
     }    
+  }
+
+  for (uint i = 0; i < duration; i++)
+  {
+    int j = i;
+    if (i == duration - 1)
+    {
+      j = i - 1;
+    }
+    features[i].features[(int)AnimationFeaturesNode::RightToeSpeed] = 
+      (features[j + 1].features[(int)AnimationFeaturesNode::RightToeBase] - 
+      features[j].features[(int)AnimationFeaturesNode::RightToeBase]) * ticksPerSecond;
+
+    features[i].features[(int)AnimationFeaturesNode::LeftToeSpeed] = 
+      (features[j + 1].features[(int)AnimationFeaturesNode::LeftToeBase] - 
+      features[j].features[(int)AnimationFeaturesNode::LeftToeBase]) * ticksPerSecond;
   }
 
   ground_calculate();
