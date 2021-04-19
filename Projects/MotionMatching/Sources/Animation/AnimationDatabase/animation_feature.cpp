@@ -35,7 +35,7 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
 {
   float norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
-    norma += weights->weights[i] * length((feature1.features[i] - feature2.features[i]) * vec3(1, weights->y_norma_scale, 1));
+    norma += weights->weights[i] * length(feature1.features[i] - feature2.features[i]);
   return weights->norma_function_weight * norma;
 }
 float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
@@ -63,7 +63,7 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal
 {
   float path_norma = 0.f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-    path_norma += length(path.trajectory[i].point - goal.path.trajectory[i].point);
+    path_norma += length2((path.trajectory[i].point - goal.path.trajectory[i].point) * vec3(1, weights->y_norma_scale, 1));
   return weights->goal_path_weight * path_norma;
 }
 

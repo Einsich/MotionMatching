@@ -4,6 +4,10 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include "../Time/time_scope.h"
+#include "../Application/application.h"
 class ISerializable
 {
 protected:
@@ -143,4 +147,29 @@ inline size_t read(std::istream& is, std::set<T>& value)
     value.insert(t);
   }
   return static_cast<size_t>(is.tellg() - pos);
+}
+
+void print_file_size(size_t fileSize);
+template <typename T>
+size_t save_object(const T &object, const std::string &path)
+{
+  TimeScope scope("save file " + path);
+  ofstream file (project_resources_path(path), ios::binary);
+  size_t fileSize = write(file, object);
+  scope.stop();
+  print_file_size(fileSize);
+  file.close();
+  return fileSize;
+}
+
+template <typename T>
+size_t load_object(T &object, const std::string &path)
+{
+  TimeScope scope("load file " + path);
+  ifstream file(project_resources_path(path), ios::binary);
+  size_t fileSize = read(file, object);
+  scope.stop();
+  print_file_size(fileSize);
+  file.close();
+  return fileSize;
 }

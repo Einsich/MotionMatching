@@ -69,6 +69,7 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
   });
 
 
+
   QUERY() render_debug_goal([&](Transform &debugTransform, const MeshRender &debugGoalSphere)
   {
     QUERY() render_debug_goal_on_animplayer([&](
@@ -91,13 +92,28 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
 
       u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
       onGround = animationPlayer.onGround;
-      /*material->set_property(Property("Ambient", vec3(1,1,1)));
-      transform->set_scale(vec3(0.1f));
-      for (vec3 v: feature.features)
-      {
-        transform->get_position() = transformation * vec4(v, 1.f);
-        meshRender->render(transform, mainCam, light, true);
-      }*/
+      #define DEBUG_NODE(node)\
+      {\
+        debugTransform.get_position() = transformation * vec4(feature.features[(int)node], 1.f);\
+        debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);\
+      }
+      #define DEBUG_NODE_SPEED(node, speed)\
+      {\
+        vec3 p = vec3(transformation * vec4(feature.features[(int)node], 1.f));\
+        vec3 v = vec3(transformation * vec4(feature.features[(int)speed], 0.f));\
+        draw_arrow(p, p + v * 5.f, vec3(1,0,0), 0.02f, false);\
+      }
+
+      material->set_property(Property("Ambient", vec3(1,1,1)));
+      debugTransform.set_scale(vec3(0.1f));
+      DEBUG_NODE(AnimationFeaturesNode::LeftToeBase)
+      DEBUG_NODE(AnimationFeaturesNode::LeftHand)
+      DEBUG_NODE(AnimationFeaturesNode::RightToeBase)
+      DEBUG_NODE(AnimationFeaturesNode::RightHand)
+      DEBUG_NODE(AnimationFeaturesNode::Hips)
+      
+      DEBUG_NODE_SPEED(AnimationFeaturesNode::LeftToeBase, AnimationFeaturesNode::LeftToeSpeed)
+      DEBUG_NODE_SPEED(AnimationFeaturesNode::RightToeBase, AnimationFeaturesNode::RightToeSpeed)
 
       if (onGround & 1)
       {
@@ -105,7 +121,7 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
         debugTransform.set_scale(vec3(0.11f));
         
         debugTransform.get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
-        debugGoalSphere.render(transform, viewProjection, cameraPosition, light, true);
+        debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
       }
       if (onGround & 2)
       {
@@ -113,9 +129,8 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
         debugTransform.set_scale(vec3(0.11f));
         
         debugTransform.get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
-        debugGoalSphere.render(transform, viewProjection, cameraPosition, light, true);
+        debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
       }
-      debugTransform.set_scale(vec3(0.02f));
       constexpr float dirLength = 0.3f;
       constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};
       constexpr float lenghts[2] = {0.3f, 0.3f};
@@ -123,12 +138,10 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
       const std::array<TrajectoryPoint,AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &animationPlayer.inputGoal.path.trajectory};
       for(int i = 0; i < 2; i++)
       {
-        material->set_property(Property("Ambient", colors[i]));
         for (const TrajectoryPoint &p: *trajectories[i])
         {
           vec3 v = vec3(transformation * vec4(p.point, 1.f));
           vec3 w = vec3(transformation * vec4(quat(vec3(0, p.rotation, 0)) * vec3(0, 0, dirLength * lenghts[i]), 0.f));
-          debugTransform.get_position() = v;
           draw_arrow(v, v + w, colors[i], 0.02f, false);
         }
       }

@@ -1,19 +1,29 @@
 #pragma once
-#include "math.h"
-#include "../animation_goal.h"
-#include <vector>
-struct TestPoint
+#include "Event/input.h"
+#include "Serialization/serialization.h"
+struct AnimationTest : public ISerializable
 {
-  vec3 point, velocity;
-  float rotation;
-  float time;
-};
-
-class AnimationTest
-{
-public:
-  std::vector<TestPoint> points;
-  AnimationTest() = default;
-  AnimationTest(const std::vector<TestPoint> &points);
-  TestPoint get_lerped_point(int index, float time);
+  std::vector<KeyboardEvent> keyboardEvents;
+  std::vector<MouseMoveEvent> mouseMoveEvents;
+  std::string name;
+  float totalTime;
+  virtual size_t serialize(std::ostream& os) const override
+  {
+    size_t size = 0;
+    size += write(os, keyboardEvents);
+    size += write(os, mouseMoveEvents);
+    size += write(os, name);
+    size += write(os, totalTime);
+    return size;
+  }
+  virtual size_t deserialize(std::istream& is) override
+  {
+    size_t size = 0;
+    size += read(is, keyboardEvents);
+    size += read(is, mouseMoveEvents);
+    size += read(is, name);
+    size += read(is, totalTime);
+    return size;
+  }
+  
 };

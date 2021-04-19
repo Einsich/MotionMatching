@@ -5,7 +5,7 @@
 #include "config.h"
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
-scene(scene), context(window_name, width, height, full_screen), timer(), input(),
+scene(scene), context(window_name, width, height, full_screen), timer(),
 projectPath(string(get_config("projectPath"))),
 projectResourcesPath(string(get_config("projectPath")) + "/Resources"),
 projectShaderPath(string(get_config("projectPath")) + "/Shaders"),
@@ -24,6 +24,7 @@ bool Application::sdl_event_handler()
 {
   SDL_Event event;
   bool running = true;
+  Input &input = Input::input();
   while (SDL_PollEvent(&event))
   {
     ImGui_ImplSDL2_ProcessEvent(&event);
@@ -31,18 +32,18 @@ bool Application::sdl_event_handler()
       case SDL_QUIT: running = false; break;
       
       case SDL_KEYDOWN: 
-      case SDL_KEYUP: input.event_process(event.key);
+      case SDL_KEYUP: input.event_process(event.key, Time::time());
 
       if(event.key.keysym.sym == SDLK_ESCAPE)
         running = false;
       break;
 
       case SDL_MOUSEBUTTONDOWN:
-      case SDL_MOUSEBUTTONUP: input.event_process(event.button); break;
+      case SDL_MOUSEBUTTONUP: input.event_process(event.button, Time::time()); break;
 
-      case SDL_MOUSEMOTION: input.event_process(event.motion); break;
+      case SDL_MOUSEMOTION: input.event_process(event.motion, Time::time()); break;
 
-      case SDL_MOUSEWHEEL: input.event_process(event.wheel); break;
+      case SDL_MOUSEWHEEL: input.event_process(event.wheel, Time::time()); break;
       case SDL_WINDOWEVENT: break;
     }
   }

@@ -12,7 +12,6 @@ private:
   IScene *scene;
   Context context;
   Time timer;
-  Input input;
 public:
   const string projectPath, projectResourcesPath, projectShaderPath, commonResourcesPath, commonShaderPath;
   Application(IScene *scene, string window_name, int width, int height, bool full_screen = false);
@@ -31,10 +30,6 @@ public:
   static const Time& get_timer()
   {
     return application->timer;
-  }
-  static Input& get_input()
-  {
-    return application->input;
   }
 };
 string project_resources_path(const string &path);

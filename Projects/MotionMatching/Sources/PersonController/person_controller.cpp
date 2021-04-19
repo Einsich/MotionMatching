@@ -1,11 +1,14 @@
+#include "Event/input.h"
 #include "person_controller.h"
 #include "../Animation/animation_player.h"
 #include "Transform/transform.h"
 #include "Components/DebugTools/debug_arrow.h"
 PersonController::PersonController(vec3 position) :
-simulatedRotation(0), realRotation(0),
+simulatedRotation(0), realRotation(0), wantedRotation(0),
 speed(0),
-simulatedPosition(position), realPosition(position)
+simulatedPosition(position), realPosition(position),
+disableEvents(false),
+crouching(false)
 {}
   constexpr float maxErrorRadius = 0.5f;
 
@@ -19,15 +22,14 @@ float rotation_abs(float rotation_delta)
 void PersonController::update_from_speed(const AnimationPlayer &player, Transform &transform, vec3 speed_set, float dt)
 {
   speed = speed_set;
-  float nextRotation = realRotation + player.rootDeltaRotation * dt;
+  float nextRotation = realRotation - player.rootDeltaRotation * dt;
   
   if (rotation_abs(nextRotation - simulatedRotation) < rotation_abs(realRotation - simulatedRotation))
   {
     realRotation = nextRotation; 
     simulatedRotation = realRotation;
   }
-
-  simulatedPosition += glm::rotateY(speed * dt, PIHALF + realRotation);
+  simulatedPosition += glm::rotateY(speed * dt, -realRotation);
   
   realPosition = transform.get_position() -
   (player.rootDeltaTranslation.z * transform.get_forward() + 
@@ -42,7 +44,7 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
     realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
   }
   transform.get_position() = realPosition;
-  transform.set_rotation(PIHALF + realRotation); 
+  transform.set_rotation(-realRotation); 
   
   draw_transform(transform);
 
@@ -50,7 +52,7 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
 void PersonController::set_pos_rotation(Transform &transform, vec3 position, float rotation)
 {
   realPosition = simulatedPosition = position;
-  realRotation = simulatedRotation = rotation - PIHALF;
+  realRotation = simulatedRotation = rotation;
   transform.get_position() = position;
   transform.set_rotation(realRotation); 
 }

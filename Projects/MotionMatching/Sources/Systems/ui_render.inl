@@ -2,8 +2,23 @@
 #include "ecs/ecs.h"
 #include "imgui/imgui.h"
 #include "Animation/animation_player.h"
-
-
+#include "Animation/man_property.h"
+void show_property_sliders(ManProperty &property)
+{
+  ImGui::Begin("Controller property");
+  #define SLIDER(name, min, max) ImGui::SliderFloat(#name, &property.name, min, max)
+  SLIDER(walkForwardSpeed, 0.f, 10.f);
+  SLIDER(walkSidewaySpeed, 0.f, 10.f);
+  SLIDER(walkBackwardSpeed, 0.f, 10.f);
+  SLIDER(runForwardSpeed, 0.f, 10.f);
+  SLIDER(runSidewaySpeed, 0.f, 10.f);
+  SLIDER(runBackwardSpeed, 0.f, 10.f);
+  SLIDER(hipsHeightStand, 0.f, 10.f);
+  SLIDER(hipsHeightCrouch, 0.f, 10.f);
+  SLIDER(hipsHeightJump, 0.f, 10.f);
+  property.update_array();
+  ImGui::End();
+}
 void show_sliders(const AnimationFeaturesWeightsPtr weights)
 {
   ImGui::Begin("Sliders");
@@ -146,4 +161,6 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
   show_scores(dataBase, weights, solver, mm);
 
   show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
+  if (ManProperty::instance)
+    show_property_sliders(*ManProperty::instance);
 }

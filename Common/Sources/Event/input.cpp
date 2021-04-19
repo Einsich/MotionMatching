@@ -10,14 +10,11 @@ const float wheelHalfDecayTime = wheelDecayTime * 0.5f;
 const float wheelScrollSpeed = 0.2f;
 Input& Input::input()
 {
+
+  static Input *instance = new Input();
   return *instance;
 }
 
-Input::Input()
-{
-  assert(instance == nullptr);
-  instance = this;
-}
 IEvent<const KeyboardEvent &> & Input::keyboard_event(KeyAction action, SDL_Keycode keycode)
 {
   return keyboardEvent.get_event((int)action, (int)keycode);
@@ -42,30 +39,32 @@ IEvent<const MouseWheelEvent &> & Input::mouse_wheel_event()
 {
   return mouseWheelEvent.get_event(0, 0);
 }
-void Input::event_process(const SDL_KeyboardEvent& event)
+void Input::event_process(const SDL_KeyboardEvent& event, float time)
 {
   KeyboardEvent e;
   e.keycode = event.keysym.sym;
+  e.time = time;
   if (event.repeat)
     e.action = KeyAction::Press;
   else
   if (event.state == SDL_PRESSED)
   {
     e.action = KeyAction::Down;
-    keyMap[e.keycode] = {1, Time::time()};
+    keyMap[e.keycode] = {1, time};
   }
   else
   {
     e.action = KeyAction::Up;
-    keyMap[e.keycode] = {0, Time::time()};
+    keyMap[e.keycode] = {0, time};
 
   }  
   keyboardEvent.get_event((int)e.action, 0)(e);
   keyboardEvent.get_event((int)e.action, (int)e.keycode)(e);
 }
-void Input::event_process(const SDL_MouseButtonEvent& event)
+void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 {
   MouseClickEvent e;
+  e.time = time;
   
   switch (event.button)
   {
@@ -84,19 +83,21 @@ void Input::event_process(const SDL_MouseButtonEvent& event)
   mouseClickEvent.get_event((int)e.buttonType, (int)e.action)(e);
   
 }
-void Input::event_process(const SDL_MouseMotionEvent& event)
+void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
   MouseMoveEvent e
   {
     e.x = event.x, e.y = event.y,
-    e.dx = event.xrel, e.dy = event.yrel
+    e.dx = event.xrel, e.dy = event.yrel,
+    e.time = time
   };
   mouseMoveEvent.get_event(0, 0)(e);
 }
-void Input::event_process(const SDL_MouseWheelEvent& event)
+void Input::event_process(const SDL_MouseWheelEvent& event, float time)
 {
   MouseWheelEvent e;
   e.wheel = event.y;
+  e.time = time;
   if (Time::time() - wheelData.lastTime > wheelDecayTime)
   {
     wheelData.lastValue = 0;

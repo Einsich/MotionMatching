@@ -33,26 +33,29 @@ struct MouseClickEvent
   MouseButtonType buttonType;
   MouseButtonAction action;
   int x, y;
+  float time;
 };
 struct MouseMoveEvent
 {
   int x, y;
   int dx, dy;
+  float time;
 };
 struct MouseWheelEvent
 {
   int wheel;
+  float time;
 };
 
 struct KeyboardEvent
 {
   SDL_Keycode keycode;
   KeyAction action;
+  float time;
 };
 
 class Input
 {
-  inline static Input *instance;
   template<int n, class InputEvent>
   class  InputEventHandler
   {
@@ -81,17 +84,16 @@ class Input
 
 public:
   static Input& input();
-  Input();
   IEvent<const KeyboardEvent &> & keyboard_event(KeyAction action, SDL_Keycode keycode);
   IEvent<const KeyboardEvent &> & keyboard_event(KeyAction action);
   IEvent<const MouseClickEvent &> & mouse_click_event(MouseButtonType type, MouseButtonAction action);
   IEvent<const MouseClickEvent &> & mouse_click_event();
   IEvent<const MouseMoveEvent &> & mouse_move_event();
   IEvent<const MouseWheelEvent &> & mouse_wheel_event();
-  void event_process(const SDL_KeyboardEvent& event);
-  void event_process(const SDL_MouseButtonEvent& event);
-  void event_process(const SDL_MouseMotionEvent& event);
-  void event_process(const SDL_MouseWheelEvent& event);
+  void event_process(const SDL_KeyboardEvent& event, float time);
+  void event_process(const SDL_MouseButtonEvent& event, float time);
+  void event_process(const SDL_MouseMotionEvent& event, float time);
+  void event_process(const SDL_MouseWheelEvent& event, float time);
   float get_key(SDL_Keycode keycode, float reaction_time = 0.1f);
   float get_key_derivative(SDL_Keycode keycode, float reaction_time = 0.1f);
   float get_wheel();

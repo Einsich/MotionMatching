@@ -74,11 +74,11 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     }
     features[i].features[(int)AnimationFeaturesNode::RightToeSpeed] = 
       (features[j + 1].features[(int)AnimationFeaturesNode::RightToeBase] - 
-      features[j].features[(int)AnimationFeaturesNode::RightToeBase]) * ticksPerSecond;
+      features[j].features[(int)AnimationFeaturesNode::RightToeBase]);
 
     features[i].features[(int)AnimationFeaturesNode::LeftToeSpeed] = 
       (features[j + 1].features[(int)AnimationFeaturesNode::LeftToeBase] - 
-      features[j].features[(int)AnimationFeaturesNode::LeftToeBase]) * ticksPerSecond;
+      features[j].features[(int)AnimationFeaturesNode::LeftToeBase]);
   }
 
   ground_calculate();

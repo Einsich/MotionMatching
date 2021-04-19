@@ -20,8 +20,11 @@
 #include "Animation/Test/animation_tester.h"
 #include "Event/input.h"
 #include "Animation/AnimationRender/bone_render.h"
+#include "Animation/man_property.h"
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
+  ManProperty::instance = new ManProperty();
+  load_object(*ManProperty::instance, "man_property");
   ecs::EntityId attachedCamera;
   {
     create_camera_manager();
@@ -45,6 +48,11 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<SkyBox>("skyBox") = SkyBox(common_resources_path("Textures/Skyboxes/CloudSky"));
     ecs::create_entity(list);
   }
+  {
+    ecs::ComponentInitializerList list;
+    list.add<float>("fps") = float(0);
+    ecs::create_entity(list);
+  }
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
@@ -66,6 +74,9 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   {
     ecs::ComponentInitializerList list;
     list.add<MotionMatchingScene>("motionMatchingScene") = MotionMatchingScene(dataBase);
+    list.add<int>("recordedTest") = -1;
+    list.add<int>("recordedState") = 0;
+    list.add<float>("recorderStartTime") = 0;
     ecs::create_entity(list);
   }
   {
@@ -92,9 +103,9 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<ecs::EntityId>("attachedCamera") = attachedCamera;
     ecs::create_entity(list);
   }
-  if (dataBase->test.size() > 0)
+  if (dataBase->tests.size() > 0)
   {
-    int testN = std::min(18, (int)dataBase->test.size());
+    int testN = std::min(18, (int)dataBase->tests.size());
     int testK = (int)sqrt(testN);
     float testSq = 5;
     for (int i = 0; i < testN; i++)
@@ -115,9 +126,11 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       list.get<AnimationRender>("animationRender").get_material()->set_property(Property("Shininess", 100.f));
 
       list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
-      list.add<AnimationTester>("animationTester") = AnimationTester(dataBase, i * (dataBase->test.size() / testN), pos);
+      list.add<AnimationTester>("animationTester") = AnimationTester();
+      list.add<vec2>("testOffset") = pos;
 
-      ecs::create_entity(list);
+      ecs::EntityId tester = ecs::create_entity(list);
+      ecs::send_event(OnAnimationTestStart(i));
     }
   }
   if (get_bool_config("showGoal"))
@@ -197,4 +210,6 @@ EVENT() scene_destroy(
   const MotionMatchingScene &motionMatchingScene)
 {
   motionMatchingScene.dataBase->save_runtime_parameters();
+  
+  save_object(*ManProperty::instance, "man_property");
 }
