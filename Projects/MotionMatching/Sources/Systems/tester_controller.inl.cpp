@@ -40,7 +40,7 @@ void start_test_handler(const OnAnimationTestStart &event);
 
 ecs::EventDescription<OnAnimationTestStart> start_test_descr("start_test", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
-  {ecs::get_type_description<vec3>("test_offset"), false},
+  {ecs::get_type_description<vec3>("testOffset"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
 }, start_test_handler);
@@ -64,7 +64,7 @@ void start_test_singl_handler(const OnAnimationTestStart &event, ecs::QueryItera
 
 ecs::SingleEventDescription<OnAnimationTestStart> start_test_singl_descr("start_test", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
-  {ecs::get_type_description<vec3>("test_offset"), false},
+  {ecs::get_type_description<vec3>("testOffset"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
 }, start_test_singl_handler);

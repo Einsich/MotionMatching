@@ -103,6 +103,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<ecs::EntityId>("attachedCamera") = attachedCamera;
     ecs::create_entity(list);
   }
+  float sectionSize = 15.f;
   if (dataBase->tests.size() > 0)
   {
     int testN = std::min(18, (int)dataBase->tests.size());
@@ -112,7 +113,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     {
       ecs::ComponentInitializerList list;
       vec2 rotation = vec2(0,0);
-      vec3 pos = vec3(i / testK, 0, i % testK) * testSq;
+      vec3 pos = vec3(i / testK + 0.5f, 0, i % testK + 0.5f) * sectionSize;
       list.add<Transform>("transform") = Transform(pos, vec3(rotation.x, rotation.y ,0), vec3(1));
       list.add<PersonController>("personController") = PersonController(pos);
       list.add<AnimationRender>("animationRender") = AnimationRender(
@@ -127,10 +128,10 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
 
       list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
       list.add<AnimationTester>("animationTester") = AnimationTester();
-      list.add<vec2>("testOffset") = pos;
+      list.add<vec3>("testOffset") = pos;
 
       ecs::EntityId tester = ecs::create_entity(list);
-      ecs::send_event(OnAnimationTestStart(i));
+      ecs::send_event(tester, OnAnimationTestStart(i));
     }
   }
   if (get_bool_config("showGoal"))
@@ -148,10 +149,12 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     ecs::ComponentInitializerList list; 
     list.add<Transform>("transform") = Transform(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));
     list.add<MeshRender>("meshRender") = create_plane(true);
+    list.get<MeshRender>("meshRender").get_shader() = get_shader("section_plane");
     material = list.get<MeshRender>("meshRender").get_material();
     material->set_property(Property("mainTex", floor));
     material->set_property(Property("uvScale", vec2(80.f,80.f)));
     material->set_property(Property("Specular", vec3(0.f)));
+    material->set_property(Property("sectionScale", sectionSize));
     //add_collider(plane, make_collider<PlaneCollider>());
     ecs::create_entity(list);
   }

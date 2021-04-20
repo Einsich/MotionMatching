@@ -23,7 +23,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     AnimationTest &test = motionMatchingScene.dataBase->tests[animationTester.testInd];
 
     animationTester.curTime += dt;
-    while (test.keyboardEvents.size() < animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
+    while (test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
     {
       const KeyboardEvent &e = test.keyboardEvents[animationTester.keyboardInd];
       SDL_KeyboardEvent event;
@@ -32,11 +32,12 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
         event.repeat = true;
       else 
         event.state = e.action == KeyAction::Down ? SDL_PRESSED : SDL_RELEASED;
-      animationTester.testInput.event_process(event, e.time);
+      animationTester.testInput.event_process(event, Time::time());
       ecs::send_event_immediate(eid, ControllerKeyBoardEvent(e));
+      animationTester.keyboardInd++;
       
     }
-    while (test.mouseMoveEvents.size() < animationTester.mouseMoveInd && test.mouseMoveEvents[animationTester.mouseMoveInd].time <= animationTester.curTime)
+    while (test.mouseMoveEvents.size() > animationTester.mouseMoveInd && test.mouseMoveEvents[animationTester.mouseMoveInd].time <= animationTester.curTime)
     {
       const MouseMoveEvent &e = test.mouseMoveEvents[animationTester.mouseMoveInd];
       SDL_MouseMotionEvent event;
@@ -44,8 +45,9 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
       event.x = e.x , event.y = e.y,
       event.xrel = e.dx , event.yrel = e.dy;
   
-      animationTester.testInput.event_process(event, e.time);
+      animationTester.testInput.event_process(event, Time::time());
       ecs::send_event_immediate(eid, ControllerMouseMoveEvent(e));
+      animationTester.mouseMoveInd++;
     }
     if (test.totalTime <= animationTester.curTime)
     {
@@ -58,16 +60,15 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
 EVENT() start_test(
   const OnAnimationTestStart &test,
   AnimationTester &animationTester,
-  const vec3 &test_offset,
+  const vec3 &testOffset,
   Transform &transform,
   PersonController &personController)
 {
-
   animationTester.testInd = test.test;
   animationTester.curTime = 0;
   animationTester.testStartTime = Time::time();
   animationTester.keyboardInd = 0;
   animationTester.mouseMoveInd = 0;
   animationTester.testInput = Input();
-  personController.set_pos_rotation(transform, test_offset, 0);
+  personController.set_pos_rotation(transform, testOffset, 0);
 }

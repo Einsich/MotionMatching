@@ -52,11 +52,11 @@ void update_attached_camera(const ecs::EntityId&, Callable);
 SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   AnimationPlayer &animationPlayer,
   PersonController &personController,
-  AnimationTester *animationtester,
+  AnimationTester *animationTester,
   Transform &transform) 
 {
   
-  Input &input = animationtester ? animationtester->testInput : Input::input();
+  Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
   animationPlayer.update(transform, dt);
   personController.simulatedRotation =

@@ -6,7 +6,7 @@ void peson_controller_update_func();
 ecs::SystemDescription peson_controller_update_descr("peson_controller_update", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
-  {ecs::get_type_description<AnimationTester>("animationtester"), true},
+  {ecs::get_type_description<AnimationTester>("animationTester"), true},
   {ecs::get_type_description<Transform>("transform"), false}
 }, peson_controller_update_func, ecs::SystemOrder::LOGIC);
 
