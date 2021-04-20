@@ -36,7 +36,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
   for (int i = 0; i < tests.size(); i++)
   {
     AnimationTest &test = tests[i];
-    ImGui::Text("[%d]%s, t = %f, k = %ld, m = %ld", i, test.name.c_str(), test.totalTime, test.keyboardEvents.size(), test.mouseMoveEvents.size());
+    ImGui::Text("%s, t = %f, k = %ld, m = %ld", test.name.c_str(), test.totalTime, test.keyboardEvents.size(), test.mouseMoveEvents.size());
     ImGui::SameLine();
     snprintf(buf, BUF_SIZE, "edit[%d]", i);
     if (ImGui::Button(buf, ImVec2(60, 20)))

@@ -79,10 +79,11 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<float>("recorderStartTime") = 0;
     ecs::create_entity(list);
   }
+  float sectionSize = 10.f;
   {
     ecs::ComponentInitializerList list;
     vec2 rotation(0,0);
-    vec3 pos(0.f, 0.f,-12.f);
+    vec3 pos = vec3(-0.5f, 0.f,-0.5f) * sectionSize;
     list.add<Transform>("transform") = Transform(pos, vec3(rotation.x, rotation.y ,0), vec3(1));
     list.add<PersonController>("personController") = PersonController(pos);
     list.add<AnimationRender>("animationRender") = AnimationRender(
@@ -103,12 +104,10 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<ecs::EntityId>("attachedCamera") = attachedCamera;
     ecs::create_entity(list);
   }
-  float sectionSize = 15.f;
   if (dataBase->tests.size() > 0)
   {
     int testN = std::min(18, (int)dataBase->tests.size());
     int testK = (int)sqrt(testN);
-    float testSq = 5;
     for (int i = 0; i < testN; i++)
     {
       ecs::ComponentInitializerList list;

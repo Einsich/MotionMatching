@@ -35,7 +35,7 @@ void main()
     section = fract(section);
     section = min(section, abs(section - vec2(1,1)));
     float t = min(section.x, section.y);
-    bool addSection = toCameraDist < 45 && t * sectionScale < 0.03;
+    bool addSection = toCameraDist < 45 && t * sectionScale < 0.05;
     vec3 texColor = addSection ? vec3(1,1,1) : texture(mainTex, uv).rgb;
     vec3 color = texColor * (Ambient + df * Diffuse) + sf * Specular;
 
