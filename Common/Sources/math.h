@@ -13,7 +13,7 @@ constexpr float PI = 3.1415926535897932384626433832795f;
 constexpr float PIHALF = PI * 0.5f;
 constexpr float PITWO = PI * 2.0f;
 constexpr float DegToRad = PI / 180.f;
-
+constexpr float RadToDeg = 1.f / DegToRad;
 template<typename T>
 vec2 to_vec2(const T& t)
 {

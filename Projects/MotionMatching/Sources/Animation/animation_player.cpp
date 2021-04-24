@@ -9,7 +9,7 @@ playerType(playerType), speed(1.f),
 stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 
 motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
 tree(dataBase->tree), 
-index(dataBase, 0, 0, 0, 1),
+index(dataBase, 0, 0),
 currentCadr(index.get_lerped_cadr())
 {
   if (playerType ==  AnimationPlayerType::StateMachine)
@@ -76,9 +76,9 @@ void AnimationPlayer::update(Transform &transform, float dt)
   }
   float ticks = index.ticks_per_second();
   
-  AnimationCadr targetCadr = index.get_lerped_cadr();
-  rootDeltaTranslation = targetCadr.rootTranslationDelta * ticks;
-  rootDeltaRotation = targetCadr.rootRotationDelta * ticks;
+  currentCadr = index.get_lerped_cadr();
+  rootDeltaTranslation = currentCadr.rootTranslationDelta * ticks;
+  rootDeltaRotation = currentCadr.rootRotationDelta * ticks;
   
   if (get_bool_config("UseIK"))
   {
@@ -131,15 +131,13 @@ void AnimationPlayer::update(Transform &transform, float dt)
       {
         vec3 footPosition = inv_t * vec4(ikFoot[i].footPosition, 1);
         vec3 toePosition = inv_t * vec4(ikFoot[i].toePosition, 1);
-        process_IK(tree, targetCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
-        process_IK(tree, targetCadr, t, toePosition, vec3(0,1,0), ikFoot[i].toeNode, hipsNode);
+        process_IK(tree, currentCadr, t, footPosition, ikFoot[i].normal, ikFoot[i].footNode, hipsNode);
+        process_IK(tree, currentCadr, t, toePosition, vec3(0,1,0), ikFoot[i].toeNode, hipsNode);
         vec3 norm = t * vec4(ikFoot[i].normal, 0);
         draw_arrow(ikFoot[i].toePosition, ikFoot[i].toePosition + norm * 0.3f, vec3(10,0,0), 0.02f, false);
       }
     }
   }
-  float lerp_strength = index.get_data_base()->featureWeights->animation_lerp;
-  currentCadr = lerped_cadr(currentCadr, targetCadr, dt * ticks * lerp_strength);
   tree.set_cadr(currentCadr);
   tree.calculate_bone_transforms();
 }

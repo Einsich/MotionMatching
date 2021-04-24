@@ -4,7 +4,7 @@
 #include "Transform/transform.h"
 #include "Components/DebugTools/debug_arrow.h"
 PersonController::PersonController(vec3 position) :
-simulatedRotation(0), realRotation(0), wantedRotation(0),
+simulatedRotation(0), realRotation(0), wantedRotation(0), angularSpeed(0),
 speed(0),
 simulatedPosition(position), realPosition(position),
 disableEvents(false),
@@ -29,6 +29,9 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
     realRotation = nextRotation; 
     simulatedRotation = realRotation;
   }
+  //realRotation = simulatedRotation;
+  //realRotation = nextRotation; 
+
   simulatedPosition += glm::rotateY(speed * dt, -realRotation);
   
   realPosition = transform.get_position() -
@@ -41,7 +44,7 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
   if (errorRadius > maxErrorRadius * maxErrorRadius)
   {
     errorRadius = sqrt(errorRadius);
-    realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
+    //realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
   }
   transform.get_position() = realPosition;
   transform.set_rotation(-realRotation); 

@@ -31,7 +31,10 @@ void AnimationIndex::increase_cadr()
     cadr++;
     if (cadr >= (int)dataBase->clips[clip].duration)
     {
-      cadr = 0;
+      if (dataBase->clips[clip].loopable)
+        cadr = 0;
+      else
+        cadr--;
     }
   }
 }
@@ -39,8 +42,11 @@ bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &
 {
   constexpr int N = 10;
   #define ABS_L(k, n) (((k + n) % n) >= N)
+  if (to.get_cadr_index() + 4 >= to.get_clip().duration)
+    return false;
   if (from.clip == to.clip)
   {
+    //return false;//???
     int k = from.cadr - to.cadr;
     const AnimationClip &clip = to.get_clip();
     if (clip.loopable)
@@ -77,6 +83,11 @@ AnimationCadr AnimationIndex::get_cadr() const
 {
   return dataBase->clips[clip].get_frame(cadr);
 }
+AnimationCadr AnimationIndex::get_cadr(float t) const
+{
+  int nextClip = (cadr + 1 + dataBase->clips[clip].duration) % dataBase->clips[clip].duration;
+  return lerped_cadr(dataBase->clips[clip].get_frame(cadr), dataBase->clips[clip].get_frame(nextClip), t);
+}
 const AnimationFeatures &AnimationIndex::get_feature() const
 {
   return dataBase->clips[clip].features[cadr];
@@ -87,16 +98,16 @@ AnimationTrajectory AnimationIndex::get_trajectory() const
 }
 
 AnimationLerpedIndex::AnimationLerpedIndex(
-  AnimationDataBasePtr dataBase, int clip1, int cadr1, int clip2, int cadr2, float t):
-dataBase(dataBase), first(dataBase, clip1, cadr1), second(dataBase, clip2, cadr2), t(t)
+  AnimationDataBasePtr dataBase, int clip1, int cadr1):
+dataBase(dataBase), first(dataBase, clip1, cadr1), second(), t(0), lerpT(0), lerpTime(0)
 {}
 AnimationCadr AnimationLerpedIndex::get_lerped_cadr()
 {
   if (!second())
   {
-    return first() ? first.get_cadr() : AnimationCadr();
+    return first() ? first.get_cadr(t) : AnimationCadr();
   }
-  return lerped_cadr(first.get_cadr(), second.get_cadr(), t);
+  return lerped_cadr(first.get_cadr(t), second.get_cadr(t), lerpT / lerpTime);
 }
 AnimationDataBasePtr AnimationLerpedIndex::get_data_base() const
 {
@@ -108,14 +119,43 @@ float AnimationLerpedIndex::ticks_per_second() const
 }
 void AnimationLerpedIndex::update(float dt)
 {
-  if (first() && second())
+  t += dt * ticks_per_second();
+
+  if (first() && !second())
   {
-    t += dt * ticks_per_second();
     if (t >= 1.f)
     {
-      first = second;
-      second.increase_cadr();
+      first.increase_cadr();
       t -= (int)t;
     }
   }
+  else
+  if (first() && second())
+  {
+    lerpT += dt;
+    if (t >= 1.f)
+    {
+      first.increase_cadr();
+      second.increase_cadr();
+      t -= (int)t;
+    }
+    if (lerpT >= lerpTime)
+    {
+      first = second;
+      second = AnimationIndex();
+    }
+  }
+}
+
+void AnimationLerpedIndex::play_lerped(AnimationIndex next, float lerp_time)
+{
+  if (second()) 
+    first = second;
+  second = next;
+  lerpT = 0;
+  lerpTime = lerp_time;
+}
+AnimationIndex AnimationLerpedIndex::current_index() const
+{
+  return second() ? second : first;
 }

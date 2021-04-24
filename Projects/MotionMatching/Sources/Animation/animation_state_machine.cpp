@@ -5,9 +5,7 @@ AnimationLerpedIndex AnimationStateMachine::get_current_animation() const
 {
   return AnimationLerpedIndex(dataBase, 
   blendMode.anim1 ? anim_index(blendMode.anim1->clip.name) : -1,
-  blendMode.anim1 ? blendMode.anim1->cadr : -1,
-  blendMode.anim2 ? anim_index(blendMode.anim2->clip.name) : -1,
-  blendMode.anim2 ? blendMode.anim2->cadr : -1, blendMode.t);
+  blendMode.anim1 ? blendMode.anim1->cadr : -1);
 }
 
 void AnimationStateMachine::update(float dt)

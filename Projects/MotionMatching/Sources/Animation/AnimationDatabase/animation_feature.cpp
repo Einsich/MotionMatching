@@ -63,7 +63,7 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal
 {
   float path_norma = 0.f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-    path_norma += length2((path.trajectory[i].point - goal.path.trajectory[i].point) * vec3(1, weights->y_norma_scale, 1));
+    path_norma += length((path.trajectory[i].point - goal.path.trajectory[i].point) * vec3(1, weights->y_norma_scale, 1));
   return weights->goal_path_weight * path_norma;
 }
 
@@ -75,6 +75,12 @@ MatchingScores get_score(const AnimationFeatures& feature1, const AnimationFeatu
   score.goal_rotation = rotation_norma(frame_trajectory, goal);
   score.noise = (1.f * std::rand() / RAND_MAX) * weights->noise_scale;
   score.full_score = score.pose + score.goal_path + score.goal_rotation + score.noise;
+  #define NAN_LOG(var)if (std::isnan(-var)) debug_error("NAN in %s", #var);
+
+
+  NAN_LOG(score.pose)
+  NAN_LOG(score.goal_path)
+  NAN_LOG(score.goal_rotation)
   return score;
 }
 const std::string &get_tag_name(AnimationTag tag)

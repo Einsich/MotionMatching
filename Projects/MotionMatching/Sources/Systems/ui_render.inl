@@ -40,8 +40,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWei
   ImGui::Begin("Scores");
   const vector<AnimationClip> &animations = dataBase->clips;
   const auto &matchingScore = solver->get_matching_scores();
-  AnimationIndex cur = mm.get_index().first;
-  AnimationIndex next = mm.get_index().second;
+  AnimationIndex cur = mm.get_index().current_index();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
   ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
@@ -62,9 +61,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWei
       draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f - t,t, 0 ,1.f)));
     }
   }
-  ImVec2 p = ImVec2(pos.x  + next.get_cadr_index() * size.x, pos.y + next.get_clip_index() * ImGui::GetTextLineHeightWithSpacing()); 
-  draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 0.f, 1.f ,1.f))); 
-  p = ImVec2(pos.x + cur.get_cadr_index() * size.x, pos.y + cur.get_clip_index() * ImGui::GetTextLineHeightWithSpacing()); 
+  ImVec2 p = ImVec2(pos.x + cur.get_cadr_index() * size.x, pos.y + cur.get_clip_index() * ImGui::GetTextLineHeightWithSpacing()); 
   draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f, 1.f, 1.f ,1.f))); 
   ImGui::End();
 }
@@ -96,7 +93,8 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   ADD_SCORE(2, goal_rotation)
   ADD_SCORE(3, goal_tag)
   ADD_SCORE(4, noise)
-  auto index = mm.get_index().first;
+  auto index = mm.get_index().current_index();
+
   ImGui::Text(" ");
   ImGui::Text(" full score %.2f, clip %s",score.full_score,  index.get_clip().name.c_str());
   for (int i = 0; i < N; i++)

@@ -102,3 +102,23 @@ EVENT() crouch_event_handler(
 {
   ecs::send_event_immediate(eid, ControllerKeyBoardEvent(e));
 }
+EVENT() animation_player_handler(
+  const KeyboardEvent &e,
+  ecs::EntityId eid,
+  ThirdPersonController &thirdPersonController,
+  AnimationPlayer &animationPlayer)
+{
+  int d = 0;
+  if(e.keycode == SDLK_m)
+    d = 1;
+  if(e.keycode == SDLK_n)
+    d = -1;
+  if (d != 0)
+  {
+    int n = animationPlayer.index.get_data_base()->clips.size();
+    int clip = animationPlayer.index.first.get_clip_index();
+    clip = (clip + d + n) %n;
+    
+    animationPlayer.index.first = animationPlayer.index.second = AnimationIndex(animationPlayer.index.get_data_base(), clip, 0);
+  }
+}

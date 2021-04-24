@@ -19,8 +19,6 @@ private:
   AnimationStateMachine stateMachine;
   MotionMatching motionMatching;
   AnimationTree tree;
-  AnimationLerpedIndex index;
-  AnimationCadr currentCadr;
   struct IKFoot
   {
     bool onGround = false;
@@ -30,6 +28,8 @@ private:
   IKFoot ikFoot[2];
   void set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, vec3 norm, const char *foot_name, const char *toe_name);
 public:
+  AnimationLerpedIndex index;
+  AnimationCadr currentCadr;
   uint8 onGround;
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0;

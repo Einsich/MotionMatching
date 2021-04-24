@@ -18,10 +18,13 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   float best = INFINITY;
   int bestClip = curClip;
   int bestCadr = curCadr;
+  bool forceJump = index.get_clip().loopable ? false : curCadr + 2 >= index.get_clip().duration;
   for(int nextClip = 0; nextClip < (int)dataBase->clips.size(); nextClip++)
   {
     const AnimationClip &clip = dataBase->clips[nextClip];
-    for (int nextCadr = 0, n = dataBase->clips[nextClip].features.size(); nextCadr < n; nextCadr++)
+    if (forceJump && nextClip == curClip)
+      continue;
+    for (int nextCadr = 0, n = dataBase->clips[nextClip].duration-4; nextCadr < n; nextCadr++)
     {
       MatchingScores score = get_score(clip.features[nextCadr], feature, clip.get_frame_trajectory(nextCadr), goal);
       float matching = score.full_score;
@@ -35,6 +38,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
       }
     }
   }
+
   return AnimationIndex(dataBase, bestClip, bestCadr);
 }
 const vector<vector<float>> &MotionMatchingBruteSolver::get_matching_scores() const

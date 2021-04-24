@@ -125,12 +125,12 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   point0.y = 0;
   float rotation1 = hipsRotation[frame];
   float rotation0 = hipsRotation[0];
-  quat q0 = quat(vec3(0, -rotation0, 0));
+  quat q0 = quat(vec3(0, -rotation0+hipsRotation[duration-1]-rotation1, 0));
   quat q1 = quat(vec3(0, -rotation1, 0));
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
-    if (true)
+    if (loopable)
     {
       if (next < duration)
       {
@@ -139,7 +139,7 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
       }
       else
       {
-        next -= duration - 1;
+        next -= (next / (duration - 1)) * (duration - 1);
         pathFeature.trajectory[j].point = q0*(hipsTranslation[next] - hipsTranslation[0]) + q1*(hipsTranslation[duration - 1]+point0);
         pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1] - rotation1;
       }
@@ -148,16 +148,16 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
     {
       if (next < duration)
       {
-        pathFeature.trajectory[j].point = hipsTranslation[next]+point0;
-        pathFeature.trajectory[j].rotation = hipsRotation[next]-rotation0;
+        pathFeature.trajectory[j].point = q1*(hipsTranslation[next]+point0);
+        pathFeature.trajectory[j].rotation = hipsRotation[next]-rotation1;
       }
       else
       {
-        float times = next - duration + 1;
+        float times = 0;//next - duration + 1;
         vec3 dt = hipsTranslation[duration - 1] - hipsTranslation[duration - 2];
         float dr = hipsRotation[duration - 1] - hipsRotation[duration - 2];
-        pathFeature.trajectory[j].point = dt * times + hipsTranslation[duration - 1]+point0;
-        pathFeature.trajectory[j].rotation = dr * times + hipsRotation[duration - 1]-rotation0;
+        pathFeature.trajectory[j].point = q1*(dt * times + hipsTranslation[duration - 1]+point0);
+        pathFeature.trajectory[j].rotation = dr * times + hipsRotation[duration - 1]-rotation1;
       }
     }
     

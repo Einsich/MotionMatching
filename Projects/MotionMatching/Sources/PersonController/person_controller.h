@@ -5,7 +5,7 @@ class Transform;
 class PersonController
 {
 public:
-  float simulatedRotation, realRotation, wantedRotation;
+  float simulatedRotation, realRotation, wantedRotation, angularSpeed;
   vec3 speed, simulatedPosition, realPosition;
   bool disableEvents, crouching;
   PersonController(vec3 position);

@@ -135,6 +135,28 @@ void crouch_event_handler_handler(const KeyboardEvent &event)
 }
 
 
+void animation_player_handler_handler(const KeyboardEvent &event);
+
+ecs::EventDescription<KeyboardEvent> animation_player_handler_descr("animation_player_handler", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, animation_player_handler_handler);
+
+void animation_player_handler_handler(const KeyboardEvent &event)
+{
+  for (ecs::QueryIterator begin = animation_player_handler_descr.begin(), end = animation_player_handler_descr.end(); begin != end; ++begin)
+  {
+    animation_player_handler(
+      event,
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<ThirdPersonController>(1),
+      *begin.get_component<AnimationPlayer>(2)
+    );
+  }
+}
+
+
 void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> third_controller_appear_singl_descr("third_controller_appear", {
@@ -212,6 +234,25 @@ void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIt
     event,
     *begin.get_component<ecs::EntityId>(0),
     *begin.get_component<ThirdPersonController>(1)
+  );
+}
+
+
+void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<KeyboardEvent> animation_player_handler_singl_descr("animation_player_handler", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, animation_player_handler_singl_handler);
+
+void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+{
+  animation_player_handler(
+    event,
+    *begin.get_component<ecs::EntityId>(0),
+    *begin.get_component<ThirdPersonController>(1),
+    *begin.get_component<AnimationPlayer>(2)
   );
 }
 

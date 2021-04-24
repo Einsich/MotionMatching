@@ -46,6 +46,39 @@ vec3 get_boost_dt(vec3 speed, float dt, Input &input)
   }
 }
 
+float get_drotation(float &s, float r, float dt)
+{
+  constexpr float angularW = 360 * DegToRad;
+  constexpr float maxAngularSpeed = 90 * DegToRad;
+  constexpr float littleAngle = 5 * DegToRad;
+
+
+  float rotationSigh = glm::sign(r);
+
+  float dRotationAbs = r * rotationSigh;
+  
+  if (dRotationAbs <= littleAngle)
+  {
+    s = 0;
+    return 0;
+  }
+
+  float v = sqrt((2 * dRotationAbs * angularW + s*s)*0.5f);
+  if (v <= s)
+  {
+    s -= angularW * dt;
+  }
+  else
+  if (s <= maxAngularSpeed)
+  {
+    s += angularW * dt;
+  }
+
+
+  return s * rotationSigh * dt;
+}
+
+
 template<typename Callable>
 void update_attached_camera(const ecs::EntityId&, Callable);
 
@@ -59,9 +92,9 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
   animationPlayer.update(transform, dt);
-  personController.simulatedRotation =
-   lerp(personController.simulatedRotation, personController.wantedRotation, dt * lerp_strength);
-
+  
+  personController.simulatedRotation += get_drotation(personController.angularSpeed, personController.wantedRotation - personController.simulatedRotation, dt);
+  
 
   personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input), dt);
 
@@ -74,36 +107,21 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   }
   
-  constexpr float rotationSpeed = DegToRad * 90;//radians per second
-  float T = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
-  float rotations[AnimationTrajectory::PathLength];
-  if (rotationSpeed * T < abs(rotationDelta))
-  {
-    float rotationMin = sign(rotationDelta) * rotationSpeed * T;
-    float rotationAdd = rotationDelta - rotationMin;
-    constexpr float K = 2.f / (AnimationTrajectory::PathLength * (AnimationTrajectory::PathLength - 1));
-    constexpr float M = 1.f / AnimationTrajectory::PathLength;
-    for (int i = 0; i < AnimationTrajectory::PathLength; i++)
-      rotations[i] = rotationMin * M + rotationAdd * (AnimationTrajectory::PathLength - 1 - i) * K;
-
-  }
-  else
-  {
-    for (int i = 0; i < AnimationTrajectory::PathLength; i++)
-      rotations[i] = rotationDelta / AnimationTrajectory::PathLength;
-  }
-  for (int i = 1; i < AnimationTrajectory::PathLength; i++)
-    rotations[i] += rotations[i - 1];
   
 
   vec3 hipsPoint = vec3(0, personController.crouching ? ManProperty::instance->hipsHeightCrouch : ManProperty::instance->hipsHeightStand, 0);
   vec3 prevPoint = hipsPoint;
   vec3 predictedSpeed = personController.speed;
+  float predictedRotationSpeed = personController.angularSpeed;
+  float predictedRotation = personController.simulatedRotation;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float t = AnimationTrajectory::timeDelays[i];
     float dtdelay = i == 0 ? t : t - AnimationTrajectory::timeDelays[i - 1];
-    float x = -rotations[i]; 
+
+    predictedRotation += get_drotation(predictedRotationSpeed, personController.wantedRotation - predictedRotation, dtdelay);
+
+    float x = -predictedRotation + personController.simulatedRotation; 
     animationPlayer.inputGoal.path.trajectory[i].point = prevPoint + quat(vec3(0,x,0)) * (predictedSpeed * dtdelay);
     animationPlayer.inputGoal.path.trajectory[i].rotation = x;
     prevPoint = animationPlayer.inputGoal.path.trajectory[i].point;

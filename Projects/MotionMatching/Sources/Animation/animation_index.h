@@ -17,6 +17,7 @@ public:
   int get_cadr_index() const;
   const AnimationClip &get_clip() const;
   AnimationCadr get_cadr() const;
+  AnimationCadr get_cadr(float t) const;
   const AnimationFeatures &get_feature() const;
   AnimationTrajectory get_trajectory() const;
   static bool can_jump(const AnimationIndex &from, const AnimationIndex &to);
@@ -28,9 +29,12 @@ private:
 public:
   AnimationIndex first, second;
   float t;
-  AnimationLerpedIndex(AnimationDataBasePtr dataBase = nullptr, int clip1 = -1, int cadr1 = -1, int clip2 = -1, int cadr2 = -1, float t = 0);
+  float lerpT, lerpTime;
+  AnimationLerpedIndex(AnimationDataBasePtr dataBase = nullptr, int clip1 = -1, int cadr1 = -1);
   AnimationCadr get_lerped_cadr();
   AnimationDataBasePtr get_data_base() const;
   float ticks_per_second() const;
   void update(float dt);
+  void play_lerped(AnimationIndex next, float lerp_time);
+  AnimationIndex current_index() const;
 };
