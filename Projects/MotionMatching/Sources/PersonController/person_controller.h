@@ -8,6 +8,7 @@ public:
   float simulatedRotation, realRotation, wantedRotation, angularSpeed;
   vec3 speed, simulatedPosition, realPosition;
   bool disableEvents, crouching;
+  int rotationStrafe;
   PersonController(vec3 position);
   void update_from_speed(const AnimationPlayer &player, Transform &transform, vec3 speed, float dt);
   void set_pos_rotation(Transform &transform, vec3 position, float rotation);

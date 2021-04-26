@@ -46,12 +46,12 @@ vec3 get_boost_dt(vec3 speed, float dt, Input &input)
   }
 }
 
-float get_drotation(float &s, float r, float dt)
+float get_drotation(float &s, float r, float dt, int &strafe)
 {
-  constexpr float angularW = 180 * DegToRad;
-  constexpr float maxAngularSpeed = 90 * DegToRad;
+  constexpr float angularW = 90 * DegToRad;
+  constexpr float maxAngularSpeed = 60 * DegToRad;
   constexpr float littleAngle = 5 * DegToRad;
-  constexpr float middleAngle = 45 * DegToRad;
+  constexpr float middleAngle = 60 * DegToRad;
   constexpr float rightAngle = 90 * DegToRad;
 
   float rotationSigh = glm::sign(r);
@@ -60,22 +60,25 @@ float get_drotation(float &s, float r, float dt)
   
   if (dRotationAbs <= littleAngle)
   {
+    strafe = 0;
     s = 0;
     return 0;
   }
   float w = angularW;
   float maxSpeed = maxAngularSpeed;
-  if (dRotationAbs > middleAngle)
+  if (dRotationAbs > middleAngle || strafe >= 1)
   {
-    if (dRotationAbs <= rightAngle)
+    if (dRotationAbs > rightAngle || strafe == 2)
     {
-      w *= 2;
-      maxSpeed *= 2;
+      strafe = 2;
+      w *= 4;
+      maxSpeed *= 4;
     }
     else
     {
-      w *= 4;
-      maxSpeed *= 4;
+      strafe = 1;
+      w *= 2;
+      maxSpeed *= 2;
     }
   }
 
@@ -110,7 +113,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   float dt = Time::delta_time();
   animationPlayer.update(transform, dt);
   
-  personController.simulatedRotation += get_drotation(personController.angularSpeed, personController.wantedRotation - personController.simulatedRotation, dt);
+  personController.simulatedRotation += get_drotation(personController.angularSpeed, personController.wantedRotation - personController.simulatedRotation, dt, personController.rotationStrafe);
   
 
   personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input), dt);
@@ -131,12 +134,13 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   vec3 predictedSpeed = personController.speed;
   float predictedRotationSpeed = personController.angularSpeed;
   float predictedRotation = personController.simulatedRotation;
+  int predictedStrafe = personController.rotationStrafe;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float t = AnimationTrajectory::timeDelays[i];
     float dtdelay = i == 0 ? t : t - AnimationTrajectory::timeDelays[i - 1];
 
-    predictedRotation += get_drotation(predictedRotationSpeed, personController.wantedRotation - predictedRotation, 1.f / AnimationTrajectory::PathLength);
+    predictedRotation += get_drotation(predictedRotationSpeed, personController.wantedRotation - predictedRotation, 1.f / AnimationTrajectory::PathLength, predictedStrafe);
 
     float x = -predictedRotation + personController.simulatedRotation; 
     animationPlayer.inputGoal.path.trajectory[i].point = prevPoint + quat(vec3(0,x,0)) * (predictedSpeed * dtdelay);

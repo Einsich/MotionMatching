@@ -8,7 +8,8 @@ simulatedRotation(0), realRotation(0), wantedRotation(0), angularSpeed(0),
 speed(0),
 simulatedPosition(position), realPosition(position),
 disableEvents(false),
-crouching(false)
+crouching(false),
+rotationStrafe(0)
 {}
   constexpr float maxErrorRadius = 0.5f;
 
