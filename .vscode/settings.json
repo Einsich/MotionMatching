@@ -80,7 +80,7 @@
   "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
   "showBones": "no",
-  "showGoal": "yes",
+  "showGoal": "no",
   "showMatchingStatistic": "yes"
 },
 }

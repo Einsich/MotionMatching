@@ -2,7 +2,7 @@
 #include <map>
 
 static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
-constexpr int max_skip_cadr = 10;
+constexpr int max_skip_cadr = 5;
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType):
 dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0), skip_count(0)
 {
@@ -46,11 +46,16 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
   if (saveT > index.t)
   {
     AnimationIndex currentIndex = index.current_index();
-    AnimationIndex best_index = solver->find_best_index(currentIndex, goal);
-    // debug_log("i = (%s, %d/%d), s = %f", best_index.get_clip().name.c_str(), best_index.get_cadr_index(), best_index.get_clip().duration, ((MotionMatchingBruteSolver*)solver.get())->bestScore.full_score);
-    if (AnimationIndex::can_jump(currentIndex, best_index))
+    bool forceJump = (currentIndex.get_cadr_index() + 1 == currentIndex.get_clip().duration);
+    if (forceJump || ++skip_count >= max_skip_cadr)
     {
-      index.play_lerped(best_index, 0.2f);
+      skip_count = 0;
+      AnimationIndex best_index = solver->find_best_index(currentIndex, goal);
+      // debug_log("i = (%s, %d/%d), s = %f", best_index.get_clip().name.c_str(), best_index.get_cadr_index(), best_index.get_clip().duration, ((MotionMatchingBruteSolver*)solver.get())->bestScore.full_score);
+      if (AnimationIndex::can_jump(currentIndex, best_index))
+      {
+        index.play_lerped(best_index, 0.2f);
+      }
     }
   }
 }
