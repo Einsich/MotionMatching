@@ -2,7 +2,6 @@
 #include "Animation/Test/animation_tester.h"
 #include "Animation/animation_player.h"
 #include "Transform/transform.h"
-#include "GameObject/game_object.h"
 #include "Time/time.h"
 #include "Components/DebugTools/debug_arrow.h"
 #include "PersonController/person_controller.h"

@@ -1,10 +1,9 @@
 #pragma once
 #include <memory>
 #include "math.h"
-#include "component.h"
 #include "collision.h"
 #include "../ray.h"
-class Collider : public Component
+class Collider
 {
 public:
   virtual bool raycast_hit(Collision &collision, const mat4 &transform, const mat3 &rotation, const Ray &ray) = 0;

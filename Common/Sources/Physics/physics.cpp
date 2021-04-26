@@ -11,7 +11,7 @@ struct ColliderGO
 
 static vector<ColliderGO> colliders;
 
-
+/*
 void add_collider(GameObjectPtr go, ColliderPtr collider)
 {
   if (go)
@@ -30,6 +30,7 @@ void add_collider(GameObjectPtr go, ColliderPtr collider)
   } 
 }
 
+*/
 Collision ray_cast(const Ray &ray)
 {
   Collision result;
@@ -41,7 +42,7 @@ Collision ray_cast(const Ray &ray)
     {
       result = collision;
       result.collider = collider.collider;
-      result.gameObject = collider.collider->game_object();
+      //result.gameObject = collider.collider->game_object();
     }
   }
   return result;

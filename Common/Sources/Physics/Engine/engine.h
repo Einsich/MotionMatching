@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject/game_object.h"
+/*
 #include "../Colliders/collider.h"
 class PhysicsEngine
 {
@@ -8,3 +8,4 @@ class PhysicsEngine
     
   }
 };
+*/

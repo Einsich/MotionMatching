@@ -119,7 +119,6 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input), dt);
 
 
-  float rotationDelta = personController.wantedRotation - personController.realRotation;
   
   animationPlayer.inputGoal.tags.clear();
   if (input.get_key(SDLK_SPACE) > 0)

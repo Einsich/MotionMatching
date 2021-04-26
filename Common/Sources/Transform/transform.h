@@ -2,9 +2,7 @@
 #include "common.h"
 #include "math.h"
 #include "Shader/shader.h"
-#include "component.h"
-class Component;
-class Transform : public Component
+class Transform 
 {
 private:
   vec3 position;
