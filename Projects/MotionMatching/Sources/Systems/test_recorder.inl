@@ -1,8 +1,8 @@
 #include "ecs/ecs.h"
-#include "imgui/imgui.h"
+#include "Engine/imgui/imgui.h"
 #include "Animation/Test/animation_tester.h"
 #include "motion_matching_scene.h"
-#include "Time/time.h"
+#include "Engine/time.h"
 
 
 SYSTEM(ecs::SystemOrder::UI) recorder_ui(
@@ -33,7 +33,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
     lastName = "";
   }
   
-  for (int i = 0; i < tests.size(); i++)
+  for (uint i = 0; i < tests.size(); i++)
   {
     AnimationTest &test = tests[i];
     ImGui::Text("%s, t = %f, k = %ld, m = %ld", test.name.c_str(), test.totalTime, test.keyboardEvents.size(), test.mouseMoveEvents.size());

@@ -42,7 +42,7 @@ bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &
 {
   constexpr int N = 10;
   #define ABS_L(k, n) (((k + n) % n) >= N)
-  if (to.get_cadr_index() + 4 >= to.get_clip().duration)
+  if (to.get_cadr_index() + 4 >= (int)to.get_clip().duration)
     return false;
   if (from.clip == to.clip)
   {

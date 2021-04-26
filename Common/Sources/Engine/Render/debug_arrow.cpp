@@ -1,9 +1,9 @@
 #include <vector>
 #include "debug_arrow.h"
-#include "Mesh/vertex_array_object.h"
-#include "Light/direction_light.h"
+#include "vertex_array_object.h"
+#include "direction_light.h"
 #include "Shader/shader.h"
-#include "Camera/camera.h"
+#include "../camera.h"
 
 static DebugArrow *arrow_instance = nullptr;
 

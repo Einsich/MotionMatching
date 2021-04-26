@@ -1,26 +1,27 @@
 #include "ecs/ecs.h"
-#include "Camera/camera.h"
+#include "Engine/camera.h"
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include "Application/application.h"
-#include "Texture/textures.h"
-#include "Material/material.h"
-#include "skybox.h"
-#include "Components/DebugTools/debug_arrow.h"
+#include "Engine/Render/Texture/textures.h"
+#include "Engine/Render/material.h"
+#include "Engine/Render/skybox.h"
+#include "Engine/Render/debug_arrow.h"
 #include "Animation/AnimationDatabase/animation_database.h"
-#include "Components/MeshRender/mesh_render.h"
+#include "Engine/Render/mesh_render.h"
 #include "Animation/AnimationDatabase/animation_preprocess.h"
 #include "motion_matching_scene.h"
 #include "Animation/AnimationRender/animation_render.h"
 #include "Animation/animation_player.h"
 #include "PersonController/third_person_controller.h"
 #include "PersonController/person_controller.h"
-#include "Application/config.h"
+#include "config.h"
 #include "Animation/Test/animation_tester.h"
-#include "Event/input.h"
+#include "Engine/input.h"
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/man_property.h"
+#include "Engine/resources.h"
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
   ManProperty::instance = new ManProperty();

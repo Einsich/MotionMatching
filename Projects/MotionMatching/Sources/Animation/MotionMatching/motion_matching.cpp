@@ -46,7 +46,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
   if (saveT > index.t)
   {
     AnimationIndex currentIndex = index.current_index();
-    bool forceJump = (currentIndex.get_cadr_index() + 1 == currentIndex.get_clip().duration);
+    bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
     if (forceJump || ++skip_count >= max_skip_cadr)
     {
       skip_count = 0;

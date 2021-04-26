@@ -1,9 +1,9 @@
 #include "ecs/ecs.h"
 #include "Animation/Test/animation_tester.h"
 #include "Animation/animation_player.h"
-#include "Transform/transform.h"
-#include "Time/time.h"
-#include "Components/DebugTools/debug_arrow.h"
+#include "Engine/transform.h"
+#include "Engine/time.h"
+#include "Engine/Render/debug_arrow.h"
 #include "PersonController/person_controller.h"
 #include "motion_matching_scene.h"
 
@@ -22,7 +22,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     AnimationTest &test = motionMatchingScene.dataBase->tests[animationTester.testInd];
 
     animationTester.curTime += dt;
-    while (test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
+    while ((int)test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
     {
       const KeyboardEvent &e = test.keyboardEvents[animationTester.keyboardInd];
       SDL_KeyboardEvent event;
@@ -36,7 +36,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
       animationTester.keyboardInd++;
       
     }
-    while (test.mouseMoveEvents.size() > animationTester.mouseMoveInd && test.mouseMoveEvents[animationTester.mouseMoveInd].time <= animationTester.curTime)
+    while ((int)test.mouseMoveEvents.size() > animationTester.mouseMoveInd && test.mouseMoveEvents[animationTester.mouseMoveInd].time <= animationTester.curTime)
     {
       const MouseMoveEvent &e = test.mouseMoveEvents[animationTester.mouseMoveInd];
       SDL_MouseMotionEvent event;

@@ -1,6 +1,6 @@
 
 #include "ecs/ecs.h"
-#include "imgui/imgui.h"
+#include "Engine/imgui/imgui.h"
 #include "Animation/animation_player.h"
 #include "Animation/man_property.h"
 void show_property_sliders(ManProperty &property)

@@ -1,7 +1,7 @@
 #pragma once
-#include "common.h"
 #include <SDL2/SDL_timer.h>
 #include <assert.h>
+#include "common.h"
 
 struct Time
 {
@@ -55,5 +55,27 @@ public:
     sum += t; 
     k = (k + 1) % N;
     return 1000.f  * N / sum;
+  }
+};
+class TimeScope
+{
+private:
+  Uint32 start;
+  const string message;
+  bool stopped;
+public:
+  TimeScope(const string &message):
+    start(SDL_GetTicks()), message(message), stopped(false)
+  { }
+  void stop()
+  {
+    Uint32 delta = SDL_GetTicks() - start;
+    debug_log("%s\nspend %f seconds", message.c_str(), delta * 0.001f);
+    stopped = true;
+  }
+  ~TimeScope()
+  {
+    if (!stopped)
+      stop();
   }
 };

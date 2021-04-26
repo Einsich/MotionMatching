@@ -18,7 +18,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   float best = INFINITY;
   int bestClip = curClip;
   int bestCadr = curCadr;
-  bool forceJump = index.get_clip().loopable ? false : curCadr + 2 >= index.get_clip().duration;
+  bool forceJump = index.get_clip().loopable ? false : curCadr + 2 >= (int)index.get_clip().duration;
   for(int nextClip = 0; nextClip < (int)dataBase->clips.size(); nextClip++)
   {
     const AnimationClip &clip = dataBase->clips[nextClip];

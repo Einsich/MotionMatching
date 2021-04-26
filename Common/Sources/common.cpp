@@ -1,8 +1,8 @@
 #include "common.h"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
-#include "Time/time.h"
+#include "Engine/imgui/imgui.h"
+#include "Engine/imgui/imgui_internal.h"
+#include "Engine/time.h"
 #include <list>
 #include <stdarg.h>
 const int MaxQueueSize = 10;

@@ -2,7 +2,6 @@
 #include "common.h"
 #include <map>
 #include <vector>
-#include "Event/event.h"
 #include "event.h"
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>

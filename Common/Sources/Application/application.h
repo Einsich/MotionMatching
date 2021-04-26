@@ -1,9 +1,9 @@
 #pragma once
 #include "common.h"
-#include "Scene/iscene.h"
+#include "Engine/iscene.h"
 #include "context.h"
-#include "Event/input.h"
-#include "Time/time.h"
+#include "Engine/input.h"
+#include "Engine/time.h"
 
 class Application
 {

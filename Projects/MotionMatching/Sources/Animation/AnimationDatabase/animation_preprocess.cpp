@@ -4,10 +4,10 @@
 #include <set>
 #include "math.h"
 #include "Serialization/serialization.h"
-#include "Time/time_scope.h"
+#include "Engine/time.h"
 #include <assimp/postprocess.h>
 #include "Application/application.h"
-#include "Application/config.h"
+#include "config.h"
 
 string normalName(const string& badName)
 {

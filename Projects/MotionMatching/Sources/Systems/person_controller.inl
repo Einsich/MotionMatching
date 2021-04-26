@@ -1,10 +1,10 @@
 #include "ecs/ecs.h"
-#include "Time/time.h"
-#include "Event/input.h"
+#include "Engine/time.h"
+#include "Engine/input.h"
 #include "PersonController/person_controller.h"
 #include "Animation/man_property.h"
 #include "Animation/animation_player.h"
-#include "Transform/transform.h"
+#include "Engine/transform.h"
 #include "Animation/Test/animation_tester.h"
 constexpr float lerp_strength = 4.f;
 

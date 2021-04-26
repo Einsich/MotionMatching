@@ -1,6 +1,5 @@
 #pragma once
-#include "common.h"
-#include "Shader/shader.h"
+#include "../Shader/shader.h"
 enum TextureType
 {
   Texture2DType = GL_TEXTURE_2D,

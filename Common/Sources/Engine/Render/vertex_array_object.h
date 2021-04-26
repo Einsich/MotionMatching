@@ -1,8 +1,8 @@
 #pragma once
-#include "common.h"
-#include "math.h"
 #include <vector>
 #include <type_traits>
+#include "glad/glad.h"
+#include "math.h"
 class VertexArrayObject
 {
 private:
@@ -11,7 +11,7 @@ private:
   template<int i>
     void InitChannel() { }
   template<int i, typename T, typename... Channel>
-  void InitChannel(const vector<T> &channel, Channel... channels)
+  void InitChannel(const std::vector<T> &channel, Channel... channels)
   {
     if (channel.size())
     {
@@ -35,7 +35,7 @@ public:
   vertexArrayBufferObject(0), numIndices(0)
   {}
   template<typename... Channel>
-  VertexArrayObject(const vector<unsigned int> &indices, const Channel... channels)
+  VertexArrayObject(const std::vector<unsigned int> &indices, const Channel... channels)
   {
     //int channelCount = sizeof...(channels);
   

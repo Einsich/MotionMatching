@@ -1,8 +1,8 @@
 #pragma once
-#include "common.h"
-#include "Mesh/vertex_array_object.h"
 #include <map>
 #include <assimp/scene.h>
+#include "common.h"
+#include "vertex_array_object.h"
 class Mesh
 {
   VertexArrayObject vertexArrayObject;

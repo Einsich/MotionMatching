@@ -1,8 +1,7 @@
 #pragma once
-#include "common.h"
 #include "Shader/shader.h"
 #include "Texture/textures.h"
-#include "Mesh/vertex_array_object.h"
+#include "vertex_array_object.h"
 class SkyBox
 {
 public:

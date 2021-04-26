@@ -1,7 +1,7 @@
 #include "animation_ik.h"
 #include "common.h"
 #include "math.h"
-#include "Components/DebugTools/debug_arrow.h"
+#include "Engine/Render/debug_arrow.h"
 
 #include <vector>
 struct Joint

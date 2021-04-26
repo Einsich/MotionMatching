@@ -1,6 +1,6 @@
 #include <vector>
 #include "skybox.h"
-#include "Camera/camera.h"
+#include "../camera.h"
 SkyBox::SkyBox(string path_to_folder)
 {
 	skybox = CubeMap(path_to_folder);

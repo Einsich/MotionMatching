@@ -1,9 +1,9 @@
 #include "animation_player.h"
-#include "Time/time.h"
+#include "Engine/time.h"
 #include "animation_ik.h"
-#include "Components/DebugTools/debug_arrow.h"
-#include "Physics/physics.h"
-#include "Application/config.h"
+#include "Engine/Render/debug_arrow.h"
+#include "Engine/Physics/physics.h"
+#include "config.h"
 AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f), 
 stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 

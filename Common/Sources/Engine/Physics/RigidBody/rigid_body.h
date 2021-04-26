@@ -1,7 +1,7 @@
 #pragma once
 #include "math.h"
-#include "Transform/transform.h"
-#include "Physics/Colliders/collider.h"
+#include "Engine/transform.h"
+#include "Engine/Physics/Colliders/collider.h"
 class RigidBody
 {
 private:

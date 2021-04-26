@@ -2,6 +2,7 @@
 #include "common.h"
 #include "math.h"
 #include <vector>
+#include "glad/glad.h"
 #define BAD_PROGRAM 0
 class Shader
 {

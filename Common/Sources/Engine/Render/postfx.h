@@ -1,5 +1,5 @@
 #pragma once
-#include "Mesh/vertex_array_object.h"
+#include "vertex_array_object.h"
 #include "Shader/shader.h"
 class PostFX
 {

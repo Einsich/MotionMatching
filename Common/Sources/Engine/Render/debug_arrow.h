@@ -1,9 +1,9 @@
 #pragma once
 #include "math.h"
-#include "Material/material.h"
-#include "Light/direction_light.h"
-#include "Mesh/vertex_array_object.h"
-#include "Transform/transform.h"
+#include "material.h"
+#include "direction_light.h"
+#include "vertex_array_object.h"
+#include "../transform.h"
 class DebugArrow
 {
 private:

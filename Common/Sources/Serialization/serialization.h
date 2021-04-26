@@ -6,8 +6,8 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "../Time/time_scope.h"
-#include "../Application/application.h"
+#include "Engine/time.h"
+#include "Application/application.h"
 class ISerializable
 {
 protected:

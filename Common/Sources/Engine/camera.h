@@ -1,8 +1,7 @@
 #pragma once
-#include "common.h"
 #include "math.h"
-#include "Shader/shader.h"
-#include "Transform/transform.h"
+#include "Render/Shader/shader.h"
+#include "transform.h"
 #include "ecs/ecs.h"
 struct Camera
 {

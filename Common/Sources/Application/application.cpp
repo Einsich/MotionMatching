@@ -1,7 +1,8 @@
 #include "application.h"
-#include "Shader/shader_factory.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_sdl.h"
+#include "Engine/Render/Shader/shader_factory.h"
+#include "glad/glad.h"
+#include "Engine/imgui/imgui_impl_opengl3.h"
+#include "Engine/imgui/imgui_impl_sdl.h"
 #include "config.h"
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):

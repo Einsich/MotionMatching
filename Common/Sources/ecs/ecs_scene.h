@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include "Scene/iscene.h"
+#include "Engine/iscene.h"
 #include "manager/system_description.h"
-#include "Event/input.h"
+#include "Engine/input.h"
 namespace ecs
 {
   class Scene : IScene

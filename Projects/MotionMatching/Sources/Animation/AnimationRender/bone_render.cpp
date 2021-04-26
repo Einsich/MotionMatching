@@ -1,5 +1,5 @@
 #include "bone_render.h"
-#include "Components/DebugTools/debug_arrow.h"
+#include "Engine/Render/debug_arrow.h"
 
 
 static vector<vec3> boneOffsets;

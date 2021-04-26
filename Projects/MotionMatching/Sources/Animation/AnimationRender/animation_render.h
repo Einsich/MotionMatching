@@ -1,10 +1,10 @@
 #pragma once
 #include "Animation/AnimationTree/animation_tree.h"
-#include "Mesh/mesh.h"
-#include "Shader/shader.h"
-#include "Material/material.h"
-#include "Light/direction_light.h"
-#include "Transform/transform.h"
+#include "Engine/Render/mesh.h"
+#include "Engine/Render/Shader/shader.h"
+#include "Engine/Render/material.h"
+#include "Engine/Render/direction_light.h"
+#include "Engine/transform.h"
 class AnimationRender
 {
 private:

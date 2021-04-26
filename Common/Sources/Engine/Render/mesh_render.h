@@ -1,9 +1,9 @@
 #pragma once
-#include "Mesh/mesh.h"
+#include "mesh.h"
 #include "Shader/shader.h"
-#include "Material/material.h"
-#include "Light/direction_light.h"
-#include "Transform/transform.h"
+#include "material.h"
+#include "direction_light.h"
+#include "Engine/transform.h"
 class MeshRender
 {
 private:

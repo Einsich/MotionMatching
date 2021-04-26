@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "Application/application.h"
-#include "Application/config.h"
+#include "config.h"
 #include "ecs/ecs_scene.h"
 
 int main(int argc, char** argv)

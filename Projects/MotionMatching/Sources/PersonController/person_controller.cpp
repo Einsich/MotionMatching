@@ -1,8 +1,8 @@
-#include "Event/input.h"
+#include "Engine/input.h"
 #include "person_controller.h"
 #include "../Animation/animation_player.h"
-#include "Transform/transform.h"
-#include "Components/DebugTools/debug_arrow.h"
+#include "Engine/transform.h"
+#include "Engine/Render/debug_arrow.h"
 PersonController::PersonController(vec3 position) :
 simulatedRotation(0), realRotation(0), wantedRotation(0), angularSpeed(0),
 speed(0),

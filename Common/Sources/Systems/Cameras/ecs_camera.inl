@@ -1,7 +1,7 @@
-#include "Camera/camera.h"
+#include "Engine/camera.h"
 #include "ecs/ecs.h"
-#include "Event/input.h"
-#include "Time/time.h"
+#include "Engine/input.h"
+#include "Engine/time.h"
 
 // CameraManager
 

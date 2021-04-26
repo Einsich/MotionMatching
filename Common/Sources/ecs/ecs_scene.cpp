@@ -1,6 +1,6 @@
 #include "ecs_scene.h"
 #include "ecs/ecs.h"
-#include "Application/config.h"
+#include "config.h"
 #include "glad/glad.h"
 namespace ecs
 {
