@@ -1,6 +1,22 @@
 #include "ecs_camera.inl"
 //Code-generator production
 
+ecs::QueryDescription register_cam_query_descr("register_cam_query", {
+  {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false}
+});
+
+template<typename Callable>
+void register_cam_query(Callable lambda)
+{
+  for (ecs::QueryIterator begin = register_cam_query_descr.begin(), end = register_cam_query_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<std::vector<ecs::EntityId>>(0)
+    );
+  }
+}
+
+
 ecs::QueryDescription get_main_cam_query_descr("get_main_cam_query", {
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 });
@@ -157,6 +173,7 @@ void set_next_camera_handler(const KeyboardEvent &event)
 void arcball_created_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> arcball_created_descr("arcball_created", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_handler);
@@ -167,8 +184,9 @@ void arcball_created_handler(const ecs::OnEntityCreated &event)
   {
     arcball_created(
       event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<ArcballCamera>(1),
+      *begin.get_component<Transform>(2)
     );
   }
 }
@@ -237,6 +255,7 @@ void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event)
 void freecam_created_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> freecam_created_descr("freecam_created", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_handler);
@@ -247,8 +266,9 @@ void freecam_created_handler(const ecs::OnEntityCreated &event)
   {
     freecam_created(
       event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<FreeCamera>(1),
+      *begin.get_component<Transform>(2)
     );
   }
 }
@@ -331,6 +351,7 @@ void set_next_camera_singl_handler(const KeyboardEvent &event, ecs::QueryIterato
 void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> arcball_created_singl_descr("arcball_created", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_singl_handler);
@@ -339,8 +360,9 @@ void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   arcball_created(
     event,
-    *begin.get_component<ArcballCamera>(0),
-    *begin.get_component<Transform>(1)
+    *begin.get_component<ecs::EntityId>(0),
+    *begin.get_component<ArcballCamera>(1),
+    *begin.get_component<Transform>(2)
   );
 }
 
@@ -399,6 +421,7 @@ void arccam_mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs:
 void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> freecam_created_singl_descr("freecam_created", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_singl_handler);
@@ -407,8 +430,9 @@ void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   freecam_created(
     event,
-    *begin.get_component<FreeCamera>(0),
-    *begin.get_component<Transform>(1)
+    *begin.get_component<ecs::EntityId>(0),
+    *begin.get_component<FreeCamera>(1),
+    *begin.get_component<Transform>(2)
   );
 }
 

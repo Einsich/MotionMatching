@@ -23,7 +23,7 @@ EVENT() set_main_camera(
   set_main_camera_status(mainCamera, false);
   mainCamera = event.mainCamera;
   set_main_camera_status(mainCamera, true);
-  if (std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera) != sceneCameras.end())
+  if (std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera) == sceneCameras.end())
   {
     sceneCameras.push_back(mainCamera);
   }
@@ -50,14 +50,28 @@ EVENT() set_next_camera(
   }
 }
 
+
+template<typename Callable>
+static void register_cam_query(Callable);
+
+void register_camera(ecs::EntityId camera)
+{
+  QUERY()register_cam_query([camera](std::vector<ecs::EntityId> &sceneCameras){
+    auto it = std::find(sceneCameras.begin(), sceneCameras.end(), camera);
+    if (it == sceneCameras.end())
+      sceneCameras.push_back(camera);
+  });
+}
 //ArcballCamera
 
 EVENT() arcball_created(
   const ecs::OnEntityCreated &,
+  ecs::EntityId eid,
   ArcballCamera &arcballCamera,
   Transform &transform)
 {
   arcballCamera.calculate_transform(transform);
+  register_camera(eid);
 }
 
 EVENT() arccam_mouse_move_handler(
@@ -122,11 +136,13 @@ SYSTEM() arcball_camera_update(
 
 EVENT() freecam_created(
   const ecs::OnEntityCreated &,
+  ecs::EntityId eid,
   FreeCamera &freeCamera,
   Transform &transform)
 { 
   transform.set_position(freeCamera.curPosition);
   freeCamera.calculate_transform(transform);
+  register_camera(eid);
 }
 
 EVENT() freecam_mouse_move_handler(
