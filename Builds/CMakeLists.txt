@@ -2,9 +2,18 @@ cmake_minimum_required(VERSION 3.7)
 
 set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
 project(${PROJECT_NAME})
-
-find_package(SDL2 REQUIRED)
-find_package(assimp REQUIRED)
+if(WIN32)
+    add_library(SDL2 SDL2.dll)
+    set_target_properties(SDL2 PROPERTIES LINKER_LANGUAGE C)
+else()
+    find_package(SDL2 REQUIRED)
+endif()
+if(WIN32)
+    add_library(assimp assimp.dll)
+    set_target_properties(assimp PROPERTIES LINKER_LANGUAGE C)
+else()
+    find_package(assimp REQUIRED)
+endif()
 
 set(PARENT_DIR ${CMAKE_SOURCE_DIR}/../)
 set(COMMON_ROOT ${PARENT_DIR}/Common/Sources)
@@ -35,7 +44,7 @@ file(GLOB_RECURSE PROJECT_C_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${PROJECT_ROOT
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${COMMON_SOURCES} ${COMMON_C_SOURCES} ${PROJECT_C_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} SDL2 assimp )
+target_link_libraries(${PROJECT_NAME} SDL2 assimp ${CMAKE_DL_LIBS})
 
 
 
