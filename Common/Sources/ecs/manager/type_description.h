@@ -31,8 +31,10 @@ namespace ecs
     TypeDescription(string_hash name_hash, uint typeId);
 
     template<typename T>
-    TypeDescription(const char *name):
-      typeHash(hash(HashedString(name), type_index<T>())){}
+    static TypeDescription typeDescription(const char *name)
+    {
+      return TypeDescription(HashedString(name), type_index<T>());
+    }
 
     uint type_hash() const;
     bool operator==(const TypeDescription &other);

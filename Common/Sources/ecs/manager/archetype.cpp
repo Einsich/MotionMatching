@@ -30,7 +30,7 @@ namespace ecs
   template<typename T>
   ComponentContainer *Archetype::get_container(const char *name)
   {
-    auto it = components.find(TypeDescription::TypeDescription<T>(name).hash());
+    auto it = components.find(TypeDescription::typeDescription<T>(name).hash());
     return it == components.end() ? dummyContainer : &it->second;
   }
 

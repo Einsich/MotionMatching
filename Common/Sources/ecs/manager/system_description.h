@@ -17,7 +17,7 @@ namespace ecs
     SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers);
   };
 
-  class QueryIterator;
+  struct QueryIterator;
 
   struct QueryDescription
   {
@@ -48,9 +48,9 @@ namespace ecs
   };
 
   
-  class QueryIterator
+  struct QueryIterator
   {
-    friend class QueryDescription;
+    friend struct QueryDescription;
   public:
     QueryIterator();
     QueryIterator(const QueryDescription *query, int archetype, int component);

@@ -42,9 +42,9 @@ namespace ecs
   {
     if (entity)
     {
-      Archetype& archetype = core().archetypes[entity.archetype_index()];
+      Archetype& archetype = *core().archetypes[entity.archetype_index()];
       
-      ComponentContainer *container = archetype.components[TypeDescription::TypeDescription<T>(name).hash()];
+      ComponentContainer *container = archetype.components[TypeDescription::typeDescription<T>(name).hash()];
       return container ? container->get_component<T>(entity.array_index()) : nullptr;
     }
     return nullptr;

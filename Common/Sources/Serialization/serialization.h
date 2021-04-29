@@ -10,8 +10,6 @@
 #include "Application/application.h"
 class ISerializable
 {
-protected:
-  ~ISerializable() = default;
 
 public:
   virtual size_t serialize(std::ostream& os) const = 0;

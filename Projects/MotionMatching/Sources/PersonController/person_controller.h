@@ -13,8 +13,8 @@ public:
   void update_from_speed(const AnimationPlayer &player, Transform &transform, vec3 speed, float dt);
   void set_pos_rotation(Transform &transform, vec3 position, float rotation);
 };
-class KeyboardEvent;
-class MouseMoveEvent;
+struct KeyboardEvent;
+struct MouseMoveEvent;
 struct ControllerKeyBoardEvent
 {
   KeyboardEvent e;

@@ -49,6 +49,7 @@ public:
     else
     {
       debug_error("texture %s didn't added in resources", name.c_str());
+      return nullptr;
     }
   }
   static MeshPtr get_mesh(const std::string &name)
@@ -61,6 +62,7 @@ public:
     else
     {
       debug_error("mesh %s didn't added in resources", name.c_str());
+      return nullptr;
     }
   }
   static void dispose_resources()

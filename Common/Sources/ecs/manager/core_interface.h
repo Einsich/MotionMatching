@@ -18,13 +18,13 @@ namespace ecs
     return index;
   };
 
-  class SystemDescription;
+  struct SystemDescription;
   void add_system(SystemDescription *system_description);
-  class QueryDescription;
+  struct QueryDescription;
   void add_query(QueryDescription *query_description);
   
   void print_archetypes();
-  class FullTypeDescription;
+  struct FullTypeDescription;
 
   std::unordered_map<uint, FullTypeDescription> &full_description();
 }

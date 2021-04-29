@@ -20,6 +20,8 @@ fi
 
 if [ $CMAKE = "yes" ]
 then
+    export CC=/usr/bin/clang-6.0
+    export CXX=/usr/bin/clang++-6.0
     cmake -DPROJECT=$PROJECT -DBUILD_TYPE=$BUILD_TYPE -B $PROJECT/$BUILD_TYPE  
 fi
 
