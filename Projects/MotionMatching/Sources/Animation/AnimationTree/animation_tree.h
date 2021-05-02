@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "math.h"
+#include "3dmath.h"
 #include <vector>
 #include "animation_tree_data.h"
 #include "../AnimationDatabase/animation_cadr.h"

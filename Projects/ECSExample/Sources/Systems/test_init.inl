@@ -1,6 +1,6 @@
 #include "ecs/ecs.h"
 #include "test_header.h"
-#include "math.h"
+#include "3dmath.h"
 
 EVENT()
 on_scene_create(const ecs::OnSceneCreated &)

@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "input.h"
 #include "Engine/time.h"
-#include "math.h"
+#include "3dmath.h"
 
 
 const float wheelDecayTime = 0.03f;

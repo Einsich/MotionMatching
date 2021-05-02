@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "math.h"
+#include "3dmath.h"
 #include "collision.h"
 #include "../ray.h"
 class Collider

@@ -2,7 +2,7 @@
 #include <vector>
 #include <type_traits>
 #include "glad/glad.h"
-#include "math.h"
+#include "3dmath.h"
 class VertexArrayObject
 {
 private:

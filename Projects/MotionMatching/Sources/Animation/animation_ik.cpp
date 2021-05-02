@@ -1,6 +1,6 @@
 #include "animation_ik.h"
 #include "common.h"
-#include "math.h"
+#include "3dmath.h"
 #include "Engine/Render/debug_arrow.h"
 
 #include <vector>

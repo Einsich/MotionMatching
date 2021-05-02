@@ -3,7 +3,7 @@
 #include <vector>
 #include <set>
 #include "Serialization/serialization.h"
-#include "math.h"
+#include "3dmath.h"
 #include "animation_feature_weight.h"
 #include "animation_trajectory.h"
 #include "../animation_goal.h"

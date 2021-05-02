@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "math.h"
+#include "3dmath.h"
 #include <vector>
 #include "glad/glad.h"
 #define BAD_PROGRAM 0
@@ -32,7 +32,7 @@ public:
 	}
 	void set_mat3x3(const char*name, vector<mat3x3>::iterator &begin, vector<mat3x3>::iterator &end, bool transpose = false) const
 	{
-		glUniformMatrix3fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin.base()));
+		glUniformMatrix3fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin));
 	}
 
 	void set_mat4x4(const char*name, const mat4x4 matrix, bool transpose = false) const
@@ -45,11 +45,11 @@ public:
 	}
 	void set_mat4x4(const char*name, vector<mat4x4>::iterator begin, vector<mat4x4>::iterator end, bool transpose = false) const
 	{
-		glUniformMatrix4fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin.base()));
+		glUniformMatrix4fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin));
 	}
 	void set_mat4x4(const char*name, vector<mat4x4>::const_iterator begin, vector<mat4x4>::const_iterator end, bool transpose = false) const
 	{
-		glUniformMatrix4fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin.base()));
+		glUniformMatrix4fv(glGetUniformLocation(program, name), end - begin , transpose, glm::value_ptr(*begin));
 	}
 
 	void set_float(const char*name, const float &v) const
@@ -62,7 +62,7 @@ public:
 	}
 	void set_float(const char*name, vector<float>::iterator &begin, vector<float>::iterator &end) const
 	{
-		glUniform1fv(glGetUniformLocation(program, name), end - begin, begin.base());
+		glUniform1fv(glGetUniformLocation(program, name), end - begin, &begin[0]);
 	}
 
 	void set_vec2(const char*name, const vec2 &v) const
@@ -75,7 +75,7 @@ public:
 	}
 	void set_vec2(const char*name, vector<vec2>::iterator &begin, vector<vec2>::iterator &end) const
 	{
-		glUniform2fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin.base()));
+		glUniform2fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin));
 	}
 
 	void set_vec3(const char*name, const vec3 &v) const
@@ -88,11 +88,11 @@ public:
 	}
 	void set_vec3(const char*name, vector<vec3>::iterator &begin, vector<vec3>::iterator &end) const
 	{
-		glUniform3fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin.base()));
+		glUniform3fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin));
 	}
 	void set_vec3(const char*name, vector<vec3>::const_iterator &begin, vector<vec3>::const_iterator &end) const
 	{
-		glUniform3fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin.base()));
+		glUniform3fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin));
 	}
 
 	void set_vec4(const char*name, const vec4 &v) const
@@ -105,7 +105,7 @@ public:
 	}
 	void set_vec4(const char*name, vector<vec4>::iterator &begin, vector<vec4>::iterator &end) const
 	{
-		glUniform4fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin.base()));
+		glUniform4fv(glGetUniformLocation(program, name), end - begin, glm::value_ptr(*begin));
 	}
 };
 

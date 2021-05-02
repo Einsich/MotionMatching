@@ -1,5 +1,5 @@
 #pragma once
-#include "math.h"
+#include "3dmath.h"
 #include "material.h"
 #include "direction_light.h"
 #include "vertex_array_object.h"

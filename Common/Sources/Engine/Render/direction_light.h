@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "math.h"
+#include "3dmath.h"
 #include "Shader/shader.h"
 class DirectionLight
 {

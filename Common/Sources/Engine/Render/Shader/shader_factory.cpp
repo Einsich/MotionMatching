@@ -27,11 +27,12 @@ void read_directories(string path)
 {
   if (!fs::exists(path))
   {
+    debug_error("Didn't exists %s", path.c_str());
     return;
   }
   for (const auto & entry : fs::directory_iterator(path))
   {
-    string nextPath = entry.path();
+    string nextPath = entry.path().string();
     
     
     if (entry.is_directory())
@@ -46,6 +47,7 @@ void read_directories(string path)
       auto shaderTypeIter = shaderTypeMap.find(extension);
       if (shaderTypeIter != shaderTypeMap.end())
       {
+      std::replace(nextPath.begin(), nextPath.end(), '\\', '/');
         int slash = nextPath.find_last_of('/') + 1;
         string shaderName = nextPath.substr(slash, pointPos - slash);
         string shaderCode;
@@ -135,4 +137,5 @@ void compile_shaders()
   read_directories(Application::instance().commonShaderPath);
   read_directories(Application::instance().projectShaderPath);
   compile_shaders(shaderMap, true);
+  debug_log("finish shader compilation");
 }

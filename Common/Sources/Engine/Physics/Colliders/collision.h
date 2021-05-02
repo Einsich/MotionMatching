@@ -1,5 +1,5 @@
 #pragma once
-#include "math.h"
+#include "3dmath.h"
 class Collider;
 
 class Collision

@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <set>
-#include "math.h"
+#include "3dmath.h"
 #include "Serialization/serialization.h"
 #include "Engine/time.h"
 #include <assimp/postprocess.h>
@@ -105,7 +105,7 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *ro
       if (entry.is_regular_file())
       {
         animation_size += entry.file_size();
-        const string& nextPath = entry.path();
+        const string& nextPath = entry.path().string();
         importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
         importer.ReadFile(nextPath, aiProcess_GlobalScale);
         const aiScene* scene = importer.GetScene();

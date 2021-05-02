@@ -1,5 +1,6 @@
 #include "config.h"
 #include <map>
+#include <filesystem>
 static map<string, string> configs;
 
 void add_configs(int config_count, const char** config_value)
@@ -11,8 +12,7 @@ void add_configs(int config_count, const char** config_value)
     sscanf(config_value[i], "-%s -%s", key, val);
     configs[string(key)] = string(val);
   }
-  string buildPath = string(config_value[0]);
-  buildPath = buildPath.substr(0, buildPath.find_last_of('/'));
+  string buildPath = std::filesystem::current_path().string();
   string project = configs["project"];
   configs["projectPath"] = buildPath + "/../../Projects/" + project;
   configs["commonPath"] = buildPath + "/../../Common";
