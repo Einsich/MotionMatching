@@ -5,7 +5,7 @@ REBUILD=${3:-no}
 ECS_CODEGEN=${4:-no}
 CMAKE=${5:-yes}
 CWD=$(pwd)
-cd Builds
+cd Builds/unix
 
 if [ $REBUILD = "yes" ]
 then

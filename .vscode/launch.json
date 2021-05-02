@@ -4,12 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Run project",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+            "program": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
             "args": [
                 "-project -${config:launchOption.currentConfig.Project}",
                 "-showBones -${config:launchOption.currentConfig.showBones}",
@@ -17,20 +16,12 @@
                 "-showMatchingStatistic -${config:launchOption.currentConfig.showMatchingStatistic}",
                 "-loadDataBaseFromFBX -${config:launchOption.currentConfig.loadDataBaseFromFBX}",
             ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
+            "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
             "preLaunchTask": "Build project",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "windows": {
+                "program": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+            }
         },
         {
             "name": "Test codeGen",

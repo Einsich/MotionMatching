@@ -8,9 +8,8 @@
 *.obj
 
 #.vscode/*
-Builds/*/dbg
-Builds/*/dev
-Builds/*/rel
+Builds/unix/*
+Builds/win/*
 # Precompiled Headers
 *.gch
 *.pch

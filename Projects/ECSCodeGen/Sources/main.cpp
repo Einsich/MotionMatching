@@ -5,8 +5,8 @@
 #include <regex>
 #include <filesystem>
 #include <vector>
-#include "Application/config.h"
-#include "ecs/system_order.h"
+#include "config.h"
+typedef unsigned int uint;
 enum class ArgType
 {
   ReadWrite, // T &t, T *t

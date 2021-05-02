@@ -1,36 +1,30 @@
 cmake_minimum_required(VERSION 3.20)
 
+set(ADDITIONAL_LIBS "")
 if(WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
     set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
-else()
-endif()
-if(WIN32)
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE})
+    set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib)
 else()
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
 endif()
 
 project(${PROJECT_NAME})
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 if(WIN32)
 
     add_library(SDL2 SHARED IMPORTED)
     set_target_properties(SDL2 PROPERTIES
-        #IMPORTED_CONFIGURATIONS "Debug;Release"
-        #IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/SDL2.dll"
-        #IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/SDL2.dll"
-        IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/SDL2.dll"
-        IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/libSDL2.a"
+        IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/win/SDL2.dll"
+        IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/win/libSDL2.a"
         LINKER_LANGUAGE C)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lwinmm.lib -lVersion.lib -lSetupapi.lib")
     add_library(assimp SHARED IMPORTED)
     set_target_properties(assimp PROPERTIES
             IMPORTED_CONFIGURATIONS "Debug;Release"
-            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/assimp.dll"
-            IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/assimp.dll"
-            IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/assimp.dll"
-            IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/assimp.lib"
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/win/assimp.dll"
+            IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/win/assimp.dll"
+            IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/win/assimp.dll"
+            IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/win/assimp.lib"
             LINKER_LANGUAGE C)
 
 else()
@@ -45,10 +39,11 @@ set(PROJECT_ROOT ${PARENT_DIR}/Projects/${PROJECT}/Sources)
 
 include_directories(${COMMON_ROOT})
 include_directories(${PROJECT_ROOT})
-message("common root is ${COMMON_ROOT}")
-message("project root is ${PROJECT_ROOT}")
+#message("common root is ${COMMON_ROOT}")
+#message("project root is ${PROJECT_ROOT}")
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 if(BUILD_TYPE STREQUAL "dbg")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -g -O0 -DDEBUG -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fsanitize=bounds-strict")
     message("DebugBuild")
@@ -67,7 +62,7 @@ file(GLOB_RECURSE PROJECT_C_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "${PROJECT_ROOT
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${COMMON_SOURCES} ${COMMON_C_SOURCES} ${PROJECT_C_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} SDL2 assimp ${CMAKE_DL_LIBS} winmm.lib)
+target_link_libraries(${PROJECT_NAME} SDL2 assimp ${CMAKE_DL_LIBS} ${ADDITIONAL_LIBS})
 
 
 

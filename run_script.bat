@@ -1,7 +1,7 @@
 @echo off
-set PROJECT=MotionMatching
-set BUILD_TYPE=rel
+set PROJECT=%1
+set BUILD_TYPE=%2
 
-cd Builds/%PROJECT%
+cd Builds/win/%PROJECT%
 %PROJECT%-%BUILD_TYPE%.exe "-project -%PROJECT%" "-showBones -yes" "-showGoal -yes" "-showMatchingStatistic -yes" "-loadDataBaseFromFBX -no"
-cd ../..
+cd ../../..
