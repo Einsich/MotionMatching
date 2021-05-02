@@ -72,7 +72,10 @@ namespace ecs
       i++;
     }
     if (!breaked)
+    {
       sys_archetypes.emplace_back(archetype, std::move(containers));
+      debug_log("processed by %s",query->name.c_str());
+    }
   }
 
   
@@ -91,13 +94,14 @@ namespace ecs
   {
     Archetype *archetype = new Archetype(types, capacity);
     core().archetypes.push_back(archetype);
-    register_archetype(archetype);
     printf("added\n");
-        for (const auto &component : archetype->components)
-        {
-          auto &type = core().types[component.second.typeHash];
-          printf("  %s %s\n",type.type.c_str(), type.name.c_str());
-        }
+    for (const auto &component : archetype->components)
+    {
+      auto &type = core().types[component.second.typeHash];
+      printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+    }
+    register_archetype(archetype);
+    
     return archetype;
   }
 

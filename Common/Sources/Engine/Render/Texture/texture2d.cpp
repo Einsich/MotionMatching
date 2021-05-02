@@ -11,6 +11,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
   {
     string fullpath = texture_path_from_textures_folder;
     int w, h, ch;
+    stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
 		
 		if (image)

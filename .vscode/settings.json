@@ -85,7 +85,7 @@
     "xutility": "cpp"
   },
   "launchOption.options": {
-    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing"],
+    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
         {"name": "Develop", "value": "dev"},
@@ -97,7 +97,7 @@
     "showMatchingStatistic":["yes","no"],
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
+  "Project": "Strategy",
   "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
   "showBones": "no",

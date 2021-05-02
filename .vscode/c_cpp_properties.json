@@ -4,13 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/Common/Sources/",
-                "${workspaceFolder}/Projects/**",
-                "/usr/include/SDL2/",
-                "/usr/include/glm/"
+                "${workspaceFolder}/Projects/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang-6.0",
             "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
         }
     ],

@@ -14,6 +14,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   {
     string fullpath =  folderPath + "/" + to_string(i) + ".jpg";
     int w, h, ch;
+    stbi_set_flip_vertically_on_load(false);
     images[i] = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
     if (!images[i])
     {

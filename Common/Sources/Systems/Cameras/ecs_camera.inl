@@ -187,7 +187,7 @@ SYSTEM() arccam_update(
   float speed = lerp(minSpeed, maxSpeed, Input::input().get_key(SDLK_LSHIFT));
   freeCamera.wantedPosition += delta * speed * Time::delta_time();
 
-  float lerpFactor = Time::delta_time() * 3;
+  float lerpFactor = Time::delta_time() * 20.f;
   freeCamera.curRotation = lerp(freeCamera.curRotation, freeCamera.wantedRotation, lerpFactor);
   freeCamera.curPosition = lerp(freeCamera.curPosition, freeCamera.wantedPosition, lerpFactor);
   transform.get_position() = freeCamera.curPosition;

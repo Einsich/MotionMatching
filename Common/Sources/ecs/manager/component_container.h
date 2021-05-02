@@ -23,8 +23,7 @@ namespace ecs
       }
       else
       {
-        auto destr = template_destructor<T>;
-        assert(descructor == destr && "ComponentInitializer was initialized by other type, but hashes was equal!");
+        assert(descructor == template_destructor<T> && "ComponentInitializer was initialized by other type, but hashes was equal!");
       }
       data = new (data) T(std::move(value));
     }
