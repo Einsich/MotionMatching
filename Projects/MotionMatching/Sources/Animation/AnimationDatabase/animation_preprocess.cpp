@@ -22,18 +22,22 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
   for (int child : node.childs)
     print_tree(tree, child, depth + 1);
 }
+int find_last(const std::string &s, const char *substr)
+{
+  return s.find_last_of(substr);
+}
 void get_tag_from_name(const string &s, set<AnimationTag> &tags)
 {
 
   #define CHECK(SUBSTR, TAG) \
-  {size_t t = s.find("_To_"), r = s.find(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
+  {size_t t = s.find("_To_"), r = s.find_last_of(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
   #define FIND(SUBSTR, TAG) \
   {size_t r = s.find(#SUBSTR);if (r < s.length()) tags.insert(AnimationTag::TAG);}
   FIND(Loop, Loopable)
-  return;
   CHECK(Crouch, Crouch)
   CHECK(CrouchWalk, Crouch)
   CHECK(Stand_Relaxed, Stay)
+  return;
   CHECK(_Walk_, Stay)
   CHECK(_Run_, Stay)
   CHECK(_Jog_, Stay)

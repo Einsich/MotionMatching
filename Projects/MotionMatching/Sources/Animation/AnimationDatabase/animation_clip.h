@@ -7,7 +7,7 @@
 #include "animation_cadr.h"
 #include "animation_channel.h"
 
-class AnimationClip: public ISerializable
+class AnimationClip final : public ISerializable
 {
 private:
   void ground_calculate();
@@ -21,7 +21,8 @@ private:
   vec3 get_root_traslation(uint i) const;
   float get_root_rotation(uint i) const;
 public:
-  AnimationClip(){}
+  AnimationClip()=default;
+  ~AnimationClip()=default;
   AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
   map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags);
   uint duration;

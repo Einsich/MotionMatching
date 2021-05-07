@@ -16,6 +16,8 @@ vec3 get_boost_dt(vec3 speed, float dt, Input &input)
   //forward *= 1.3f;
   bool onPlace = float_equal(right, 0) && float_equal(forward, 0);
   float run = input.get_key(SDLK_LSHIFT);
+  if (!onPlace && float_equal(forward, 0))
+    forward = abs(right);
   vec3 wantedSpeed(right, 0, forward);
   if (!onPlace)
   {
@@ -121,6 +123,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   
   animationPlayer.inputGoal.tags.clear();
+  if(personController.crouching)
+    animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
   if (input.get_key(SDLK_SPACE) > 0)
   {
 
@@ -132,7 +136,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   vec3 prevPoint = hipsPoint;
   vec3 predictedSpeed = personController.speed;
   float predictedRotationSpeed = personController.angularSpeed;
-  float predictedRotation = personController.simulatedRotation;
+  float predictedRotation = personController.wantedRotation;
   int predictedStrafe = personController.rotationStrafe;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
@@ -141,7 +145,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
     predictedRotation += get_drotation(predictedRotationSpeed, personController.wantedRotation - predictedRotation, 1.f / AnimationTrajectory::PathLength, predictedStrafe);
 
-    float x = -predictedRotation + personController.simulatedRotation; 
+    float x = -predictedRotation + personController.realRotation; 
     animationPlayer.inputGoal.path.trajectory[i].point = prevPoint + quat(vec3(0,x,0)) * (predictedSpeed * dtdelay);
     animationPlayer.inputGoal.path.trajectory[i].rotation = x;
     prevPoint = animationPlayer.inputGoal.path.trajectory[i].point;

@@ -50,7 +50,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
 
   QUERY() update_attached_camera(attachedCamera, [&](Transform &transform)
   {
-    vec3 hipsPoint = vec3(0, personController.crouching ? ManProperty::instance->hipsHeightCrouch : ManProperty::instance->hipsHeightStand, 0);
+    vec3 hipsPoint = vec3(0, ManProperty::instance->hipsHeightStand, 0);
 
 
     transform.get_position() = personController.realPosition + hipsPoint - thirdPersonController.currentCameraOrientation * thirdPersonController.currentZoom;
@@ -117,7 +117,7 @@ EVENT() animation_player_handler(
     int n = animationPlayer.index.get_data_base()->clips.size();
     int clip = animationPlayer.index.first.get_clip_index();
     clip = (clip + d + n) %n;
-    
     animationPlayer.index.first = animationPlayer.index.second = AnimationIndex(animationPlayer.index.get_data_base(), clip, 0);
+    debug_log("Play anim %s", animationPlayer.index.first.get_clip().name.c_str());
   }
 }

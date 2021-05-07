@@ -4,9 +4,11 @@
 #include <vector>
 #include "Serialization/serialization.h"
 
-class AnimationCadr : public ISerializable
+class AnimationCadr final : public ISerializable
 {
 public:
+  AnimationCadr()=default;
+  ~AnimationCadr()=default;
   vec3 rootTranslationDelta;
   float rootRotationDelta;
 

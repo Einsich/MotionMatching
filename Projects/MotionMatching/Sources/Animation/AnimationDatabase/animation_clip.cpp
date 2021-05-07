@@ -22,6 +22,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       hipsChannelIndex = i;
   }
   bool idle = std::find(tags.begin(), tags.end(), AnimationTag::Idle) != tags.end();
+  bool crouch = std::find(tags.begin(), tags.end(), AnimationTag::Crouch) != tags.end();
   vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
   {
@@ -34,7 +35,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       {
         vec3 translation = channels[j].get_translation(i);
         nodeTranslation = vec3(0, translation.y, 0);
-        if (idle)
+        if (idle && !crouch)
         {
           hipsTranslation[i] = nodeTranslation;
           nodeTranslation = translation;

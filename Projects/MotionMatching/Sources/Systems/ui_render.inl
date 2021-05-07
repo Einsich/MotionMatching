@@ -78,7 +78,7 @@ string tags_to_text(const set<AnimationTag> &tags)
   }
   return tagsString;
 }
-void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &)
+void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &tags)
 {
   ImGui::Begin("Best score");
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -96,7 +96,7 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   auto index = mm.get_index().current_index();
 
   ImGui::Text(" ");
-  ImGui::Text(" full score %.2f, clip %s",score.full_score,  index.get_clip().name.c_str());
+  ImGui::Text(" full score %6.2f, clip %s",score.full_score,  index.get_clip().name.c_str());
   for (int i = 0; i < N; i++)
     ImGui::Text("   %s score %.2f", names[i], scores[i] * score.full_score);
   float sum = 0;
@@ -120,9 +120,9 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
     draw_list->AddRectFilled(p, q, color);
   }
   
- // ImGui::Text(" goal tags { %s }", tags_to_text(tags).c_str());
-  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().first.get_clip().tags).c_str());
-  bool loopable = mm.get_index().first.get_clip().loopable;
+  ImGui::Text("goal tags { %s }", tags_to_text(tags).c_str());
+  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().current_index().get_clip().tags).c_str());
+  bool loopable = mm.get_index().current_index().get_clip().loopable;
   if (loopable)
     ImGui::Text("[loopable]");
   
@@ -137,7 +137,7 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
     return;
   if (!animationPlayer.get_motion_matching())
   {
-    debug_error("Hasn't motion matching realisation");
+    //debug_error("Hasn't motion matching realisation");
     return;
   }
   const MotionMatchingBruteSolver *solver 

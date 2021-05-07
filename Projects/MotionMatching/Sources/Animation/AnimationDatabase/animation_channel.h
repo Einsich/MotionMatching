@@ -3,7 +3,7 @@
 #include "3dmath.h"
 #include <vector>
 #include "Serialization/serialization.h"
-class AnimationChannel : ISerializable
+class AnimationChannel final : ISerializable
 {
   std::vector<vec3> translation;
   std::vector<quat> rotation;

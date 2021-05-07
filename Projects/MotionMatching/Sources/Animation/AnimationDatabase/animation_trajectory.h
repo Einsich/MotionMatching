@@ -3,21 +3,23 @@
 #include <array>
 #include "Serialization/serialization.h"
 #include "3dmath.h"
-struct TrajectoryPoint : public ISerializable
+struct TrajectoryPoint final : public ISerializable
 {
   vec3 point;
   float rotation;
   TrajectoryPoint();
+  ~TrajectoryPoint()=default;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
 };
-class AnimationTrajectory : public ISerializable
+class AnimationTrajectory final : public ISerializable
 {
 public: 
-  static const int PathLength = 6;
-  static constexpr float timeDelays[PathLength] = {0.1f, 0.2f, 0.3f, 0.4f, 0.6f, 0.8f};
+  static const int PathLength = 3;
+  static constexpr float timeDelays[PathLength] = {0.5f, 0.65f, 0.8f};
   array<TrajectoryPoint, PathLength> trajectory;
   AnimationTrajectory() = default;
+  ~AnimationTrajectory() = default;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
 };

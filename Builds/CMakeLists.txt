@@ -43,7 +43,7 @@ include_directories(${PROJECT_ROOT})
 #message("project root is ${PROJECT_ROOT}")
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
 if(BUILD_TYPE STREQUAL "dbg")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -g -O0 -DDEBUG -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fsanitize=bounds-strict")
     message("DebugBuild")

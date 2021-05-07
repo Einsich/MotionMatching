@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/input.h"
 #include "Serialization/serialization.h"
-struct AnimationTest : public ISerializable
+struct AnimationTest final : public ISerializable
 {
   std::vector<KeyboardEvent> keyboardEvents;
   std::vector<MouseMoveEvent> mouseMoveEvents;

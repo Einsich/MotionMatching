@@ -16,8 +16,9 @@ rotationStrafe(0)
 float rotation_abs(float rotation_delta)
 {
   rotation_delta = abs(rotation_delta);
-  if (rotation_delta >= PITWO)
-    rotation_delta -= PITWO;
+  rotation_delta -= (int)(rotation_delta/PITWO)*PITWO;
+  
+  rotation_delta = rotation_delta > PI ? PITWO - rotation_delta : rotation_delta;
   return rotation_delta;
 }
 void PersonController::update_from_speed(const AnimationPlayer &player, Transform &transform, vec3 speed_set, float dt)
@@ -25,13 +26,11 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
   speed = speed_set;
   float nextRotation = realRotation - player.rootDeltaRotation * dt;
   
-  if (rotation_abs(nextRotation - simulatedRotation) < rotation_abs(realRotation - simulatedRotation))
+  if (rotation_abs(nextRotation - wantedRotation) < rotation_abs(realRotation - wantedRotation))
   {
     realRotation = nextRotation; 
-    simulatedRotation = realRotation;
+    //simulatedRotation = realRotation;
   }
-  //realRotation = simulatedRotation;
-  //realRotation = nextRotation; 
 
   simulatedPosition += glm::rotateY(speed * dt, -realRotation);
   
@@ -45,7 +44,7 @@ void PersonController::update_from_speed(const AnimationPlayer &player, Transfor
   if (errorRadius > maxErrorRadius * maxErrorRadius)
   {
     errorRadius = sqrt(errorRadius);
-    //realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
+    realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
   }
   transform.get_position() = realPosition;
   transform.set_rotation(-realRotation); 

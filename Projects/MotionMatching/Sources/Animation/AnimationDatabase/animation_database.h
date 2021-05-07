@@ -5,10 +5,11 @@
 #include "animation_feature_weight.h"
 #include "animation_clip.h"
 #include "../Test/animation_test.h"
-class AnimationDataBase : public ISerializable
+class AnimationDataBase final : public ISerializable
 {
 public:
   AnimationDataBase(aiNode *root);
+  ~AnimationDataBase()=default;
   AnimationTreeData tree;
   vector<AnimationClip> clips;
   AnimationFeaturesWeightsPtr featureWeights;

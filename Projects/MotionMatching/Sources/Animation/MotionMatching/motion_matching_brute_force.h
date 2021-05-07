@@ -3,7 +3,7 @@
 #include "motion_matching_solver.h"
 #include <vector>
 
-class MotionMatchingBruteSolver : public MotionMatchingSolver
+class MotionMatchingBruteSolver final : public MotionMatchingSolver
 {
 
 private:

@@ -14,12 +14,13 @@ enum class AnimationFeaturesNode
   RightToeSpeed,
   Count
 };
-class AnimationFeaturesWeights : public ISerializable
+class AnimationFeaturesWeights final : public ISerializable
 {
 public:
   float norma_function_weight, goal_path_weight, goal_rotation, goal_tag_weight, y_norma_scale, noise_scale, debug_scale, animation_lerp;
   vector<float> weights;
   AnimationFeaturesWeights();
+  ~AnimationFeaturesWeights()=default;
   map<string, AnimationFeaturesNode> featureMap;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;

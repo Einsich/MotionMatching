@@ -97,10 +97,10 @@
     "showMatchingStatistic":["yes","no"],
 },
 "launchOption.currentConfig": {
-  "Project": "Strategy",
+  "Project": "MotionMatching",
   "BuildType": "rel",
   "loadDataBaseFromFBX": "no",
-  "showBones": "no",
+  "showBones": "yes",
   "showGoal": "yes",
   "showMatchingStatistic": "yes"
 },
