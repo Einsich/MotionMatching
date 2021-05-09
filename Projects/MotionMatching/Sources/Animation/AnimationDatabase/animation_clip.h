@@ -1,6 +1,6 @@
 #pragma once
 #include <set>
-#include "common.h"
+#include <common.h>
 #include "Serialization/serialization.h"
 #include "../AnimationTree/animation_tree_data.h"
 #include "animation_feature.h"

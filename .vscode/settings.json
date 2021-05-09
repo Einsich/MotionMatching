@@ -98,7 +98,7 @@
 },
 "launchOption.currentConfig": {
   "Project": "MotionMatching",
-  "BuildType": "rel",
+  "BuildType": "dev",
   "loadDataBaseFromFBX": "no",
   "showBones": "yes",
   "showGoal": "yes",

@@ -121,7 +121,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input), dt);
 
 
-  
+   
   animationPlayer.inputGoal.tags.clear();
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);

@@ -1,5 +1,4 @@
 
-
 #include <iostream>
 #include "Application/application.h"
 #include "config.h"

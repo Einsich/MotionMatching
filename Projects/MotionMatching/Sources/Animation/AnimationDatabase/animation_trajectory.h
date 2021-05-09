@@ -2,7 +2,7 @@
 #include "common.h"
 #include <array>
 #include "Serialization/serialization.h"
-#include "3dmath.h"
+#include <3dmath.h>
 struct TrajectoryPoint final : public ISerializable
 {
   vec3 point;

@@ -6,7 +6,6 @@ set ECS_CODEGEN=%4
 set CMAKE=%5
 set CWD=%cd%
 cd Builds
-echo %PROJECT% %BUILD_TYPE% %REBUILD% %ECS_CODEGEN% %CMAKE% %CWD%
 
 
 if "%REBUILD%"=="yes" (
@@ -21,12 +20,16 @@ if "%ECS_CODEGEN%"=="yes" (
     ECSCodeGen-rel.exe "-ecsPath -%CWD%/Projects/%PROJECT%/Sources/Systems"
     cd ../..
 )
+cd ..
+Rem call build_lib_script.bat Common/Sources Engine %BUILD_TYPE% %CMAKE% 
+Rem call build_lib_script.bat Projects/%PROJECT%/Sources %PROJECT% %BUILD_TYPE% %CMAKE% 
+cd Projects
+
 if "%CMAKE%"=="yes" (
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B win/%PROJECT%/%BUILD_TYPE%
+    cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/win/%PROJECT%/%BUILD_TYPE%
     echo builded
 )
-
-cd win/%PROJECT%/%BUILD_TYPE% 
+cd ../Builds/win/%PROJECT%/%BUILD_TYPE% 
 
 ninja
 move %PROJECT%-%BUILD_TYPE%.exe ..

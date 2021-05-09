@@ -3,7 +3,7 @@
 
 void fps_ui_func();
 
-ecs::SystemDescription fps_ui_descr("fps_ui", {
+static ecs::SystemDescription fps_ui_descr("fps_ui", {
   {ecs::get_type_description<float>("fps"), false}
 }, fps_ui_func, ecs::SystemOrder::UI);
 
@@ -20,7 +20,7 @@ void fps_ui_func()
 
 void debug_console_ui_func();
 
-ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
+static ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
   {ecs::get_type_description<string>("project"), false}
 }, debug_console_ui_func, ecs::SystemOrder::UI);
 
