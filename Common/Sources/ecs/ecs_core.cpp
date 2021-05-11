@@ -74,7 +74,7 @@ namespace ecs
     if (!breaked)
     {
       sys_archetypes.emplace_back(archetype, std::move(containers));
-      debug_log("processed by %s",query->name.c_str());
+      //debug_log("processed by %s",query->name.c_str());
     }
   }
 

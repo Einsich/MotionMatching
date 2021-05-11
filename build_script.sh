@@ -17,14 +17,14 @@ then
     ./ECSCodeGen/ECSCodeGen-rel.exe "-ecsPath -$CWD/Common/Sources/Systems"
     ./ECSCodeGen/ECSCodeGen-rel.exe "-ecsPath -$CWD/Projects/$PROJECT/Sources/Systems"
 fi
-
+cd ../../Projects
 if [ $CMAKE = "yes" ]
 then
     export CC=/usr/bin/clang-6.0
     export CXX=/usr/bin/clang++-6.0
-    cmake -DPROJECT=$PROJECT -DBUILD_TYPE=$BUILD_TYPE -B $PROJECT/$BUILD_TYPE  
+    cmake -G Ninja -DPROJECT=$PROJECT -DBUILD_TYPE=$BUILD_TYPE -B ../Builds/unix/$PROJECT/$BUILD_TYPE
 fi
 
-cd $PROJECT/$BUILD_TYPE 
-time -p make -j $(nproc)
+cd ../Builds/unix/$PROJECT/$BUILD_TYPE 
+time -p ninja -j $(nproc)
 mv $PROJECT-$BUILD_TYPE.exe ..

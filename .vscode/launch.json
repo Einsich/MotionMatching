@@ -21,6 +21,9 @@
             "windows": {
                 "program": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
                 "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+            },
+            "linux": {
+                "type": "cppdbg",
             }
         },
         {

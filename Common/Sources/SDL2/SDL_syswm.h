@@ -27,7 +27,7 @@
 
 #ifndef SDL_syswm_h_
 #define SDL_syswm_h_
-
+#ifdef __WIN32__
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_video.h"
@@ -352,3 +352,4 @@ extern DECLSPEC SDL_bool SDLCALL SDL_GetWindowWMInfo(SDL_Window * window,
 #endif /* SDL_syswm_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */
+#endif 

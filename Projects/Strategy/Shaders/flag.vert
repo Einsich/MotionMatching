@@ -14,7 +14,7 @@ uniform float Time;
 void main()
 {
     vec3 worldPos = Model[3].xyz;
-    float freeStrength = clamp(Position.x*0.1, 0,0.1);
+    float freeStrength = clamp(Position.x*0.1, 0.0,0.1);
     float xScale = 2;
     float yScale = 5;
     float phase = Time*6 + Position.y*yScale + Position.x*xScale + worldPos.x + worldPos.z;
