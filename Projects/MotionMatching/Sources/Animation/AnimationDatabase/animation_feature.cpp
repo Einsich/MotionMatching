@@ -38,6 +38,13 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
     norma += weights->weights[i] * length2(feature1.features[i] - feature2.features[i]);
   return weights->norma_function_weight * norma;
 }
+bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
+{
+  for (AnimationTag tag1 : goal)
+    if (clips_tag.find(tag1) == clips_tag.end())
+      return false;
+  return true;
+}
 float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
 {
   //if (goal.size() == 0)

@@ -24,13 +24,20 @@ void print_tree(const AnimationTreeData &tree, int node_index, int depth)
 }
 int find_last(const std::string &s, const char *substr)
 {
-  return s.find_last_of(substr);
+  size_t off = 0;
+  size_t pos = s.find(substr, off);
+  while(pos < s.size())
+  {
+    off = pos;
+    pos = s.find(substr, off+1);
+  } 
+  return off == 0 ? pos : off;
 }
 void get_tag_from_name(const string &s, set<AnimationTag> &tags)
 {
 
   #define CHECK(SUBSTR, TAG) \
-  {size_t t = s.find("_To_"), r = s.find_last_of(#SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
+  {size_t t = s.find("_To_"), r = find_last(s, #SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
   #define FIND(SUBSTR, TAG) \
   {size_t r = s.find(#SUBSTR);if (r < s.length()) tags.insert(AnimationTag::TAG);}
   FIND(Loop, Loopable)

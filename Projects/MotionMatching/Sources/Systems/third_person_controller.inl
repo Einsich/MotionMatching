@@ -12,7 +12,7 @@ constexpr float zoom_strength = 0.4f;
 
 vec3 rotation_to_orientation(vec2 rotation)
 {
-  float x = rotation.x;
+  float x = 0;//rotation.x;
   float y = rotation.y;
   return vec3(cos(y) * cos(x), sin(y), cos(y) * sin(x));
 }
@@ -54,7 +54,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
 
 
     transform.get_position() = personController.realPosition + hipsPoint - thirdPersonController.currentCameraOrientation * thirdPersonController.currentZoom;
-    transform.set_rotation(PI * 0.5f - thirdPersonController.currentCameraRotation.x, -thirdPersonController.currentCameraRotation.y);
+    //transform.set_rotation(PI * 0.5f - thirdPersonController.currentCameraRotation.x, -thirdPersonController.currentCameraRotation.y);
+    transform.set_rotation(PI * 0.5f, -thirdPersonController.currentCameraRotation.y);
   });
 }
 

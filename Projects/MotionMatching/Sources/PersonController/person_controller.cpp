@@ -11,7 +11,7 @@ disableEvents(false),
 crouching(false),
 rotationStrafe(0)
 {}
-  constexpr float maxErrorRadius = 0.5f;
+  constexpr float maxErrorRadius = 0.35f;
 
 float rotation_abs(float rotation_delta)
 {

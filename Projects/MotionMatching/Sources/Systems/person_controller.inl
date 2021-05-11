@@ -9,15 +9,15 @@
 constexpr float lerp_strength = 4.f;
 
 
-vec3 get_boost_dt(vec3 speed, float dt, Input &input)
+vec3 get_boost_dt(vec3 speed, float dt, Input &input, bool &onPlace)
 {
   float right = input.get_key(SDLK_d) - input.get_key(SDLK_a);
   float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
   //forward *= 1.3f;
-  bool onPlace = float_equal(right, 0) && float_equal(forward, 0);
+  onPlace = float_equal(right, 0) && float_equal(forward, 0);
   float run = input.get_key(SDLK_LSHIFT);
-  if (!onPlace && float_equal(forward, 0))
-    forward = abs(right);
+  //if (!onPlace && float_equal(forward, 0))
+  //  forward = abs(right);
   vec3 wantedSpeed(right, 0, forward);
   if (!onPlace)
   {
@@ -44,7 +44,7 @@ vec3 get_boost_dt(vec3 speed, float dt, Input &input)
   }
   else
   {
-    return normalize(dv) * 3.f * dt;
+    return normalize(dv) * 9.f * dt;
   }
 }
 
@@ -114,17 +114,19 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
   animationPlayer.update(transform, dt);
-  
+  bool onPlace;
   personController.simulatedRotation += get_drotation(personController.angularSpeed, personController.wantedRotation - personController.simulatedRotation, dt, personController.rotationStrafe);
   
 
-  personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input), dt);
+  personController.update_from_speed(animationPlayer, transform, personController.speed + get_boost_dt(personController.speed, dt, input, onPlace), dt);
 
 
    
   animationPlayer.inputGoal.tags.clear();
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
+  //if (onPlace && length(personController.speed) < 0.3f)
+  //  animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
   if (input.get_key(SDLK_SPACE) > 0)
   {
 
@@ -149,7 +151,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
     animationPlayer.inputGoal.path.trajectory[i].point = prevPoint + quat(vec3(0,x,0)) * (predictedSpeed * dtdelay);
     animationPlayer.inputGoal.path.trajectory[i].rotation = x;
     prevPoint = animationPlayer.inputGoal.path.trajectory[i].point;
-    predictedSpeed += get_boost_dt(predictedSpeed, dtdelay, input);
+    predictedSpeed += get_boost_dt(predictedSpeed, dtdelay, input, onPlace);
   }
 
 }

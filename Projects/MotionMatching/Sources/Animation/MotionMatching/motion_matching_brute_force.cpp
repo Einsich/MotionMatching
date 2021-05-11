@@ -24,6 +24,8 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
     const AnimationClip &clip = dataBase->clips[nextClip];
     if (forceJump && nextClip == curClip)
       continue;
+    if (!has_goal_tags(goal.tags, clip.tags))
+      continue;
     for (int nextCadr = 0, n = dataBase->clips[nextClip].duration-0; nextCadr < n; nextCadr++)
     {
       
