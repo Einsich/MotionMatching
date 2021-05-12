@@ -11,6 +11,7 @@ public:
   AnimationDataBase(aiNode *root);
   ~AnimationDataBase()=default;
   AnimationTreeData tree;
+  vector<AnimationTreeData> animationTrees;
   vector<AnimationClip> clips;
   AnimationFeaturesWeightsPtr featureWeights;
   std::vector<AnimationTest> tests;

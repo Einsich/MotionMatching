@@ -22,8 +22,19 @@
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/man_property.h"
 #include "Engine/resources.h"
+
+void write_tree(aiNode* root, int d = 1)
+{
+  debug_log("%*c%s",d, ' ', root->mName.C_Str());
+  for (int i = 0, n = root->mNumChildren; i < n; i++)
+    write_tree(root->mChildren[i], d + 1);
+}
+
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
+  const char* animData[2] = {"", "-AnimData -hUnity"};
+  add_configs(2, animData);
+
   ManProperty::instance = new ManProperty();
   load_object(*ManProperty::instance, "man_property");
   ecs::EntityId attachedCamera;
@@ -65,7 +76,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   
   aiNode* root = scene->mRootNode;
   root = root->mChildren[0];
-
+  write_tree(root);
   MeshPtr mesh = make_mesh(scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
   TexturePtr tex = make_texture2d(project_resources_path("MocapOnline/MotusMan_v55/MCG_diff.jpg"), TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);

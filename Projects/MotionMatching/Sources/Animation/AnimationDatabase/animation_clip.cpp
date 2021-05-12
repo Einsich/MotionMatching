@@ -1,14 +1,17 @@
 #include "animation_clip.h"
-
+#include "config.h"
 
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
+ const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
  hipsTranslation(duration), hipsRotation(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), 
  loopable(std::find(tags.begin(), tags.end(), AnimationTag::Loopable) != tags.end()), 
  name(name), tags(tags), features(duration)
 {
+  debug_log("Animation %s was added, duration %d", name.c_str(), duration);
+
+  string hips = "Hips";
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
     const string & nodeName = tree.nodes[i].name;
@@ -16,10 +19,11 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     auto itQuat = quats.find(nodeName);
     vector<vec3> zeroVec = {vec3(0.f)};
     vector<quat> zeroQuat = {quat(1,0,0,0)};
+    if (nodeName == hips)
+      hipsChannelIndex = i;
+    //else itVec = vecs.end(), itQuat = quats.end();
     channels.emplace_back(duration, itVec == vecs.end() ? zeroVec : itVec->second, itQuat == quats.end() ? zeroQuat : itQuat->second);
 
-    if (nodeName == "Hips")
-      hipsChannelIndex = i;
   }
   bool idle = std::find(tags.begin(), tags.end(), AnimationTag::Idle) != tags.end();
   bool crouch = std::find(tags.begin(), tags.end(), AnimationTag::Crouch) != tags.end();
@@ -31,7 +35,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       const AnimationNodeData& node = tree.nodes[j];
       quat rotation = channels[j].get_rotation(i);
       vec3 nodeTranslation = node.translation;
-      if (node.name == "Hips")
+      if (node.name == hips)
       {
         vec3 translation = channels[j].get_translation(i);
         nodeTranslation = vec3(0, translation.y, 0);

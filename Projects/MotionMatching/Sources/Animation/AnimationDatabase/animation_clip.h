@@ -23,7 +23,7 @@ private:
 public:
   AnimationClip()=default;
   ~AnimationClip()=default;
-  AnimationClip(uint duration, float ticksPerSecond, const string &name, AnimationTreeData& tree,
+  AnimationClip(uint duration, float ticksPerSecond, const string &name, const AnimationTreeData& tree,
   map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags);
   uint duration;
   float ticksPerSecond;
