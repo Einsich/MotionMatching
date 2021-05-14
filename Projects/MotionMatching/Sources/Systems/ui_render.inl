@@ -16,6 +16,8 @@ void show_property_sliders(ManProperty &property)
   SLIDER(hipsHeightStand, 0.f, 10.f);
   SLIDER(hipsHeightCrouch, 0.f, 10.f);
   SLIDER(hipsHeightJump, 0.f, 10.f);
+  SLIDER(moveRate, 0.f, 20.f);
+  SLIDER(rotationRate, 0.f, 20.f);
   property.update_array();
   ImGui::End();
 }

@@ -19,10 +19,12 @@ struct ManProperty : ISerializable
   float runSpeeds[3] = {runForwardSpeed, runSidewaySpeed, runBackwardSpeed};
   float walkSpeeds[3] = {walkForwardSpeed, walkSidewaySpeed, walkBackwardSpeed};
 
+  float moveRate, rotationRate;
   #define PARAMS()\
   VAR(walkForwardSpeed), VAR(walkSidewaySpeed), VAR(walkBackwardSpeed),\
   VAR(runForwardSpeed), VAR(runSidewaySpeed), VAR(runBackwardSpeed),\
-  VAR(hipsHeightStand), VAR(hipsHeightCrouch), VAR(hipsHeightJump)
+  VAR(hipsHeightStand), VAR(hipsHeightCrouch), VAR(hipsHeightJump),\
+  VAR(moveRate), VAR(rotationRate)
 
 
   void update_array()

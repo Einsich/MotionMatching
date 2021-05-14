@@ -1,10 +1,10 @@
 #include "ecs/ecs.h"
-#include "PersonController/third_person_controller.h"
+#include "Animation/third_person_controller.h"
 #include "Engine/transform.h"
 #include "Animation/animation_player.h"
 #include "Engine/time.h"
 #include "Animation/man_property.h"
-#include "PersonController/person_controller.h"
+#include "Animation/person_controller.h"
 
 
 constexpr float lerp_strength = 4.f;
@@ -119,6 +119,6 @@ EVENT() animation_player_handler(
     int clip = animationPlayer.index.first.get_clip_index();
     clip = (clip + d + n) %n;
     animationPlayer.index.first = animationPlayer.index.second = AnimationIndex(animationPlayer.index.get_data_base(), clip, 0);
-    debug_log("Play anim %s", animationPlayer.index.first.get_clip().name.c_str());
+    debug_log("Play anim %s", animationPlayer.index.current_index().get_clip().name.c_str());
   }
 }

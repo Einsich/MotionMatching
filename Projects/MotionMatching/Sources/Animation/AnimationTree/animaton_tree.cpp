@@ -53,7 +53,7 @@ void AnimationTree::calculate_bone_transforms()
   for (uint i = 0; i < nodes.size(); i++)
   {
     const mat4 &parent = nodes[i].parent() >= 0 ? transforms[nodes[i].parent()] : mat4(1.f);
-    transforms[i] = parent * nodes[i].get_transform();
+    transforms[i] = parent * nodes[i].get_transform() * data.nodes[i].avatarTransform;
   }
 
 }

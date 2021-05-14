@@ -4,7 +4,7 @@
 #include "Engine/transform.h"
 #include "Engine/time.h"
 #include "Engine/Render/debug_arrow.h"
-#include "PersonController/person_controller.h"
+#include "Animation/person_controller.h"
 #include "motion_matching_scene.h"
 
 template<typename Callable>
