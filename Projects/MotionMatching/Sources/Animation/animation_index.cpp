@@ -1,4 +1,5 @@
 #include "animation_index.h"
+#include "Animation/man_property.h"
 
 AnimationIndex::AnimationIndex(AnimationDataBasePtr dataBase, int clip, int cadr):
 dataBase(dataBase), clip(-1), cadr(-1)
@@ -40,7 +41,7 @@ void AnimationIndex::increase_cadr()
 }
 bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &to)
 {
-  constexpr int N = 10;
+  constexpr int N = 30;
   #define ABS_L(k, n) (((k + n) % n) >= N)
   if (to.get_cadr_index() + 4 >= (int)to.get_clip().duration)
     return false;
@@ -96,18 +97,27 @@ AnimationTrajectory AnimationIndex::get_trajectory() const
 {
   return dataBase->clips[clip].get_frame_trajectory(cadr);
 }
+bool AnimationIndex::operator==(const AnimationIndex &i2)
+{
+  return cadr == i2.cadr && clip == i2.clip;
+}
+bool AnimationIndex::operator!=(const AnimationIndex &i2)
+{
+  return !(*this == i2);
+}
 
 AnimationLerpedIndex::AnimationLerpedIndex(
   AnimationDataBasePtr dataBase, int clip1, int cadr1):
-dataBase(dataBase), first(dataBase, clip1, cadr1), second(), t(0), lerpT(0), lerpTime(0)
+dataBase(dataBase), indexes({AnimationIndex(dataBase, clip1, cadr1)}), indexesT({0})
 {}
 AnimationCadr AnimationLerpedIndex::get_lerped_cadr()
 {
-  if (!second())
+  AnimationCadr lateFrame = indexes[0].get_cadr(indexesT[0]);
+  for (int i = 1; i < (int)indexes.size(); i++)
   {
-    return first() ? first.get_cadr(t) : AnimationCadr();
+    lateFrame = lerped_cadr(lateFrame, indexes[i].get_cadr(indexesT[i]), mixWeights[i-1]);
   }
-  return lerped_cadr(first.get_cadr(t), second.get_cadr(t), lerpT / lerpTime);
+  return lateFrame;
 }
 AnimationDataBasePtr AnimationLerpedIndex::get_data_base() const
 {
@@ -119,43 +129,44 @@ float AnimationLerpedIndex::ticks_per_second() const
 }
 void AnimationLerpedIndex::update(float dt)
 {
-  t += dt * ticks_per_second();
 
-  if (first() && !second())
+  for (int i = 0; i < (int)indexes.size() - 1; i++)
+    mixWeights[i] += dt / ManProperty::instance->lerpTime;
+  dt *= ticks_per_second();
+  for (int i = 0; i < (int)indexes.size(); i++)
+    indexesT[i] += dt;
+
+
+  while (indexes.size() > 1 && mixWeights[0] >= 1.f)
   {
-    if (t >= 1.f)
-    {
-      first.increase_cadr();
-      t -= (int)t;
-    }
+    mixWeights.erase(mixWeights.begin());
+    indexesT.erase(indexesT.begin());
+    indexes.erase(indexes.begin());
   }
-  else
-  if (first() && second())
+
+  for (int i = 0; i < (int)indexes.size(); i++)
   {
-    lerpT += dt;
-    if (t >= 1.f)
+    if (indexesT[i] >= 1.f)
     {
-      first.increase_cadr();
-      second.increase_cadr();
-      t -= (int)t;
-    }
-    if (lerpT >= lerpTime)
-    {
-      first = second;
-      second = AnimationIndex();
+      indexes[i].increase_cadr();
+      indexesT[i] -= (int)indexesT[i];
     }
   }
 }
 
-void AnimationLerpedIndex::play_lerped(AnimationIndex next, float lerp_time)
+void AnimationLerpedIndex::play_lerped(AnimationIndex next)
 {
-  if (second()) 
-    first = second;
-  second = next;
-  lerpT = 0;
-  lerpTime = lerp_time;
+  if (indexes.size() > ManProperty::instance->maxLerpIndex)
+  {
+    mixWeights.erase(mixWeights.begin());
+    indexesT.erase(indexesT.begin());
+    indexes.erase(indexes.begin());
+  }
+  indexes.push_back(next);
+  indexesT.push_back(0);
+  mixWeights.push_back(0);
 }
 AnimationIndex AnimationLerpedIndex::current_index() const
 {
-  return second() ? second : first;
+  return indexes.back();
 }

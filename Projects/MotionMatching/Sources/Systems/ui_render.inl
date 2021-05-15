@@ -6,18 +6,15 @@
 void show_property_sliders(ManProperty &property)
 {
   ImGui::Begin("Controller property");
-  #define SLIDER(name, min, max) ImGui::SliderFloat(#name, &property.name, min, max)
-  SLIDER(walkForwardSpeed, 0.f, 10.f);
-  SLIDER(walkSidewaySpeed, 0.f, 10.f);
-  SLIDER(walkBackwardSpeed, 0.f, 10.f);
-  SLIDER(runForwardSpeed, 0.f, 10.f);
-  SLIDER(runSidewaySpeed, 0.f, 10.f);
-  SLIDER(runBackwardSpeed, 0.f, 10.f);
-  SLIDER(hipsHeightStand, 0.f, 10.f);
-  SLIDER(hipsHeightCrouch, 0.f, 10.f);
-  SLIDER(hipsHeightJump, 0.f, 10.f);
-  SLIDER(moveRate, 0.f, 20.f);
-  SLIDER(rotationRate, 0.f, 20.f);
+
+  #define FVAR(name, def, min, max) ImGui::SliderFloat(#name, &property.name, min, max);
+  #define IVAR(name, def, min, max) ImGui::SliderInt(#name, &property.name, min, max);
+
+  PARAMS()
+
+  #undef FVAR
+  #undef IVAR
+  
   property.update_array();
   ImGui::End();
 }

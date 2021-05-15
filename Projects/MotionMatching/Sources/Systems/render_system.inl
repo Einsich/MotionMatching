@@ -82,15 +82,15 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
 
 
       MaterialPtr material = debugGoalSphere.get_material();
-      const auto& feature = index.first.get_feature();
-      AnimationTrajectory trajectory = index.first.get_trajectory();
+      const auto& feature = index.current_index().get_feature();
+      AnimationTrajectory trajectory = index.current_index().get_trajectory();
       
       /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
       Ray ray(man, vec3(0,-1,0), 100);
       Collision collision = ray_cast(ray);
       draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);*/
 
-      u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
+      u8 onGround = index.current_index().get_clip().onGround[index.current_index().get_cadr_index()];
       onGround = animationPlayer.onGround;
 
       #define DEBUG_NODE(node)\

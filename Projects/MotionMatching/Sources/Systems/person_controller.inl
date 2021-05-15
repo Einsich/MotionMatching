@@ -96,7 +96,7 @@ float lerp_angle(float a_angleA, float a_angleB, float a_t)
 
   return a_angleA + (mod_f(2*da,PITWO) - da) * a_t;
 }
-  constexpr float maxErrorRadius = 0.35f;
+  constexpr float maxErrorRadius = 0.55f;
 
 float rotation_abs(float rotation_delta)
 {

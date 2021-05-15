@@ -116,9 +116,9 @@ EVENT() animation_player_handler(
   if (d != 0)
   {
     int n = animationPlayer.index.get_data_base()->clips.size();
-    int clip = animationPlayer.index.first.get_clip_index();
+    int clip = animationPlayer.index.current_index().get_clip_index();
     clip = (clip + d + n) %n;
-    animationPlayer.index.first = animationPlayer.index.second = AnimationIndex(animationPlayer.index.get_data_base(), clip, 0);
+    animationPlayer.index.play_lerped(AnimationIndex(animationPlayer.index.get_data_base(), clip, 0));
     debug_log("Play anim %s", animationPlayer.index.current_index().get_clip().name.c_str());
   }
 }

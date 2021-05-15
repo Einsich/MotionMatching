@@ -40,10 +40,10 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
 {
   if (!solver)
     return;
-  float saveT = index.t;
+  AnimationIndex saveIndex = index.current_index();
   index.update(dt);
 
-  if (saveT > index.t)
+  if (saveIndex != index.current_index())
   {
     AnimationIndex currentIndex = index.current_index();
     bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
@@ -54,7 +54,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
       // debug_log("i = (%s, %d/%d), s = %f", best_index.get_clip().name.c_str(), best_index.get_cadr_index(), best_index.get_clip().duration, ((MotionMatchingBruteSolver*)solver.get())->bestScore.full_score);
       if (AnimationIndex::can_jump(currentIndex, best_index))
       {
-        index.play_lerped(best_index, 0.2f);
+        index.play_lerped(best_index);
       }
     }
   }

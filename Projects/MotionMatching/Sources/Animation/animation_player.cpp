@@ -83,11 +83,11 @@ void AnimationPlayer::update(Transform &transform, float dt)
   if (get_bool_config("UseIK"))
   {
     mat4 t = transform.get_transform();
-    vec3 hips = index.first.get_feature().nodes[(int)AnimationFeaturesNode::Hips];
-    vec3 leftToe = index.first.get_feature().nodes[(int)AnimationFeaturesNode::LeftToeBase];
-    vec3 rightToe = index.first.get_feature().nodes[(int)AnimationFeaturesNode::RightToeBase];
+    vec3 hips = index.current_index().get_feature().nodes[(int)AnimationFeaturesNode::Hips];
+    vec3 leftToe = index.current_index().get_feature().nodes[(int)AnimationFeaturesNode::LeftToeBase];
+    vec3 rightToe = index.current_index().get_feature().nodes[(int)AnimationFeaturesNode::RightToeBase];
     
-    onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
+    onGround = index.current_index().get_clip().onGround[index.current_index().get_cadr_index()];
     float h = 0;
     vec3 normal, leftToeNormal, rightToeNormal;
     normal = leftToeNormal = rightToeNormal = vec3(0, 1, 0);
@@ -147,15 +147,15 @@ void AnimationPlayer::animation_selector(const KeyboardEvent &event)
 {
   if (playerType !=  AnimationPlayerType::AnimationPlayer)
     return;
-  int anim = index.first.get_clip_index();
+  int anim = index.current_index().get_clip_index();
   if (event.keycode == SDLK_RIGHT)
     anim++;
   if (event.keycode == SDLK_LEFT)
     anim--;
   int n = index.get_data_base()->clips.size();
   anim = (n + anim) % n;
-  index.first.set_index(anim, 0);
-  index.second.set_index(anim, 1);
+  index.current_index().set_index(anim, 0);
+  index.current_index().set_index(anim, 1);
 }
 
 AnimationStateMachine *AnimationPlayer::get_state_machine()
