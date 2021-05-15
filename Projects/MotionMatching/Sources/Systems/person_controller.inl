@@ -124,7 +124,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   
 
   vec3 speed = get_wanted_speed(input, onPlace);
-  speed =glm::rotateY(speed , -(personController.wantedRotation-personController.realRotation));
+  
   float nextRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
   
   if (rotation_abs(nextRotation - personController.wantedRotation) < rotation_abs(personController.realRotation - personController.wantedRotation))
@@ -132,7 +132,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
     personController.realRotation = mod_f(nextRotation, PITWO); 
   }
 
-  personController.simulatedPosition += transform.get_rotation() * speed * dt;
+  personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(personController.wantedRotation-personController.realRotation));
   
   vec3 rootDelta = animationPlayer.rootDeltaTranslation;
 
@@ -166,7 +166,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   vec3 prevPointNew = prevPoint;
   float maxTime = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
   float desiredOrientation = mod_f(personController.wantedRotation - personController.realRotation, PITWO);
-  
+  speed = glm::rotateY(speed, -personController.wantedRotation);
+
   auto &trajectory = animationPlayer.inputGoal.path.trajectory;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
@@ -187,6 +188,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   }
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
     personController.desiredTrajectory[i] = trajectory[i].point;
+  for (int i = 0; i < AnimationTrajectory::PathLength; i++)
+    trajectory[i].point = glm::rotateY(trajectory[i].point, personController.realRotation);
 
 }
 

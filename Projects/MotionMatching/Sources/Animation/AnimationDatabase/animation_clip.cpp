@@ -70,7 +70,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     }    
   }
 
-  for (int node = 0; node < (int)AnimationFeaturesNode::Count / 2; node++)
+  for (int node = 0; node < (int)AnimationFeaturesNode::Count; node++)
   {
     for (uint i = 0; i < duration; i++)
     {
