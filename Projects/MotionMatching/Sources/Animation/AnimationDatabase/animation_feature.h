@@ -11,7 +11,8 @@
 class AnimationFeatures final : public ISerializable
 {
 public:
-  vector<vec3> features;
+  vector<vec3> nodes;
+  vector<vec3> nodesVelocity;
   AnimationFeatures();
   ~AnimationFeatures()=default;
   void set_feature(const string& name, vec3 feature);

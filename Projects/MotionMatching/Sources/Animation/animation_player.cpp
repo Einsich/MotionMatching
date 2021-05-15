@@ -83,9 +83,9 @@ void AnimationPlayer::update(Transform &transform, float dt)
   if (get_bool_config("UseIK"))
   {
     mat4 t = transform.get_transform();
-    vec3 hips = index.first.get_feature().features[(int)AnimationFeaturesNode::Hips];
-    vec3 leftToe = index.first.get_feature().features[(int)AnimationFeaturesNode::LeftToeBase];
-    vec3 rightToe = index.first.get_feature().features[(int)AnimationFeaturesNode::RightToeBase];
+    vec3 hips = index.first.get_feature().nodes[(int)AnimationFeaturesNode::Hips];
+    vec3 leftToe = index.first.get_feature().nodes[(int)AnimationFeaturesNode::LeftToeBase];
+    vec3 rightToe = index.first.get_feature().nodes[(int)AnimationFeaturesNode::RightToeBase];
     
     onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
     float h = 0;

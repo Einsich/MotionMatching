@@ -70,20 +70,13 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     }    
   }
 
-  for (uint i = 0; i < duration; i++)
+  for (int node = 0; node < (int)AnimationFeaturesNode::Count / 2; node++)
   {
-    int j = i;
-    if (i == duration - 1)
+    for (uint i = 0; i < duration; i++)
     {
-      j = i - 1;
+      int j = i == duration - 1 ? i - 1: i;
+      features[i].nodesVelocity[node] = (features[j + 1].nodes[node] - features[j].nodes[node]);
     }
-    features[i].features[(int)AnimationFeaturesNode::RightToeSpeed] = 
-      (features[j + 1].features[(int)AnimationFeaturesNode::RightToeBase] - 
-      features[j].features[(int)AnimationFeaturesNode::RightToeBase]);
-
-    features[i].features[(int)AnimationFeaturesNode::LeftToeSpeed] = 
-      (features[j + 1].features[(int)AnimationFeaturesNode::LeftToeBase] - 
-      features[j].features[(int)AnimationFeaturesNode::LeftToeBase]);
   }
 
   ground_calculate();
@@ -178,7 +171,7 @@ void AnimationClip::leg_process(int leg_index, u8 leg)
   vector<float> h(features.size());
   vector<int> g(features.size());
   for (uint i = 0; i < h.size(); i++)
-    h[i] = features[i].features[leg_index].y;
+    h[i] = features[i].nodes[leg_index].y;
 
   constexpr float ground_value = 0.04f;
   g[0] = abs(h[0]) < ground_value ? 1 : 0;

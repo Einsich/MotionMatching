@@ -92,15 +92,13 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
 
       u8 onGround = index.first.get_clip().onGround[index.first.get_cadr_index()];
       onGround = animationPlayer.onGround;
+
       #define DEBUG_NODE(node)\
       {\
-        debugTransform.get_position() = transformation * vec4(feature.features[(int)node], 1.f);\
+        vec3 p = vec3(transformation * vec4(feature.nodes[(int)node], 1.f));\
+        vec3 v = vec3(transformation * vec4(feature.nodesVelocity[(int)node], 0.f));\
+        debugTransform.get_position() = p;\
         debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);\
-      }
-      #define DEBUG_NODE_SPEED(node, speed)\
-      {\
-        vec3 p = vec3(transformation * vec4(feature.features[(int)node], 1.f));\
-        vec3 v = vec3(transformation * vec4(feature.features[(int)speed], 0.f));\
         draw_arrow(p, p + v * 5.f, vec3(1,0,0), 0.02f, false);\
       }
 
@@ -111,16 +109,13 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
       DEBUG_NODE(AnimationFeaturesNode::RightToeBase)
       DEBUG_NODE(AnimationFeaturesNode::RightHand)
       DEBUG_NODE(AnimationFeaturesNode::Hips)
-      
-      DEBUG_NODE_SPEED(AnimationFeaturesNode::LeftToeBase, AnimationFeaturesNode::LeftToeSpeed)
-      DEBUG_NODE_SPEED(AnimationFeaturesNode::RightToeBase, AnimationFeaturesNode::RightToeSpeed)
 
       if (onGround & 1)
       {
         material->set_property(Property("Ambient", vec3(1,0,0)));
         debugTransform.set_scale(vec3(0.11f));
         
-        debugTransform.get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
+        debugTransform.get_position() = transformation * vec4(feature.nodes[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
         debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
       }
       if (onGround & 2)
@@ -128,7 +123,7 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
         material->set_property(Property("Ambient", vec3(1,0,0)));
         debugTransform.set_scale(vec3(0.11f));
         
-        debugTransform.get_position() = transformation * vec4(feature.features[(int)AnimationFeaturesNode::RightToeBase], 1.f);
+        debugTransform.get_position() = transformation * vec4(feature.nodes[(int)AnimationFeaturesNode::RightToeBase], 1.f);
         debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
       }
       constexpr float dirLength = 0.3f;

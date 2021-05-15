@@ -165,13 +165,14 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   vec3 prevPoint = vec3(0, personController.crouching ? ManProperty::instance->hipsHeightCrouch : ManProperty::instance->hipsHeightStand, 0);
   vec3 prevPointNew = prevPoint;
   float maxTime = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
-  vec3 desiredDisplacement = speed * (maxTime / AnimationTrajectory::PathLength);
   float desiredOrientation = mod_f(personController.wantedRotation - personController.realRotation, PITWO);
   
   auto &trajectory = animationPlayer.inputGoal.path.trajectory;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float percentage = (i + 1.f) / AnimationTrajectory::PathLength;
+    float delay = AnimationTrajectory::timeDelays[i] - (i == 0 ? 0 : AnimationTrajectory::timeDelays[i-1]);
+    vec3 desiredDisplacement = speed * delay;
     vec3 trajectoryDelta = personController.desiredTrajectory[i] - prevPoint;
     prevPoint = personController.desiredTrajectory[i];
     

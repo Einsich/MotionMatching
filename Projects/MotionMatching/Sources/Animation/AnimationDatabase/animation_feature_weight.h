@@ -3,15 +3,15 @@
 #include "Serialization/serialization.h"
 #include <map>
 #include <vector>
+
+#define NODE(node) node
 enum class AnimationFeaturesNode
 {
-  Hips,
-  LeftHand,
-  RightHand,
-  LeftToeBase,
-  RightToeBase,
-  LeftToeSpeed,
-  RightToeSpeed,
+  NODE(Hips),
+  NODE(LeftHand),
+  NODE(RightHand),
+  NODE(LeftToeBase),
+  NODE(RightToeBase),
   Count
 };
 class AnimationFeaturesWeights final : public ISerializable
@@ -21,7 +21,7 @@ public:
   vector<float> weights;
   AnimationFeaturesWeights();
   ~AnimationFeaturesWeights()=default;
-  map<string, AnimationFeaturesNode> featureMap;
+  map<string, int> featureMap;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
 };

@@ -1,18 +1,18 @@
 #include "animation_feature_weight.h"
-#define FEATURE(F) {#F, AnimationFeaturesNode::F}
+
+
+#define FEATURE(F) {#F, (int)AnimationFeaturesNode::F}, {#F "Speed",(int)AnimationFeaturesNode::Count + (int)AnimationFeaturesNode::F}
 AnimationFeaturesWeights::AnimationFeaturesWeights():
 norma_function_weight(1.f), goal_path_weight(1.f), goal_rotation(1.f), goal_tag_weight(1.f), y_norma_scale(1.f),
 noise_scale(0.1f),
 debug_scale(1.f),
 animation_lerp(1.f),
-weights((int)AnimationFeaturesNode::Count, 1.f), featureMap({
+weights(2 * (int)AnimationFeaturesNode::Count, 1.f), featureMap({
     FEATURE(Hips),
     FEATURE(LeftHand),
     FEATURE(RightHand),
     FEATURE(LeftToeBase),
-    FEATURE(RightToeBase),
-    FEATURE(LeftToeSpeed),
-    FEATURE(RightToeSpeed)})
+    FEATURE(RightToeBase)})
 {}
 size_t AnimationFeaturesWeights::serialize(std::ostream& os) const
 {

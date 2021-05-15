@@ -3,17 +3,19 @@
 #include <cstdlib>
 
 AnimationFeatures::AnimationFeatures():
-  features((int)AnimationFeaturesNode::Count, vec3(NAN)){}
+  nodes((int)AnimationFeaturesNode::Count, vec3(NAN)), nodesVelocity((int)AnimationFeaturesNode::Count, vec3(NAN)){}
 size_t AnimationFeatures::serialize(std::ostream& os) const
 {
   size_t size = 0;
-  size += write(os, features);
+  size += write(os, nodes);
+  size += write(os, nodesVelocity);
   return size;
 }
 size_t AnimationFeatures::deserialize(std::istream& is)
 {
   size_t size = 0;
-  size += read(is, features);
+  size += read(is, nodes);
+  size += read(is, nodesVelocity);
   return size;
 }
 
@@ -28,14 +30,18 @@ void AnimationFeatures::set_feature(const string& name, vec3 feature)
 {
   auto it = weights->featureMap.find(name);
   if (it != weights->featureMap.end())
-    features[(int)it->second] = feature;
+    nodes[(int)it->second] = feature;
   
 }
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2)
 {
   float norma = 0.f;
-  for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
-    norma += weights->weights[i] * length2(feature1.features[i] - feature2.features[i]);
+  for (int i = 0; i < (int)AnimationFeaturesNode::Count / 2; i++)
+  {
+    int weight_index = i * 2;
+    norma += weights->weights[weight_index + 0] * length(feature1.nodes[i] - feature2.nodes[i]);
+    norma += weights->weights[weight_index + 1] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
+  }
   return weights->norma_function_weight * norma;
 }
 bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)

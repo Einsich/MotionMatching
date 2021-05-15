@@ -16,7 +16,7 @@ class AnimationTrajectory final : public ISerializable
 {
 public: 
   static const int PathLength = 3;
-  static constexpr float timeDelays[PathLength] = {0.5f, 0.65f, 0.8f};
+  static constexpr float timeDelays[PathLength] = {0.33f, 0.66f, 0.99f};
   array<TrajectoryPoint, PathLength> trajectory;
   AnimationTrajectory() = default;
   ~AnimationTrajectory() = default;
