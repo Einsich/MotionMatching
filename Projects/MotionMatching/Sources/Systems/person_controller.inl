@@ -156,15 +156,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   draw_transform(transform);
    
-  animationPlayer.inputGoal.tags.clear();
-  if(personController.crouching)
-    animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
-  //if (onPlace && length(personController.speed) < 0.3f)
-  //  animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
-  if (input.get_key(SDLK_SPACE) > 0)
-  {
 
-  }
 
 
   vec3 prevPoint = vec3(0, personController.crouching ? Settings::hipsHeightCrouch : Settings::hipsHeightStand, 0);
@@ -174,6 +166,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   speed = glm::rotateY(speed, -personController.wantedRotation);
 
   auto &trajectory = animationPlayer.inputGoal.path.trajectory;
+  float onPlaceError = 0;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float percentage = (i + 1.f) / AnimationTrajectory::PathLength;
@@ -189,6 +182,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
     
     trajectory[i].rotation = lerp_angle(trajectory[i].rotation, -desiredOrientation,
                     1.f - exp(-TurnRate * percentage*dt));
+    
+    onPlaceError += length(adjustedTrajectoryDisplacement);
   
   }
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
@@ -196,6 +191,16 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
     trajectory[i].point = glm::rotateY(trajectory[i].point, personController.realRotation);
 
+
+  animationPlayer.inputGoal.tags.clear();
+  if(personController.crouching)
+    animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
+  if (onPlaceError < 0.05f && + abs(desiredOrientation) * RadToDeg < 10.f)
+    animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
+  if (input.get_key(SDLK_SPACE) > 0)
+  {
+
+  }
 }
 
 EVENT() controller_mouse_move_handler(
