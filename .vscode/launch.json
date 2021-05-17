@@ -11,9 +11,6 @@
             "program": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
             "args": [
                 "-project -${config:launchOption.currentConfig.Project}",
-                "-showBones -${config:launchOption.currentConfig.showBones}",
-                "-showGoal -${config:launchOption.currentConfig.showGoal}",
-                "-showMatchingStatistic -${config:launchOption.currentConfig.showMatchingStatistic}",
                 "-loadDataBaseFromFBX -${config:launchOption.currentConfig.loadDataBaseFromFBX}",
             ],
             "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",

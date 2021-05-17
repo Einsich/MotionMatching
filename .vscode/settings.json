@@ -91,17 +91,11 @@
         {"name": "Develop", "value": "dev"},
         {"name": "Release", "value": "rel"}
     ],
-    "loadDataBaseFromFBX":["yes","no"],
-    "showBones":["yes","no"],
-    "showGoal":["yes","no"],
-    "showMatchingStatistic":["yes","no"],
+    "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
   "Project": "MotionMatching",
   "BuildType": "rel",
-  "loadDataBaseFromFBX": "no",
-  "showBones": "no",
-  "showGoal": "yes",
-  "showMatchingStatistic": "yes"
+  "loadDataBaseFromFBX": "no"
 },
 }
