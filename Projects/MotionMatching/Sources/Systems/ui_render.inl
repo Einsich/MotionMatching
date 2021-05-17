@@ -128,9 +128,18 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   ImGui::End();
 }
 
+void show_briefing()
+{
+  ImGui::Begin("Briefing");
+  ImGui::Text(
+    "Move - WASD. Run - shift+WASD. Crouch - Z.\n"
+    "");
+  ImGui::End();
+}
 SYSTEM(ecs::SystemOrder::UI) ui_render(
   const AnimationPlayer &animationPlayer)
 {
+  show_briefing();
   show_settings();
   if (!Settings::MatchingStatistic)
     return;

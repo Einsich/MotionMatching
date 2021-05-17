@@ -18,6 +18,8 @@ struct Settings : ISerializable
   FVAR(hipsHeightJump, 1.2f, 0.f, 20.f)\
   FVAR(moveRate, 9.0f, 0.f, 20.f)\
   FVAR(rotationRate, 9.0f, 0.f, 20.f)\
+  FVAR(mouseSensitivity, 0.2f, 0.f, 1.f)\
+  BVAR(mouseInvertXaxis, true)\
   FVAR(lerpTime, 0.2f, 0.f, 1.f)\
   IVAR(maxLerpIndex, 2, 2, 10)\
   BVAR(debugNodes, false)\

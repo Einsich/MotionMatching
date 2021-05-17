@@ -207,8 +207,8 @@ EVENT() controller_mouse_move_handler(
   const ControllerMouseMoveEvent &e,
   PersonController &personController)
 {
-  float const pixToRad = PI / 180.f * 0.2f;
-  personController.wantedRotation += e.e.dx * pixToRad;
+  float dx = e.e.dx * DegToRad * Settings::mouseSensitivity;
+  personController.wantedRotation += (Settings::mouseInvertXaxis ? 1 : -1) * dx;
 }
 
 
