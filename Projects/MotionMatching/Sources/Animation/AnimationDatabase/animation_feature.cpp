@@ -36,11 +36,11 @@ void AnimationFeatures::set_feature(const string& name, vec3 feature)
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2)
 {
   float norma = 0.f;
-  for (int i = 0; i < (int)AnimationFeaturesNode::Count / 2; i++)
+  for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
   {
     int weight_index = i * 2;
-    norma += weights->weights[weight_index + 0] * length2(feature1.nodes[i] - feature2.nodes[i]);
-    norma += weights->weights[weight_index + 1] * length2(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
+    norma += weights->weights[weight_index + 0] * length(feature1.nodes[i] - feature2.nodes[i]);
+    norma += weights->weights[weight_index + 1] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
   }
   return weights->norma_function_weight * norma;
 }
