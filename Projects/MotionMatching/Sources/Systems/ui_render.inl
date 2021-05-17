@@ -2,20 +2,20 @@
 #include "ecs/ecs.h"
 #include "Engine/imgui/imgui.h"
 #include "Animation/animation_player.h"
-#include "Animation/man_property.h"
-void show_property_sliders(ManProperty &property)
+#include "Animation/settings.h"
+void show_settings()
 {
   ImGui::Begin("Controller property");
 
-  #define FVAR(name, def, min, max) ImGui::SliderFloat(#name, &property.name, min, max);
-  #define IVAR(name, def, min, max) ImGui::SliderInt(#name, &property.name, min, max);
-
+  #define FVAR(name, def, min, max) ImGui::SliderFloat(#name, &Settings::name, min, max);
+  #define IVAR(name, def, min, max) ImGui::SliderInt(#name, &Settings::name, min, max);
+  #define BVAR(name, def) ImGui::Checkbox(#name, &Settings::name);
   PARAMS()
-
   #undef FVAR
   #undef IVAR
+  #undef BVAR
   
-  property.update_array();
+  Settings::update_array();
   ImGui::End();
 }
 void show_sliders(const AnimationFeaturesWeightsPtr weights)
@@ -129,10 +129,10 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
 }
 
 SYSTEM(ecs::SystemOrder::UI) ui_render(
-  const AnimationPlayer &animationPlayer,
-  bool showMatchingStatistic)
+  const AnimationPlayer &animationPlayer)
 {
-  if (!showMatchingStatistic)
+  show_settings();
+  if (!Settings::MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())
   {
@@ -158,6 +158,5 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
   show_scores(dataBase, weights, solver, mm);
 
   show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
-  if (ManProperty::instance)
-    show_property_sliders(*ManProperty::instance);
+
 }

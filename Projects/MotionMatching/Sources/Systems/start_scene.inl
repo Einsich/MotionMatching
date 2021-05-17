@@ -20,7 +20,7 @@
 #include "Animation/Test/animation_tester.h"
 #include "Engine/input.h"
 #include "Animation/AnimationRender/bone_render.h"
-#include "Animation/man_property.h"
+#include "Animation/settings.h"
 #include "Engine/resources.h"
 
 void write_tree(aiNode* root, int d = 1)
@@ -35,8 +35,8 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   const char* animData[2] = {"", "-AnimData -hUnity"};
   add_configs(2, animData);
 
-  ManProperty::instance = new ManProperty();
-  load_object(*ManProperty::instance, "man_property");
+  Settings::instance = new Settings();
+  load_object(*Settings::instance, "man_property");
   ecs::EntityId attachedCamera;
   {
     create_camera_manager();
@@ -102,13 +102,9 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       mesh,
       standart_textured_material(tex),
       get_shader("animation_normal_uv"));
-    if (get_bool_config("showBones"))
-      list.add<BoneRender>("boneRender") = BoneRender();
+    
+    list.add<BoneRender>("boneRender") = BoneRender();
 
-     if (get_bool_config("showMatchingStatistic"))
-     {
-      list.add<bool>("showMatchingStatistic") = true;
-     }
 
     list.get<AnimationRender>("animationRender").get_material()->set_property(Property("Shininess", 100.f));
     list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
@@ -132,8 +128,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       standart_textured_material(tex),
       get_shader("animation_normal_uv"));
 
-      if (get_bool_config("showBones"))
-        list.add<BoneRender>("boneRender") = BoneRender();
+      list.add<BoneRender>("boneRender") = BoneRender();
       
       list.get<AnimationRender>("animationRender").get_material()->set_property(Property("Shininess", 100.f));
 
@@ -145,7 +140,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       ecs::send_event(tester, OnAnimationTestStart(i));
     }
   }
-  if (get_bool_config("showGoal"))
+  
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("debugTransform") = Transform();
@@ -225,5 +220,5 @@ EVENT() scene_destroy(
 {
   motionMatchingScene.dataBase->save_runtime_parameters();
   
-  save_object(*ManProperty::instance, "man_property");
+  save_object(*Settings::instance, "man_property");
 }

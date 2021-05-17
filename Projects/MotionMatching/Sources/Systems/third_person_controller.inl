@@ -3,7 +3,7 @@
 #include "Engine/transform.h"
 #include "Animation/animation_player.h"
 #include "Engine/time.h"
-#include "Animation/man_property.h"
+#include "Animation/settings.h"
 #include "Animation/person_controller.h"
 
 
@@ -50,7 +50,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
 
   QUERY() update_attached_camera(attachedCamera, [&](Transform &transform)
   {
-    vec3 hipsPoint = vec3(0, ManProperty::instance->hipsHeightStand, 0);
+    vec3 hipsPoint = vec3(0, Settings::hipsHeightStand, 0);
 
 
     transform.get_position() = personController.realPosition + hipsPoint - thirdPersonController.currentCameraOrientation * thirdPersonController.currentZoom;

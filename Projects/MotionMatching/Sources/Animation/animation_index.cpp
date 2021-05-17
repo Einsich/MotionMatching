@@ -1,5 +1,5 @@
 #include "animation_index.h"
-#include "Animation/man_property.h"
+#include "Animation/settings.h"
 
 AnimationIndex::AnimationIndex(AnimationDataBasePtr dataBase, int clip, int cadr):
 dataBase(dataBase), clip(-1), cadr(-1)
@@ -131,7 +131,7 @@ void AnimationLerpedIndex::update(float dt)
 {
 
   for (int i = 0; i < (int)indexes.size() - 1; i++)
-    mixWeights[i] += dt / ManProperty::instance->lerpTime;
+    mixWeights[i] += dt / Settings::lerpTime;
   dt *= ticks_per_second();
   for (int i = 0; i < (int)indexes.size(); i++)
     indexesT[i] += dt;
@@ -156,7 +156,7 @@ void AnimationLerpedIndex::update(float dt)
 
 void AnimationLerpedIndex::play_lerped(AnimationIndex next)
 {
-  if (indexes.size() > ManProperty::instance->maxLerpIndex)
+  if ((int)indexes.size() > Settings::maxLerpIndex)
   {
     mixWeights.erase(mixWeights.begin());
     indexesT.erase(indexesT.begin());

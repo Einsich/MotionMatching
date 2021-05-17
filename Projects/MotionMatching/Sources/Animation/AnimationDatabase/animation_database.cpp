@@ -1,5 +1,5 @@
 #include "animation_database.h"
-#include "../man_property.h"
+#include "../settings.h"
 AnimationDataBase::AnimationDataBase(aiNode *root):
 tree(root), featureWeights(make_shared<AnimationFeaturesWeights>()), tests()
 {

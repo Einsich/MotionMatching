@@ -75,7 +75,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     for (uint i = 0; i < duration; i++)
     {
       int j = i == duration - 1 ? i - 1: i;
-      features[i].nodesVelocity[node] = (features[j + 1].nodes[node] - features[j].nodes[node]);
+      features[i].nodesVelocity[node] = (features[j + 1].nodes[node] - features[j].nodes[node]) * ticksPerSecond;
     }
   }
 

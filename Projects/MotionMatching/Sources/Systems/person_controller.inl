@@ -2,7 +2,7 @@
 #include "Engine/time.h"
 #include "Engine/input.h"
 #include "Animation/person_controller.h"
-#include "Animation/man_property.h"
+#include "Animation/settings.h"
 #include "Animation/animation_player.h"
 #include "Engine/transform.h"
 #include "Animation/Test/animation_tester.h"
@@ -25,9 +25,9 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   {
     int moveIndex = forward > 0 ? 0 : forward < 0 ? 2 : 1;
     if(run > 0)
-      wantedSpeed *= ManProperty::instance->runSpeeds[moveIndex];
+      wantedSpeed *= Settings::runSpeeds[moveIndex];
     else
-      wantedSpeed *= ManProperty::instance->walkSpeeds[moveIndex];
+      wantedSpeed *= Settings::walkSpeeds[moveIndex];
   }
   return wantedSpeed;
 }
@@ -124,6 +124,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   
 
   vec3 speed = get_wanted_speed(input, onPlace);
+  float MoveRate = Settings::moveRate, TurnRate = Settings::rotationRate;
   
   float nextRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
   
@@ -131,12 +132,17 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   {
     personController.realRotation = mod_f(nextRotation, PITWO); 
   }
+  else
+  {
+    personController.realRotation = lerp_angle(personController.realRotation, personController.wantedRotation, dt);//1.f - exp(-TurnRate * dt * 0.1f));
+  }
 
   personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(personController.wantedRotation-personController.realRotation));
   
   vec3 rootDelta = animationPlayer.rootDeltaTranslation;
 
-  personController.realPosition = transform.get_position() - transform.get_rotation() * rootDelta * dt;
+  personController.simulatedPosition =
+  personController.realPosition = transform.get_position() + transform.get_rotation() * rootDelta * dt;
 
   vec3 positionDelta = personController.simulatedPosition - personController.realPosition;
   float errorRadius = length2(positionDelta);
@@ -160,11 +166,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   }
 
-  float MoveRate = ManProperty::instance->moveRate, TurnRate = ManProperty::instance->rotationRate;
 
-  vec3 prevPoint = vec3(0, personController.crouching ? ManProperty::instance->hipsHeightCrouch : ManProperty::instance->hipsHeightStand, 0);
+  vec3 prevPoint = vec3(0, personController.crouching ? Settings::hipsHeightCrouch : Settings::hipsHeightStand, 0);
   vec3 prevPointNew = prevPoint;
-  float maxTime = AnimationTrajectory::timeDelays[AnimationTrajectory::PathLength - 1];
+  
   float desiredOrientation = mod_f(personController.wantedRotation - personController.realRotation, PITWO);
   speed = glm::rotateY(speed, -personController.wantedRotation);
 
@@ -181,7 +186,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
         1.f - exp(-MoveRate * percentage * dt));
     trajectory[i].point = prevPointNew + adjustedTrajectoryDisplacement;
     prevPointNew = trajectory[i].point;
-    float r=trajectory[i].rotation*RadToDeg;
+    
     trajectory[i].rotation = lerp_angle(trajectory[i].rotation, -desiredOrientation,
                     1.f - exp(-TurnRate * percentage*dt));
   
