@@ -1,4 +1,10 @@
-cmake_minimum_required(VERSION 3.20)
+if (WIN32)
+    set(CMAKE_VER 3.20)
+else()
+    set(CMAKE_VER 3.10)
+endif()
+
+cmake_minimum_required(VERSION ${CMAKE_VER})
 
 set(ADDITIONAL_LIBS "")
 if(WIN32)
