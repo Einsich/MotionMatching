@@ -13,7 +13,7 @@ enum class VarType
   #define VAR_MAPS() VAR_MAP(float); VAR_MAP(int); VAR_MAP(bool);
   
 
-template<typename T> VarType get_var_type() { return VarType::UNKNOWN;}
+template<typename T> VarType get_var_type();
 
 
 struct VarBase
