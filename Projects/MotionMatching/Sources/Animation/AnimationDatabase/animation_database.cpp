@@ -1,7 +1,7 @@
 #include "animation_database.h"
 #include "../settings.h"
 AnimationDataBase::AnimationDataBase(aiNode *root):
-tree(root), featureWeights(make_shared<AnimationFeaturesWeights>()), tests()
+tree(root), tests()
 {
 }
 int AnimationDataBase::cadr_count() const
@@ -25,11 +25,9 @@ size_t AnimationDataBase::deserialize(std::istream& is)
 }
 void AnimationDataBase::save_runtime_parameters()
 {
-  save_object(*featureWeights, "FeaturesWeights.bin");
   save_object(tests, "AnimatuionTests.bin");
 }
 void AnimationDataBase::load_runtime_parameters()
 {
-  load_object(*featureWeights, "FeaturesWeights.bin");
   load_object(tests, "AnimatuionTests.bin");
 }

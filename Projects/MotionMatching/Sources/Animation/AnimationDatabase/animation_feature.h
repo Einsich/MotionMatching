@@ -4,7 +4,6 @@
 #include <set>
 #include "Serialization/serialization.h"
 #include "3dmath.h"
-#include "animation_feature_weight.h"
 #include "animation_trajectory.h"
 #include "../animation_goal.h"
 
@@ -21,10 +20,9 @@ public:
 };
 struct MatchingScores
 {
-  float pose, goal_tag, goal_rotation, goal_path, noise;
+  float pose, goal_tag, goal_rotation, goal_path;
   float full_score;
 };
-void pose_matching_norma_weights(AnimationFeaturesWeightsPtr weights_ptr);
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2);
 
 float goal_tag_norma(const vector<AnimationTag> &target, const vector<AnimationTag> &set);

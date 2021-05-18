@@ -1,5 +1,4 @@
 #pragma once
-#include "Serialization/serialization.h"
 #include "Serialization/settings_set.h"
 struct Settings : SettingsSet
 {
@@ -19,8 +18,10 @@ struct Settings : SettingsSet
   FVAR(hipsHeightStand, 0.967f, 0.f, 20.f)\
   FVAR(hipsHeightCrouch, 0.35f, 0.f, 20.f)\
   FVAR(hipsHeightJump, 1.2f, 0.f, 20.f)\
-  FVAR(moveRate, 9.0f, 0.f, 20.f)\
-  FVAR(rotationRate, 9.0f, 0.f, 20.f)\
+  FVAR(predictionMoveRate, 9.0f, 0.f, 20.f)\
+  FVAR(predictionRotationRate, 9.0f, 0.f, 20.f)\
+  FVAR(rotationRate, 2.0f, 0.f, 20.f)\
+  FVAR(maxMoveErrorRadius, 1.0f, 0.f, 5.f)\
   FVAR(mouseSensitivity, 0.2f, 0.f, 1.f)\
   BVAR(mouseInvertXaxis, true)\
   FVAR(lerpTime, 0.2f, 0.f, 1.f)\
@@ -52,37 +53,4 @@ struct Settings : SettingsSet
   }
 
 
-};
-class TestSettings : public SettingsSet
-{
-public:
-  static inline TestSettings *instance = nullptr ;
-  #define FVAR DECL_FVAR
-  #define IVAR DECL_IVAR
-  #define BVAR DECL_BVAR
-  #define LABEL(s)
-  #define TPARAMS()\
-    IVAR(keks,666,0,1000)\
-    FVAR(lol, 1, 0, 10)\
-    LABEL("label blyat")\
-    BVAR(kek, false)
-  TPARAMS()
-  #undef FVAR
-  #undef IVAR
-  #undef BVAR
-  #undef LABEL
-  TestSettings()
-  {
-    #define FVAR INIT_FVAR
-    #define IVAR INIT_IVAR
-    #define BVAR INIT_BVAR
-    #define LABEL INIT_LABEL
-    TPARAMS() 
-    #undef FVAR
-    #undef IVAR
-    #undef BVAR
-    #undef LABEL
-  }
-
-    #undef TPARAMS
 };

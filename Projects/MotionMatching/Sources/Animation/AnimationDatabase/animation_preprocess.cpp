@@ -116,7 +116,7 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
       const aiScene* scene = importer.GetScene();
 
       AnimationTreeData avatar(scene->mRootNode->mChildren[0]);
-      for (int i = 0 ; i < avatar.nodes.size(); i++)
+      for (uint i = 0 ; i < avatar.nodes.size(); i++)
         avatar.nodes[i].name = map_unity_name(avatar.nodes[i].name);
       animDatabase->tree.apply_other_tree(avatar);
     }
@@ -208,7 +208,6 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
   //debug_log("Animation at all: %d", animDatabase->clips.size());
 
   animDatabase->load_runtime_parameters();
-  pose_matching_norma_weights(animDatabase->featureWeights);
   
   //print_tree(animDatabase->tree, 0, 0);
   return animDatabase;

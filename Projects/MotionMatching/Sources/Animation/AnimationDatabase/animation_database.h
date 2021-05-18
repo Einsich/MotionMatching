@@ -13,7 +13,6 @@ public:
   AnimationTreeData tree;
   vector<AnimationTreeData> animationTrees;
   vector<AnimationClip> clips;
-  AnimationFeaturesWeightsPtr featureWeights;
   std::vector<AnimationTest> tests;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;

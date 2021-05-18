@@ -1,5 +1,6 @@
 #include "animation_clip.h"
 #include "config.h"
+#include "animation_feature_weight.h"
 
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,

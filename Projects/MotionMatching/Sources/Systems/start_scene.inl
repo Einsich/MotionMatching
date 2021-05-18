@@ -36,9 +36,11 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   add_configs(2, animData);
 
   Settings::instance = new Settings();
-  TestSettings::instance = new TestSettings();
+  //TestSettings::instance = new TestSettings();
+  MotionMatchingWeights::instance = new MotionMatchingWeights();
   load_object(*Settings::instance, "man_property.bin");
-  load_object(*TestSettings::instance, "test_properties.bin");
+  //load_object(*TestSettings::instance, "test_properties.bin");
+  load_object(*MotionMatchingWeights::instance, "motion_matching_weights.bin");
   ecs::EntityId attachedCamera;
   {
     create_camera_manager();
@@ -223,5 +225,6 @@ EVENT() scene_destroy(
   motionMatchingScene.dataBase->save_runtime_parameters();
   
   save_object(*Settings::instance, "man_property.bin");
-  save_object(*TestSettings::instance, "test_properties.bin");
+  //save_object(*TestSettings::instance, "test_properties.bin");
+  save_object(*MotionMatchingWeights::instance, "motion_matching_weights.bin");
 }

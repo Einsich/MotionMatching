@@ -16,7 +16,7 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
   
   float run = input.get_key(SDLK_LSHIFT);
-  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.4f)) * right;
+  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.5f)) * right;
   sideDir.z = abs(sideDir.z);
   vec3 wantedSpeed =  sideDir + vec3(0.f, 0.f, 1.f) * forward;
   float speed = length(wantedSpeed);
@@ -36,58 +36,6 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   return wantedSpeed;
 }
 
-float get_drotation(float &s, float r, float dt, int &strafe)
-{
-  constexpr float angularW = 90 * DegToRad;
-  constexpr float maxAngularSpeed = 60 * DegToRad;
-  constexpr float littleAngle = 5 * DegToRad;
-  constexpr float middleAngle = 60 * DegToRad;
-  constexpr float rightAngle = 90 * DegToRad;
-
-  float rotationSigh = glm::sign(r);
-
-  float dRotationAbs = r * rotationSigh;
-  
-  if (dRotationAbs <= littleAngle)
-  {
-    strafe = 0;
-    s = 0;
-    return 0;
-  }
-  float w = angularW;
-  float maxSpeed = maxAngularSpeed;
-  if (dRotationAbs > middleAngle || strafe >= 1)
-  {
-    if (dRotationAbs > rightAngle || strafe == 2)
-    {
-      strafe = 2;
-      w *= 4;
-      maxSpeed *= 4;
-    }
-    else
-    {
-      strafe = 1;
-      w *= 2;
-      maxSpeed *= 2;
-    }
-  }
-
-
-  float v = sqrt((2 * dRotationAbs * w + s*s)*0.5f);
-  if (v <= s)
-  {
-    s -= w * dt;
-  }
-  else
-  if (s <= maxSpeed)
-  {
-    s += w * dt;
-  }
-
-
-  return s * rotationSigh * dt;
-}
-
 float mod_f(float x, float n)
 {
   x = x - (int)(x/n) * n;
@@ -100,7 +48,7 @@ float lerp_angle(float a_angleA, float a_angleB, float a_t)
 
   return a_angleA + (mod_f(2*da,PITWO) - da) * a_t;
 }
-  constexpr float maxErrorRadius = 0.55f;
+
 
 float rotation_abs(float rotation_delta)
 {
@@ -133,36 +81,37 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   float dt = Time::delta_time();
   animationPlayer.update(transform, dt);
   bool onPlace;
-  personController.simulatedRotation += get_drotation(personController.angularSpeed, personController.wantedRotation - personController.simulatedRotation, dt, personController.rotationStrafe);
-  
 
   vec3 speed = get_wanted_speed(input, onPlace);
-  float MoveRate = Settings::moveRate, TurnRate = Settings::rotationRate;
+  float MoveRate = Settings::predictionMoveRate, TurnRate = Settings::predictionRotationRate;
   
   float nextRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
-  
-  if (rotation_abs(nextRotation - personController.wantedRotation) < rotation_abs(personController.realRotation - personController.wantedRotation))
+  //float sideRot = (abs(speed.z) < 0.1f && abs(speed.x) > 0.1f) ? -speed.x * DegToRad * 5 : 0;
+
+  float wantedRotation = personController.wantedRotation;
+  float desiredOrientation = mod_f(wantedRotation - personController.realRotation, PITWO);
+  if (rotation_abs(nextRotation - wantedRotation) < rotation_abs(personController.realRotation - wantedRotation))
   {
     personController.realRotation = mod_f(nextRotation, PITWO); 
   }
   else
   {
-    personController.realRotation = lerp_angle(personController.realRotation, personController.wantedRotation, dt);//1.f - exp(-TurnRate * dt * 0.1f));
+    personController.realRotation = lerp_angle(personController.realRotation, wantedRotation, dt * Settings::rotationRate);
   }
-
-  personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(personController.wantedRotation-personController.realRotation));
-  
+  if (abs(desiredOrientation) * RadToDeg < 15.f)
+    personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(wantedRotation-personController.realRotation));
+  else
+    personController.simulatedPosition = personController.realPosition;
   vec3 rootDelta = apply_root_motion_to_speed(speed, animationPlayer.rootDeltaTranslation);
 
-  personController.simulatedPosition =
+
   personController.realPosition = transform.get_position() + transform.get_rotation() * rootDelta * dt;
 
   vec3 positionDelta = personController.simulatedPosition - personController.realPosition;
-  float errorRadius = length2(positionDelta);
-  if (errorRadius > maxErrorRadius * maxErrorRadius)
+  float errorRadius = length(positionDelta);
+  if (errorRadius > Settings::maxMoveErrorRadius)
   {
-    errorRadius = sqrt(errorRadius);
-    personController.realPosition += positionDelta * (errorRadius-maxErrorRadius)/errorRadius;
+    personController.realPosition += positionDelta * (errorRadius-Settings::maxMoveErrorRadius)/errorRadius;
   }
   transform.get_position() = personController.realPosition;
   transform.set_rotation(-personController.realRotation); 
@@ -175,8 +124,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   vec3 prevPoint = vec3(0, personController.crouching ? Settings::hipsHeightCrouch : Settings::hipsHeightStand, 0);
   vec3 prevPointNew = prevPoint;
   
-  float desiredOrientation = mod_f(personController.wantedRotation - personController.realRotation, PITWO);
-  speed = glm::rotateY(speed, -personController.wantedRotation);
+  speed = glm::rotateY(speed, -wantedRotation);
 
   auto &trajectory = animationPlayer.inputGoal.path.trajectory;
   float onPlaceError = 0;

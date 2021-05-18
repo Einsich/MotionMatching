@@ -26,22 +26,7 @@ void show_settings(SettingsSet *settings, const char *label)
   ImGui::End();
 
 }
-void show_sliders(const AnimationFeaturesWeightsPtr weights)
-{
-  ImGui::Begin("Sliders");
-  ImGui::SliderFloat("scale", &weights->debug_scale, 0.f, 100.f);
-  ImGui::SliderFloat("lerp scale", &weights->animation_lerp, 0.f, 1.f);
-  ImGui::SliderFloat("pose match scale", &weights->norma_function_weight, 0, 100.f);
-  ImGui::SliderFloat("y norma scale", &weights->y_norma_scale, 0, 100.f);
-  ImGui::SliderFloat("goal path weight", &weights->goal_path_weight, 0, 100.f);
-  ImGui::SliderFloat("goal rotation", &weights->goal_rotation, 0, 105.f);
-  ImGui::SliderFloat("goal tag weight", &weights->goal_tag_weight, 0, 25.f);
-  ImGui::SliderFloat("noise_scale", &weights->noise_scale, 0, 10.f);
-  for (const auto &p : weights->featureMap)
-    ImGui::SliderFloat(p.first.c_str(), &weights->weights[(int)p.second], 0, 10);
-  ImGui::End();
-}
-void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWeightsPtr weights, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
+void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
 {
 
   ImGui::Begin("Scores");
@@ -64,7 +49,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const AnimationFeaturesWei
     for (uint j = 0, n = matchingScore[i].size(); j < n; j++)
     {
       ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + i * ImGui::GetTextLineHeightWithSpacing()); 
-      float t = 1.f / matchingScore[i][j] * weights->debug_scale;
+      float t = 1.f / matchingScore[i][j] * 1.0f;//ADD GOOG WEIGHT
       draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f - t,t, 0 ,1.f)));
     }
   }
@@ -99,7 +84,6 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   ADD_SCORE(1, goal_path)
   ADD_SCORE(2, goal_rotation)
   ADD_SCORE(3, goal_tag)
-  ADD_SCORE(4, noise)
   auto index = mm.get_index().current_index();
 
   ImGui::Text(" ");
@@ -149,7 +133,8 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
 {
   show_briefing();
   show_settings(Settings::instance, "Controller property");
-  show_settings(TestSettings::instance, "Test property");
+  //show_settings(TestSettings::instance, "Test property");
+  show_settings(MotionMatchingWeights::instance, "Motion matching weights");
   if (!Settings::MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())
@@ -170,10 +155,9 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
     debug_error("Hasn't database");
     return;
   }
-  const AnimationFeaturesWeightsPtr weights = dataBase->featureWeights;
   const MotionMatching &mm = *animationPlayer.get_motion_matching();
-  show_sliders(weights);
-  show_scores(dataBase, weights, solver, mm);
+
+  show_scores(dataBase, solver, mm);
 
   show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
 
