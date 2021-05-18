@@ -1,10 +1,13 @@
 #pragma once
 #include "Serialization/serialization.h"
-
-struct Settings : ISerializable
+#include "Serialization/settings_set.h"
+struct Settings : SettingsSet
 {
   static inline Settings *instance;
-
+  #define FVAR DECL_FVAR
+  #define IVAR DECL_IVAR
+  #define BVAR DECL_BVAR
+  #define LABEL(s)
 
   #define PARAMS()\
   FVAR(walkForwardSpeed, 1.2f, 0.f, 20.f)\
@@ -27,46 +30,59 @@ struct Settings : ISerializable
   BVAR(debugBones, false)\
   BVAR(MatchingStatistic, false)
 
-  #define FVAR(name, def, min, max) static inline float name = def;
-  #define IVAR(name, def, min, max) static inline int   name = def;
-  #define BVAR(name, def)           static inline bool  name = def;
-
   PARAMS()
+  #undef FVAR
+  #undef IVAR
+  #undef BVAR
+  #undef LABEL
 
-  #undef FVAR 
-  #undef IVAR 
-  #undef BVAR 
-  static inline float runSpeeds[3] = {runForwardSpeed, runSidewaySpeed, runBackwardSpeed};
-  static inline float walkSpeeds[3] = {walkForwardSpeed, walkSidewaySpeed, walkBackwardSpeed};
 
-  static void update_array()
+  Settings()
   {
-    runSpeeds[0] = runForwardSpeed, runSpeeds[1] = runSidewaySpeed,  runSpeeds[2] = runBackwardSpeed;
-    walkSpeeds[0] = walkForwardSpeed, walkSpeeds[1] = walkSidewaySpeed,  walkSpeeds[2] = walkBackwardSpeed;
-  }
-  virtual size_t serialize(std::ostream& os) const override
-  {
-    #define FVAR(x, d, mn, mx) size += write(os, x);
-    #define IVAR(x, d, mn, mx) size += write(os, x);
-    #define BVAR(x, d)         size += write(os, x);
-    size_t size = 0;
-    PARAMS();
-    return size;
+    #define FVAR INIT_FVAR
+    #define IVAR INIT_IVAR
+    #define BVAR INIT_BVAR
+    #define LABEL INIT_LABEL
+    PARAMS() 
+    #undef PARAMS
     #undef FVAR
     #undef IVAR
-    #undef BVAR 
+    #undef BVAR
+    #undef LABEL
   }
-  virtual size_t deserialize(std::istream& is) override
+
+
+};
+class TestSettings : public SettingsSet
+{
+public:
+  static inline TestSettings *instance = nullptr ;
+  #define FVAR DECL_FVAR
+  #define IVAR DECL_IVAR
+  #define BVAR DECL_BVAR
+  #define LABEL(s)
+  #define TPARAMS()\
+    IVAR(keks,666,0,1000)\
+    FVAR(lol, 1, 0, 10)\
+    LABEL("label blyat")\
+    BVAR(kek, false)
+  TPARAMS()
+  #undef FVAR
+  #undef IVAR
+  #undef BVAR
+  #undef LABEL
+  TestSettings()
   {
-    #define FVAR(x, d, mn, mx) size += read(is, x);
-    #define IVAR(x, d, mn, mx) size += read(is, x);
-    #define BVAR(x, d)         size += read(is, x);
-    size_t size = 0;
-    PARAMS();
-    update_array();
-    return size;
+    #define FVAR INIT_FVAR
+    #define IVAR INIT_IVAR
+    #define BVAR INIT_BVAR
+    #define LABEL INIT_LABEL
+    TPARAMS() 
     #undef FVAR
     #undef IVAR
-    #undef BVAR 
+    #undef BVAR
+    #undef LABEL
   }
+
+    #undef TPARAMS
 };

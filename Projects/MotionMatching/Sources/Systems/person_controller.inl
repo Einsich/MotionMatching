@@ -16,7 +16,9 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
   
   float run = input.get_key(SDLK_LSHIFT);
-  vec3 wantedSpeed(right, 0, forward);
+  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.4f)) * right;
+  sideDir.z = abs(sideDir.z);
+  vec3 wantedSpeed =  sideDir + vec3(0.f, 0.f, 1.f) * forward;
   float speed = length(wantedSpeed);
   if (speed > 1.f)
     wantedSpeed /= speed;
@@ -24,10 +26,12 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   if (!onPlace)
   {
     int moveIndex = forward > 0 ? 0 : forward < 0 ? 2 : 1;
+    float runSpeeds[3] = {Settings::runForwardSpeed, Settings::runSidewaySpeed, Settings::runBackwardSpeed};
+    float walkSpeeds[3] = {Settings::walkForwardSpeed, Settings::walkSidewaySpeed, Settings::walkBackwardSpeed};
     if(run > 0)
-      wantedSpeed *= Settings::runSpeeds[moveIndex];
+      wantedSpeed *= runSpeeds[moveIndex];
     else
-      wantedSpeed *= Settings::walkSpeeds[moveIndex];
+      wantedSpeed *= walkSpeeds[moveIndex];
   }
   return wantedSpeed;
 }
@@ -106,6 +110,15 @@ float rotation_abs(float rotation_delta)
   rotation_delta = rotation_delta > PI ? PITWO - rotation_delta : rotation_delta;
   return rotation_delta;
 }
+
+vec3 apply_root_motion_to_speed(vec3 speed, vec3 root_motion)
+{
+  return root_motion;
+  float speedMagnitude = length(speed);
+  if (speedMagnitude > 0.1f)
+    speed /= speedMagnitude;
+  return root_motion * speed;
+}
 template<typename Callable>
 void update_attached_camera(const ecs::EntityId&, Callable);
 
@@ -139,7 +152,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(personController.wantedRotation-personController.realRotation));
   
-  vec3 rootDelta = animationPlayer.rootDeltaTranslation;
+  vec3 rootDelta = apply_root_motion_to_speed(speed, animationPlayer.rootDeltaTranslation);
 
   personController.simulatedPosition =
   personController.realPosition = transform.get_position() + transform.get_rotation() * rootDelta * dt;
@@ -195,7 +208,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   animationPlayer.inputGoal.tags.clear();
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
-  if (onPlaceError < 0.05f && + abs(desiredOrientation) * RadToDeg < 10.f)
+  if (onPlaceError < 0.3f && + abs(desiredOrientation) * RadToDeg < 10.f)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
   if (input.get_key(SDLK_SPACE) > 0)
   {

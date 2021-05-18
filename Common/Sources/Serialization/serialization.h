@@ -165,6 +165,7 @@ size_t load_object(T &object, const std::string &path)
 {
   TimeScope scope("load file " + path);
   ifstream file(project_resources_path(path), ios::binary);
+  
   size_t fileSize = read(file, object);
   scope.stop();
   print_file_size(fileSize);

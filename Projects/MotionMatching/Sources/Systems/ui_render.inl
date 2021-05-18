@@ -3,20 +3,28 @@
 #include "Engine/imgui/imgui.h"
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
-void show_settings()
-{
-  ImGui::Begin("Controller property");
 
-  #define FVAR(name, def, min, max) ImGui::SliderFloat(#name, &Settings::name, min, max);
-  #define IVAR(name, def, min, max) ImGui::SliderInt(#name, &Settings::name, min, max);
-  #define BVAR(name, def) ImGui::Checkbox(#name, &Settings::name);
-  PARAMS()
-  #undef FVAR
-  #undef IVAR
-  #undef BVAR
+
+void show_settings(SettingsSet *settings, const char *label)
+{
+  ImGui::Begin(label);
+
+  for (VarBase *var : settings->vars)
+  {
+    switch (var->varType)
+    {
+    case VarType::FLOAT: {Var<float>* fvar = (Var<float>*)var; ImGui::SliderFloat(var->name.c_str(), &fvar->value, fvar->min_val, fvar->max_val); break;}
+    case VarType::INT:   {Var<int>* ivar = (Var<int>*)var; ImGui::SliderInt(var->name.c_str(), &ivar->value, ivar->min_val, ivar->max_val); break;}
+    case VarType::BOOL:  {Var<bool>* bvar = (Var<bool>*)var; ImGui::Checkbox(var->name.c_str(), &bvar->value); break;}
+    case VarType::LABEL: {ImGui::Text("%s", var->name.c_str());}
+    
+    default:
+      break;
+    }
+  }
   
-  Settings::update_array();
   ImGui::End();
+
 }
 void show_sliders(const AnimationFeaturesWeightsPtr weights)
 {
@@ -140,7 +148,8 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
   const AnimationPlayer &animationPlayer)
 {
   show_briefing();
-  show_settings();
+  show_settings(Settings::instance, "Controller property");
+  show_settings(TestSettings::instance, "Test property");
   if (!Settings::MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())
