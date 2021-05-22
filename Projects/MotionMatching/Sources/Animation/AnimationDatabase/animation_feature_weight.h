@@ -35,6 +35,8 @@ public:
   FVAR(goalRotationMatchingWeight, 1.0f, 0.f, 50.f)\
   FVAR(goalFavourTagWeight, 0.f, 0.f, 20.f)\
   FVAR(YpathScale, 1.2f, 0.f, 5.f)\
+  BVAR(trajectoryErrorToleranceTest, true)\
+  FVAR(trajectoryErrorTolerance, 0.f, 0.f, 5.f)\
   BVAR(velocityMatching, true)\
   NODES
 
