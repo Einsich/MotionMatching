@@ -4,6 +4,7 @@
 #include "Engine/imgui/imgui_impl_opengl3.h"
 #include "Engine/imgui/imgui_impl_sdl.h"
 #include "config.h"
+#include "Engine/Profiler/profiler.h"
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
 scene(scene), context(window_name, width, height, full_screen), timer(),
@@ -20,6 +21,7 @@ commonShaderPath(string(get_config("commonPath")) + "/Shaders")
 void Application::start()
 {
   scene->start_scene();
+  get_profiler();
 }
 bool Application::sdl_event_handler()
 {
@@ -54,20 +56,28 @@ void Application::main_loop()
 {
   bool running = true;
   while(running){
+    get_profiler().start_frame();
     timer.update();
-    
+    PROFILER(sdl_events) 
 		running = sdl_event_handler();
+    sdl_events.stop();
     if (running)
     {
+      PROFILER(ecs_scene);
       scene->process_events();
       scene->update_logic();
       scene->update_render();
+      ecs_scene.stop();
+      
+      PROFILER(ui_scene);
       context.start_imgui();
       scene->update_ui();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       context.swap_buffer();
+      ui_scene.stop();
     }
+    get_profiler().end_frame();
 	}
 }
 void Application::exit()

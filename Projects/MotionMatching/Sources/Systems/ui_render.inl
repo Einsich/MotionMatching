@@ -3,7 +3,7 @@
 #include "Engine/imgui/imgui.h"
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
-
+#include "Engine/Profiler/profiler.h"
 
 void show_settings(SettingsSet *settings, const char *label)
 {
@@ -128,9 +128,26 @@ void show_briefing()
     "");
   ImGui::End();
 }
+void profiler_info()
+{
+  ImGui::Begin("Profiler");
+  auto& history = get_profiler().get_frame_history();
+
+  int level = 0;
+  Uint32 maxTime = 0;
+  printf("real_h %d\n", history.size());
+  for (const TimeLabel &label : history)
+  {
+    float dt = (label.end - label.start);
+    ImGui::LabelText(label.label.c_str(), "%s: %.2f ms", label.label.c_str(), dt);
+  }
+  
+  ImGui::End();
+}
 SYSTEM(ecs::SystemOrder::UI) ui_render(
   const AnimationPlayer &animationPlayer)
 {
+  profiler_info();
   show_briefing();
   show_settings(Settings::instance, "Controller property");
   //show_settings(TestSettings::instance, "Test property");
