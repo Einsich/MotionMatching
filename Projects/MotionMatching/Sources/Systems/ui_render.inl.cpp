@@ -1,6 +1,21 @@
 #include "ui_render.inl"
 //Code-generator production
 
+void ui_unique_render_func();
+
+ecs::SystemDescription ui_unique_render_descr("ui_unique_render", {
+}, ui_unique_render_func, ecs::SystemOrder::UI);
+
+void ui_unique_render_func()
+{
+  for (ecs::QueryIterator begin = ui_unique_render_descr.begin(), end = ui_unique_render_descr.end(); begin != end; ++begin)
+  {
+    ui_unique_render(
+    );
+  }
+}
+
+
 void ui_render_func();
 
 ecs::SystemDescription ui_render_descr("ui_render", {

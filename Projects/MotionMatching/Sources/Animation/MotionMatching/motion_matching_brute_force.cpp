@@ -22,8 +22,11 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   int nextCadr = (curCadr + 1) % (int)index.get_clip().duration;
   if (!forceJump && MotionMatchingWeights::trajectoryErrorToleranceTest)
   {
-    float trajectory_cost = goal_path_norma(index.get_clip().get_frame_trajectory(nextCadr), goal);
-    if (trajectory_cost < MotionMatchingWeights::trajectoryErrorTolerance)
+    AnimationTrajectory trajectory = index.get_clip().get_frame_trajectory(nextCadr);
+    float trajectory_cost = goal_path_norma(trajectory, goal);
+    float rotation_cost = rotation_norma(trajectory, goal);
+    if (trajectory_cost < MotionMatchingWeights::trajectoryErrorTolerance &&
+        rotation_cost < MotionMatchingWeights::rotationErrorTolerance)
     {
       return AnimationIndex(dataBase, curClip, nextCadr);
     }

@@ -57,6 +57,7 @@ void Application::main_loop()
   bool running = true;
   while(running){
     get_profiler().start_frame();
+    PROFILER(main_loop);
     timer.update();
     PROFILER(sdl_events) 
 		running = sdl_event_handler();
@@ -77,6 +78,7 @@ void Application::main_loop()
       context.swap_buffer();
       ui_scene.stop();
     }
+    main_loop.stop();
     get_profiler().end_frame();
 	}
 }

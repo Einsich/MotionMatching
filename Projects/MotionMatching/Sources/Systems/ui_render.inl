@@ -135,23 +135,27 @@ void profiler_info()
 
   int level = 0;
   Uint32 maxTime = 0;
-  printf("real_h %d\n", history.size());
   for (const TimeLabel &label : history)
   {
-    float dt = (label.end - label.start);
-    ImGui::LabelText(label.label.c_str(), "%s: %.2f ms", label.label.c_str(), dt);
+    
+    ImGui::LabelText(label.label.c_str(), "%s: %.2f ms", label.label.c_str(), label.averange);
   }
   
   ImGui::End();
 }
-SYSTEM(ecs::SystemOrder::UI) ui_render(
-  const AnimationPlayer &animationPlayer)
+
+SYSTEM(ecs::SystemOrder::UI) ui_unique_render()
 {
   profiler_info();
   show_briefing();
   show_settings(Settings::instance, "Controller property");
   //show_settings(TestSettings::instance, "Test property");
   show_settings(MotionMatchingWeights::instance, "Motion matching weights");
+}
+SYSTEM(ecs::SystemOrder::UI) ui_render(
+  const AnimationPlayer &animationPlayer)
+{
+
   if (!Settings::MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())

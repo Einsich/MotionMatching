@@ -34,12 +34,13 @@ namespace ecs
   QueryIterator QueryDescription::begin()
   {
     QueryIterator it(this, 0, 0);
-    it.skip_empty_archetype();
+    if (args.size() != 0)
+      it.skip_empty_archetype();
     return it;
   }
   QueryIterator QueryDescription::end()
   {
-    return QueryIterator(this, archetypes.size(), 0);
+    return args.size() != 0 ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
   }
 
   QueryIterator::QueryIterator():

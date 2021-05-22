@@ -53,6 +53,8 @@ namespace ecs
 
   static void register_archetype_to(QueryDescription *query, Archetype *archetype)
   {
+    if (query->args.size() == 0)
+      return;
     std::vector<SystemCashedArchetype> &sys_archetypes = query->archetypes;
     std::vector<ComponentContainer*> containers(query->args.size());
     bool breaked = false;

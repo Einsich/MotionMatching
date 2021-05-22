@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/time.h"
 #include <vector>
+#include <map>
 class ProfilerLabel
 {
 private:
@@ -13,16 +14,27 @@ public:
   void stop();
 };
 
-struct TimeLabel {Uint32 start, end; string label;};
+struct TimeLabel {Uint32 start, end; string label; float averange;};
 class Profiler
 {
 private:
+  struct AverangeTime 
+  {
+    vector<float> dtChain;
+    int curIndex;
+    float curSum;
+    AverangeTime();
+    float get_averange() const;
+    void add_time(float dt);
+  };
+
+  map<string, AverangeTime> labelAveranges;
   vector<TimeLabel> prev_frame_labels, cur_frame_labels;
 public:
   void start_frame();
   void end_frame();
   void add_label(Uint32 start, Uint32 end, const string &label);
-  const vector<TimeLabel> &get_frame_history() const;
+  const vector<TimeLabel> &get_frame_history();
 };
 
 Profiler &get_profiler();
