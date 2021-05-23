@@ -141,11 +141,11 @@ void profiler_info()
   float width = ImGui::GetWindowWidth();
   float height = 10.f;
   float maxdt = get_profiler().get_averange(history.back().label);
-  float scale = (width - 10) / maxdt;
+
   stack<float> openTimes;
   openTimes.push(0.f);
 
-  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  //ImDrawList* draw_list = ImGui::GetWindowDrawList();
   float lastCloseTime = 0.f;
   for (const TimeLabel &label : history)
   {
@@ -154,7 +154,10 @@ void profiler_info()
     if (label.open)
     {
       openTimes.push(lastCloseTime);
-      ImGui::Text("%*c%s: %.2f ms",level*3, ' ', label.label.c_str(), dt);
+      float hardness = sqrt(dt / maxdt);
+      vec3 color = glm::lerp(vec3(1), vec3(1,0,0), hardness);
+      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: %.2f ms",level*3, ' ', label.label.c_str(), dt);
+
     }
     else
     {
