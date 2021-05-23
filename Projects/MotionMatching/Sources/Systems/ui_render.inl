@@ -4,6 +4,7 @@
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
 #include "Engine/Profiler/profiler.h"
+#include <stack>
 
 void show_settings(SettingsSet *settings, const char *label)
 {
@@ -22,7 +23,6 @@ void show_settings(SettingsSet *settings, const char *label)
       break;
     }
   }
-  
   ImGui::End();
 
 }
@@ -132,13 +132,46 @@ void profiler_info()
 {
   ImGui::Begin("Profiler");
   auto& history = get_profiler().get_frame_history();
+  if (history.size() == 0)
+  {
+    ImGui::End();
+    return;
+  }
+  ImVec2 corner = ImGui::GetWindowPos();
+  float width = ImGui::GetWindowWidth();
+  float height = 10.f;
+  float maxdt = get_profiler().get_averange(history.back().label);
+  float scale = (width - 10) / maxdt;
+  stack<float> openTimes;
+  openTimes.push(0.f);
 
-  int level = 0;
-  Uint32 maxTime = 0;
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  float lastCloseTime = 0.f;
   for (const TimeLabel &label : history)
   {
-    
-    ImGui::LabelText(label.label.c_str(), "%s: %.2f ms", label.label.c_str(), label.averange);
+    float dt = get_profiler().get_averange(label.label);
+    int level = openTimes.size();
+    if (label.open)
+    {
+      openTimes.push(lastCloseTime);
+      ImGui::Text("%*c%s: %.2f ms",level*3, ' ', label.label.c_str(), dt);
+    }
+    else
+    {
+      float dt = get_profiler().get_averange(label.label);
+      float openTime = openTimes.top();
+      float closeTime = openTime + dt;
+      lastCloseTime = closeTime;
+      openTimes.pop();
+      /*
+
+      float c = dt / maxdt;
+      auto color = ImGui::ColorConvertFloat4ToU32(ImVec4(1, c, c,1.f));
+      ImVec2 p_min = ImVec2((openTime) * scale + corner.x, 100+level * height + corner.y);
+      ImVec2 p_max = ImVec2((closeTime) * scale + corner.x, 100+(level+1) * height + corner.y);
+      draw_list->AddRectFilled(p_min, p_max, color);
+      */
+    }
   }
   
   ImGui::End();

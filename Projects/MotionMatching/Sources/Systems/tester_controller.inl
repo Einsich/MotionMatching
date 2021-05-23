@@ -26,6 +26,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     {
       const KeyboardEvent &e = test.keyboardEvents[animationTester.keyboardInd];
       SDL_KeyboardEvent event;
+      memset(&event, 0, sizeof(event));
       event.keysym.sym = e.keycode;
       if (e.action == KeyAction::Press)
         event.repeat = true;

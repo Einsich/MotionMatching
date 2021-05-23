@@ -214,7 +214,22 @@ bool main_camera(mat4 &cam_transform, mat4 &cam_projection)
   });
   return result;
 }
-
+template<typename Callable>
+static void get_main_cam_query2(Callable);
+template<typename Callable>
+static void get_main_cam_property_query2(const ecs::EntityId&, Callable);
+vec3 main_camera_position()
+{
+  vec3 result;
+  QUERY() get_main_cam_query2([&](const ecs::EntityId &mainCamera)
+  {
+    QUERY() get_main_cam_property_query2(mainCamera, [&](const Transform &transform)
+    {
+      result = transform.get_position();
+    });
+  });
+  return result;
+}
 
 ecs::EntityId create_camera_manager()
 {

@@ -21,6 +21,7 @@ struct MotionMatchingWeights : public SettingsSet
 public:
   static inline map<string, int> featureMap;
   static inline MotionMatchingWeights *instance;
+  static inline int testCount = 0;
   #define FVAR DECL_FVAR
   #define IVAR DECL_IVAR
   #define BVAR DECL_BVAR
@@ -39,6 +40,7 @@ public:
   FVAR(trajectoryErrorTolerance, 0.f, 0.f, 5.f)\
   FVAR(rotationErrorTolerance, 0.f, 0.f, 5.f)\
   BVAR(velocityMatching, true)\
+  BVAR(lodOptimisation, true)\
   NODES
 
   PARAMS()

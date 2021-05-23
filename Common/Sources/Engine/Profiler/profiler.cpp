@@ -1,12 +1,13 @@
 #include "profiler.h"
 
-ProfilerLabel::ProfilerLabel(const char *label):
+ProfilerLabel::ProfilerLabel(const string &label):
  start(SDL_GetTicks()), label(label), stopped(false)
 {
+  get_profiler().open_label(start, label);
 }
 void ProfilerLabel::stop()
 {
-  get_profiler().add_label(start, SDL_GetTicks(), label);
+  get_profiler().close_label(start, SDL_GetTicks(), label);
   stopped = true;
 }
 ProfilerLabel::~ProfilerLabel()
@@ -17,24 +18,28 @@ ProfilerLabel::~ProfilerLabel()
 
 void Profiler::start_frame()
 {
-  //std::swap(prev_frame_labels, cur_frame_labels);
   prev_frame_labels = std::move(cur_frame_labels);
-  //prev_frame_labels.clear();
   cur_frame_labels.clear();
 }
 void Profiler::end_frame()
 {
 
 }
-void Profiler::add_label(Uint32 start, Uint32 end, const string &label)
+void Profiler::open_label(Uint32 start, const string &label)
 {
-  cur_frame_labels.push_back({start, end, label, 0.f});
+  cur_frame_labels.push_back({start, label, true});
+}
+void Profiler::close_label(Uint32 start, Uint32 end, const string &label)
+{
+  cur_frame_labels.push_back({end, label, false});
   labelAveranges[label].add_time(end - start);
+}
+float Profiler::get_averange(const string &label)
+{
+  return labelAveranges[label].get_averange();
 }
 const vector<TimeLabel> &Profiler::get_frame_history()
 {
-  for (TimeLabel &label : prev_frame_labels)
-    label.averange = labelAveranges[label.label].get_averange();
   return prev_frame_labels;
 }
 
@@ -44,7 +49,7 @@ Profiler &get_profiler()
   return profiler;
 }
 
-constexpr int framesCount = 30;
+constexpr int framesCount = 60;
 
 Profiler::AverangeTime::AverangeTime():dtChain(framesCount, 0.0f), curIndex(0), curSum(0){}
 

@@ -13,7 +13,7 @@ enum class AnimationPlayerType
 class Transform;
 class AnimationPlayer
 {
-private:
+  public:
   AnimationPlayerType playerType;
   float speed;
   AnimationStateMachine stateMachine;
@@ -27,7 +27,7 @@ private:
   };
   IKFoot ikFoot[2];
   void set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, vec3 norm, const char *foot_name, const char *toe_name);
-public:
+
   AnimationLerpedIndex index;
   AnimationCadr currentCadr;
   uint8 onGround;
@@ -35,7 +35,7 @@ public:
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;
   AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType);
-  void update(Transform &transform, float dt);
+
 
   void animation_selector(const KeyboardEvent &event);
   AnimationStateMachine *get_state_machine();

@@ -33,6 +33,22 @@ void get_main_cam_query(Callable lambda)
 }
 
 
+ecs::QueryDescription get_main_cam_query2_descr("get_main_cam_query2", {
+  {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
+});
+
+template<typename Callable>
+void get_main_cam_query2(Callable lambda)
+{
+  for (ecs::QueryIterator begin = get_main_cam_query2_descr.begin(), end = get_main_cam_query2_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<ecs::EntityId>(0)
+    );
+  }
+}
+
+
 ecs::SingleQueryDescription set_main_cam_query_descr("set_main_cam_query", {
   {ecs::get_type_description<bool>("isMainCamera"), false}
 });
@@ -81,6 +97,23 @@ void get_main_cam_property_query(const ecs::EntityId &eid, Callable lambda)
     lambda(
       *begin.get_component<Camera>(0),
       *begin.get_component<Transform>(1)
+    );
+  }
+}
+
+
+ecs::SingleQueryDescription get_main_cam_property_query2_descr("get_main_cam_property_query2", {
+  {ecs::get_type_description<Transform>("transform"), false}
+});
+
+template<typename Callable>
+void get_main_cam_property_query2(const ecs::EntityId &eid, Callable lambda)
+{
+  ecs::QueryIterator begin;
+  if (ecs::get_iterator(get_main_cam_property_query2_descr, eid, begin))
+  {
+    lambda(
+      *begin.get_component<Transform>(0)
     );
   }
 }

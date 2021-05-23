@@ -2,6 +2,7 @@
 #include "ecs/ecs.h"
 #include "config.h"
 #include "glad/glad.h"
+#include "Engine/Profiler/profiler.h"
 namespace ecs
 {
   bool system_comparator(const SystemDescription *a, const SystemDescription *b)
@@ -42,6 +43,7 @@ namespace ecs
     for (SystemIterator it = range.begin; it != range.end; it++)
     {
       //debug_log("execute %s system", (*it)->name.c_str());
+      ProfilerLabel label((*it)->name.c_str());
       (*it)->execute();
     }
   }

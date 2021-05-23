@@ -79,10 +79,14 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   
   Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
-  animationPlayer.update(transform, dt);
   bool onPlace;
 
   vec3 speed = get_wanted_speed(input, onPlace);
+  if (animationTester)
+  {
+    //debug_log("[%f, %f, %f]", speed.x, speed.y, speed.z);input.get_key(SDLK_w)
+    //debug_log("[%f]", input.get_key(SDLK_w));
+  }
   float MoveRate = Settings::predictionMoveRate, TurnRate = Settings::predictionRotationRate;
   
   float nextRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;

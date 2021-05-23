@@ -46,6 +46,7 @@ struct OnSetMainCamera
 
 void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition);
 bool main_camera(mat4 &cam_transform, mat4 &cam_projection);
+vec3 main_camera_position();
 
 ecs::EntityId create_camera_manager();
 

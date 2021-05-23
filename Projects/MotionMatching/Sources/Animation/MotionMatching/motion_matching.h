@@ -14,8 +14,9 @@ private:
   AnimationDataBasePtr dataBase;
   MotionMatchingSolverPtr solver;
   AnimationLerpedIndex index;
-  int skip_count;
+  float skip_time;
 public:
+  int lod;
   MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType);
 
   AnimationLerpedIndex get_index() const;

@@ -2,9 +2,9 @@
 #include <map>
 
 static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
-constexpr int max_skip_cadr = 5;
+
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType):
-dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0), skip_count(0)
+dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0), skip_time(0), lod(0)
 {
   if (!dataBase)
     return;
@@ -38,18 +38,21 @@ AnimationLerpedIndex MotionMatching::get_index() const
 }
 void MotionMatching::update(float dt, const AnimationGoal &goal)
 {
+  constexpr float lod_skip_time[4] = {1.f / 30, 1.f / 3, 3.f, 30.f};
   if (!solver)
     return;
   AnimationIndex saveIndex = index.current_index();
   index.update(dt);
+  skip_time += dt;
 
   if (saveIndex != index.current_index())
   {
     AnimationIndex currentIndex = index.current_index();
     bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
-    if (forceJump || ++skip_count >= max_skip_cadr)
+    lod = MotionMatchingWeights::lodOptimisation ? lod : 0;
+    if (forceJump || skip_time >= lod_skip_time[lod])
     {
-      skip_count = 0;
+      skip_time = 0;
       AnimationIndex best_index = solver->find_best_index(currentIndex, goal);
       // debug_log("i = (%s, %d/%d), s = %f", best_index.get_clip().name.c_str(), best_index.get_cadr_index(), best_index.get_clip().duration, ((MotionMatchingBruteSolver*)solver.get())->bestScore.full_score);
       if (AnimationIndex::can_jump(currentIndex, best_index))

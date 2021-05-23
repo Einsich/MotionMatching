@@ -119,6 +119,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   if (dataBase->tests.size() > 0)
   {
     int testN = std::min(18, (int)dataBase->tests.size());
+    MotionMatchingWeights::testCount = testN;
     int testK = (int)sqrt(testN);
     for (int i = 0; i < testN; i++)
     {
