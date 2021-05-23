@@ -93,9 +93,9 @@ const AnimationFeatures &AnimationIndex::get_feature() const
 {
   return dataBase->clips[clip].features[cadr];
 }
-AnimationTrajectory AnimationIndex::get_trajectory() const
+const AnimationTrajectory &AnimationIndex::get_trajectory() const
 {
-  return dataBase->clips[clip].get_frame_trajectory(cadr);
+  return dataBase->clips[clip].trajectories[cadr];
 }
 bool AnimationIndex::operator==(const AnimationIndex &i2)
 {

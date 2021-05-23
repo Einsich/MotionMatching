@@ -139,7 +139,7 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
         constexpr float dirLength = 0.3f;
         constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};
         constexpr float lenghts[2] = {0.3f, 0.3f};
-        AnimationTrajectory trajectory = index.current_index().get_trajectory();
+        const AnimationTrajectory &trajectory = index.current_index().get_trajectory();
 
         const std::array<TrajectoryPoint,AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &animationPlayer.inputGoal.path.trajectory};
         for(int i = 0; i < 2; i++)

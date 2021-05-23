@@ -8,7 +8,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
  hipsTranslation(duration), hipsRotation(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), 
  loopable(std::find(tags.begin(), tags.end(), AnimationTag::Loopable) != tags.end()), 
- name(name), tags(tags), features(duration)
+ name(name), tags(tags), features(duration), trajectories(duration)
 {
   debug_log("Animation %s was added, duration %d", name.c_str(), duration);
 
@@ -71,13 +71,17 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     }    
   }
 
-  for (int node = 0; node < (int)AnimationFeaturesNode::Count; node++)
+  for (uint i = 0; i < duration; i++)
   {
-    for (uint i = 0; i < duration; i++)
+    int j = i == duration - 1 ? i - 1: i;
+    for (int node = 0; node < (int)AnimationFeaturesNode::Count; node++)
     {
-      int j = i == duration - 1 ? i - 1: i;
       features[i].nodesVelocity[node] = (features[j + 1].nodes[node] - features[j].nodes[node]) * ticksPerSecond;
     }
+  }
+  for (uint i = 0; i < duration; i++)
+  {
+    trajectories[i] = get_frame_trajectory(i);
   }
 
   ground_calculate();
@@ -210,6 +214,7 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, hipsTranslation);
   size += write(os, hipsRotation);
   size += write(os, features);
+  size += write(os, trajectories);
   size += write(os, tags);
   size += write(os, loopable);
   return size;
@@ -225,6 +230,7 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, hipsTranslation);
   size += read(is, hipsRotation);
   size += read(is, features);
+  size += read(is, trajectories);
   size += read(is, tags);
   size += read(is, loopable);
   ground_calculate();

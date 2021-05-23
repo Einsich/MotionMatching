@@ -31,6 +31,7 @@ public:
   string name;
   set<AnimationTag> tags;
   vector<AnimationFeatures> features;
+  vector<AnimationTrajectory> trajectories;
 
   vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;
