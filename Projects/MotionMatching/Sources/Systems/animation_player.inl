@@ -49,9 +49,11 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     for (; j < 3; j++)
       if (dist < lodDistances[j])
       { 
-        lodColor[j] = 1;
+        lodColor[j] = 10;
         break;
       }
+    if (j == 3)
+      lodColor = vec3(10);
     animationPlayer.motionMatching.lod = j;
     
     animationRender.get_material()->set_property(Property("Diffuse", lodColor));

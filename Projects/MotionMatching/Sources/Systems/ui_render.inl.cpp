@@ -1,33 +1,50 @@
 #include "ui_render.inl"
 //Code-generator production
 
-void ui_unique_render_func();
+void briefing_ui_func();
 
-ecs::SystemDescription ui_unique_render_descr("ui_unique_render", {
-}, ui_unique_render_func, ecs::SystemOrder::UI);
+ecs::SystemDescription briefing_ui_descr("briefing_ui", {
+}, briefing_ui_func, ecs::SystemOrder::UI);
 
-void ui_unique_render_func()
+void briefing_ui_func()
 {
-  for (ecs::QueryIterator begin = ui_unique_render_descr.begin(), end = ui_unique_render_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = briefing_ui_descr.begin(), end = briefing_ui_descr.end(); begin != end; ++begin)
   {
-    ui_unique_render(
+    briefing_ui(
     );
   }
 }
 
 
-void ui_render_func();
+void motion_matching_statistic_func();
 
-ecs::SystemDescription ui_render_descr("ui_render", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
-}, ui_render_func, ecs::SystemOrder::UI);
+ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
+}, motion_matching_statistic_func, ecs::SystemOrder::UI);
 
-void ui_render_func()
+void motion_matching_statistic_func()
 {
-  for (ecs::QueryIterator begin = ui_render_descr.begin(), end = ui_render_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = motion_matching_statistic_descr.begin(), end = motion_matching_statistic_descr.end(); begin != end; ++begin)
   {
-    ui_render(
-      *begin.get_component<AnimationPlayer>(0)
+    motion_matching_statistic(
+      *begin.get_component<AnimationPlayer>(0),
+      *begin.get_component<ThirdPersonController>(1)
+    );
+  }
+}
+
+
+void menu_ui_func();
+
+ecs::SystemDescription menu_ui_descr("menu_ui", {
+}, menu_ui_func, ecs::SystemOrder::UI);
+
+void menu_ui_func()
+{
+  for (ecs::QueryIterator begin = menu_ui_descr.begin(), end = menu_ui_descr.end(); begin != end; ++begin)
+  {
+    menu_ui(
     );
   }
 }

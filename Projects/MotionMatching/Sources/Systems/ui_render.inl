@@ -5,10 +5,10 @@
 #include "Animation/settings.h"
 #include "Engine/Profiler/profiler.h"
 #include <stack>
+#include "Animation/third_person_controller.h"
 
-void show_settings(SettingsSet *settings, const char *label)
+void show_settings(SettingsSet *settings)
 {
-  ImGui::Begin(label);
 
   for (VarBase *var : settings->vars)
   {
@@ -23,13 +23,16 @@ void show_settings(SettingsSet *settings, const char *label)
       break;
     }
   }
-  ImGui::End();
 
 }
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
 {
 
-  ImGui::Begin("Scores");
+  if (!ImGui::Begin("Scores"))
+  {
+    ImGui::End();
+    return;
+  }
   const vector<AnimationClip> &animations = dataBase->clips;
   const auto &matchingScore = solver->get_matching_scores();
   AnimationIndex cur = mm.get_index().current_index();
@@ -72,7 +75,11 @@ string tags_to_text(const set<AnimationTag> &tags)
 }
 void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &tags)
 {
-  ImGui::Begin("Best score");
+  if (!ImGui::Begin("Best score"))
+  {
+    ImGui::End();
+    return;
+  }
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
   ImVec2 corner = ImGui::GetWindowPos();
   constexpr int N = 5;
@@ -120,26 +127,29 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   ImGui::End();
 }
 
-void show_briefing()
+SYSTEM(ecs::SystemOrder::UI) briefing_ui()
 {
-  ImGui::Begin("Briefing");
+  if (!ImGui::Begin("Briefing"))
+  {
+    ImGui::End();
+    return;
+  }
   ImGui::Text(
     "Move - WASD. Run - shift+WASD. Crouch - Z.\n"
     "");
   ImGui::End();
 }
-void profiler_info()
+void profiler()
 {
-  ImGui::Begin("Profiler");
   auto& history = get_profiler().get_frame_history();
   if (history.size() == 0)
   {
     ImGui::End();
     return;
   }
-  ImVec2 corner = ImGui::GetWindowPos();
-  float width = ImGui::GetWindowWidth();
-  float height = 10.f;
+  //ImVec2 corner = ImGui::GetWindowPos();
+  //float width = ImGui::GetWindowWidth();
+  //float height = 10.f;
   float maxdt = get_profiler().get_averange(history.back().label);
 
   stack<float> openTimes;
@@ -177,19 +187,11 @@ void profiler_info()
     }
   }
   
-  ImGui::End();
 }
 
-SYSTEM(ecs::SystemOrder::UI) ui_unique_render()
-{
-  profiler_info();
-  show_briefing();
-  show_settings(Settings::instance, "Controller property");
-  //show_settings(TestSettings::instance, "Test property");
-  show_settings(MotionMatchingWeights::instance, "Motion matching weights");
-}
-SYSTEM(ecs::SystemOrder::UI) ui_render(
-  const AnimationPlayer &animationPlayer)
+SYSTEM(ecs::SystemOrder::UI) motion_matching_statistic(
+  const AnimationPlayer &animationPlayer,
+  const ThirdPersonController &thirdPersonController)
 {
 
   if (!Settings::MatchingStatistic)
@@ -218,4 +220,27 @@ SYSTEM(ecs::SystemOrder::UI) ui_render(
 
   show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
 
+}
+SYSTEM(ecs::SystemOrder::UI) menu_ui()
+{
+  if (ImGui::BeginMainMenuBar())
+  {
+    
+    if (ImGui::BeginMenu("Controller property"))
+    {
+      show_settings(Settings::instance);
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Motion matching weights"))
+    {
+      show_settings(MotionMatchingWeights::instance);
+      ImGui::EndMenu();
+    }    
+    if (ImGui::BeginMenu("Profiler"))
+    {
+      profiler();
+      ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+  }
 }
