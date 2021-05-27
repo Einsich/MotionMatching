@@ -47,15 +47,20 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
 
   if (saveIndex != index.current_index())
   {
+    
     AnimationIndex currentIndex = index.current_index();
     bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
     lod = MotionMatchingWeights::lodOptimisation ? lod : 0;
     if (forceJump || skip_time >= lod_skip_time[lod])
     {
       skip_time = 0;
-      AnimationIndex best_index = solver->find_best_index(currentIndex, goal);
-      // debug_log("i = (%s, %d/%d), s = %f", best_index.get_clip().name.c_str(), best_index.get_cadr_index(), best_index.get_clip().duration, ((MotionMatchingBruteSolver*)solver.get())->bestScore.full_score);
-      if (AnimationIndex::can_jump(currentIndex, best_index))
+      bestScore = {0,0,0,0,0};
+      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore);
+      
+      bool can_jump = true;
+      for (const AnimationIndex &index : index.get_indexes())
+        can_jump &= AnimationIndex::can_jump(index, best_index);
+      if (can_jump)
       {
         index.play_lerped(best_index);
       }

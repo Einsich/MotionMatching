@@ -11,9 +11,8 @@ private:
   vector<vector<float>> matchingScore;
 
 public:
-  MatchingScores bestScore;
   MotionMatchingBruteSolver(AnimationDataBasePtr dataBase);
-  virtual AnimationIndex find_best_index(const AnimationIndex &index, const AnimationGoal &goal) override final;
+  virtual AnimationIndex solve_motion_matching(const AnimationIndex &index, const AnimationGoal &goal, MatchingScores &best_score) override final;
   const vector<vector<float>> &get_matching_scores() const;
   AnimationDataBasePtr get_data_base() const;
 

@@ -82,15 +82,15 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
   }
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
   ImVec2 corner = ImGui::GetWindowPos();
-  constexpr int N = 5;
+  constexpr int N = 3;
   float scores[N];
   const char*names[N];
-  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f), vec3(0.1f, 0.9f, 0.9f), vec3(0.2f, 0.99f, 0.2f)};
+  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f)};
   #define ADD_SCORE(i, SCORE) scores[i] = score.SCORE / score.full_score; names[i] = #SCORE;
   ADD_SCORE(0, pose)
   ADD_SCORE(1, goal_path)
   ADD_SCORE(2, goal_rotation)
-  ADD_SCORE(3, goal_tag)
+  
   auto index = mm.get_index().current_index();
 
   ImGui::Text(" ");
@@ -218,7 +218,7 @@ SYSTEM(ecs::SystemOrder::UI) motion_matching_statistic(
 
   show_scores(dataBase, solver, mm);
 
-  show_best_score(solver->bestScore, mm, animationPlayer.inputGoal.tags);
+  show_best_score(mm.bestScore, mm, animationPlayer.inputGoal.tags);
 
 }
 SYSTEM(ecs::SystemOrder::UI) menu_ui()

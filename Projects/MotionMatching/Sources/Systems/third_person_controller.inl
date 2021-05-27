@@ -65,7 +65,12 @@ EVENT() mouse_move_handler(
   ThirdPersonController &thirdPersonController,
   PersonController &personController)
 {
-  if (personController.disableEvents)
+  if (Settings::disableCameraRotation)
+  {
+    ecs::send_event_immediate(eid, ControllerMouseMoveEvent(e));
+    return;
+  }
+  if (personController.disableEvents )
     return;
   float dx = (Settings::mouseInvertXaxis ? 1 : -1) * e.dx;
   thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * DegToRad * Settings::mouseSensitivity;

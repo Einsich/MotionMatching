@@ -112,7 +112,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
 
     list.get<AnimationRender>("animationRender").get_material()->set_property(Property("Shininess", 100.f));
     list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
-    list.add<ThirdPersonController>("thirdPersonController") =  ThirdPersonController(rotation + vec2(PI*0.5f,0), 3.f);
+    list.add<ThirdPersonController>("thirdPersonController") =  ThirdPersonController(rotation + vec2(PI*0.5f,-0.5), 3.f);
     list.add<ecs::EntityId>("attachedCamera") = attachedCamera;
     ecs::create_entity(list);
   }

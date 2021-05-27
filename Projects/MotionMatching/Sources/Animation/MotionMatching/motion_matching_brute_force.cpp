@@ -8,7 +8,7 @@ dataBase(dataBase)
   for (uint i = 0; i < matchingScore.size(); i++)
     matchingScore[i].resize(dataBase->clips[i].duration, 0);
 }
-AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &index, const AnimationGoal &goal)
+AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(const AnimationIndex &index, const AnimationGoal &goal, MatchingScores &best_score)
 {
   if (!dataBase || !index())
     return AnimationIndex();
@@ -18,11 +18,13 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
   float best = INFINITY;
   int bestClip = curClip;
   int bestCadr = curCadr;
-  bool forceJump = index.get_clip().loopable ? false : curCadr + 2 >= (int)index.get_clip().duration;
-  int nextCadr = (curCadr + 1) % (int)index.get_clip().duration;
-  if (!forceJump && MotionMatchingWeights::trajectoryErrorToleranceTest)
+  const AnimationClip &clip = index.get_clip();
+  bool forceJump = clip.loopable ? false : curCadr + 2 >= (int)clip.duration;
+  int nextCadr = (curCadr + 1) % (int)clip.duration;
+  if (!forceJump && MotionMatchingWeights::trajectoryErrorToleranceTest &&
+    has_goal_tags(goal.tags, clip.tags))
   {
-    const AnimationTrajectory &trajectory = index.get_clip().trajectories[nextCadr];
+    const AnimationTrajectory &trajectory = clip.trajectories[nextCadr];
     float trajectory_cost = goal_path_norma(trajectory, goal);
     float rotation_cost = rotation_norma(trajectory, goal);
     if (trajectory_cost < MotionMatchingWeights::trajectoryErrorTolerance &&
@@ -49,7 +51,7 @@ AnimationIndex MotionMatchingBruteSolver::find_best_index(const AnimationIndex &
         best = matching;
         bestClip = nextClip;
         bestCadr = nextCadr;
-        bestScore = score;
+        best_score = score;
       }
     }
   }

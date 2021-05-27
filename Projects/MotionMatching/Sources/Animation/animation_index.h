@@ -39,4 +39,5 @@ public:
   void update(float dt);
   void play_lerped(AnimationIndex next);
   AnimationIndex current_index() const;
+  const vector<AnimationIndex> &get_indexes() const;
 };

@@ -17,6 +17,7 @@ private:
   float skip_time;
 public:
   int lod;
+  MatchingScores bestScore;
   MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType);
 
   AnimationLerpedIndex get_index() const;

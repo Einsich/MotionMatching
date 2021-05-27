@@ -16,7 +16,7 @@ vec3 get_wanted_speed(Input &input, bool &onPlace)
   float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
   
   float run = input.get_key(SDLK_LSHIFT);
-  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.5f)) * right;
+  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.0f)) * right;
   sideDir.z = abs(sideDir.z);
   vec3 wantedSpeed =  sideDir + vec3(0.f, 0.f, 1.f) * forward;
   float speed = length(wantedSpeed);
@@ -89,18 +89,19 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   }
   float MoveRate = Settings::predictionMoveRate, TurnRate = Settings::predictionRotationRate;
   
-  float nextRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
   //float sideRot = (abs(speed.z) < 0.1f && abs(speed.x) > 0.1f) ? -speed.x * DegToRad * 5 : 0;
 
   float wantedRotation = personController.wantedRotation;
+  float nextRootRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
+  float nextLerpRotation = lerp_angle(personController.realRotation, wantedRotation, dt * Settings::rotationRate);
   float desiredOrientation = mod_f(wantedRotation - personController.realRotation, PITWO);
-  if (rotation_abs(nextRotation - wantedRotation) < rotation_abs(personController.realRotation - wantedRotation))
+  if (rotation_abs(nextRootRotation - wantedRotation) < rotation_abs(nextLerpRotation - wantedRotation))
   {
-    personController.realRotation = mod_f(nextRotation, PITWO); 
+    personController.realRotation = mod_f(nextRootRotation, PITWO); 
   }
   else
   {
-    personController.realRotation = lerp_angle(personController.realRotation, wantedRotation, dt * Settings::rotationRate);
+    personController.realRotation = nextLerpRotation;
   }
   if (abs(desiredOrientation) * RadToDeg < 15.f)
     personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(wantedRotation-personController.realRotation));
@@ -122,10 +123,14 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   draw_transform(transform);
    
+  float h = Settings::hipsHeightStand;
+  if (personController.crouching)
+  {
+    h = animationPlayer.inputGoal.tags.find(AnimationTag::Idle) != animationPlayer.inputGoal.tags.end() ?
+        Settings::hipsHeightCrouchIdle : Settings::hipsHeightCrouch;
+  }
 
-
-
-  vec3 prevPoint = vec3(0, personController.crouching ? Settings::hipsHeightCrouch : Settings::hipsHeightStand, 0);
+  vec3 prevPoint = vec3(0, h, 0);
   vec3 prevPointNew = prevPoint;
   
   speed = glm::rotateY(speed, -wantedRotation);
@@ -160,8 +165,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   animationPlayer.inputGoal.tags.clear();
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
-  if (onPlaceError < 0.3f && + abs(desiredOrientation) * RadToDeg < 10.f)
+
+  if (onPlaceError < Settings::onPlaceMoveError && + abs(desiredOrientation) * RadToDeg < Settings::onPlaceRotationError)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
+
   if (input.get_key(SDLK_SPACE) > 0)
   {
 
