@@ -25,7 +25,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
 
     if (lastName == "")
     {
-      snprintf(buf, BUF_SIZE, "test %ld", tests.size());
+      snprintf(buf, BUF_SIZE, "test %llu", tests.size());
       lastName = std::string(buf);
     }
     AnimationTest &test = tests.emplace_back();
@@ -36,7 +36,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
   for (uint i = 0; i < tests.size(); i++)
   {
     AnimationTest &test = tests[i];
-    ImGui::Text("%s, t = %f, k = %ld, m = %ld", test.name.c_str(), test.totalTime, test.keyboardEvents.size(), test.mouseMoveEvents.size());
+    ImGui::Text("%s, t = %f, k = %llu, m = %llu", test.name.c_str(), test.totalTime, test.keyboardEvents.size(), test.mouseMoveEvents.size());
     ImGui::SameLine();
     snprintf(buf, BUF_SIZE, "edit[%d]", i);
     if (ImGui::Button(buf, ImVec2(60, 20)))

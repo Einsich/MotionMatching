@@ -30,6 +30,37 @@ void write_tree(aiNode* root, int d = 1)
     write_tree(root->mChildren[i], d + 1);
 }
 
+
+struct A
+{
+  REFLECT(
+    A, 
+    (int) a,
+    (int) b,
+    (std::string) c
+  )
+};
+struct B
+{
+  REFLECT(
+    B, 
+    (int) a,
+    (std::string) c
+  )
+};
+void f()
+{
+  A a{1,2,"aaa"};
+  const string path = "test_reflectable";
+  save_object(a, path);
+  a = {0,0,""};
+  load_object(a, path);
+  B b{0,""};
+  load_object(b, path);
+  auto f = [](const auto &arg, const char *name){std::cout<<name << " " << arg<<"\n";};
+  a.reflect(f);
+  b.reflect(f);
+}
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
   const char* animData[2] = {"", "-AnimData -hUnity"};
@@ -214,7 +245,8 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       ecs::create_entity(list);
     }
   }
-  ecs::system_statistic();
+  //ecs::system_statistic();
+  f();
 
 }
 
