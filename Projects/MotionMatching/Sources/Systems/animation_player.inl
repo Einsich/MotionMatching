@@ -48,11 +48,11 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     const MotionMatchingOptimisationSettings &OptimisationSettings = 
       SettingsContainer::instance->motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
     float dist = length(main_camera_position() - transform.get_position());
-    float lodDistances[3] = {5.f, 15.f, 100.f};
+
     int j = 0;
     vec3 lodColor(0.f);
     for (; j < 3; j++)
-      if (dist < lodDistances[j])
+      if (dist < OptimisationSettings.lodDistances[j])
       { 
         lodColor[j] = 10;
         break;

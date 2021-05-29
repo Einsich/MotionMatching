@@ -41,7 +41,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
   const MotionMatchingSettings &settings,
   const MotionMatchingOptimisationSettings &optimisationSettings)
 {
-  constexpr float lod_skip_time[4] = {1.f / 30, 1.f / 3, 3.f, 30.f};
+  
   if (!solver)
     return;
   AnimationIndex saveIndex = index.current_index();
@@ -54,7 +54,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
     AnimationIndex currentIndex = index.current_index();
     bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
     lod = optimisationSettings.lodOptimisation ? lod : 0;
-    if (forceJump || skip_time >= lod_skip_time[lod])
+    if (forceJump || skip_time >= optimisationSettings.lodSkipSeconds[lod])
     {
       skip_time = 0;
       bestScore = {0,0,0,0,0};
