@@ -1,4 +1,5 @@
 #include "motion_matching.h"
+#include "../settings.h"
 #include <map>
 
 static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
@@ -36,7 +37,9 @@ AnimationLerpedIndex MotionMatching::get_index() const
 {
   return index;
 }
-void MotionMatching::update(float dt, const AnimationGoal &goal)
+void MotionMatching::update(float dt, const AnimationGoal &goal,
+  const MotionMatchingSettings &settings,
+  const MotionMatchingOptimisationSettings &optimisationSettings)
 {
   constexpr float lod_skip_time[4] = {1.f / 30, 1.f / 3, 3.f, 30.f};
   if (!solver)
@@ -50,12 +53,12 @@ void MotionMatching::update(float dt, const AnimationGoal &goal)
     
     AnimationIndex currentIndex = index.current_index();
     bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
-    lod = MotionMatchingWeights::lodOptimisation ? lod : 0;
+    lod = optimisationSettings.lodOptimisation ? lod : 0;
     if (forceJump || skip_time >= lod_skip_time[lod])
     {
       skip_time = 0;
       bestScore = {0,0,0,0,0};
-      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore);
+      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore, settings, optimisationSettings);
       
       bool can_jump = true;
       for (const AnimationIndex &index : index.get_indexes())

@@ -5,7 +5,7 @@
 #include <regex>
 #include <filesystem>
 #include <vector>
-#include "config.h"
+
 typedef unsigned int uint;
 enum class ArgType
 {
@@ -462,20 +462,13 @@ void process_inl_file(const fs::path& path)
   
   outFile << "\n";
 }
-int main(int argc, char** argv)
-{
-  add_configs(argc, (const char**)(argv));
 
-  const char *ecsPath = get_config("ecsPath");
-  if (!ecsPath)
-  {
-    printf("No ecs path, add -ecsPath [path]\n");
-    return 0;
-  }
-  std::string path(ecsPath);
+void process_folder(const std::string &path)
+{
   if (!fs::exists(path))
   {
-    return 0;
+    printf("Didn't exist path %s\n", path.c_str());
+    return;
   }
   for (auto& p : fs::recursive_directory_iterator(path))
   {
@@ -494,6 +487,11 @@ int main(int argc, char** argv)
       }
     }
   }
+
+}
+int main(int argc, char** argv)
+{
+  for (int i = 1; i < argc; i++)
+    process_folder(argv[i]);
   std::cout << "Codegen finished work\n\n";
-  return 0;
 }

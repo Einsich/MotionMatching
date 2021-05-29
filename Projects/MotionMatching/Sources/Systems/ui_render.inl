@@ -23,7 +23,7 @@ void show_settings(SettingsSet *settings)
       break;
     }
   }
-
+  
 }
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
 {
@@ -221,6 +221,80 @@ SYSTEM(ecs::SystemOrder::UI) motion_matching_statistic(
   show_best_score(mm.bestScore, mm, animationPlayer.inputGoal.tags);
 
 }
+
+template<typename T>
+void display_property(T &property, const char *name)
+{
+  ImGui::Text("%s", name);
+}
+void display_property(float &property, const char *name)
+{
+  ImGui::InputFloat(name, &property, 0.1f, 10.f, 2);
+}
+void display_property(bool &property, const char *name)
+{
+  ImGui::Checkbox(name, &property);
+}
+void display_property(vec3 &property, const char *name)
+{
+  ImGui::InputFloat3(name, &property.x);
+}
+void display_property(vec4 &property, const char *name)
+{
+  ImGui::InputFloat4(name, &property.x);
+}
+template<typename T>
+void settings_manager(vector<pair<string, T>> &settings, const char *settings_name)
+{
+  constexpr int BUF_SIZE = 64;
+  char buf[BUF_SIZE];
+  static string lastName = "";
+
+  if (ImGui::BeginMenu(settings_name))
+  {
+    static bool add = false, remove = false;
+
+    if (add)
+    {
+      settings.emplace_back("preset" + to_string(settings.size()), settings.empty() ? T() : settings.back().second);
+      settings.back().first.reserve(BUF_SIZE);
+    }
+    
+    if (ImGui::BeginTabBar("Tabs", ImGuiTabBarFlags_AutoSelectNewTabs))
+    {
+      for (uint i = 0; i < settings.size(); ++i)
+      {
+        auto &p = settings[i];
+        if (ImGui::BeginTabItem(p.first.c_str(), nullptr))
+        {
+          strcpy(buf, p.first.data());
+          if (ImGui::InputText("preset name", buf, BUF_SIZE, ImGuiInputTextFlags_EnterReturnsTrue))
+            p.first = std::string(buf);
+
+
+          const auto &f = [](auto &arg, const char *name){display_property(arg, name);};
+          p.second.reflect(f);
+
+          ImGui::EndTabItem();
+          if (remove)
+          {
+            settings.erase(settings.begin() + i);
+            i--;
+          }
+        }
+
+      }
+      
+      add = ImGui::TabItemButton("+");
+    
+      remove = ImGui::TabItemButton("-");
+      ImGui::EndTabBar();
+    }
+    ImGui::EndMenu();
+  }
+}
+
+
 SYSTEM(ecs::SystemOrder::UI) menu_ui()
 {
   if (ImGui::BeginMainMenuBar())
@@ -231,16 +305,15 @@ SYSTEM(ecs::SystemOrder::UI) menu_ui()
       show_settings(Settings::instance);
       ImGui::EndMenu();
     }
-    if (ImGui::BeginMenu("Motion matching weights"))
-    {
-      show_settings(MotionMatchingWeights::instance);
-      ImGui::EndMenu();
-    }    
     if (ImGui::BeginMenu("Profiler"))
     {
       profiler();
       ImGui::EndMenu();
     }
+    
+    settings_manager(SettingsContainer::instance->controllerSettings, "Controller");
+    settings_manager(SettingsContainer::instance->motionMatchingSettings, "Motion matching");
+    settings_manager(SettingsContainer::instance->motionMatchingOptimisationSettings, "Motion matching optimisation");
     ImGui::EndMainMenuBar();
   }
 }

@@ -21,7 +21,9 @@ public:
   MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType);
 
   AnimationLerpedIndex get_index() const;
-  void update(float dt, const AnimationGoal &goal);
+  void update(float dt, const AnimationGoal &goal,
+    const MotionMatchingSettings &settings,
+    const MotionMatchingOptimisationSettings &optimisationSettings);
   AnimationDataBasePtr get_data_base() const;
   MotionMatchingSolverPtr get_solver() const;
 };

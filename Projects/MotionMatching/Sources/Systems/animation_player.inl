@@ -7,7 +7,7 @@
 #include "config.h"
 #include "Engine/Profiler/profiler.h"
 #include "Engine/camera.h"
-
+#include "Animation/settings.h"
 
 bool raycast_in_point(vec3 point, float &dh, vec3 &normal)
 {
@@ -31,7 +31,9 @@ void detect_motion_matching_lod(C);
 SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
-  AnimationRender &animationRender)
+  AnimationRender &animationRender,
+  int *mmIndex,
+  int *mmOptimisationIndex)
 {
   float dt = Time::delta_time();
   
@@ -42,6 +44,9 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   }
   if (animationPlayer.playerType ==  AnimationPlayerType::MotionMatching)
   {
+    const MotionMatchingSettings &settings = SettingsContainer::instance->motionMatchingSettings[mmIndex ? *mmIndex : 0].second;
+    const MotionMatchingOptimisationSettings &OptimisationSettings = 
+      SettingsContainer::instance->motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
     float dist = length(main_camera_position() - transform.get_position());
     float lodDistances[3] = {5.f, 15.f, 100.f};
     int j = 0;
@@ -60,10 +65,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     static int i = 0;
     ProfilerLabel motion_matching("motion_matching" + to_string(i));
     i = (i + 1) % (MotionMatchingWeights::testCount + 1);
-    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal);
+    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, settings, OptimisationSettings);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }
-  if (animationPlayer.playerType ==  AnimationPlayerType::AnimationPlayer)
+  if (animationPlayer.playerType == AnimationPlayerType::AnimationPlayer)
   {
     animationPlayer.index.update(dt);
   }

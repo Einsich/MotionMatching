@@ -6,7 +6,9 @@ void animation_player_update_func();
 ecs::SystemDescription animation_player_update_descr("animation_player_update", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<AnimationRender>("animationRender"), false}
+  {ecs::get_type_description<AnimationRender>("animationRender"), false},
+  {ecs::get_type_description<int>("mmIndex"), true},
+  {ecs::get_type_description<int>("mmOptimisationIndex"), true}
 }, animation_player_update_func, ecs::SystemOrder::LOGIC);
 
 void animation_player_update_func()
@@ -16,7 +18,9 @@ void animation_player_update_func()
     animation_player_update(
       *begin.get_component<Transform>(0),
       *begin.get_component<AnimationPlayer>(1),
-      *begin.get_component<AnimationRender>(2)
+      *begin.get_component<AnimationRender>(2),
+       begin.get_component<int>(3),
+       begin.get_component<int>(4)
     );
   }
 }

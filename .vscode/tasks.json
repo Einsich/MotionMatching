@@ -72,13 +72,10 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./build_script.sh",
-            "args": [
-                "ECSCodeGen",
-                "rel"
-            ],
+            "command": "build_codegen_script.sh ${config:launchOption.currentConfig.BuildType}",
+
             "windows": {
-                "command": "build_script.bat"
+                "command": "build_codegen_script.bat ${config:launchOption.currentConfig.BuildType}"
             },
             "group": {
                 "kind": "build",

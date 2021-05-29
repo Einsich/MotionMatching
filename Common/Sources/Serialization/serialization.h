@@ -34,17 +34,30 @@ inline std::enable_if_t<std::is_base_of_v<ISerializable, T>, size_t> write(std::
 template<typename T>
 inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& file, const T& value)
 {
-  size_t fileSize = 0;
+  uint32_t fileSize = 0;
+  file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
+  auto beg = file.tellp();
   value.reflect([&](const auto &arg, const char *name){ 
     fileSize += write(file, string(name)); 
-    file.seekp((size_t)file.tellp() + sizeof(size_t));
-    size_t objSize = write(file, arg);
-    file.seekp((size_t)file.tellp() - objSize - sizeof(size_t));
+    auto p = file.tellp();
+    file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
+
+    std::uint32_t objSize = write(file, arg);
+    p = file.tellp();
+    file.seekp((size_t)file.tellp() - (int)objSize - sizeof(std::uint32_t));
     fileSize += write(file, objSize);
     fileSize += objSize;
+    p = file.tellp();
     file.seekp((size_t)file.tellp() + objSize);
+    printf("ln %s %d\n", name, (int)(file.tellp()-beg));
   });
-  return fileSize;
+
+  file.seekp((size_t)file.tellp() - (int)fileSize - sizeof(fileSize));
+  write(file, fileSize);
+  file.seekp((size_t)file.tellp() + fileSize);
+
+    printf("ls %d\n", fileSize);
+  return fileSize + sizeof(fileSize);
 }
 
 inline size_t write(std::ostream& os, const std::string& value) 
@@ -86,7 +99,13 @@ inline size_t write(std::ostream& os, const std::set<T>& value)
     write(os, t);
   return static_cast<std::size_t>(os.tellp() - pos);
 }
-
+template<typename T, typename U>
+inline size_t write(std::ostream& os, const std::pair<T, U>& value) 
+{
+  const auto pos = os.tellp();
+  write(os, value.first), write(os, value.second);
+  return static_cast<std::size_t>(os.tellp() - pos);
+}
 
 
 template<typename T> 
@@ -95,8 +114,6 @@ inline std::enable_if_t<!std::is_base_of_v<ISerializable, T> && !HasReflection<T
 {
   const auto pos = is.tellg();
   is.read(reinterpret_cast<char*>(&value), sizeof(value));
-  if (is.fail())
-    return 0;
   return static_cast<size_t>(is.tellg() - pos);
 }
 template<typename T> 
@@ -108,10 +125,18 @@ inline std::enable_if_t<std::is_base_of_v<ISerializable, T>, size_t> read(std::i
 template<typename T> 
 inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file, T& value)
 {
+  uint32_t curObjSize = 0;
+
+  read(file, curObjSize);
+    printf("ls %d\n", curObjSize);
+
+  auto beginObj = file.tellg();
+
   size_t fileSize = 0;
-  size_t objSize = 0;
+  std::uint32_t objSize = 0;
   string buf_name;
-  while (read(file, buf_name))
+  auto beg = file.tellg();
+  while (file.peek() != EOF && file.tellg() - beginObj < curObjSize && read(file, buf_name))
   {
     bool readed = false;
     read(file, objSize);
@@ -125,6 +150,8 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
     });
     if (!readed)
       file.seekg((size_t)file.tellg() + objSize);
+    printf("ln %s %d\n", buf_name.c_str(), (int)(file.tellg()-beg));
+  std::fflush(stdout);
   }
   return fileSize;
 }
@@ -132,17 +159,13 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
 inline size_t read(std::istream& is, std::string& value) 
 {
   const auto pos = is.tellg();
-  //value.clear();
-  int len;
+
+  std::uint32_t len = 0;
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
-  if (is.fail())
-    return 0;
+
   value.resize(len);
-  
   if (len > 0)
     is.read(value.data(), len);
-  if (is.fail())
-    return 0;
   return static_cast<size_t>(is.tellg() - pos);
 }
 template<typename T>
@@ -150,16 +173,13 @@ inline size_t read(std::istream& is, std::vector<T>& value)
 {
   const auto pos = is.tellg();
   value.clear();
-  int len;
+  std::uint32_t len = 0;
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
-  if (is.fail())
-    return 0;
+
   value.resize(len);
   for (T & t : value)
   {
     read(is, t);
-    if (is.fail())
-      return 0;
   }
   return static_cast<size_t>(is.tellg() - pos);
 }
@@ -168,19 +188,14 @@ inline size_t read(std::istream& is, std::map<T, U>& value)
 {
   const auto pos = is.tellg();
   value.clear();
-  int len;
+  std::uint32_t len = 0;
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
-  if (is.fail())
-    return 0;
-  for (int i = 0; i < len; i++)
+
+  for (std::uint32_t i = 0; i < len; i++)
   {
     T t; U u;
     read(is, t);
-    if (is.fail())
-      return 0;
     read(is, u);
-    if (is.fail())
-      return 0;
     value.insert({t, u});
   }
   return static_cast<size_t>(is.tellg() - pos);
@@ -190,21 +205,25 @@ inline size_t read(std::istream& is, std::set<T>& value)
 {
   const auto pos = is.tellg();
   value.clear();
-  int len;
+  std::uint32_t len = 0;
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
-  if (is.fail())
-    return 0;
-  for (int i = 0; i < len; i++)
+
+  for (std::uint32_t i = 0; i < len; i++)
   {
     T t;
     read(is, t);
-    if (is.fail())
-      return 0;
     value.insert(t);
   }
   return static_cast<size_t>(is.tellg() - pos);
 }
-
+template<typename T, typename U>
+inline size_t read(std::istream& is, std::pair<T, U>& value) 
+{
+  const auto pos = is.tellg();
+  read(is, value.first);
+  read(is, value.second);
+  return static_cast<size_t>(is.tellg() - pos);
+}
 void print_file_size(const std::string &path, size_t fileSize);
 
 template <typename T>

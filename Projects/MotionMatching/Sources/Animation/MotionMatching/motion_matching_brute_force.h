@@ -12,7 +12,11 @@ private:
 
 public:
   MotionMatchingBruteSolver(AnimationDataBasePtr dataBase);
-  virtual AnimationIndex solve_motion_matching(const AnimationIndex &index, const AnimationGoal &goal, MatchingScores &best_score) override final;
+  virtual AnimationIndex solve_motion_matching(const AnimationIndex &index,
+      const AnimationGoal &goal,
+      MatchingScores &best_score,
+      const MotionMatchingSettings &settings,
+      const MotionMatchingOptimisationSettings &optimisationSettings) override final;
   const vector<vector<float>> &get_matching_scores() const;
   AnimationDataBasePtr get_data_base() const;
 

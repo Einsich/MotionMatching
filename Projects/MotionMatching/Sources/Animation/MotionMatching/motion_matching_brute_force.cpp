@@ -1,4 +1,5 @@
 #include "motion_matching_brute_force.h"
+#include "../settings.h"
 MotionMatchingBruteSolver::MotionMatchingBruteSolver(AnimationDataBasePtr dataBase):
 dataBase(dataBase)
 {
@@ -8,7 +9,12 @@ dataBase(dataBase)
   for (uint i = 0; i < matchingScore.size(); i++)
     matchingScore[i].resize(dataBase->clips[i].duration, 0);
 }
-AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(const AnimationIndex &index, const AnimationGoal &goal, MatchingScores &best_score)
+AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
+  const AnimationIndex &index,
+  const AnimationGoal &goal,
+  MatchingScores &best_score,
+  const MotionMatchingSettings &settings,
+  const MotionMatchingOptimisationSettings &optimisationSettings)
 {
   if (!dataBase || !index())
     return AnimationIndex();
@@ -21,14 +27,14 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(const AnimationI
   const AnimationClip &clip = index.get_clip();
   bool forceJump = clip.loopable ? false : curCadr + 2 >= (int)clip.duration;
   int nextCadr = (curCadr + 1) % (int)clip.duration;
-  if (!forceJump && MotionMatchingWeights::trajectoryErrorToleranceTest &&
+  if (!forceJump && optimisationSettings.trajectoryErrorToleranceTest &&
     has_goal_tags(goal.tags, clip.tags))
   {
     const AnimationTrajectory &trajectory = clip.trajectories[nextCadr];
-    float trajectory_cost = goal_path_norma(trajectory, goal);
+    float trajectory_cost = goal_path_norma(trajectory, goal) ;
     float rotation_cost = rotation_norma(trajectory, goal);
-    if (trajectory_cost < MotionMatchingWeights::trajectoryErrorTolerance &&
-        rotation_cost < MotionMatchingWeights::rotationErrorTolerance)
+    if (trajectory_cost < optimisationSettings.pathErrorTolerance &&
+        rotation_cost < optimisationSettings.rotationErrorTolerance)
     {
       return AnimationIndex(dataBase, curClip, nextCadr);
     }
@@ -43,7 +49,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(const AnimationI
     for (int nextCadr = 0, n = dataBase->clips[nextClip].duration-0; nextCadr < n; nextCadr++)
     {
       
-      MatchingScores score = get_score(clip.features[nextCadr], clip.tags, feature, clip.trajectories[nextCadr], goal);
+      MatchingScores score = get_score(clip.features[nextCadr], clip.tags, feature, clip.trajectories[nextCadr], goal, settings);
       float matching = score.full_score;
       matchingScore[nextClip][nextCadr] = matching;
       if (matching < best)

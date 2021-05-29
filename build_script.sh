@@ -14,8 +14,7 @@ fi
 
 if [ $ECS_CODEGEN = "yes" ]
 then
-    ./ECSCodeGen/ECSCodeGen-rel.exe "-ecsPath -$CWD/Common/Sources/Systems"
-    ./ECSCodeGen/ECSCodeGen-rel.exe "-ecsPath -$CWD/Projects/$PROJECT/Sources/Systems"
+    ./ECSCodeGen/ECSCodeGen-rel.exe $CWD/Common/Sources/Systems $CWD/Projects/$PROJECT/Sources/Systems
 fi
 cd ../../Projects
 if [ $CMAKE = "yes" ]

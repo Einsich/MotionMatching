@@ -45,6 +45,8 @@ struct B
   REFLECT(
     B, 
     (int) a,
+    (int) b,
+    (float) f,
     (std::string) c
   )
 };
@@ -53,9 +55,10 @@ void f()
   A a{1,2,"aaa"};
   const string path = "test_reflectable";
   save_object(a, path);
+  std::fflush(stdout);
   a = {0,0,""};
   load_object(a, path);
-  B b{0,""};
+  B b{0,0,0.f,""};
   load_object(b, path);
   auto f = [](const auto &arg, const char *name){std::cout<<name << " " << arg<<"\n";};
   a.reflect(f);
@@ -65,6 +68,10 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
 {
   const char* animData[2] = {"", "-AnimData -hUnity"};
   add_configs(2, animData);
+
+  SettingsContainer::instance = new SettingsContainer();
+  load_object(*SettingsContainer::instance, "settings.bin");
+  SettingsContainer::instance->after_loading();
 
   Settings::instance = new Settings();
   //TestSettings::instance = new TestSettings();
@@ -145,6 +152,9 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
     list.add<ThirdPersonController>("thirdPersonController") =  ThirdPersonController(rotation + vec2(PI*0.5f,-0.5), 3.f);
     list.add<ecs::EntityId>("attachedCamera") = attachedCamera;
+    list.add<int>("controllerIndex") = 0;
+    list.add<int>("mmIndex") = 0;
+    list.add<int>("mmOptimisationIndex") = 0;
     ecs::create_entity(list);
   }
   if (dataBase->tests.size() > 0)
@@ -260,4 +270,58 @@ EVENT() scene_destroy(
   save_object(*Settings::instance, "man_property.bin");
   //save_object(*TestSettings::instance, "test_properties.bin");
   save_object(*MotionMatchingWeights::instance, "motion_matching_weights.bin");
+  
+  save_object(*SettingsContainer::instance, "settings.bin");
+  std::fflush(stdout);
 }
+/*
+ln (walkForwardSpeed) 30
+ln (walkSidewaySpeed) 60
+ln (walkBackwardSpeed) 91
+ln (runForwardSpeed) 120
+ln (runSidewaySpeed) 149
+ln (runBackwardSpeed) 179
+ln (hipsHeightStand) 208
+ln (hipsHeightCrouch) 238
+ln (hipsHeightCrouchIdle) 272
+ln (hipsHeightJump) 300
+ln (predictionMoveRate) 332
+ln (predictionRotationRate) 368
+ln (rotationRate) 394
+ln (maxMoveErrorRadius) 426
+ln (onPlaceMoveError) 456
+ln (onPlaceRotationError) 490
+ls 490
+ln (controllerSettings) 537
+ln (realism) 21
+ln (poseMatchingWeight) 53
+ln (velocityMatching) 80
+ln (velocityMatchingWeight) 116
+ln (goalPathMatchingWeight) 152
+ln (goalRotationMatchingWeight) 192
+ln (goalFavourTagWeight) 225
+ln (Hips) 243
+ln (HipsSpeed) 266
+ln (LeftHand) 288
+ln (LeftHandSpeed) 315
+ln (RightHand) 338
+ln (RightHandSpeed) 366
+ln (LeftToeBase) 391
+ln (LeftToeBaseSpeed) 421
+ln (RightToeBase) 447
+ln (RightToeBaseSpeed) 478
+ls 478
+ln (motionMatchingSettings) 1066
+ln (trajectoryErrorToleranceTest) 39
+ln (pathErrorTolerance) 71
+ln (rotationErrorTolerance) 107
+ln (lodOptimisation) 133
+ln (lodDistances) 167
+ln (lodSkipSeconds) 207
+ls 207
+ln (motionMatchingOptimisationSettings) 1336
+ls 1336
+
+
+
+*/

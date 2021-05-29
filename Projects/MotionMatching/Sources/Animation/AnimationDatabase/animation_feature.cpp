@@ -1,5 +1,6 @@
 #include "animation_feature.h"
 #include "animation_feature_weight.h"
+#include "../settings.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -28,16 +29,16 @@ void AnimationFeatures::set_feature(const string& name, vec3 feature)
     nodes[(int)it->second] = feature;
   
 }
-float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2)
+float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const MotionMatchingSettings &settings)
 {
   float pose_norma = 0.f, vel_norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
   {
-    pose_norma += MotionMatchingWeights::nodeWeights[i] * length(feature1.nodes[i] - feature2.nodes[i]);
-    if (MotionMatchingWeights::velocityMatching)
-      vel_norma += MotionMatchingWeights::velocitiesWeights[i] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
+    pose_norma += settings.nodeWeights[i] * length(feature1.nodes[i] - feature2.nodes[i]);
+    if (settings.velocityMatching)
+      vel_norma += settings.velocitiesWeights[i] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
   }
-  return MotionMatchingWeights::poseMatchingWeight * pose_norma + MotionMatchingWeights::velocityMatchingWeight * vel_norma;
+  return settings.poseMatchingWeight * pose_norma + settings.velocityMatchingWeight * vel_norma;
 }
 bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
 {
@@ -56,7 +57,7 @@ float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &cli
     bool exist = clips_tag.find(tag1) != clips_tag.end();
     count += exist;
   }
-  return -MotionMatchingWeights::goalFavourTagWeight * (count / goal.size());
+  return -(count / goal.size());
 }
 float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
 {
@@ -68,28 +69,28 @@ float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
     r = r > PI ? PITWO - r : r;
     rotation_norma += r;
   }
-  return MotionMatchingWeights::goalRotationMatchingWeight * rotation_norma;
+  return rotation_norma;
 }
 float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
 {
   float path_norma = 0.f;
   float distScale = length(goal.path.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-    path_norma += length((path.trajectory[i].point - goal.path.trajectory[i].point) * vec3(1, MotionMatchingWeights::YpathScale, 1));
-  return MotionMatchingWeights::goalPathMatchingWeight * path_norma / (0.1f + distScale);
+    path_norma += length((path.trajectory[i].point - goal.path.trajectory[i].point));
+  return  path_norma / (0.1f + distScale);
 }
 
 MatchingScores get_score(const AnimationFeatures& feature1, const set<AnimationTag> &clip_tags, 
-  const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal)
+  const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal,
+  const MotionMatchingSettings &settings)
 {
   MatchingScores score{0, 0, 0, 0, 0};
-  score.pose = pose_matching_norma(feature1, feature2);
-  score.goal_path = goal_path_norma(frame_trajectory, goal);
-  score.goal_rotation = rotation_norma(frame_trajectory, goal);
-  score.goal_tag = goal_tag_norma(goal.tags, clip_tags);
-  score.full_score = score.pose + score.goal_path + score.goal_rotation;
+  score.pose = pose_matching_norma(feature1, feature2, settings);
+  score.goal_path = goal_path_norma(frame_trajectory, goal) * settings.goalPathMatchingWeight;
+  score.goal_rotation = rotation_norma(frame_trajectory, goal) * settings.goalRotationMatchingWeight;
+  score.goal_tag = goal_tag_norma(goal.tags, clip_tags) * settings.goalFavourTagWeight;
+  score.full_score = score.pose * settings.realism + (score.goal_path + score.goal_rotation);
   #define NAN_LOG(var)if (std::isnan(-var)) debug_error("NAN in %s", #var);
-
 
   NAN_LOG(score.pose)
   NAN_LOG(score.goal_path)
