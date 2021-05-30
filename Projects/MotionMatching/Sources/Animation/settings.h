@@ -6,28 +6,13 @@
 struct Settings : SettingsSet
 {
   static inline Settings *instance;
+  static inline int testCount = 0;
   #define FVAR DECL_FVAR
   #define IVAR DECL_IVAR
   #define BVAR DECL_BVAR
   #define LABEL(s)
 
   #define PARAMS()\
-  FVAR(walkForwardSpeed, 1.2f, 0.f, 20.f)\
-  FVAR(walkSidewaySpeed, 1.2f, 0.f, 20.f)\
-  FVAR(walkBackwardSpeed, 1.0f, 0.f, 20.f)\
-  FVAR(runForwardSpeed, 2.7f*1.2f, 0.f, 20.f)\
-  FVAR(runSidewaySpeed, 2.f*1.2f, 0.f, 20.f)\
-  FVAR(runBackwardSpeed, 2.1f*1.2f, 0.f, 20.f)\
-  FVAR(hipsHeightStand, 0.967f, 0.f, 1.f)\
-  FVAR(hipsHeightCrouch, 0.35f, 0.f, 1.f)\
-  FVAR(hipsHeightCrouchIdle, 0.35f, 0.f, 1.f)\
-  FVAR(hipsHeightJump, 1.2f, 0.f, 2.f)\
-  FVAR(predictionMoveRate, 9.0f, 0.f, 20.f)\
-  FVAR(predictionRotationRate, 9.0f, 0.f, 20.f)\
-  FVAR(rotationRate, 2.0f, 0.f, 20.f)\
-  FVAR(maxMoveErrorRadius, 1.0f, 0.f, 5.f)\
-  FVAR(onPlaceMoveError, 0.0f, 0.f, 1.f)\
-  FVAR(onPlaceRotationError, 0.0f, 0.f, 30.f)\
   FVAR(mouseSensitivity, 0.2f, 0.f, 1.f)\
   BVAR(mouseInvertXaxis, true)\
   BVAR(disableCameraRotation, true)\

@@ -50,12 +50,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
 
   QUERY() update_attached_camera(attachedCamera, [&](Transform &transform)
   {
-    vec3 hipsPoint = vec3(0, Settings::hipsHeightStand, 0);
-
+    vec3 hipsPoint = vec3(0, 0.97f, 0);
 
     transform.get_position() = personController.realPosition + hipsPoint - thirdPersonController.currentCameraOrientation * thirdPersonController.currentZoom;
     transform.set_rotation(PI * 0.5f - thirdPersonController.currentCameraRotation.x, -thirdPersonController.currentCameraRotation.y);
-    //transform.set_rotation(PI * 0.5f, -thirdPersonController.currentCameraRotation.y);
   });
 }
 

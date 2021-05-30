@@ -2,7 +2,6 @@
 #include "common.h"
 #include "Serialization/serialization.h"
 #include <assimp/scene.h>
-#include "animation_feature_weight.h"
 #include "animation_clip.h"
 #include "../Test/animation_test.h"
 class AnimationDataBase final : public ISerializable

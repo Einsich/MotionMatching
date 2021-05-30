@@ -1,7 +1,6 @@
 #include "animation_clip.h"
 #include "config.h"
-#include "animation_feature_weight.h"
-
+#include "animation_nodes.h"
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
  const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):

@@ -7,31 +7,33 @@
 #include "Engine/transform.h"
 #include "Animation/Test/animation_tester.h"
 #include "Engine/Render/debug_arrow.h"
+
 constexpr float lerp_strength = 4.f;
 
 
-vec3 get_wanted_speed(Input &input, bool &onPlace)
+vec3 get_wanted_speed(Input &input, bool &onPlace, const ControllerSettings &settings)
 {
   float right = input.get_key(SDLK_d) - input.get_key(SDLK_a);
   float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
   
   float run = input.get_key(SDLK_LSHIFT);
-  vec3 sideDir = normalize(vec3(1.f, 0.f, 0.0f)) * right;
-  sideDir.z = abs(sideDir.z);
-  vec3 wantedSpeed =  sideDir + vec3(0.f, 0.f, 1.f) * forward;
+  
+  
+  vec3 wantedSpeed =  vec3(right, 0.f, forward);
   float speed = length(wantedSpeed);
   if (speed > 1.f)
     wantedSpeed /= speed;
   onPlace = speed < 0.1f;
   if (!onPlace)
   {
-    int moveIndex = forward > 0 ? 0 : forward < 0 ? 2 : 1;
-    float runSpeeds[3] = {Settings::runForwardSpeed, Settings::runSidewaySpeed, Settings::runBackwardSpeed};
-    float walkSpeeds[3] = {Settings::walkForwardSpeed, Settings::walkSidewaySpeed, Settings::walkBackwardSpeed};
     if(run > 0)
-      wantedSpeed *= runSpeeds[moveIndex];
+    {
+      wantedSpeed *= vec3(settings.runSidewaySpeed,0,forward > 0 ? settings.runForwardSpeed : settings.runBackwardSpeed);
+    }
     else
-      wantedSpeed *= walkSpeeds[moveIndex];
+    {
+      wantedSpeed *= vec3(settings.walkSidewaySpeed,0,forward > 0 ? settings.walkForwardSpeed : settings.walkBackwardSpeed);
+    }
   }
   return wantedSpeed;
 }
@@ -74,26 +76,28 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   AnimationPlayer &animationPlayer,
   PersonController &personController,
   AnimationTester *animationTester,
-  Transform &transform) 
+  Transform &transform,
+  int *controllerIndex) 
 {
-  
+  const ControllerSettings &settings = SettingsContainer::instance->controllerSettings[controllerIndex ? *controllerIndex : 0].second;
+
   Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
   bool onPlace;
 
-  vec3 speed = get_wanted_speed(input, onPlace);
+  vec3 speed = get_wanted_speed(input, onPlace, settings);
   if (animationTester)
   {
     //debug_log("[%f, %f, %f]", speed.x, speed.y, speed.z);input.get_key(SDLK_w)
     //debug_log("[%f]", input.get_key(SDLK_w));
   }
-  float MoveRate = Settings::predictionMoveRate, TurnRate = Settings::predictionRotationRate;
+  float MoveRate = settings.predictionMoveRate, TurnRate = settings.predictionRotationRate;
   
   //float sideRot = (abs(speed.z) < 0.1f && abs(speed.x) > 0.1f) ? -speed.x * DegToRad * 5 : 0;
 
   float wantedRotation = personController.wantedRotation;
   float nextRootRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
-  float nextLerpRotation = lerp_angle(personController.realRotation, wantedRotation, dt * Settings::rotationRate);
+  float nextLerpRotation = lerp_angle(personController.realRotation, wantedRotation, dt * settings.rotationRate);
   float desiredOrientation = mod_f(wantedRotation - personController.realRotation, PITWO);
   if (rotation_abs(nextRootRotation - wantedRotation) < rotation_abs(nextLerpRotation - wantedRotation))
   {
@@ -114,20 +118,20 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   vec3 positionDelta = personController.simulatedPosition - personController.realPosition;
   float errorRadius = length(positionDelta);
-  if (errorRadius > Settings::maxMoveErrorRadius)
+  if (errorRadius > settings.maxMoveErrorRadius)
   {
-    personController.realPosition += positionDelta * (errorRadius-Settings::maxMoveErrorRadius)/errorRadius;
+    personController.realPosition += positionDelta * (errorRadius-settings.maxMoveErrorRadius)/errorRadius;
   }
   transform.get_position() = personController.realPosition;
   transform.set_rotation(-personController.realRotation); 
 
   draw_transform(transform);
    
-  float h = Settings::hipsHeightStand;
+  float h = settings.hipsHeightStand;
   if (personController.crouching)
   {
     h = animationPlayer.inputGoal.tags.find(AnimationTag::Idle) != animationPlayer.inputGoal.tags.end() ?
-        Settings::hipsHeightCrouchIdle : Settings::hipsHeightCrouch;
+        settings.hipsHeightCrouchIdle : settings.hipsHeightCrouch;
   }
 
   vec3 prevPoint = vec3(0, h, 0);
@@ -166,7 +170,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
 
-  if (onPlaceError < Settings::onPlaceMoveError && + abs(desiredOrientation) * RadToDeg < Settings::onPlaceRotationError)
+  if (onPlaceError < settings.onPlaceMoveError && + abs(desiredOrientation) * RadToDeg < settings.onPlaceRotationError)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
 
   if (input.get_key(SDLK_SPACE) > 0)

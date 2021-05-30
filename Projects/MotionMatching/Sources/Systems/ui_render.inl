@@ -300,7 +300,7 @@ SYSTEM(ecs::SystemOrder::UI) menu_ui()
   if (ImGui::BeginMainMenuBar())
   {
     
-    if (ImGui::BeginMenu("Controller property"))
+    if (ImGui::BeginMenu("Settings"))
     {
       show_settings(Settings::instance);
       ImGui::EndMenu();

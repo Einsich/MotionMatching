@@ -64,7 +64,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     animationRender.get_material()->set_property(Property("Diffuse", lodColor));
     static int i = 0;
     ProfilerLabel motion_matching("motion_matching" + to_string(i));
-    i = (i + 1) % (MotionMatchingWeights::testCount + 1);
+    i = (i + 1) % (Settings::testCount + 1);
     animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, settings, OptimisationSettings);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }

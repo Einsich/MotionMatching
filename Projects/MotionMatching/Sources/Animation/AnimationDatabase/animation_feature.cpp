@@ -1,8 +1,20 @@
 #include "animation_feature.h"
-#include "animation_feature_weight.h"
+#include "animation_nodes.h"
 #include "../settings.h"
 #include <cmath>
 #include <cstdlib>
+#include <map>
+
+#define FEATURE(node) {#node, (int)AnimationFeaturesNode::node}, {#node "Speed",(int)AnimationFeaturesNode::Count + (int)AnimationFeaturesNode::node}
+    
+std::map<std::string, int> featureMap = {
+  FEATURE(Hips),
+  FEATURE(LeftHand),
+  FEATURE(RightHand),
+  FEATURE(LeftToeBase),
+  FEATURE(RightToeBase)
+};
+#undef FEATURE
 
 AnimationFeatures::AnimationFeatures():
   nodes((int)AnimationFeaturesNode::Count, vec3(NAN)), nodesVelocity((int)AnimationFeaturesNode::Count, vec3(NAN)){}
@@ -24,8 +36,8 @@ size_t AnimationFeatures::deserialize(std::istream& is)
 
 void AnimationFeatures::set_feature(const string& name, vec3 feature)
 {
-  auto it = MotionMatchingWeights::featureMap.find(name);
-  if (it != MotionMatchingWeights::featureMap.end())
+  auto it = featureMap.find(name);
+  if (it != featureMap.end())
     nodes[(int)it->second] = feature;
   
 }

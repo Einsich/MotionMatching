@@ -30,40 +30,6 @@ void write_tree(aiNode* root, int d = 1)
     write_tree(root->mChildren[i], d + 1);
 }
 
-
-struct A
-{
-  REFLECT(
-    A, 
-    (int) a,
-    (int) b,
-    (std::string) c
-  )
-};
-struct B
-{
-  REFLECT(
-    B, 
-    (int) a,
-    (int) b,
-    (float) f,
-    (std::string) c
-  )
-};
-void f()
-{
-  A a{1,2,"aaa"};
-  const string path = "test_reflectable";
-  save_object(a, path);
-  std::fflush(stdout);
-  a = {0,0,""};
-  load_object(a, path);
-  B b{0,0,0.f,""};
-  load_object(b, path);
-  auto f = [](const auto &arg, const char *name){std::cout<<name << " " << arg<<"\n";};
-  a.reflect(f);
-  b.reflect(f);
-}
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
   const char* animData[2] = {"", "-AnimData -hUnity"};
@@ -74,11 +40,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   SettingsContainer::instance->after_loading();
 
   Settings::instance = new Settings();
-  //TestSettings::instance = new TestSettings();
-  MotionMatchingWeights::instance = new MotionMatchingWeights();
   load_object(*Settings::instance, "man_property.bin");
-  //load_object(*TestSettings::instance, "test_properties.bin");
-  load_object(*MotionMatchingWeights::instance, "motion_matching_weights.bin");
   ecs::EntityId attachedCamera;
   {
     create_camera_manager();
@@ -160,7 +122,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   if (dataBase->tests.size() > 0)
   {
     int testN = std::min(18, (int)dataBase->tests.size());
-    MotionMatchingWeights::testCount = testN;
+    Settings::testCount = testN;
     int testK = (int)sqrt(testN);
     for (int i = 0; i < testN; i++)
     {
@@ -256,7 +218,6 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
     }
   }
   //ecs::system_statistic();
-  f();
 
 }
 
@@ -268,8 +229,6 @@ EVENT() scene_destroy(
   motionMatchingScene.dataBase->save_runtime_parameters();
   
   save_object(*Settings::instance, "man_property.bin");
-  //save_object(*TestSettings::instance, "test_properties.bin");
-  save_object(*MotionMatchingWeights::instance, "motion_matching_weights.bin");
   
   save_object(*SettingsContainer::instance, "settings.bin");
   std::fflush(stdout);
