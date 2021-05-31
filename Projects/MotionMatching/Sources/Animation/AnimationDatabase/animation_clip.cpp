@@ -141,9 +141,12 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
       }
       else
       {
-        next -= (next / (duration - 1)) * (duration - 1);
-        pathFeature.trajectory[j].point = q0*(hipsTranslation[next] - hipsTranslation[0]) + q1*(hipsTranslation[duration - 1]+point0);
-        pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+hipsRotation[duration - 1] - rotation1;
+
+        int times = next / (duration);
+        next -= (times) * (duration);
+        times -= 1;
+        pathFeature.trajectory[j].point = q0*(hipsTranslation[next] - hipsTranslation[0] + (float)times*(hipsTranslation[duration-1] - hipsTranslation[0])) + q1*(hipsTranslation[duration - 1]+point0);
+        pathFeature.trajectory[j].rotation = hipsRotation[next]-(hipsRotation[0])+(float)times* (hipsRotation[duration-1]-(hipsRotation[0])) + hipsRotation[duration - 1] - rotation1;
       }
     }
     else

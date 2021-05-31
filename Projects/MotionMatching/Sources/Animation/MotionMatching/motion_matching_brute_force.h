@@ -9,7 +9,6 @@ class MotionMatchingBruteSolver final : public MotionMatchingSolver
 private:
   AnimationDataBasePtr dataBase;
   vector<vector<float>> matchingScore;
-
 public:
   MotionMatchingBruteSolver(AnimationDataBasePtr dataBase);
   virtual AnimationIndex solve_motion_matching(const AnimationIndex &index,

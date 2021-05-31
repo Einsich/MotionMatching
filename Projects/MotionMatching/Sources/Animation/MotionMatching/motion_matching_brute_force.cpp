@@ -39,6 +39,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
       return AnimationIndex(dataBase, curClip, nextCadr);
     }
   }
+
   for(int nextClip = 0; nextClip < (int)dataBase->clips.size(); nextClip++)
   {
     const AnimationClip &clip = dataBase->clips[nextClip];
@@ -46,12 +47,13 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
       continue;
     if (!has_goal_tags(goal.tags, clip.tags))
       continue;
-    for (int nextCadr = 0, n = dataBase->clips[nextClip].duration-0; nextCadr < n; nextCadr++)
+    for (int nextCadr = 0, n = dataBase->clips[nextClip].duration; nextCadr < n; nextCadr++)
     {
       
       MatchingScores score = get_score(clip.features[nextCadr], clip.tags, feature, clip.trajectories[nextCadr], goal, settings);
       float matching = score.full_score;
-      matchingScore[nextClip][nextCadr] = matching;
+      if (updateScoreStatistic)
+        matchingScore[nextClip][nextCadr] = matching;
       if (matching < best)
       {
         best = matching;

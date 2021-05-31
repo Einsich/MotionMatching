@@ -8,6 +8,7 @@
 #include "Engine/Profiler/profiler.h"
 #include "Engine/camera.h"
 #include "Animation/settings.h"
+#include "Animation/third_person_controller.h"
 
 bool raycast_in_point(vec3 point, float &dh, vec3 &normal)
 {
@@ -32,6 +33,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
   AnimationRender &animationRender,
+  ThirdPersonController *thirdPersonController,
   int *mmIndex,
   int *mmOptimisationIndex)
 {
@@ -57,6 +59,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
         lodColor[j] = 10;
         break;
       }
+    if (j == 0)
+      lodColor = vec3(1);
     if (j == 3)
       lodColor = vec3(10);
     animationPlayer.motionMatching.lod = j;
@@ -65,7 +69,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     static int i = 0;
     ProfilerLabel motion_matching("motion_matching" + to_string(i));
     i = (i + 1) % (Settings::testCount + 1);
-    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, settings, OptimisationSettings);
+    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, settings, OptimisationSettings, thirdPersonController != nullptr);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }
   if (animationPlayer.playerType == AnimationPlayerType::AnimationPlayer)

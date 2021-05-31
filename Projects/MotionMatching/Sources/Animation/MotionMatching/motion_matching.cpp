@@ -39,7 +39,8 @@ AnimationLerpedIndex MotionMatching::get_index() const
 }
 void MotionMatching::update(float dt, const AnimationGoal &goal,
   const MotionMatchingSettings &settings,
-  const MotionMatchingOptimisationSettings &optimisationSettings)
+  const MotionMatchingOptimisationSettings &optimisationSettings,
+  bool updateStatistic)
 {
   
   if (!solver)
@@ -58,6 +59,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
     {
       skip_time = 0;
       bestScore = {0,0,0,0,0};
+      solver->updateScoreStatistic = updateStatistic;
       AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore, settings, optimisationSettings);
       
       bool can_jump = true;

@@ -23,7 +23,8 @@ public:
   AnimationLerpedIndex get_index() const;
   void update(float dt, const AnimationGoal &goal,
     const MotionMatchingSettings &settings,
-    const MotionMatchingOptimisationSettings &optimisationSettings);
+    const MotionMatchingOptimisationSettings &optimisationSettings,
+    bool updateStatistic);
   AnimationDataBasePtr get_data_base() const;
   MotionMatchingSolverPtr get_solver() const;
 };

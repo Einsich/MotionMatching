@@ -6,6 +6,7 @@ struct MotionMatchingOptimisationSettings;
 class MotionMatchingSolver
 {
 public:
+  bool updateScoreStatistic;
   virtual AnimationIndex solve_motion_matching(const AnimationIndex &index,
       const AnimationGoal &goal,
       MatchingScores &best_score,

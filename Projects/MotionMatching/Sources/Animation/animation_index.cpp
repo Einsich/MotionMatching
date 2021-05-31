@@ -41,7 +41,7 @@ void AnimationIndex::increase_cadr()
 }
 bool AnimationIndex::can_jump(const AnimationIndex &from, const AnimationIndex &to)
 {
-  constexpr int N = 30;
+  constexpr int N = 15;
   #define ABS_L(k, n) (((k + n) % n) >= N)
   if (to.get_cadr_index() + 4 >= (int)to.get_clip().duration)
     return false;

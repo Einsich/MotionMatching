@@ -38,6 +38,8 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteS
   AnimationIndex cur = mm.get_index().current_index();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
+  float scale = 10;
+  ImGui::SliderFloat("Scale", &scale, 0, 100);
   ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
   for(const AnimationClip &animation : animations)
   {
@@ -51,12 +53,12 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteS
   {
     for (uint j = 0, n = matchingScore[i].size(); j < n; j++)
     {
-      ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + i * ImGui::GetTextLineHeightWithSpacing()); 
-      float t = 1.f / matchingScore[i][j] * 1.0f;//ADD GOOG WEIGHT
+      ImVec2 p = ImVec2(pos.x  + j * size.x, pos.y + (i+1) * ImGui::GetTextLineHeightWithSpacing()); 
+      float t = 1.f / matchingScore[i][j] * scale;
       draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f - t,t, 0 ,1.f)));
     }
   }
-  ImVec2 p = ImVec2(pos.x + cur.get_cadr_index() * size.x, pos.y + cur.get_clip_index() * ImGui::GetTextLineHeightWithSpacing()); 
+  ImVec2 p = ImVec2(pos.x + cur.get_cadr_index() * size.x, pos.y + (cur.get_clip_index()+1) * ImGui::GetTextLineHeightWithSpacing()); 
   draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f, 1.f, 1.f ,1.f))); 
   ImGui::End();
 }
