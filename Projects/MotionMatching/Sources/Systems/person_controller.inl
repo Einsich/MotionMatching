@@ -107,10 +107,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   {
     personController.realRotation = nextLerpRotation;
   }
-  if (abs(desiredOrientation) * RadToDeg < 15.f)
-    personController.simulatedPosition += transform.get_rotation() * glm::rotateY(speed * dt, -(wantedRotation-personController.realRotation));
-  else
-    personController.simulatedPosition = personController.realPosition;
+  vec3 v = personController.desiredTrajectory[0] / AnimationTrajectory::timeDelays[0];
+  v.y = 0;
+
+  personController.simulatedPosition +=  v * dt;
   vec3 rootDelta = apply_root_motion_to_speed(speed, animationPlayer.rootDeltaTranslation);
 
 
