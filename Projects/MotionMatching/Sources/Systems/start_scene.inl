@@ -121,7 +121,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   }
   if (dataBase->tests.size() > 0)
   {
-    int testN = std::min(18, (int)dataBase->tests.size());
+    int testN = 50;
     Settings::testCount = testN;
     int testK = (int)sqrt(testN);
     for (int i = 0; i < testN; i++)
@@ -145,7 +145,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       list.add<vec3>("testOffset") = pos;
 
       ecs::EntityId tester = ecs::create_entity(list);
-      ecs::send_event(tester, OnAnimationTestStart(i));
+      ecs::send_event(tester, OnAnimationTestStart(i % dataBase->tests.size()));
     }
   }
   

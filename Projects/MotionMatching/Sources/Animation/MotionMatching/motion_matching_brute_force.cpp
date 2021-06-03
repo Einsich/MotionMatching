@@ -27,6 +27,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
   const AnimationClip &clip = index.get_clip();
   bool forceJump = clip.loopable ? false : curCadr + 2 >= (int)clip.duration;
   int nextCadr = (curCadr + 1) % (int)clip.duration;
+  Settings::MMCount++;
   if (!forceJump && optimisationSettings.trajectoryErrorToleranceTest &&
     has_goal_tags(goal.tags, clip.tags))
   {
@@ -36,6 +37,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
     if (trajectory_cost < optimisationSettings.pathErrorTolerance &&
         rotation_cost < optimisationSettings.rotationErrorTolerance)
     {
+      Settings::earlyTestMMCount++;
       return AnimationIndex(dataBase, curClip, nextCadr);
     }
   }

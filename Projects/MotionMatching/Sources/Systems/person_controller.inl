@@ -144,20 +144,18 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
   {
     float percentage = (i + 1.f) / AnimationTrajectory::PathLength;
-    float delay = AnimationTrajectory::timeDelays[i] - (i == 0 ? 0 : AnimationTrajectory::timeDelays[i-1]);
-    vec3 desiredDisplacement = speed * delay;
-    vec3 trajectoryDelta = personController.desiredTrajectory[i] - prevPoint;
-    prevPoint = personController.desiredTrajectory[i];
+
     
-    vec3 adjustedTrajectoryDisplacement = lerp(trajectoryDelta, desiredDisplacement,
+    trajectory[i].point = lerp(personController.desiredTrajectory[i],
+    speed * AnimationTrajectory::timeDelays[i]  + vec3(0, h, 0),
         1.f - exp(-MoveRate * percentage * dt));
-    trajectory[i].point = prevPointNew + adjustedTrajectoryDisplacement;
     prevPointNew = trajectory[i].point;
     
     trajectory[i].rotation = lerp_angle(trajectory[i].rotation, -desiredOrientation,
                     1.f - exp(-TurnRate * percentage*dt));
     
-    onPlaceError += length(adjustedTrajectoryDisplacement);
+    onPlaceError += length(personController.desiredTrajectory[i] - prevPoint);
+    prevPoint = personController.desiredTrajectory[i];
   
   }
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
@@ -170,7 +168,9 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   if(personController.crouching)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
 
-  if (onPlaceError < settings.onPlaceMoveError && + abs(desiredOrientation) * RadToDeg < settings.onPlaceRotationError)
+  float dr = abs(desiredOrientation);
+  dr = dr < PI ? dr : PITWO - dr;
+  if (onPlaceError < settings.onPlaceMoveError && dr * RadToDeg < settings.onPlaceRotationError)
     animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
 
   if (input.get_key(SDLK_SPACE) > 0)

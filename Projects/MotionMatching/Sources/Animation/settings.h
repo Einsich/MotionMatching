@@ -7,6 +7,8 @@ struct Settings : SettingsSet
 {
   static inline Settings *instance;
   static inline int testCount = 0;
+  static inline int earlyTestMMCount = 0;
+  static inline int MMCount = 0;
   #define FVAR DECL_FVAR
   #define IVAR DECL_IVAR
   #define BVAR DECL_BVAR

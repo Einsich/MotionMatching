@@ -319,3 +319,10 @@ SYSTEM(ecs::SystemOrder::UI) menu_ui()
     ImGui::EndMainMenuBar();
   }
 }
+
+SYSTEM(ecs::SystemOrder::UI) mm_early_text_perf()
+{
+  ImGui::Begin("Early mm test");
+  ImGui::Text("perf = %f %", 100.f * (float)Settings::earlyTestMMCount / Settings::MMCount);
+  ImGui::End();
+}

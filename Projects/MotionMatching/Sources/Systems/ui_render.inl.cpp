@@ -50,4 +50,19 @@ void menu_ui_func()
 }
 
 
+void mm_early_text_perf_func();
+
+ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
+}, mm_early_text_perf_func, ecs::SystemOrder::UI);
+
+void mm_early_text_perf_func()
+{
+  for (ecs::QueryIterator begin = mm_early_text_perf_descr.begin(), end = mm_early_text_perf_descr.end(); begin != end; ++begin)
+  {
+    mm_early_text_perf(
+    );
+  }
+}
+
+
 
