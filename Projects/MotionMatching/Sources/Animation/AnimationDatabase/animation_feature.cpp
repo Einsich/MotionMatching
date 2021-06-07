@@ -86,10 +86,10 @@ float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
 float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
 {
   float path_norma = 0.f;
-  float distScale = length(goal.path.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
+  //float distScale = length(goal.path.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
     path_norma += length((path.trajectory[i].point - goal.path.trajectory[i].point));
-  return  path_norma / (0.1f + distScale);
+  return  path_norma;// / (0.1f + distScale);
 }
 
 MatchingScores get_score(const AnimationFeatures& feature1, const set<AnimationTag> &clip_tags, 
