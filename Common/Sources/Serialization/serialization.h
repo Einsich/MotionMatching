@@ -31,34 +31,6 @@ inline std::enable_if_t<std::is_base_of_v<ISerializable, T>, size_t> write(std::
   const ISerializable *serializable = (const ISerializable*)(&value);
   return serializable->serialize(os);
 }
-template<typename T>
-inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& file, const T& value)
-{
-  uint32_t fileSize = 0;
-  file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
-  auto beg = file.tellp();
-  value.reflect([&](const auto &arg, const char *name){ 
-    fileSize += write(file, string(name)); 
-    auto p = file.tellp();
-    file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
-
-    std::uint32_t objSize = write(file, arg);
-    p = file.tellp();
-    file.seekp((size_t)file.tellp() - (int)objSize - sizeof(std::uint32_t));
-    fileSize += write(file, objSize);
-    fileSize += objSize;
-    p = file.tellp();
-    file.seekp((size_t)file.tellp() + objSize);
-    printf("ln %s %d\n", name, (int)(file.tellp()-beg));
-  });
-
-  file.seekp((size_t)file.tellp() - (int)fileSize - sizeof(fileSize));
-  write(file, fileSize);
-  file.seekp((size_t)file.tellp() + fileSize);
-
-    printf("ls %d\n", fileSize);
-  return fileSize + sizeof(fileSize);
-}
 
 inline size_t write(std::ostream& os, const std::string& value) 
 {
@@ -107,6 +79,35 @@ inline size_t write(std::ostream& os, const std::pair<T, U>& value)
   return static_cast<std::size_t>(os.tellp() - pos);
 }
 
+template<typename T>
+inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& file, const T& value)
+{
+  uint32_t fileSize = 0;
+  file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
+  auto beg = file.tellp();
+  value.reflect([&](const auto &arg, const char *name){ 
+    fileSize += write(file, string(name)); 
+    auto p = file.tellp();
+    file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
+
+    std::uint32_t objSize = write(file, arg);
+    p = file.tellp();
+    file.seekp((size_t)file.tellp() - (int)objSize - sizeof(std::uint32_t));
+    fileSize += write(file, objSize);
+    fileSize += objSize;
+    p = file.tellp();
+    file.seekp((size_t)file.tellp() + objSize);
+    printf("ln %s %d\n", name, (int)(file.tellp()-beg));
+  });
+
+  file.seekp((size_t)file.tellp() - (int)fileSize - sizeof(fileSize));
+  write(file, fileSize);
+  file.seekp((size_t)file.tellp() + fileSize);
+
+    printf("ls %d\n", fileSize);
+  return fileSize + sizeof(fileSize);
+}
+
 
 template<typename T> 
 inline std::enable_if_t<!std::is_base_of_v<ISerializable, T> && !HasReflection<T>::value, size_t>
@@ -122,39 +123,7 @@ inline std::enable_if_t<std::is_base_of_v<ISerializable, T>, size_t> read(std::i
   ISerializable* p = (ISerializable*)(&value);
   return p->deserialize(is);
 }
-template<typename T> 
-inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file, T& value)
-{
-  uint32_t curObjSize = 0;
 
-  read(file, curObjSize);
-    printf("ls %d\n", curObjSize);
-
-  auto beginObj = file.tellg();
-
-  size_t fileSize = 0;
-  std::uint32_t objSize = 0;
-  string buf_name;
-  auto beg = file.tellg();
-  while (file.peek() != EOF && file.tellg() - beginObj < curObjSize && read(file, buf_name))
-  {
-    bool readed = false;
-    read(file, objSize);
-    value.reflect([&](auto &arg, const char *name)
-    { 
-      if (name == buf_name && !readed)
-      {
-        fileSize += read(file, arg); 
-        readed = true;
-      }
-    });
-    if (!readed)
-      file.seekg((size_t)file.tellg() + objSize);
-    printf("ln %s %d\n", buf_name.c_str(), (int)(file.tellg()-beg));
-  std::fflush(stdout);
-  }
-  return fileSize;
-}
 
 inline size_t read(std::istream& is, std::string& value) 
 {
@@ -223,6 +192,40 @@ inline size_t read(std::istream& is, std::pair<T, U>& value)
   read(is, value.first);
   read(is, value.second);
   return static_cast<size_t>(is.tellg() - pos);
+}
+
+template<typename T> 
+inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file, T& value)
+{
+  uint32_t curObjSize = 0;
+
+  read(file, curObjSize);
+    printf("ls %d\n", curObjSize);
+
+  auto beginObj = file.tellg();
+
+  size_t fileSize = 0;
+  std::uint32_t objSize = 0;
+  string buf_name="";
+  auto beg = file.tellg();
+  while (file.peek() != EOF && file.tellg() - beginObj < curObjSize && read(file, buf_name))
+  {
+    bool readed = false;
+    read(file, objSize);
+    value.reflect([&](auto &arg, const char *name)
+    { 
+      if (name == buf_name && !readed)
+      {
+        fileSize += read(file, arg); 
+        readed = true;
+      }
+    });
+    if (!readed)
+      file.seekg((size_t)file.tellg() + objSize);
+    printf("ln %s %d\n", buf_name.c_str(), (int)(file.tellg()-beg));
+  std::fflush(stdout);
+  }
+  return fileSize;
 }
 void print_file_size(const std::string &path, size_t fileSize);
 
