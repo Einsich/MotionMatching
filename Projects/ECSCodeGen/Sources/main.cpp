@@ -5,6 +5,7 @@
 #include <regex>
 #include <filesystem>
 #include <vector>
+#include <stdarg.h>
 
 typedef unsigned int uint;
 enum class ArgType
@@ -194,6 +195,43 @@ void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
     systemsDescriptions.emplace_back(descr);
   }
 }
+
+constexpr int bufferSize = 2000;
+static char buffer[bufferSize];
+
+void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, bool event = false)
+{
+  for (uint i = event ? 1 : 0; i < args.size(); i++)
+  {
+    auto& arg  = args[i];
+    snprintf(buffer, bufferSize,
+    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)args.size() ? "" : ",");
+    outFile << buffer;
+  }
+}
+void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, bool event = false)
+{
+  int i0 = event ? 1 : 0;
+  for (uint i = i0; i < args.size(); i++)
+    {
+      auto& arg  = args[i];
+      snprintf(buffer, bufferSize,
+      "      %sbegin.get_component<%s>(%d)%s\n",
+      arg.optional ? " " : "*", arg.type.c_str(), i - i0, i + 1 == (uint)args.size() ? "" : ",");
+      outFile << buffer;
+    }
+}
+    
+void write(std::ofstream &outFile, const char *fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, bufferSize, fmt, args);
+  va_end(args);
+  outFile << buffer;
+}
+
 void process_inl_file(const fs::path& path)
 {
   std::ifstream inFile;
@@ -221,96 +259,61 @@ void process_inl_file(const fs::path& path)
   outFile << "#include " << path.filename() << "\n";
   outFile << "//Code-generator production\n\n";
 
-  
-  constexpr int bufferSize = 2000;
-  char buffer[bufferSize];
   for (auto& query : queriesDescriptions)
   {
     std::string query_descr = query.sys_name + "_descr";
-    snprintf(buffer, bufferSize,
-      "ecs::QueryDescription %s(\"%s\", {\n",
-      query_descr.c_str(), query.sys_name.c_str());
+    write(outFile,
+    "ecs::QueryDescription %s(\"%s\", {\n",
+    query_descr.c_str(), query.sys_name.c_str());
     
-    outFile << buffer;
-    for (uint i = 0; i < query.args.size(); i++)
-    {
-      auto& arg  = query.args[i];
-      snprintf(buffer, bufferSize,
-      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)query.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize, "});\n\n");
-    outFile << buffer;
+    fill_arguments(outFile, query.args);
+    write(outFile,
+    "});\n\n");
 
-    snprintf(buffer, bufferSize,
-      "template<typename Callable>\n"
-      "void %s(Callable lambda)\n"
-      "{\n"
-      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-      "  {\n"
-      "    lambda(\n",
+    write(outFile,
+    "template<typename Callable>\n"
+    "void %s(Callable lambda)\n"
+    "{\n"
+    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+    "  {\n"
+    "    lambda(\n",
       query.sys_name.c_str(), query_descr.c_str(), query_descr.c_str());
-    
-    outFile << buffer;
-    for (uint i = 0; i < query.args.size(); i++)
-    {
-      auto& arg  = query.args[i];
-      snprintf(buffer, bufferSize,
-      "      %sbegin.get_component<%s>(%d)%s\n",
-      arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)query.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize,
-        "    );\n"
-        "  }\n"
-        "}\n\n\n");
-    outFile << buffer;
+
+    pass_arguments(outFile, query.args);
+
+    write(outFile,
+    "    );\n"
+    "  }\n"
+    "}\n\n\n");
   }
 
   for (auto& query : singlqueriesDescriptions)
   {
     std::string query_descr = query.sys_name + "_descr";
-    snprintf(buffer, bufferSize,
-      "ecs::SingleQueryDescription %s(\"%s\", {\n",
-      query_descr.c_str(), query.sys_name.c_str());
-    
-    outFile << buffer;
-    for (uint i = 0; i < query.args.size(); i++)
-    {
-      auto& arg  = query.args[i];
-      snprintf(buffer, bufferSize,
-      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)query.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize, "});\n\n");
-    outFile << buffer;
+    write(outFile,
+    "ecs::SingleQueryDescription %s(\"%s\", {\n",
+    query_descr.c_str(), query.sys_name.c_str());
 
-    snprintf(buffer, bufferSize,
-      "template<typename Callable>\n"
-      "void %s(const ecs::EntityId &eid, Callable lambda)\n"
-      "{\n"
-      "  ecs::QueryIterator begin;\n"
-      "  if (ecs::get_iterator(%s, eid, begin))\n"
-      "  {\n"
-      "    lambda(\n",
-      query.sys_name.c_str(), query_descr.c_str());
-    
-    outFile << buffer;
-    for (uint i = 0; i < query.args.size(); i++)
-    {
-      auto& arg  = query.args[i];
-      snprintf(buffer, bufferSize,
-      "      %sbegin.get_component<%s>(%d)%s\n",
-      arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)query.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize,
-        "    );\n"
-        "  }\n"
-        "}\n\n\n");
-    outFile << buffer;
+    fill_arguments(outFile, query.args);
+
+    write(outFile,
+    "});\n\n");
+
+    write(outFile,
+    "template<typename Callable>\n"
+    "void %s(const ecs::EntityId &eid, Callable lambda)\n"
+    "{\n"
+    "  ecs::QueryIterator begin;\n"
+    "  if (ecs::get_iterator(%s, eid, begin))\n"
+    "  {\n"
+    "    lambda(\n",
+    query.sys_name.c_str(), query_descr.c_str());
+
+    pass_arguments(outFile, query.args);
+    write(outFile,
+    "    );\n"
+    "  }\n"
+    "}\n\n\n");
   }
 
   
@@ -319,45 +322,30 @@ void process_inl_file(const fs::path& path)
     std::string sys_descr = system.sys_name + "_descr";
     std::string sys_func = system.sys_name + "_func";
 
-    snprintf(buffer, bufferSize,
-      "void %s();\n\n"
-      "ecs::SystemDescription %s(\"%s\", {\n",
-      sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
+    write(outFile,
+    "void %s();\n\n"
+    "ecs::SystemDescription %s(\"%s\", {\n",
+    sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
-    outFile << buffer;
-    for (uint i = 0; i < system.args.size(); i++)
-    {
-      auto& arg  = system.args[i];
-      snprintf(buffer, bufferSize,
-      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)system.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize, "}, %s, %s);\n\n", sys_func.c_str(), system.order.c_str());
-    outFile << buffer;
+    fill_arguments(outFile, system.args);
+  
+    write(outFile,
+    "}, %s, %s);\n\n", sys_func.c_str(), system.order.c_str());
 
-    snprintf(buffer, bufferSize,
-      "void %s()\n"
-      "{\n"
-      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-      "  {\n"
-      "    %s(\n",
-      sys_func.c_str(), sys_descr.c_str(), sys_descr.c_str(), system.sys_name.c_str());
+    write(outFile,
+    "void %s()\n"
+    "{\n"
+    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+    "  {\n"
+    "    %s(\n",
+    sys_func.c_str(), sys_descr.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
-    outFile << buffer;
-    for (uint i = 0; i < system.args.size(); i++)
-    {
-      auto& arg  = system.args[i];
-      snprintf(buffer, bufferSize,
-      "      %sbegin.get_component<%s>(%d)%s\n",
-      arg.optional ? " " : "*", arg.type.c_str(), i, i + 1 == (uint)system.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize,
-        "    );\n"
-        "  }\n"
-        "}\n\n\n");
-    outFile << buffer;
+    pass_arguments(outFile, system.args);
+
+    write(outFile,
+    "    );\n"
+    "  }\n"
+    "}\n\n\n");
   }
 
   for (auto& event : eventsDescriptions)
@@ -365,50 +353,33 @@ void process_inl_file(const fs::path& path)
     std::string event_descr = event.sys_name + "_descr";
     std::string event_handler = event.sys_name + "_handler";
     std::string event_type = event.args[0].type;
-    snprintf(buffer, bufferSize,
-      "void %s(const %s &event);\n\n"
-      "ecs::EventDescription<%s> %s(\"%s\", {\n",
-      event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
-    
-    outFile << buffer;
-    for (uint i = 1; i < event.args.size(); i++)
-    {
-      auto& arg  = event.args[i];
-      snprintf(buffer, bufferSize,
-      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)event.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize, "}, %s);\n\n", event_handler.c_str());
-    outFile << buffer;
+    write(outFile,
+    "void %s(const %s &event);\n\n"
+    "ecs::EventDescription<%s> %s(\"%s\", {\n",
+    event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
-    snprintf(buffer, bufferSize,
-      "void %s(const %s &event)\n"
-      "{\n"
-      "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-      "  {\n"
-      "    %s(\n",
-      event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event_descr.c_str(), event.sys_name.c_str());
-    
-    outFile << buffer;
+    fill_arguments(outFile, event.args, true);
 
-    snprintf(buffer, bufferSize,
-      "      event%s\n", 1 == (uint)event.args.size() ? "" : ",");
-    outFile << buffer;
+    write(outFile, 
+    "}, %s);\n\n", event_handler.c_str());
 
-    for (uint i = 1; i < event.args.size(); i++)
-    {
-      auto& arg  = event.args[i];
-      snprintf(buffer, bufferSize,
-      "      %sbegin.get_component<%s>(%d)%s\n",
-      arg.optional ? " " : "*", arg.type.c_str(), i - 1, i + 1 == (uint)event.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize,
-        "    );\n"
-        "  }\n"
-        "}\n\n\n");
-    outFile << buffer;
+    write(outFile,
+    "void %s(const %s &event)\n"
+    "{\n"
+    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
+    "  {\n"
+    "    %s(\n",
+    event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event_descr.c_str(), event.sys_name.c_str());
+
+    write(outFile,
+    "      event%s\n", 1 == (uint)event.args.size() ? "" : ",");
+
+    pass_arguments(outFile, event.args, true);
+
+    write(outFile,
+    "    );\n"
+    "  }\n"
+    "}\n\n\n");
   }
   
   for (auto& event : eventsDescriptions)
@@ -416,51 +387,35 @@ void process_inl_file(const fs::path& path)
     std::string event_singl_descr = event.sys_name + "_singl_descr";
     std::string event_singl_handler = event.sys_name + "_singl_handler";
     std::string event_type = event.args[0].type;
-    snprintf(buffer, bufferSize,
-      "void %s(const %s &event, ecs::QueryIterator &begin);\n\n"
-      "ecs::SingleEventDescription<%s> %s(\"%s\", {\n",
-      event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str(), event.sys_name.c_str());
-    
-    outFile << buffer;
-    for (uint i = 1; i < event.args.size(); i++)
-    {
-      auto& arg  = event.args[i];
-      snprintf(buffer, bufferSize,
-      "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-      arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)event.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize, "}, %s);\n\n", event_singl_handler.c_str());
-    outFile << buffer;
+    write(outFile,
+    "void %s(const %s &event, ecs::QueryIterator &begin);\n\n"
+    "ecs::SingleEventDescription<%s> %s(\"%s\", {\n",
+    event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str(), event.sys_name.c_str());
+
+    fill_arguments(outFile, event.args, true);
+
+    write(outFile,
+    "}, %s);\n\n", event_singl_handler.c_str());
 
     bool noAgrs = (uint)event.args.size() == 1;
-    snprintf(buffer, bufferSize,
-      "void %s(const %s &event, ecs::QueryIterator &%s)\n"
-      "{\n"
-      "  %s(\n",
-      event_singl_handler.c_str(), event_type.c_str(), noAgrs ? "" : "begin", event.sys_name.c_str());
-    
-    outFile << buffer;
+    write(outFile,
+    "void %s(const %s &event, ecs::QueryIterator &%s)\n"
+    "{\n"
+    "  %s(\n",
+    event_singl_handler.c_str(), event_type.c_str(), noAgrs ? "" : "begin", event.sys_name.c_str());
 
-    snprintf(buffer, bufferSize,
-      "    event%s\n", noAgrs ? "" : ",");
-    outFile << buffer;
+    write(outFile,
+    "    event%s\n", noAgrs ? "" : ",");
 
-    for (uint i = 1; i < event.args.size(); i++)
-    {
-      auto& arg  = event.args[i];
-      snprintf(buffer, bufferSize,
-      "    %sbegin.get_component<%s>(%d)%s\n",
-      arg.optional ? " " : "*", arg.type.c_str(), i - 1, i + 1 == (uint)event.args.size() ? "" : ",");
-      outFile << buffer;
-    }
-    snprintf(buffer, bufferSize,
-        "  );\n"
-        "}\n\n\n");
-    outFile << buffer;
+    pass_arguments(outFile, event.args, true);
+
+    write(outFile,
+    "  );\n"
+    "}\n\n\n");
   }
   
   outFile << "\n";
+  outFile.close();
 }
 
 void process_folder(const std::string &path)
@@ -493,5 +448,5 @@ int main(int argc, char** argv)
 {
   for (int i = 1; i < argc; i++)
     process_folder(argv[i]);
-  std::cout << "Codegen finished work\n\n";
+  printf("Codegen finished work\n\n");
 }
