@@ -18,7 +18,6 @@ struct ParserFunctionArgument
 {
   std::string type, name;
   bool optional = false;
-  bool requered = false;
   ArgType argType; 
 };
 struct ParserSystemDescription
@@ -27,6 +26,7 @@ struct ParserSystemDescription
   std::string order;
   std::vector<std::string> tags;
   std::vector<ParserFunctionArgument> args;
+  std::vector<ParserFunctionArgument> req_args;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
 #define NAME_SYM "a-zA-Z0-9_"
@@ -161,8 +161,7 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
       parserDescr.tags.push_back(arg);
     else 
     {
-      parserDescr.args.push_back(clear_arg(arg));
-      parserDescr.args.back().requered = true;
+      parserDescr.req_args.push_back(clear_arg(arg));
     }
   }
 }
@@ -215,14 +214,23 @@ void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
 constexpr int bufferSize = 2000;
 static char buffer[bufferSize];
 
-void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, bool event = false)
+void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, 
+    const std::vector<ParserFunctionArgument> &req_args, bool event = false)
 {
   for (uint i = event ? 1 : 0; i < args.size(); i++)
   {
     auto& arg  = args[i];
     snprintf(buffer, bufferSize,
     "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)args.size() ? "" : ",");
+    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)args.size()  && req_args.empty() ? "" : ",");
+    outFile << buffer;
+  }
+  for (uint i = 0; i < req_args.size(); i++)
+  {
+    auto& arg  = req_args[i];
+    snprintf(buffer, bufferSize,
+    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_args.size()? "" : ",");
     outFile << buffer;
   }
 }
@@ -232,8 +240,6 @@ void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
   for (uint i = i0; i < args.size(); i++)
     {
       auto& arg  = args[i];
-      if (arg.requered)
-        continue;
       snprintf(buffer, bufferSize,
       "      %sbegin.get_component<%s>(%d)%s\n",
       arg.optional ? " " : "*", arg.type.c_str(), i - i0, i + 1 == (uint)args.size() ? "" : ",");
@@ -284,7 +290,7 @@ void process_inl_file(const fs::path& path)
     "ecs::QueryDescription %s(\"%s\", {\n",
     query_descr.c_str(), query.sys_name.c_str());
     
-    fill_arguments(outFile, query.args);
+    fill_arguments(outFile, query.args, query.req_args);
     write(outFile,
     "});\n\n");
 
@@ -312,7 +318,7 @@ void process_inl_file(const fs::path& path)
     "ecs::SingleQueryDescription %s(\"%s\", {\n",
     query_descr.c_str(), query.sys_name.c_str());
 
-    fill_arguments(outFile, query.args);
+    fill_arguments(outFile, query.args, query.req_args);
 
     write(outFile,
     "});\n\n");
@@ -345,7 +351,7 @@ void process_inl_file(const fs::path& path)
     "ecs::SystemDescription %s(\"%s\", {\n",
     sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
-    fill_arguments(outFile, system.args);
+    fill_arguments(outFile, system.args, system.req_args);
   
     write(outFile,
     "}, %s, %s);\n\n", sys_func.c_str(), system.order.c_str());
@@ -376,8 +382,7 @@ void process_inl_file(const fs::path& path)
     "ecs::EventDescription<%s> %s(\"%s\", {\n",
     event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
-    fill_arguments(outFile, event.args, true);
-
+    fill_arguments(outFile, event.args, event.req_args, true);
     write(outFile, 
     "}, %s);\n\n", event_handler.c_str());
 
@@ -410,7 +415,7 @@ void process_inl_file(const fs::path& path)
     "ecs::SingleEventDescription<%s> %s(\"%s\", {\n",
     event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str(), event.sys_name.c_str());
 
-    fill_arguments(outFile, event.args, true);
+    fill_arguments(outFile, event.args, event.req_args, true);
 
     write(outFile,
     "}, %s);\n\n", event_singl_handler.c_str());

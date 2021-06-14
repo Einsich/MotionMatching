@@ -99,16 +99,14 @@ EVENT() view_offset_handler(
   }
 }
 
-EVENT() crouch_event_handler(
+EVENT(ThirdPersonController thirdPersonController) crouch_event_handler(
   const KeyboardEvent &e,
-  ecs::EntityId eid,
-  ThirdPersonController &thirdPersonController)
+  ecs::EntityId eid)
 {
   ecs::send_event_immediate(eid, ControllerKeyBoardEvent(e));
 }
-EVENT() animation_player_handler(
+EVENT(ThirdPersonController thirdPersonController) animation_player_handler(
   const KeyboardEvent &e,
-  ThirdPersonController &thirdPersonController,
   AnimationPlayer &animationPlayer)
 {
   int d = 0;

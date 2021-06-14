@@ -128,8 +128,7 @@ void crouch_event_handler_handler(const KeyboardEvent &event)
   {
     crouch_event_handler(
       event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ThirdPersonController>(1)
+      *begin.get_component<ecs::EntityId>(0)
     );
   }
 }
@@ -138,8 +137,8 @@ void crouch_event_handler_handler(const KeyboardEvent &event)
 void animation_player_handler_handler(const KeyboardEvent &event);
 
 ecs::EventDescription<KeyboardEvent> animation_player_handler_descr("animation_player_handler", {
-  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, animation_player_handler_handler);
 
 void animation_player_handler_handler(const KeyboardEvent &event)
@@ -148,8 +147,7 @@ void animation_player_handler_handler(const KeyboardEvent &event)
   {
     animation_player_handler(
       event,
-      *begin.get_component<ThirdPersonController>(0),
-      *begin.get_component<AnimationPlayer>(1)
+      *begin.get_component<AnimationPlayer>(0)
     );
   }
 }
@@ -165,7 +163,7 @@ void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ec
 {
   third_controller_appear(
     event,
-    *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ThirdPersonController>(0)
   );
 }
 
@@ -182,9 +180,9 @@ void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 {
   mouse_move_handler(
     event,
-    *begin.get_component<ecs::EntityId>(0),
-    *begin.get_component<ThirdPersonController>(1),
-    *begin.get_component<PersonController>(2)
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<ThirdPersonController>(1),
+      *begin.get_component<PersonController>(2)
   );
 }
 
@@ -199,7 +197,7 @@ void mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryI
 {
   mouse_wheel_handler(
     event,
-    *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ThirdPersonController>(0)
   );
 }
 
@@ -214,7 +212,7 @@ void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIte
 {
   view_offset_handler(
     event,
-    *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ThirdPersonController>(0)
   );
 }
 
@@ -230,8 +228,7 @@ void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIt
 {
   crouch_event_handler(
     event,
-    *begin.get_component<ecs::EntityId>(0),
-    *begin.get_component<ThirdPersonController>(1)
+      *begin.get_component<ecs::EntityId>(0)
   );
 }
 
@@ -239,16 +236,15 @@ void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIt
 void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyboardEvent> animation_player_handler_singl_descr("animation_player_handler", {
-  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, animation_player_handler_singl_handler);
 
 void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
 {
   animation_player_handler(
     event,
-    *begin.get_component<ThirdPersonController>(0),
-    *begin.get_component<AnimationPlayer>(1)
+      *begin.get_component<AnimationPlayer>(0)
   );
 }
 
