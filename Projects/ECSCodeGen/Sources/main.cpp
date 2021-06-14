@@ -18,11 +18,14 @@ struct ParserFunctionArgument
 {
   std::string type, name;
   bool optional = false;
+  bool requered = false;
   ArgType argType; 
 };
 struct ParserSystemDescription
 {
-  std::string sys_file, sys_name, order;
+  std::string sys_file, sys_name;
+  std::string order;
+  std::vector<std::string> tags;
   std::vector<ParserFunctionArgument> args;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
@@ -31,12 +34,11 @@ struct ParserSystemDescription
 #define NAME "[" NAME_SYM "]+"
 #define ARGS "[" NAME_SYM "&*,:<>" SPACE_SYM "]*"
 #define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
-#define DEF_ARGS "[" NAME_SYM ",:" SPACE_SYM "]*"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
-#define SYSTEM "SYSTEM" SPACE "[(]" DEF_ARGS "[)]"
-#define QUERY "QUERY" SPACE "[(]" DEF_ARGS "[)]"
-#define EVENT "EVENT" SPACE "[(]" DEF_ARGS "[)]"
+#define SYSTEM "SYSTEM" SPACE "[(]" ARGS "[)]"
+#define QUERY "QUERY" SPACE "[(]" ARGS "[)]"
+#define EVENT "EVENT" SPACE "[(]" ARGS "[)]"
 
 static const std::regex name_regex(NAME);
 static const std::regex system_full_regex(SYSTEM SPACE NAME SPACE ARGS_L);
@@ -143,12 +145,26 @@ ParserFunctionArgument clear_arg(std::string str)
     arg.name = args[1];
   return arg;
 }
-void parse_definition(const std::string &str, ParserSystemDescription &parserDescr)
+void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
 {
-  const std::regex order_regex("ecs::SystemOrder::[A-Za-z0-9_]+");
-  auto args = get_matches(str, order_regex, 1);
-  parserDescr.order = args.empty() ? "ecs::SystemOrder::NO_ORDER" : args[0] ;
-
+  auto args_range = get_match({str.begin(), str.end()}, args_regex);
+  args_range.begin++;
+  args_range.end--;
+  std::string row_args = args_range.str();
+  auto matched_args = get_matches(row_args, arg_regex);
+  for (const std::string &arg : matched_args)
+  {
+    if (arg.find("SystemOrder") != std::string::npos)
+      parserDescr.order = arg;
+    else
+    if (arg.find("SystemTag") != std::string::npos)
+      parserDescr.tags.push_back(arg);
+    else 
+    {
+      parserDescr.args.push_back(clear_arg(arg));
+      parserDescr.args.back().requered = true;
+    }
+  }
 }
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
   const std::string &file, const std::string &file_path,
@@ -216,6 +232,8 @@ void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
   for (uint i = i0; i < args.size(); i++)
     {
       auto& arg  = args[i];
+      if (arg.requered)
+        continue;
       snprintf(buffer, bufferSize,
       "      %sbegin.get_component<%s>(%d)%s\n",
       arg.optional ? " " : "*", arg.type.c_str(), i - i0, i + 1 == (uint)args.size() ? "" : ",");

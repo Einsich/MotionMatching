@@ -58,7 +58,7 @@ void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::Query
 {
   scene_destroy(
     event,
-    *begin.get_component<MotionMatchingScene>(0)
+      *begin.get_component<MotionMatchingScene>(0)
   );
 }
 

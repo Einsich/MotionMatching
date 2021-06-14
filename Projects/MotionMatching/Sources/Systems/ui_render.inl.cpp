@@ -19,17 +19,16 @@ void briefing_ui_func()
 void motion_matching_statistic_func();
 
 ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, motion_matching_statistic_func, ecs::SystemOrder::UI);
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, motion_matching_statistic_func,  ecs::SystemOrder::UI);
 
 void motion_matching_statistic_func()
 {
   for (ecs::QueryIterator begin = motion_matching_statistic_descr.begin(), end = motion_matching_statistic_descr.end(); begin != end; ++begin)
   {
     motion_matching_statistic(
-      *begin.get_component<AnimationPlayer>(0),
-      *begin.get_component<ThirdPersonController>(1)
+      *begin.get_component<AnimationPlayer>(1)
     );
   }
 }

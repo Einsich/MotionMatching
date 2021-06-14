@@ -14,4 +14,3 @@ namespace ecs
     UI = 500
   };
 }
-#define SYSTEM_ORDER(order)

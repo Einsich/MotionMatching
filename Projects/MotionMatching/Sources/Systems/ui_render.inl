@@ -138,6 +138,7 @@ SYSTEM(ecs::SystemOrder::UI) briefing_ui()
   }
   ImGui::Text(
     "Move - WASD. Run - shift+WASD. Crouch - Z.\n"
+    "Open Settings menu bar to enable camera rotation, inverse mouse or to turn on some debug information.\n"
     "");
   ImGui::End();
 }
@@ -191,9 +192,8 @@ void profiler()
   
 }
 
-SYSTEM(ecs::SystemOrder::UI) motion_matching_statistic(
-  const AnimationPlayer &animationPlayer,
-  const ThirdPersonController &thirdPersonController)
+SYSTEM(ecs::SystemTag::TestTag, ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
+  const AnimationPlayer &animationPlayer)
 {
 
   if (!Settings::MatchingStatistic)
