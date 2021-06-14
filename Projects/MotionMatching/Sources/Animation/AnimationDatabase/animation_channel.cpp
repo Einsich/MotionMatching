@@ -6,7 +6,7 @@ AnimationChannel::AnimationChannel(uint duration, std::vector<vec3> & translatio
 {
   assert(translation.size() == 1 || translation.size() == duration);
   assert(rotation.size() == 1 || rotation.size() == duration);
-
+  ((void)duration);
 }
 vec3& AnimationChannel::get_translation(uint i)
 {

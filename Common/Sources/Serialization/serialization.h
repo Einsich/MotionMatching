@@ -84,7 +84,7 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& fil
 {
   uint32_t fileSize = 0;
   file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
-  auto beg = file.tellp();
+  //auto beg = file.tellp();
   value.reflect([&](const auto &arg, const char *name){ 
     fileSize += write(file, string(name)); 
     auto p = file.tellp();
@@ -97,14 +97,14 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& fil
     fileSize += objSize;
     p = file.tellp();
     file.seekp((size_t)file.tellp() + objSize);
-    printf("ln %s %d\n", name, (int)(file.tellp()-beg));
+    //printf("ln %s %d\n", name, (int)(file.tellp()-beg));
   });
 
   file.seekp((size_t)file.tellp() - (int)fileSize - sizeof(fileSize));
   write(file, fileSize);
   file.seekp((size_t)file.tellp() + fileSize);
 
-    printf("ls %d\n", fileSize);
+    //printf("ls %d\n", fileSize);
   return fileSize + sizeof(fileSize);
 }
 
@@ -200,14 +200,14 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
   uint32_t curObjSize = 0;
 
   read(file, curObjSize);
-    printf("ls %d\n", curObjSize);
+    //printf("ls %d\n", curObjSize);
 
   auto beginObj = file.tellg();
 
   size_t fileSize = 0;
   std::uint32_t objSize = 0;
   string buf_name="";
-  auto beg = file.tellg();
+  //auto beg = file.tellg();
   while (file.peek() != EOF && file.tellg() - beginObj < curObjSize && read(file, buf_name))
   {
     bool readed = false;
@@ -222,8 +222,8 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
     });
     if (!readed)
       file.seekg((size_t)file.tellg() + objSize);
-    printf("ln %s %d\n", buf_name.c_str(), (int)(file.tellg()-beg));
-  std::fflush(stdout);
+    //printf("ln %s %d\n", buf_name.c_str(), (int)(file.tellg()-beg));
+  //std::fflush(stdout);
   }
   return fileSize;
 }
