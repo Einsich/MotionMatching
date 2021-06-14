@@ -7,7 +7,7 @@ SYSTEM(ecs::SystemOrder::UI) fps_ui(float &fps)
   ImGui::Text("%.1f", fps = Time::fps());
   ImGui::End();
 }
-SYSTEM(ecs::SystemOrder::UI) debug_console_ui(const string &project)
+SYSTEM(ecs::SystemOrder::UI) debug_console_ui()
 {
   ImGui::Begin("debug");
   debug_show();

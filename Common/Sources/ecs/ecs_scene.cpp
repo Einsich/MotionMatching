@@ -11,8 +11,6 @@ namespace ecs
   }
   void Scene::start_scene()
   {
-    get_type_description<EntityId>("eid");
-    get_type_description<std::string>("project");
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
@@ -24,11 +22,6 @@ namespace ecs
     ui.begin = render.end;
     ui.end = systems.end();
 
-    {
-      ecs::ComponentInitializerList list;
-      list.add<std::string>("project") = std::string(get_config("project"));
-      ecs::create_entity(list);
-    }
     Input::input().keyboard_event(KeyAction::Down) += createMethodEventHandler(*this, &Scene::keyboard_event_handler);
     Input::input().mouse_click_event() += createMethodEventHandler(*this, &Scene::mouse_click_event_handler);
     Input::input().mouse_move_event() += createMethodEventHandler(*this, &Scene::mouse_move_event_handler);
