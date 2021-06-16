@@ -10,6 +10,7 @@ namespace ecs
   public: 
     std::unordered_map<uint, ComponentContainer> components;
     int count, capacity;
+    std::vector<FullTypeDescription*> fullTypeDescriptions;
     Archetype(const ComponentTypes &types, int count);
     bool in_archetype(const ComponentTypes &types);
     ComponentContainer *get_container(const TypeDescription &type);

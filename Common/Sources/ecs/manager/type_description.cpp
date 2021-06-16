@@ -25,9 +25,16 @@ namespace ecs
   }
 
   TypeDescription::TypeDescription(string_hash name_hash, uint typeId):
-    typeHash(hash(name_hash, typeId)){}
-  
-  
+    typeHash(hash(name_hash, typeId)), fullDescription(full_description()[typeHash]){}
+
+  TypeDescription::TypeDescription(uint type_hash, const FullTypeDescription &full_description):
+  typeHash(type_hash), fullDescription(full_description){}
+
+  const FullTypeDescription &TypeDescription::get_full_description() const
+  {
+    return fullDescription;
+  }
+    
   uint TypeDescription::type_hash() const 
   {
     return typeHash;

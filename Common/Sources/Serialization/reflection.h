@@ -1,6 +1,5 @@
 #pragma once
 #include <type_traits>
-#include "Serialization/serialization.h"
 
 #define REFLECTION_WITH_FIELD_NAME 1
     
@@ -110,7 +109,7 @@
 #define _PP_REFLECTION_ALL(x) _PP_EVAL x
 #define _PP_REFLECTION_SECOND(x) _PP_EAT x
 #define _PP_REFLECTION_FIELD(x) _PP_REFLECTION_ALL(x);
-#define _PP_REFLECTION_METHOD2(x) callable(x, _PP_REFLECTION_FIELD_NAME(x));
+#define _PP_REFLECTION_METHOD2(x) callable(_PP_EVAL x, _PP_REFLECTION_FIELD_NAME(_PP_EVAL x));
 #define _PP_REFLECTION_METHOD(x) _PP_REFLECTION_METHOD2(_PP_REFLECTION_SECOND(x))
 
 #define _PP_REFLECTION_PROPERTIES(...) \

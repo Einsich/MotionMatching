@@ -22,18 +22,22 @@ namespace ecs
   struct TypeDescription
   {
   private:
-    static int hash(string_hash name_hash, uint typeId)
+    static uint hash(string_hash name_hash, uint typeId)
     {
       return name_hash ^ (typeId * 16397816463u);
     }
     uint typeHash;
+    const FullTypeDescription &fullDescription;
   public:
     TypeDescription(string_hash name_hash, uint typeId);
+    TypeDescription(uint type_hash, const FullTypeDescription &full_description);
+
+    const FullTypeDescription &get_full_description() const;
 
     template<typename T>
-    static TypeDescription typeDescription(const char *name)
+    static uint typeDescriptionHash(const char *name)
     {
-      return TypeDescription(HashedString(name), type_index<T>());
+      return hash(HashedString(name), type_index<T>());
     }
 
     uint type_hash() const;
@@ -60,16 +64,20 @@ namespace ecs
   }
 
 
+
   template<typename T>
   TypeDescription get_type_description(const char *name)
   {
-    TypeDescription type(HashedString(name), type_index<T>());
-    auto it = full_description().find(type.type_hash());
+    uint typeHash = TypeDescription::typeDescriptionHash<T>(name);
+    auto it = full_description().find(typeHash);
     if (it == full_description().end())
     {
-      full_description().try_emplace(type.type_hash(), typeid(T).name(), name, type.type_hash(), sizeof(T),
+      auto result = full_description().try_emplace(typeHash, typeid(T).name(), name, typeHash, sizeof(T),
         template_copy_constructor<T>, template_destructor<T>);
+      
+      assert(result.second && "Failed to add new type in get_type_description");
+      it = result.first;
     }
-    return type;
+    return TypeDescription(typeHash, it->second);
   }
 }

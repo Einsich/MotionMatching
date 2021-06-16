@@ -8,7 +8,12 @@ namespace ecs
     components(), count(0), capacity(capacity)
   {
     for(const auto& t : types.componentsTypes)
+    {
       components.try_emplace(t.type_hash(), t.type_hash(), capacity);
+      auto it = full_description().find(t.type_hash());
+      assert(it->first && "Don't found full descr fot type in Archetype");
+      fullTypeDescriptions.push_back(&it->second);
+    }
   }
   bool Archetype::in_archetype(const ComponentTypes &types)
   {
@@ -30,7 +35,7 @@ namespace ecs
   template<typename T>
   ComponentContainer *Archetype::get_container(const char *name)
   {
-    auto it = components.find(TypeDescription::typeDescription<T>(name).hash());
+    auto it = components.find(TypeDescription::typeDescriptionHash<T>(name));
     return it == components.end() ? dummyContainer : &it->second;
   }
 

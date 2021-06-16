@@ -50,14 +50,6 @@ namespace ecs
       uint hash = type.type_hash();
       return components[hash];
     }
-    //template<typename T>
-    ComponentInitializer &operator[](const char *name)
-    {
-      TypeDescription type(HashedString(name), type_index<int>());
-      types.componentsTypes.push_back(type);
-      uint hash = type.type_hash();
-      return components[hash];
-    }
 
     template<typename T>
     T &get(const char *name)
