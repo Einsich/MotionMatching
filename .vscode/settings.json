@@ -83,7 +83,8 @@
     "xtr1common": "cpp",
     "xtree": "cpp",
     "xutility": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "*.rh": "cpp"
   },
   "launchOption.options": {
     "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy"],

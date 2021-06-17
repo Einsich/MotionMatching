@@ -16,11 +16,22 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
     snprintf(buf, N, "archetype[%d]", ++i);
     if (ImGui::TreeNode(buf))
     {
-      for (const ecs::FullTypeDescription *full_descr : archetype->fullTypeDescriptions)
+      for (uint j = 0; j < archetype->count; ++j)
       {
-        ImGui::Text("%s %s",  full_descr->name.c_str(), full_descr->type.c_str());
-      archetype->components[full_descr->hash];
-      //full_descr->copy_constructor
+        snprintf(buf, N, "entity[%d]", j);
+        if (ImGui::TreeNode(buf))
+        {
+          for (const ecs::FullTypeDescription *full_descr : archetype->fullTypeDescriptions)
+          {
+            snprintf(buf, N, "%s %s",  full_descr->name.c_str(), full_descr->type.c_str());
+            if (ImGui::TreeNode(buf))
+            {
+              full_descr->componentEdition(archetype->components[full_descr->hash].get_component<void>(j));
+              ImGui::TreePop();
+            }
+          }
+          ImGui::TreePop();
+        }
       }
       ImGui::TreePop();
     }

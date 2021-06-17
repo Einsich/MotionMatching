@@ -7,8 +7,8 @@ namespace ecs
   ComponentContainer::ComponentContainer():
   data(), typeHash(-1), count(0)
   {  }
-  ComponentContainer::ComponentContainer(uint type, int capacity):
-  data((capacity + binSize - 1) / binSize), typeHash(type), count(0), capacity(data.size() * binSize)
+  ComponentContainer::ComponentContainer(uint type, int capacity, int sizeOf):
+  data((capacity + binSize - 1) / binSize), typeHash(type), count(0), capacity(data.size() * binSize), sizeOf(sizeOf)
   { 
     for (uint i = 0; i < data.size(); ++i)
       data[i] = malloc(binSize * type_sizeof(typeHash));

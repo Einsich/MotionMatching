@@ -1,13 +1,18 @@
 #pragma once
+#include "Serialization/reflection.h"
 #include "common.h"
 #include "3dmath.h"
 #include "Render/Shader/shader.h"
+
 class Transform 
 {
 private:
-  vec3 position;
-  mat4x4 rotation;
-  vec3 scale;
+REFLECT(
+  Transform,
+  (vec3) (position),
+  (mat4x4) (rotation),
+  (vec3) (scale)
+)
 public:
   Transform();
   Transform(vec3 position, mat4x4 rotation = mat4x4(1.f), vec3 scale = vec3(1.f));

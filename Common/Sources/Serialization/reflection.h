@@ -1,6 +1,6 @@
 #pragma once
 #include <type_traits>
-
+#include "ecs/component_editor.h"
 #define REFLECTION_WITH_FIELD_NAME 1
     
 
@@ -113,6 +113,7 @@
 #define _PP_REFLECTION_METHOD(x) _PP_REFLECTION_METHOD2(_PP_REFLECTION_SECOND(x))
 
 #define _PP_REFLECTION_PROPERTIES(...) \
+public:\
 template<typename TCallable> \
   void reflect(TCallable&& callable) { \
     _PP_MAP(_PP_REFLECTION_METHOD, __VA_ARGS__) \
@@ -120,15 +121,18 @@ template<typename TCallable> \
 template<typename TCallable> \
   void reflect(TCallable&& callable) const { \
     _PP_MAP(_PP_REFLECTION_METHOD, __VA_ARGS__) \
+} \
+  void editor_reflect() {\
+    reflect([](auto &component, const char *name)->void{edit_component(component, name);});\
 }
 #define OBJECT_NAME_METHOD(obj) \
   static const char* class_name() { \
     return #obj; \
   }
 #define REFLECT(class_name, ...) \
-  OBJECT_NAME_METHOD(class_name)\
   _PP_MAP(_PP_REFLECTION_FIELD, __VA_ARGS__) \
-  _PP_REFLECTION_PROPERTIES(__VA_ARGS__)
+  _PP_REFLECTION_PROPERTIES(__VA_ARGS__)\
+  OBJECT_NAME_METHOD(class_name)
 
 
 template <typename T>

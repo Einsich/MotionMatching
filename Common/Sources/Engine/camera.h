@@ -3,6 +3,7 @@
 #include "Render/Shader/shader.h"
 #include "transform.h"
 #include "ecs/ecs.h"
+#include "Serialization/reflection.h"
 struct Camera
 {
 private:
@@ -20,10 +21,17 @@ public:
 struct ArcballCamera
 {
 public: 
-  float maxdistance, zoom, targetZoom, distance;
-  vec2 rotation, targetRotation;
-  vec3 target_position;
-  bool rotationEnable;
+  REFLECT(
+  ArcballCamera,
+  (float) (maxdistance), 
+  (float) (zoom),
+  (float) (targetZoom), 
+  (float) (distance),
+  (vec2) (rotation), 
+  (vec2) (targetRotation),
+  (vec3) (target_position),
+  (bool) (rotationEnable)
+  )
   ArcballCamera(float distance, vec2 rotation, vec3 target = vec3());
   void set_target(vec3 target);
   void calculate_transform(Transform &transform);
@@ -31,9 +39,14 @@ public:
 struct FreeCamera
 {
 public: 
-  vec2 curRotation, wantedRotation;
-  vec3 curPosition, wantedPosition;
-  bool rotationEnable;
+  REFLECT(
+  FreeCamera,
+  (vec2) (curRotation), 
+  (vec2) (wantedRotation),
+  (vec3) (curPosition), 
+  (vec3) (wantedPosition),
+  (bool) (rotationEnable)
+)
   FreeCamera(vec3 position, vec2 rotation);
   void calculate_transform(Transform &transform);
 };

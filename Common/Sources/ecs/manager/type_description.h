@@ -4,7 +4,8 @@
 #include <typeinfo>
 #include "string_hash.h"
 #include "core_interface.h"
-
+#include "Serialization/reflection.h"
+#include "../component_editor.h"
 namespace ecs
 {
   struct FullTypeDescription
@@ -14,9 +15,10 @@ namespace ecs
     uint sizeOf;
     CopyConstructor copy_constructor;
     Destructor destructor;
+    ComponentEdition componentEdition;
     FullTypeDescription();
     FullTypeDescription(const char *type, const char *name, string_hash hash, uint sizeOf,
-      CopyConstructor copy_constructor, Destructor destructor);
+      CopyConstructor copy_constructor, Destructor destructor, ComponentEdition componentEdition);
     ~FullTypeDescription() = default;
   };
   struct TypeDescription
@@ -62,8 +64,16 @@ namespace ecs
   {
     return new (dst) T(std::move(*((T*)src)));
   }
-
-
+  template<typename T>
+  std::enable_if_t<HasReflection<T>::value, void> template_component_edition(void *ptr)
+  {
+    ((T*)ptr)->editor_reflect();
+  }
+  template<typename T>
+  std::enable_if_t<!HasReflection<T>::value, void> template_component_edition(void *ptr)
+  {
+    edit_component(*((T*)ptr), typeid(T).name());
+  }
 
   template<typename T>
   TypeDescription get_type_description(const char *name)
@@ -73,7 +83,7 @@ namespace ecs
     if (it == full_description().end())
     {
       auto result = full_description().try_emplace(typeHash, typeid(T).name(), name, typeHash, sizeof(T),
-        template_copy_constructor<T>, template_destructor<T>);
+        template_copy_constructor<T>, template_destructor<T>, template_component_edition<T>);
       
       assert(result.second && "Failed to add new type in get_type_description");
       it = result.first;

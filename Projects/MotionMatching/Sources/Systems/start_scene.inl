@@ -233,54 +233,15 @@ EVENT() scene_destroy(
   save_object(*SettingsContainer::instance, "settings.bin");
   std::fflush(stdout);
 }
-/*
-ln (walkForwardSpeed) 30
-ln (walkSidewaySpeed) 60
-ln (walkBackwardSpeed) 91
-ln (runForwardSpeed) 120
-ln (runSidewaySpeed) 149
-ln (runBackwardSpeed) 179
-ln (hipsHeightStand) 208
-ln (hipsHeightCrouch) 238
-ln (hipsHeightCrouchIdle) 272
-ln (hipsHeightJump) 300
-ln (predictionMoveRate) 332
-ln (predictionRotationRate) 368
-ln (rotationRate) 394
-ln (maxMoveErrorRadius) 426
-ln (onPlaceMoveError) 456
-ln (onPlaceRotationError) 490
-ls 490
-ln (controllerSettings) 537
-ln (realism) 21
-ln (poseMatchingWeight) 53
-ln (velocityMatching) 80
-ln (velocityMatchingWeight) 116
-ln (goalPathMatchingWeight) 152
-ln (goalRotationMatchingWeight) 192
-ln (goalFavourTagWeight) 225
-ln (Hips) 243
-ln (HipsSpeed) 266
-ln (LeftHand) 288
-ln (LeftHandSpeed) 315
-ln (RightHand) 338
-ln (RightHandSpeed) 366
-ln (LeftToeBase) 391
-ln (LeftToeBaseSpeed) 421
-ln (RightToeBase) 447
-ln (RightToeBaseSpeed) 478
-ls 478
-ln (motionMatchingSettings) 1066
-ln (trajectoryErrorToleranceTest) 39
-ln (pathErrorTolerance) 71
-ln (rotationErrorTolerance) 107
-ln (lodOptimisation) 133
-ln (lodDistances) 167
-ln (lodSkipSeconds) 207
-ls 207
-ln (motionMatchingOptimisationSettings) 1336
-ls 1336
 
-
-
-*/
+EDIT_STUB(AnimationPlayer)
+EDIT_STUB(AnimationRender)
+EDIT_STUB(ThirdPersonController)
+EDIT_STUB(PersonController)
+EDIT_STUB(AnimationTester)
+EDIT_STUB(DebugArrow)
+EDIT_STUB(SkyBox)
+EDIT_STUB(MeshRender)
+EDIT_STUB(BoneRender)
+EDIT_STUB(SceneRender)
+EDIT_STUB(MotionMatchingScene)

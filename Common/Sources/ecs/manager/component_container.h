@@ -63,9 +63,9 @@ namespace ecs
     std::vector<void*> data;
   public:
     uint typeHash;
-    int count, capacity;
+    int count, capacity, sizeOf;
     ComponentContainer();
-    ComponentContainer(uint type, int capacity);
+    ComponentContainer(uint type, int capacity, int sizeOf);
     template<typename T>
     T* get_component(int i)
     {
@@ -73,7 +73,7 @@ namespace ecs
       {
         int j = i / binSize;
         i %= binSize;
-        return ((T*)data[j] + i);
+        return (T*)((char*)data[j] + i * sizeOf);
       }
       return nullptr;
     }

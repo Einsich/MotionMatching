@@ -6,6 +6,7 @@ namespace ecs
   typedef void *(*Constructor)(void*);
   typedef void *(*CopyConstructor)(void*, void*);
   typedef void (*Destructor)(void*);
+  typedef void (*ComponentEdition)(void*);
   uint type_sizeof(uint type);
   CopyConstructor type_copy_constructor(uint type);
   Destructor type_destructor(uint type);

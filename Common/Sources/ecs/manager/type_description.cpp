@@ -4,15 +4,17 @@ namespace ecs
 {
   FullTypeDescription::FullTypeDescription():
   name("bRoKeN"), hash(0), sizeOf(0),
-  copy_constructor(), destructor()
+  copy_constructor(), destructor(), componentEdition()
   {
   }
   FullTypeDescription::FullTypeDescription(const char *type, const char *name, string_hash hash, uint size_of,
-   CopyConstructor copy_constructor, Destructor destructor):
+   CopyConstructor copy_constructor, Destructor destructor, ComponentEdition componentEdition):
   type(type),
   name(name),
   hash(hash), sizeOf(size_of),
-  copy_constructor(copy_constructor), destructor(destructor)
+  copy_constructor(copy_constructor),
+  destructor(destructor),
+  componentEdition(componentEdition)
   {
     if(destructor == nullptr)
     {

@@ -9,7 +9,6 @@ namespace ecs
   private:
     friend class EntityContainer;
     uint *eid;//archetype index + index in archetype
-    bool valid() const;
   public:
     EntityId();
     EntityId(uint *id);
@@ -17,6 +16,7 @@ namespace ecs
     void migrate(uint archetype, uint index);
     EntityId(const EntityId &id);
     EntityId(EntityId &&id);
+    bool valid() const;
     int archetype_index() const;
     uint array_index() const;
     operator bool() const;

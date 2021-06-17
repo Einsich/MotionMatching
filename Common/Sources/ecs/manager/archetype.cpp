@@ -9,10 +9,10 @@ namespace ecs
   {
     for(const auto& t : types.componentsTypes)
     {
-      components.try_emplace(t.type_hash(), t.type_hash(), capacity);
       auto it = full_description().find(t.type_hash());
       assert(it->first && "Don't found full descr fot type in Archetype");
       fullTypeDescriptions.push_back(&it->second);
+      components.try_emplace(t.type_hash(), t.type_hash(), capacity, it->second.sizeOf);
     }
   }
   bool Archetype::in_archetype(const ComponentTypes &types)
