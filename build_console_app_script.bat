@@ -1,6 +1,6 @@
 @echo off
-set PROJECT=ECSCodeGen
-set BUILD_TYPE=%1
+set PROJECT=%1
+set BUILD_TYPE=%2
 
 cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B Builds/win/%PROJECT%/%BUILD_TYPE% -S Projects/%PROJECT%
 

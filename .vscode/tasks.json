@@ -72,10 +72,26 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "build_codegen_script.sh ${config:launchOption.currentConfig.BuildType}",
+            "command": "build_console_app_script.sh ECSCodeGen ${config:launchOption.currentConfig.BuildType}",
 
             "windows": {
-                "command": "build_codegen_script.bat ${config:launchOption.currentConfig.BuildType}"
+                "command": "build_console_app_script.bat ECSCodeGen ${config:launchOption.currentConfig.BuildType}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Build RT compiler",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "build_console_app_script.sh RTCompilation ${config:launchOption.currentConfig.BuildType}",
+
+            "windows": {
+                "command": "build_console_app_script.bat RTCompilation ${config:launchOption.currentConfig.BuildType}"
             },
             "group": {
                 "kind": "build",

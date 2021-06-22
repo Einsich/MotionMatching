@@ -1,6 +1,6 @@
 #!/bin/bash
-PROJECT=ECSCodeGen
-BUILD_TYPE=${1:-rel}
+PROJECT=${1:-ECSCodeGen}
+BUILD_TYPE=${2:-rel}
 
 export CC=/usr/bin/clang-6.0
 export CXX=/usr/bin/clang++-6.0

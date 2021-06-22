@@ -40,6 +40,24 @@
             "linux": {
                 "type": "cppdbg",
             }
+        },
+        {
+            "name": "Test RT compilation",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Builds/unix/RTCompilation/RTCompilation-${config:launchOption.currentConfig.BuildType}.exe",
+            "args": [
+                "${workspaceFolder}/Projects/${config:launchOption.currentConfig.Project}/Sources/Systems",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Builds/RTCompilation",
+            "windows": {
+                "program": "${workspaceFolder}/Builds/win/RTCompilation/RTCompilation-${config:launchOption.currentConfig.BuildType}.exe",
+                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+            },
+            "linux": {
+                "type": "cppdbg",
+            }
         }
     ]
 }
