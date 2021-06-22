@@ -27,10 +27,6 @@ public:
   {
     return application->context;
   }
-  static const Time& get_timer()
-  {
-    return application->timer;
-  }
 };
 string project_resources_path(const string &path);
 string common_resources_path(const string &path);

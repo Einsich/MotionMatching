@@ -91,3 +91,6 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
     }
 
 }
+EDIT_STUB(SkyBox)
+EDIT_STUB(SceneRender)
+EDIT_STUB(MeshRender)
