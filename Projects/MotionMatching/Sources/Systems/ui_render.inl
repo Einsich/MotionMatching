@@ -223,7 +223,16 @@ SYSTEM(ecs::SystemTag::TestTag, ecs::SystemOrder::UI, ThirdPersonController thir
   show_best_score(mm.bestScore, mm, animationPlayer.inputGoal.tags);
 
 }
-
+SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) current_anim_index(
+  const AnimationPlayer &animationPlayer)
+{
+  ImGui::Begin("Current anim");
+  AnimationIndex ind = animationPlayer.index.current_index();
+  const AnimationClip &clip = ind.get_clip();
+  
+  ImGui::Text("played %s[%d], %d/%d", clip.name.c_str(), ind.get_clip_index(), ind.get_cadr_index(), clip.duration);
+  ImGui::End();
+}
 template<typename T>
 void display_property(T &property, const char *name)
 {

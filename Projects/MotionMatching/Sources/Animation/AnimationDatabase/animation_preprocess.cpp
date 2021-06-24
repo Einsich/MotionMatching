@@ -8,6 +8,7 @@
 #include <assimp/postprocess.h>
 #include "Application/application.h"
 #include "config.h"
+#include <functional>
 
 string normalName(const string& badName)
 {
@@ -96,6 +97,47 @@ map<string, set<AnimationTag>> read_tag_map(const string &path)
   return tagMap;
 } 
 
+template<typename T> 
+int bisearch(const vector<pair<float, T>> &a, float t)
+{
+  int l = 0, r = a.size() - 1, m = (l + r) / 2;
+  while (r - l > 1)
+  {
+    float sampleT = a[m].first;
+    if (sampleT <= t)
+      l = m;
+    else
+      r = m;
+    m = (l + r) / 2;
+  }
+  return l;
+}
+template<typename T> 
+void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, function<pair<float,T>(int)>get_next)
+{
+  if (result.size() == duration)
+    return;
+  if (n == 1 || duration + 1 != n)
+  {
+    result = {get_next(0).second};
+    return;
+  }
+  vector<pair<float, T>> bisearchList(n + 1);
+  result.resize(duration);
+  for (uint i = 0; i < n; ++i)
+    bisearchList[i] = get_next(i);
+  bisearchList.back() = make_pair(max_time, bisearchList[n-1].second);
+
+  debug_log("t0 = %f, tn = %f", bisearchList[0].first, bisearchList[bisearchList.size() - 1].first);
+  float dt = max_time / duration;
+  for (uint i = 0; i < duration; ++i)
+  {
+    float t = dt * i;
+    int j = bisearch(bisearchList, t);
+    float t0 = bisearchList[j].first, t1 = bisearchList[j + 1].first;
+    result[i] = glm::mix(bisearchList[j].second, bisearchList[j+1].second, (t - t0) / (t1 - t0));
+  }
+}
 
 string map_unity_name(const string &name);
 AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *model)
@@ -105,20 +147,21 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
   if (get_bool_config("loadDataBaseFromFBX"))
   {
     TimeScope scope("Animation Reading from fbx file");
-    bool unityData = !strcmp(get_config("AnimData"), "Unity");
-    string path = project_resources_path(unityData ? "UnityMocap/Root_Motion" : "MocapOnline/Root_Motion");
+    bool unityData = false;// !strcmp(get_config("AnimData"), "Unity");
+    string path = project_resources_path(unityData ? "retarget_clips" : "MocapOnline/Root_Motion");
     uintmax_t animation_size = 0;
     
-    if (unityData)
+    if (false)
     {
       importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-      importer.ReadFile(path + "/WalkingMocapSet.fbx", aiProcess_GlobalScale);
+      importer.ReadFile(path + "/WalkMocapSet.fbx", aiProcess_GlobalScale);
       const aiScene* scene = importer.GetScene();
 
       AnimationTreeData avatar(scene->mRootNode->mChildren[0]);
       for (uint i = 0 ; i < avatar.nodes.size(); i++)
-        avatar.nodes[i].name = map_unity_name(avatar.nodes[i].name);
-      animDatabase->tree.apply_other_tree(avatar);
+        debug_log("%s %s", avatar.nodes[i].name.c_str(), map_unity_name(avatar.nodes[i].name).c_str());
+        //avatar.nodes[i].name = map_unity_name(avatar.nodes[i].name);
+      //animDatabase->tree.apply_other_tree(avatar);
     }
     for (const auto & entry : fs::directory_iterator(path))
     {
@@ -141,7 +184,9 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
         {
 
           const aiAnimation* animation = scene->mAnimations[animInd];
-          uint duration = (uint)animation->mDuration;
+          float maxTime = animation->mDuration / animation->mTicksPerSecond;
+          uint duration = (uint)(maxTime * 30.f);
+              debug_log("dur = %f", animation->mDuration);
 
           map<string, vector<quat>> rotation;
           map<string, vector<vec3>> translation;
@@ -152,40 +197,17 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
 
             if (unityData)
               name = map_unity_name(name);
-            auto &quats = rotation[name];
-            auto &vecs = translation[name];
-            if (animNode->mNumPositionKeys == duration + 1)
-            {
-              vecs.resize(duration);
-              for (uint j = 0; j < duration; j++)
-                vecs[j] = to_vec3(animNode->mPositionKeys[j + 1].mValue);
-            }
-            else
-            {
-              if (vecs.size() != duration)
-              {
-                if (vecs.size() == 0)
-                vecs = {animNode->mNumPositionKeys == 1 ? to_vec3(animNode->mPositionKeys[0].mValue):vec3(0.f)};
-              }
-            }
+            function<pair<float,vec3>(int)> posf = 
+              [&](int i){auto p = animNode->mPositionKeys[i]; return make_pair((float)p.mTime / animation->mTicksPerSecond, to_vec3(p.mValue));};
+            function<pair<float,quat>(int)> rotf = 
+              [&](int i){auto p = animNode->mRotationKeys[i]; return make_pair((float)p.mTime / animation->mTicksPerSecond, to_quat(p.mValue));};
+
+            remove_reusing(translation[name], duration, maxTime, animNode->mNumPositionKeys, posf);
+            remove_reusing(rotation[name], duration, maxTime, animNode->mNumRotationKeys, rotf);
             
-            if (animNode->mNumRotationKeys == duration + 1)
-            {
-              quats.resize(duration);
-              for (uint j = 0; j < duration; j++)
-                quats[j] = to_quat(animNode->mRotationKeys[j + 1].mValue);
-            }
-            else
-            {
-              if (quats.size() != duration)
-              {
-                if (quats.size() == 0)
-                quats = {animNode->mNumRotationKeys == 1 ? to_quat(animNode->mRotationKeys[0].mValue):quat(1,0,0,0)};
-              }
-            }
           }
           string animName = string(animation->mName.C_Str());
-          animDatabase->clips.emplace_back(duration, animation->mTicksPerSecond, animName,
+          animDatabase->clips.emplace_back(duration, 30, animName,
               animDatabase->tree, rotation, translation, tagMap[animName]);
 
         }

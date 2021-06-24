@@ -23,6 +23,7 @@ public:
   static bool can_jump(const AnimationIndex &from, const AnimationIndex &to);
   bool operator==(const AnimationIndex &i2);
   bool operator!=(const AnimationIndex &i2);
+  AnimationDataBasePtr get_data_base() const;
 };
 class AnimationLerpedIndex
 {

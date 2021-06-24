@@ -106,6 +106,12 @@ bool AnimationIndex::operator!=(const AnimationIndex &i2)
   return !(*this == i2);
 }
 
+AnimationDataBasePtr AnimationIndex::get_data_base() const
+{
+  return dataBase;
+}
+
+
 AnimationLerpedIndex::AnimationLerpedIndex(
   AnimationDataBasePtr dataBase, int clip1, int cadr1):
 dataBase(dataBase), indexes({AnimationIndex(dataBase, clip1, cadr1)}), indexesT({0})

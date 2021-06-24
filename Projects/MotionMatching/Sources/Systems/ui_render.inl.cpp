@@ -34,6 +34,24 @@ void motion_matching_statistic_func()
 }
 
 
+void current_anim_index_func();
+
+ecs::SystemDescription current_anim_index_descr("current_anim_index", {
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
+  {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
+}, current_anim_index_func, ecs::SystemOrder::UI);
+
+void current_anim_index_func()
+{
+  for (ecs::QueryIterator begin = current_anim_index_descr.begin(), end = current_anim_index_descr.end(); begin != end; ++begin)
+  {
+    current_anim_index(
+      *begin.get_component<AnimationPlayer>(0)
+    );
+  }
+}
+
+
 void menu_ui_func();
 
 ecs::SystemDescription menu_ui_descr("menu_ui", {
