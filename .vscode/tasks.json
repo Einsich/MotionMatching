@@ -68,6 +68,28 @@
         },
         {
             "type": "shell",
+            "label": "Build and configure project as dll",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./build_dll_script.sh",
+            "args": [
+                "${config:launchOption.currentConfig.Project}",
+                "${config:launchOption.currentConfig.BuildType}",
+                "no",
+                "yes",
+                "yes"
+            ],
+            "windows": {
+                "command": "build_dll_script.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
             "label": "Build Codegen",
             "options": {
                 "cwd": "${workspaceFolder}"

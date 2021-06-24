@@ -29,7 +29,7 @@ endif()
 set(PROJECT_ROOT ${CMAKE_SOURCE_DIR}/Sources)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
 
 include_directories(${PROJECT_ROOT})
 file(GLOB_RECURSE PROJECT_SOURCES  ${PROJECT_ROOT}/*.cpp)

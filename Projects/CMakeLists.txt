@@ -11,13 +11,13 @@ if(WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
     set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE})
-    set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib)
+    set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib)# libvcruntime.lib vcruntime.lib vcruntimed.lib msvcrtd.lib)
 else()
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
     set(ADDITIONAL_LIBS -ldl)
 endif()
-
 project(${PROJECT_NAME})
+
 
 set(PARENT_DIR ${CMAKE_SOURCE_DIR}/..)
 set(PROJECT_ROOT ${PARENT_DIR}/Projects/${PROJECT}/Sources)
@@ -49,6 +49,7 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
 
+
 if(BUILD_TYPE STREQUAL "dbg")
     if (WIN32)
         set(SANITIZER, "-fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=undefined")
@@ -75,9 +76,15 @@ include_directories(${COMMON_ROOT})
 include_directories(${PROJECT_ROOT})
 file(GLOB_RECURSE PROJECT_SOURCES  ${PROJECT_ROOT}/*.cpp)
 file(GLOB_RECURSE PROJECT_C_SOURCES ${PROJECT_ROOT}/*.c)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_C_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} SDL2 assimp Engine-${BUILD_TYPE} ${ADDITIONAL_LIBS})
+if (DLL STREQUAL "yes")
+    #include(GNUInstallDirs)
+    add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_C_SOURCES})
+    target_link_libraries(${PROJECT_NAME} SDL2 assimp Engine-${BUILD_TYPE} ${ADDITIONAL_LIBS})
+else()
+    add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_C_SOURCES})
+    target_link_libraries(${PROJECT_NAME} SDL2 assimp Engine-${BUILD_TYPE} ${ADDITIONAL_LIBS})
+endif()
 
 
 

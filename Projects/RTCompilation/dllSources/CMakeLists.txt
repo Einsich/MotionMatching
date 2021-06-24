@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION ${CMAKE_VER})
 
 set(ADDITIONAL_LIBS "")
 if(WIN32)
+
+    add_subdirectory(../../../Common ../../../Builds/win/TestDll/dev/Engine)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
     set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE})
@@ -17,7 +19,7 @@ else()
     set(ADDITIONAL_LIBS -ldl)
 endif()
 
-#project(${PROJECT_NAME})
+project(${PROJECT_NAME})
 
 if(BUILD_TYPE STREQUAL "dev")
     set(CMAKE_BUILD_TYPE  "Debug")
@@ -32,6 +34,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
 
 include_directories(${PROJECT_ROOT}/../Sources)
+include_directories(${PROJECT_ROOT}/../../../Common/Sources)
 message("${PROJECT_ROOT}")
 #file(GLOB_RECURSE PROJECT_SOURCES  ${PROJECT_ROOT}/*.cpp)
 #file(GLOB_RECURSE PROJECT_C_SOURCES ${PROJECT_ROOT}/*.c)

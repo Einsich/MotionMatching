@@ -87,7 +87,7 @@
     "*.rh": "cpp"
   },
   "launchOption.options": {
-    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy"],
+    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "Editor"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
         {"name": "Develop", "value": "dev"},
@@ -96,8 +96,8 @@
     "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
-  "Project": "Strategy",
-  "BuildType": "dev",
+  "Project": "MotionMatching",
+  "BuildType": "rel",
   "loadDataBaseFromFBX": "no"
 },
 }
