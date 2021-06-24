@@ -48,11 +48,37 @@ static constexpr unsigned int crc_table[256] = {
     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
-
+struct compiletime_string
+{
+    const char *str;
+    uint32_t n;
+    constexpr compiletime_string():str(nullptr), n(0){}
+};
 constexpr string_hash HashedString(const char *s)
 {
   uint32_t crc = 0xffffffff;
     for (uint32_t i = 0; s[i]; ++i)
         crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)s[i])) & 0xff];
     return crc ^ 0xffffffff;
+}
+
+constexpr string_hash HashedString(const compiletime_string& str)
+{
+  uint32_t crc = 0xffffffff;
+    for (uint32_t i = 0; i < str.n; ++i)
+        crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str.str[i])) & 0xff];
+    return crc ^ 0xffffffff;
+}
+template<typename T>
+constexpr compiletime_string get_T_name()
+{
+  const char *f = __PRETTY_FUNCTION__;
+  compiletime_string result;
+  while(*f && *f != '[')
+    ++f;
+  result.str = f + 5;
+  while(*f && *f != ']')
+    ++f;
+  result.n = f - result.str;
+  return result;
 }

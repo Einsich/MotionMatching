@@ -5,9 +5,8 @@ template<typename T>
 void edit_component(T &component, const char *name);
 
 
-#define EDIT_VECTOR(Type) \
-template<>\
-void edit_component(std::vector<Type> &component, const char *name)\
+#define EDIT_VECTOR(T) template<>\
+void edit_component(std::vector<T> &component, const char *name)\
 {\
   snprintf(buf, BUFN, "%s [%d]", name, (int)component.size());\
   if (ImGui::TreeNode(buf))\
@@ -21,10 +20,19 @@ void edit_component(std::vector<Type> &component, const char *name)\
     ImGui::Spacing();\
   }\
 }
-#define EDIT_STUB(Type) \
+
+#define EDIT_STUB(T) \
 template<>\
-void edit_component(Type &, const char *name)\
+void edit_component(T &, const char *name)\
 {\
   ImGui::Text("%s", name);\
   ImGui::Spacing();\
+}
+
+#define EDIT_REFLECTABLE(T)\
+template<>\
+void edit_component(T &component, const char *name)\
+{\
+  ImGui::Text("%s", name);\
+  component.editor_reflect();\
 }

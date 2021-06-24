@@ -23,6 +23,22 @@
 #include "Animation/settings.h"
 #include "Engine/resources.h"
 
+#define CUSTOM_TYPE \
+MACRO(AnimationPlayer)\
+MACRO(AnimationRender)\
+MACRO(ThirdPersonController)\
+MACRO(PersonController)\
+MACRO(AnimationTester)\
+MACRO(DebugArrow)\
+MACRO(MeshRender)\
+MACRO(BoneRender)\
+MACRO(SceneRender)\
+MACRO(MotionMatchingScene)
+
+#define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
+
+CUSTOM_TYPE
+
 void write_tree(aiNode* root, int d = 1)
 {
   debug_log("%*c%s",d, ' ', root->mName.C_Str());
@@ -32,6 +48,11 @@ void write_tree(aiNode* root, int d = 1)
 
 EVENT() start_scene(const ecs::OnSceneCreated &)
 {
+  for (const auto &info: ecs::TypeInfo::types())
+  {
+    debug_log("%s %u",info.second.name.c_str(),info.second.hashId);
+  }
+  fflush(stdout);
   const char* animData[2] = {"", "-AnimData -hUnity"};
   add_configs(2, animData);
 
@@ -217,7 +238,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
       ecs::create_entity(list);
     }
   }
-  //ecs::system_statistic();
+  ecs::system_statistic();
 
 }
 
@@ -233,15 +254,3 @@ EVENT() scene_destroy(
   save_object(*SettingsContainer::instance, "settings.bin");
   std::fflush(stdout);
 }
-
-EDIT_STUB(AnimationPlayer)
-EDIT_STUB(AnimationRender)
-EDIT_STUB(ThirdPersonController)
-EDIT_STUB(PersonController)
-EDIT_STUB(AnimationTester)
-EDIT_STUB(DebugArrow)
-EDIT_STUB(SkyBox)
-EDIT_STUB(MeshRender)
-EDIT_STUB(BoneRender)
-EDIT_STUB(SceneRender)
-EDIT_STUB(MotionMatchingScene)

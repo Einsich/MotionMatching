@@ -4,15 +4,15 @@ namespace ecs
 {
   uint type_sizeof(uint type)
   {
-    return core().types[type].sizeOf;
+    return TypeInfo::types()[type].sizeOf;
   }
   CopyConstructor type_copy_constructor(uint type)
   {
-    return core().types[type].copy_constructor;
+    return TypeInfo::types()[type].copy_constructor;
   }
   Destructor type_destructor(uint type)
   {
-    return core().types[type].destructor;
+    return TypeInfo::types()[type].destructor;
   }
 
   void add_system(SystemDescription *system_description)
@@ -24,10 +24,7 @@ namespace ecs
     core().queries.push_back(query_description);
   }
 
-  uint &global_type_index()
-  {
-    return core().globalTypeIndex;
-  }
+
 
 
   std::unordered_map<uint, FullTypeDescription> &full_description()
@@ -42,8 +39,9 @@ namespace ecs
       printf("{\n");
       for (const auto &descr : archetype->components)
       {
-        auto &type = core().types[descr.second.typeHash];
-        printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+        auto &ecsType = core().types[descr.first];
+        auto &cppType = TypeInfo::types()[descr.second.typeHash];
+        printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
       }
 
       printf("},\n");

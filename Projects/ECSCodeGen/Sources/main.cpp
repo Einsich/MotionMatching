@@ -23,7 +23,7 @@ struct ParserFunctionArgument
 struct ParserSystemDescription
 {
   std::string sys_file, sys_name;
-  std::string order;
+  std::string order = "ecs::SystemOrder::NO_ORDER";
   std::vector<std::string> tags;
   std::vector<ParserFunctionArgument> args;
   std::vector<ParserFunctionArgument> req_args;

@@ -73,10 +73,10 @@ void start_test_singl_handler(const OnAnimationTestStart &event, ecs::QueryItera
 {
   start_test(
     event,
-    *begin.get_component<AnimationTester>(0),
-    *begin.get_component<vec3>(1),
-    *begin.get_component<Transform>(2),
-    *begin.get_component<PersonController>(3)
+      *begin.get_component<AnimationTester>(0),
+      *begin.get_component<vec3>(1),
+      *begin.get_component<Transform>(2),
+      *begin.get_component<PersonController>(3)
   );
 }
 

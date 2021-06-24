@@ -1,7 +1,7 @@
 #include <vector>
 #include "skybox.h"
 #include "../camera.h"
-SkyBox::SkyBox(string path_to_folder)
+SkyBox::SkyBox(string path_to_folder):path(path_to_folder)
 {
 	skybox = CubeMap(path_to_folder);
 	skyboxShader = get_shader("sky_box");
@@ -47,4 +47,10 @@ void SkyBox::render(const mat4 view_projection, const vec3 &camera_position, boo
 	glDepthFunc(GL_LESS);
 
 	
+}
+template<>
+void edit_component(SkyBox &component, const char *name)
+{
+  ImGui::Text("%s : %s", name, component.path.c_str());
+  ImGui::Spacing();
 }

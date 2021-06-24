@@ -6,7 +6,7 @@
 #include "Engine/Profiler/profiler.h"
 #include <stack>
 #include "Animation/third_person_controller.h"
-
+#include "ecs/manager/type_info.h"
 void show_settings(SettingsSet *settings)
 {
 
@@ -329,8 +329,10 @@ SYSTEM(ecs::SystemOrder::UI) menu_ui()
   }
 }
 
+
 SYSTEM(ecs::SystemOrder::UI) mm_early_text_perf()
 {
+
   ImGui::Begin("Early mm test");
   ImGui::Text("perf = %f %%", 100.f * (float)Settings::earlyTestMMCount / Settings::MMCount);
   ImGui::End();

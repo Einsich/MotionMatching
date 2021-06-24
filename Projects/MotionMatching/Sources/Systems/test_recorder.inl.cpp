@@ -85,10 +85,10 @@ void listener_keybord_singl_handler(const KeyboardEvent &event, ecs::QueryIterat
 {
   listener_keybord(
     event,
-    *begin.get_component<MotionMatchingScene>(0),
-    *begin.get_component<int>(1),
-    *begin.get_component<int>(2),
-    *begin.get_component<float>(3)
+      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<int>(1),
+      *begin.get_component<int>(2),
+      *begin.get_component<float>(3)
   );
 }
 
@@ -106,10 +106,10 @@ void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 {
   listener_mousemove(
     event,
-    *begin.get_component<MotionMatchingScene>(0),
-    *begin.get_component<int>(1),
-    *begin.get_component<int>(2),
-    *begin.get_component<float>(3)
+      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<int>(1),
+      *begin.get_component<int>(2),
+      *begin.get_component<float>(3)
   );
 }
 

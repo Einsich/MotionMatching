@@ -140,6 +140,7 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
 }
 
 string map_unity_name(const string &name);
+
 AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *model)
 {
   AnimationDataBasePtr animDatabase = make_shared<AnimationDataBase>(model);
@@ -230,7 +231,7 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
   //debug_log("Animation at all: %d", animDatabase->clips.size());
 
   animDatabase->load_runtime_parameters();
-  
+   
   //print_tree(animDatabase->tree, 0, 0);
   return animDatabase;
 }

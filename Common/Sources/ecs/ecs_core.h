@@ -5,6 +5,7 @@
 #include "manager/string_hash.h"
 #include "manager/system_description.h"
 #include "manager/entity_id.h"
+#include "manager/type_description.h"
 namespace ecs
 {
   template<typename E>
@@ -14,7 +15,6 @@ namespace ecs
 
   struct Core
   {
-    uint globalTypeIndex = 0;
     std::unordered_map<uint, FullTypeDescription> types;
     std::vector<Archetype*> archetypes;
     std::vector<SystemDescription*> systems;

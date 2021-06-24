@@ -47,7 +47,7 @@ namespace ecs
       TypeDescription type = get_type_description<T>(name);
       if (std::find(types.componentsTypes.begin(), types.componentsTypes.end(), type) == types.componentsTypes.end())
         types.componentsTypes.push_back(type);
-      uint hash = type.type_hash();
+      uint hash = type.type_name_hash();
       return components[hash];
     }
 
@@ -62,10 +62,10 @@ namespace ecs
   {
     std::vector<void*> data;
   public:
-    uint typeHash;
+    string_hash typeHash, typeNameHash;
     int count, capacity, sizeOf;
     ComponentContainer();
-    ComponentContainer(uint type, int capacity, int sizeOf);
+    ComponentContainer(string_hash type_hash, string_hash type_name_hash, int capacity, int sizeOf);
     template<typename T>
     T* get_component(int i)
     {

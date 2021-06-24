@@ -2,48 +2,33 @@
 #include "common.h"
 namespace ecs
 {
-  FullTypeDescription::FullTypeDescription():
-  name("bRoKeN"), hash(0), sizeOf(0),
-  copy_constructor(), destructor(), componentEdition()
-  {
-  }
-  FullTypeDescription::FullTypeDescription(const char *type, const char *name, string_hash hash, uint size_of,
-   CopyConstructor copy_constructor, Destructor destructor, ComponentEdition componentEdition):
-  type(type),
+ 
+  FullTypeDescription::FullTypeDescription(const char *name, string_hash type_hash, string_hash hash):
   name(name),
-  hash(hash), sizeOf(size_of),
-  copy_constructor(copy_constructor),
-  destructor(destructor),
-  componentEdition(componentEdition)
+  typeHash(type_hash),hash(hash)
   {
-    if(destructor == nullptr)
-    {
-      debug_error("Hasn't copy constructor for %s %s", type, name);
-    }
-    if(copy_constructor == nullptr)
-    {
-      debug_error("Hasn't destructor for %s %s", type, name);
-    }
   }
-
-  TypeDescription::TypeDescription(string_hash name_hash, uint typeId):
-    typeHash(hash(name_hash, typeId)), fullDescription(full_description()[typeHash]){}
-
-  TypeDescription::TypeDescription(uint type_hash, const FullTypeDescription &full_description):
-  typeHash(type_hash), fullDescription(full_description){}
-
-  const FullTypeDescription &TypeDescription::get_full_description() const
+  const TypeInfo &FullTypeDescription::get_type_info() const
   {
-    return fullDescription;
+    auto it = TypeInfo::types().find(typeHash);
+    assert(it == TypeInfo::types().end());
+    return it->second;
   }
+  TypeDescription::TypeDescription(string_hash name_hash, string_hash type_hash):
+    typeNameHash(hash(name_hash, type_hash)){}
+
+  TypeDescription::TypeDescription(uint type_name_hash):
+  typeNameHash(type_name_hash){}
+
+
     
-  uint TypeDescription::type_hash() const 
+  uint TypeDescription::type_name_hash() const 
   {
-    return typeHash;
+    return typeNameHash;
   }  
   
   bool TypeDescription::operator==(const TypeDescription &other)
   {
-    return typeHash == other.typeHash;
+    return typeNameHash == other.typeNameHash;
   }
 }

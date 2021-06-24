@@ -72,7 +72,7 @@ void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent 
 {
   controller_mouse_move_handler(
     event,
-    *begin.get_component<PersonController>(0)
+      *begin.get_component<PersonController>(0)
   );
 }
 
@@ -87,7 +87,7 @@ void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent
 {
   controller_crouch_event_handler(
     event,
-    *begin.get_component<PersonController>(0)
+      *begin.get_component<PersonController>(0)
   );
 }
 

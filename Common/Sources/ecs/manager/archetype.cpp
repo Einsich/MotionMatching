@@ -9,10 +9,12 @@ namespace ecs
   {
     for(const auto& t : types.componentsTypes)
     {
-      auto it = full_description().find(t.type_hash());
-      assert(it->first && "Don't found full descr fot type in Archetype");
+      auto it = full_description().find(t.type_name_hash());
+      assert(it->first && "Don't found full descr for type in Archetype");
+      auto typeIt = TypeInfo::types().find(it->second.typeHash);
+      assert(typeIt->first && "Don't found this type");
       fullTypeDescriptions.push_back(&it->second);
-      components.try_emplace(t.type_hash(), t.type_hash(), capacity, it->second.sizeOf);
+      components.try_emplace(t.type_name_hash(), typeIt->second.hashId, t.type_name_hash(), capacity, typeIt->second.sizeOf);
     }
   }
   bool Archetype::in_archetype(const ComponentTypes &types)
@@ -21,7 +23,7 @@ namespace ecs
       return false;
     for (const TypeDescription &descr : types.componentsTypes)
     {
-      auto it = components.find(descr.type_hash());
+      auto it = components.find(descr.type_name_hash());
       if (it == components.end())
         return false;
     }
@@ -29,7 +31,8 @@ namespace ecs
   }
   ComponentContainer *Archetype::get_container(const TypeDescription &type)
   {
-    auto it = components.find(type.type_hash());
+    auto it = components.find(type.type_name_hash
+    ());
     return it == components.end() ? dummyContainer : &it->second;
   }
   template<typename T>

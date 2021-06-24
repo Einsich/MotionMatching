@@ -64,7 +64,7 @@ namespace ecs
       ComponentContainer* container = archetype->get_container(arg.descr);
       if (!arg.optional)
       {
-        if (container == nullptr || container->typeHash != arg.descr.type_hash())
+        if (container == nullptr || container->typeNameHash != arg.descr.type_name_hash())
         {
           breaked = true;
           break;
@@ -99,8 +99,9 @@ namespace ecs
     printf("added\n");
     for (const auto &component : archetype->components)
     {
-      auto &type = core().types[component.second.typeHash];
-      printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+      auto &ecsType = core().types[component.first];
+      auto &cppType = TypeInfo::types()[ecsType.typeHash];
+      printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
     }
     register_archetype(archetype);
     
@@ -178,8 +179,9 @@ namespace ecs
         printf("---\n");
         for (const auto &component : archetype.archetype->components)
         {
-          auto &type = core().types[component.second.typeHash];
-          printf("  %s %s\n",type.type.c_str(), type.name.c_str());
+          auto &ecsType = core().types[component.first];
+          auto &cppType = TypeInfo::types()[ecsType.typeHash];
+          printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
         }
       }
       printf("}\n");
