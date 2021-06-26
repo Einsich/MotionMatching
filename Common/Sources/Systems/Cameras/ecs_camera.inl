@@ -5,6 +5,23 @@
 
 // CameraManager
 
+template<typename Callable>
+static void find_all_created_camera(Callable);
+
+EVENT() create_camera_manager(const ecs::OnSceneCreated &)
+{
+  std::vector<ecs::EntityId> cameras;
+  ecs::EntityId mainCamera;
+  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
+    cameras.push_back(eid);
+    if (isMainCamera)
+      mainCamera = eid;
+  });
+  ecs::ComponentInitializerList list;
+  list.add<std::vector<ecs::EntityId>>("sceneCameras") = cameras;
+  list.add<ecs::EntityId>("mainCamera") = mainCamera;
+  ecs::create_entity(list);
+}
 
 template<typename Callable>
 static void set_main_cam_query(const ecs::EntityId&, Callable);
@@ -83,7 +100,7 @@ EVENT() arccam_mouse_move_handler(
     return;
   if (arcballCamera.rotationEnable)
   {
-    float const pixToRad = PI / 180.f * 0.2f;
+    float const pixToRad = DegToRad * arcballCamera.mouseSensitivity;
     arcballCamera.targetRotation += vec2(e.dx, e.dy) * pixToRad;
   }
 }
@@ -94,7 +111,7 @@ EVENT() arccam_mouse_click_handler(
 {
   if (!isMainCamera)
     return;
-  if (e.buttonType == MouseButtonType::MiddleButton)
+  if (e.buttonType == MouseButtonType::RightButton)
   {
     arcballCamera.rotationEnable = e.action == MouseButtonAction::Down;
   }
@@ -107,8 +124,8 @@ EVENT() arccam_mouse_wheel_handler(
 {
   if (!isMainCamera)
     return;
-  arcballCamera.targetZoom -= e.wheel * 0.03f;
-  arcballCamera.targetZoom = glm::clamp(arcballCamera.targetZoom, 0.05f, 1.f);
+  arcballCamera.targetZoom -= e.wheel * arcballCamera.wheelSensitivity;
+  arcballCamera.targetZoom = glm::clamp(arcballCamera.targetZoom, 0.f, 1.f);
 }
 
 template<typename Callable>
@@ -123,16 +140,32 @@ SYSTEM() arcball_camera_update(
     return;
   QUERY() check_arcball_target(arcballCameraTarget, [&](Transform &transform)
   {
-    arcballCamera.target_position = transform.get_position();
+    arcballCamera.targetPosition = transform.get_position();
   });
+  float lerpFactor = arcballCamera.lerpStrength * Time::delta_time();
 
-  arcballCamera.zoom = lerp(arcballCamera.zoom, arcballCamera.targetZoom, Time::delta_time() * 10);
-  arcballCamera.rotation = lerp(arcballCamera.rotation, arcballCamera.targetRotation, Time::delta_time() * 10);
-  arcballCamera.distance = arcballCamera.maxdistance * arcballCamera.zoom;
+  arcballCamera.curZoom = lerp(arcballCamera.curZoom, arcballCamera.targetZoom, lerpFactor);
+  arcballCamera.curRotation = lerp(arcballCamera.curRotation, arcballCamera.targetRotation, lerpFactor);
+  arcballCamera.distance = arcballCamera.maxdistance * arcballCamera.curZoom;
   arcballCamera.calculate_transform(transform);
 }
 
 //FreeCamera
+
+void update_free_cam_from_transform(FreeCamera &freeCamera, const Transform &transform)
+{
+  if (length2(freeCamera.curPosition - transform.get_position()) > 0.0001f)
+  {
+     freeCamera.curPosition =  freeCamera.wantedPosition = transform.get_position();
+  }
+  vec2 yawPitch;
+  float roll;
+  glm::extractEulerAngleYXZ((mat4)transform.get_rotation(), yawPitch.x, yawPitch.y, roll);
+  if (length2(mod_f(yawPitch - freeCamera.curRotation, PI)) > 0.0001f)
+  {
+    freeCamera.curRotation = freeCamera.wantedRotation = yawPitch;
+  }
+}
 
 EVENT() freecam_created(
   const ecs::OnEntityCreated &,
@@ -140,22 +173,27 @@ EVENT() freecam_created(
   FreeCamera &freeCamera,
   Transform &transform)
 { 
-  transform.set_position(freeCamera.curPosition);
-  freeCamera.calculate_transform(transform);
+  update_free_cam_from_transform(freeCamera, transform);
   register_camera(eid);
 }
 
 EVENT() freecam_mouse_move_handler(
   const MouseMoveEvent &e,
   FreeCamera &freeCamera,
+  Transform &transform,
   bool isMainCamera)
 {
   if (!isMainCamera)
     return;
-  if (freeCamera.rotationEnable)
+  if (freeCamera.rotationable)
   {
-    float const pixToRad = PI / 180.f * 0.2f;
+    float const pixToRad = freeCamera.rotationSensitivity * DegToRad;
     freeCamera.wantedRotation += vec2(e.dx, e.dy) * pixToRad;
+  } else
+  if (freeCamera.screenSpaceMovable)
+  {
+    vec2 d = vec2(-e.dx, e.dy) * freeCamera.screenMoveSensitivity;
+    freeCamera.wantedPosition += transform.get_right() * d.x +  transform.get_up() * d.y;
   }
 }
 EVENT() freecam_mouse_click_handler(
@@ -165,29 +203,32 @@ EVENT() freecam_mouse_click_handler(
 {
   if (!isMainCamera)
     return;
-  if (e.buttonType == MouseButtonType::MiddleButton)
+  switch (e.buttonType)
   {
-    freeCamera.rotationEnable = e.action == MouseButtonAction::Down;
+  case MouseButtonType::RightButton: freeCamera.rotationable = e.action == MouseButtonAction::Down; break;
+  case MouseButtonType::MiddleButton: freeCamera.screenSpaceMovable = e.action == MouseButtonAction::Down; break;
+  default:
+    break;
   }
 }
 
-SYSTEM() arccam_update(
+SYSTEM() freecamera_update(
   FreeCamera &freeCamera,
   bool isMainCamera,
   Transform &transform)
 {
   if (!isMainCamera)
     return;
-  
+ 
+  update_free_cam_from_transform(freeCamera, transform);
   vec3 delta = -transform.get_forward() * (Input::input().get_key(SDLK_w) - Input::input().get_key(SDLK_s)) +
               transform.get_right() * (Input::input().get_key(SDLK_d) - Input::input().get_key(SDLK_a)) +
               transform.get_up() * (Input::input().get_key(SDLK_e) - Input::input().get_key(SDLK_c));
-  const float minSpeed = 5.6f;
-  const float maxSpeed = 20.6f;
-  float speed = lerp(minSpeed, maxSpeed, Input::input().get_key(SDLK_LSHIFT));
+
+  float speed = lerp(freeCamera.minSpeed, freeCamera.maxSpeed, Input::input().get_key(SDLK_LSHIFT));
   freeCamera.wantedPosition += delta * speed * Time::delta_time();
 
-  float lerpFactor = Time::delta_time() * 20.f;
+  float lerpFactor = Time::delta_time() * freeCamera.lerpStrength;
   freeCamera.curRotation = lerp(freeCamera.curRotation, freeCamera.wantedRotation, lerpFactor);
   freeCamera.curPosition = lerp(freeCamera.curPosition, freeCamera.wantedPosition, lerpFactor);
   transform.get_position() = freeCamera.curPosition;
@@ -231,18 +272,12 @@ vec3 main_camera_position()
   return result;
 }
 
-ecs::EntityId create_camera_manager()
-{
-  ecs::ComponentInitializerList list;
-  list.add<std::vector<ecs::EntityId>>("sceneCameras") = std::vector<ecs::EntityId>();
-  list.add<ecs::EntityId>("mainCamera") = ecs::EntityId();
-  return ecs::create_entity(list);
-}
+
 
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target)
 {
   Camera camera;
-  camera.set_perspective(90.f * DegToRad, 0.01f, 5000.f);
+  camera.set_perspective(90.f, 0.01f, 5000.f);
   ecs::ComponentInitializerList list;
   list.add<Camera>("camera") = camera;
   list.add<ArcballCamera>("arcballCamera") = ArcballCamera(dist, rotation, target);
@@ -256,7 +291,7 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target)
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target)
 {
   Camera camera;
-  camera.set_perspective(90.f * DegToRad, 0.01f, 5000.f);
+  camera.set_perspective(90.f, 0.01f, 5000.f);
   ecs::ComponentInitializerList list;
   list.add<Camera>("camera") = camera;
   list.add<ArcballCamera>("arcballCamera") = ArcballCamera(dist, rotation);
@@ -269,18 +304,18 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId tar
 ecs::EntityId create_free_camera(vec3 position, vec2 rotation)
 {
   Camera camera;
-  camera.set_perspective(90.f * DegToRad, 0.01f, 5000.f);
+  camera.set_perspective(90.f, 0.01f, 5000.f);
   ecs::ComponentInitializerList list;
   list.add<Camera>("camera") = camera;
-  list.add<FreeCamera>("freeCamera") = FreeCamera(position, rotation);
-  list.add<Transform>("transform") = Transform();
+  list.add<FreeCamera>("freeCamera") = FreeCamera();
+  list.add<Transform>("transform") = Transform(position, vec3(rotation, 0));
   list.add<bool>("isMainCamera") = false;
   return ecs::create_entity(list);
 }
 ecs::EntityId create_camera(vec3 position, vec2 rotation)
 {
   Camera camera;
-  camera.set_perspective(90.f * DegToRad, 0.01f, 5000.f);
+  camera.set_perspective(90.f, 0.01f, 5000.f);
   ecs::ComponentInitializerList list;
   list.add<Camera>("camera") = camera;
   list.add<Transform>("transform") = Transform(position, vec3(rotation.x, rotation.y, 0));

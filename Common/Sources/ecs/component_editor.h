@@ -8,6 +8,8 @@ void edit_component(T &component, const char *name);
 #define EDIT_VECTOR(T) template<>\
 void edit_component(std::vector<T> &component, const char *name)\
 {\
+  constexpr int BUFN = 255; \
+  char buf[BUFN]; \
   snprintf(buf, BUFN, "%s [%d]", name, (int)component.size());\
   if (ImGui::TreeNode(buf))\
   {\

@@ -129,8 +129,6 @@ void edit_component(std::vector<bool> &component, const char *name)
 
 BASE_TYPES
 
-EDIT_STUB(Camera)
-EDIT_VECTOR(Camera)
 EDIT_STUB(FreeCamera)
 EDIT_VECTOR(FreeCamera)
 EDIT_STUB(ArcballCamera)

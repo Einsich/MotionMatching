@@ -22,6 +22,7 @@
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/settings.h"
 #include "Engine/resources.h"
+#include "Engine/imgui/imgui.h"
 
 #define CUSTOM_TYPE \
 MACRO(AnimationPlayer)\
@@ -64,9 +65,9 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   load_object(*Settings::instance, "man_property.bin");
   ecs::EntityId attachedCamera;
   {
-    create_camera_manager();
     attachedCamera = create_camera();
     create_free_camera(vec3(0, 5, -5),radians(vec2(-270,0)));
+    create_arcball_camera(10.f, radians(vec2(-270,0)), vec3(0, 5, -5));
     ecs::send_event_immediate(OnSetMainCamera(attachedCamera));
   }
   {
@@ -94,7 +95,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
   string manPath = project_resources_path("MocapOnline/MotusMan_v55/MotusMan_v55.fbx");
-  importer.ReadFile(manPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_FlipUVs | aiPostProcessSteps::aiProcess_LimitBoneWeights |
+  importer.ReadFile(manPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
   const aiScene* scene = importer.GetScene();
   
@@ -142,7 +143,7 @@ EVENT() start_scene(const ecs::OnSceneCreated &)
   }
   if (dataBase->tests.size() > 0)
   {
-    int testN = 50;
+    int testN = 5;
     Settings::testCount = testN;
     int testK = (int)sqrt(testN);
     for (int i = 0; i < testN; i++)

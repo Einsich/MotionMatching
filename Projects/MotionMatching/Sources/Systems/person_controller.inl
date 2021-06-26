@@ -38,11 +38,7 @@ vec3 get_wanted_speed(Input &input, bool &onPlace, const ControllerSettings &set
   return wantedSpeed;
 }
 
-float mod_f(float x, float n)
-{
-  x = x - (int)(x/n) * n;
-  return x;
-}
+
 float lerp_angle(float a_angleA, float a_angleB, float a_t)
 {
   

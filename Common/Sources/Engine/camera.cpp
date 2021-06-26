@@ -1,61 +1,101 @@
 #include "camera.h"
 #include <vector>
 #include "Application/application.h"
+#include "ecs/component_editor.h"
+#include "Engine/imgui/imgui.h"
 
-
-void Camera::set_orthographic(float width, float height, float zNear, float zFar) 
+Camera::Camera():
+orthographic(false),
+orhtoScale(1.f),
+aspectRatio((float)Application::get_context().get_width() / Application::get_context().get_height()),
+fieldOfView(90), 
+zNear(0.01f),
+zFar(5000.f)
+{}
+void Camera::set_orthographic(float aspectRatio, float orhtoScale, float zNear, float zFar) 
 { 
-  const float aspectRatio = width / height;
-  projection = ortho(-1.f, 1.f,-1.f * aspectRatio, 1.f * aspectRatio, zNear, zFar); 
-}
-void Camera::set_perspective(float fieldOfView, float aspectRatio, float zNear, float zFar)
-{ 
-  projection = perspective(fieldOfView, aspectRatio, zNear, zFar);
+  orthographic = true;
+  this->aspectRatio = aspectRatio;
+  this->zFar = zFar;
+  this->zNear = zNear;
+  projection = ortho(-orhtoScale, orhtoScale, -orhtoScale * aspectRatio, orhtoScale * aspectRatio, zNear, zFar); 
 }
 
 void Camera::set_perspective(float fieldOfView, float zNear, float zFar)
 {
+  orthographic = false;
+  this->fieldOfView = fieldOfView;
+  this->zFar = zFar;
+  this->zNear = zNear;
   const float aspectRatio = (float)Application::get_context().get_width() / Application::get_context().get_height();
-  projection = perspective(fieldOfView, aspectRatio, zNear, zFar);
+  projection = perspective(fieldOfView * DegToRad, aspectRatio, zNear, zFar);
 }
 const mat4x4& Camera::get_projection() const
 {
   return projection;
 }
 
+template<>
+void edit_component(Camera &camera, const char *name)
+{
+  ImGui::Text("%s", name);
+  ImGui::Checkbox("orthographic", &camera.orthographic);
+  if (camera.orthographic)
+  {
+    ImGui::InputFloat("aspectRatio", &camera.aspectRatio, 0.1f, 10, 2);
+    ImGui::InputFloat("orhtoScale", &camera.orhtoScale, 0.1f, 10, 2);
+    ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3);
+    ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1);
+    camera.set_orthographic(camera.aspectRatio, camera.orhtoScale, camera.zNear, camera.zFar);
+  }
+  else
+  {
+    ImGui::InputFloat("fieldOfView", &camera.fieldOfView, 10.f, 10, 2);
+    ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3);
+    ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1);
+    camera.set_perspective(camera.fieldOfView, camera.zNear, camera.zFar);
+
+  }
+  ImGui::Spacing();
+}
+EDIT_VECTOR(Camera)
+
 ArcballCamera::ArcballCamera(float distance, vec2 rotation, vec3 target):
+  curZoom(0.2f),
   maxdistance(distance),
-  zoom(0.2f),
-  targetZoom(zoom),
-  distance(zoom * maxdistance),
-  rotation(rotation),
+  targetZoom(curZoom),
+  distance(curZoom * maxdistance),
+  lerpStrength(10),
+  mouseSensitivity(0.5f),
+  wheelSensitivity(0.05f),
   targetRotation(rotation),
-  target_position(target),
-  rotationEnable(false)
+  targetPosition(target),
+  rotationEnable(false),
+  curRotation(rotation)
 {}
 void ArcballCamera::set_target(vec3 target)
 {
-  target_position = target;
+  targetPosition = target;
 }
 void ArcballCamera::calculate_transform(Transform &transform)
 {
-  float y = rotation.y;
-  float x = rotation.x ;
+  float y = curRotation.y;
+  float x = curRotation.x ;
   vec3 direction = vec3(cos(x) * cos(y), sin(y), sin(x) * cos(y));
   
-  transform.set_position(target_position - distance * direction);
-  transform.set_rotation(PI*0.5-rotation.x, -rotation.y, 0);
+  transform.set_position(targetPosition - distance * direction);
+  transform.set_rotation(PI*0.5-curRotation.x, -curRotation.y, 0);
 }
-FreeCamera::FreeCamera(vec3 position, vec2 rotation):
-  curRotation(rotation),
-  wantedRotation(rotation),
-  curPosition(position),
-  wantedPosition(position),
-  rotationEnable(false)
+FreeCamera::FreeCamera():
+  minSpeed(5),
+  maxSpeed(50),
+  lerpStrength(10),
+  rotationSensitivity(0.3),
+  screenMoveSensitivity(0.1)
 {}
 void FreeCamera::calculate_transform(Transform &transform)
 {
-  transform.set_rotation(PI*0.5f-curRotation.x, -curRotation.y, 0);
+  transform.set_rotation(curRotation.x, curRotation.y, 0);
 }
 
 void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition)

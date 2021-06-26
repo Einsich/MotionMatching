@@ -1,6 +1,25 @@
 #include "ecs_camera.inl"
 //Code-generator production
 
+ecs::QueryDescription find_all_created_camera_descr("find_all_created_camera", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<bool>("isMainCamera"), false},
+  {ecs::get_type_description<Camera>("camera"), false}
+});
+
+template<typename Callable>
+void find_all_created_camera(Callable lambda)
+{
+  for (ecs::QueryIterator begin = find_all_created_camera_descr.begin(), end = find_all_created_camera_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<bool>(1)
+    );
+  }
+}
+
+
 ecs::QueryDescription register_cam_query_descr("register_cam_query", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false}
 });
@@ -142,22 +161,38 @@ void arcball_camera_update_func()
 }
 
 
-void arccam_update_func();
+void freecamera_update_func();
 
-ecs::SystemDescription arccam_update_descr("arccam_update", {
+ecs::SystemDescription freecamera_update_descr("freecamera_update", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
-}, arccam_update_func, ecs::SystemOrder::NO_ORDER);
+}, freecamera_update_func, ecs::SystemOrder::NO_ORDER);
 
-void arccam_update_func()
+void freecamera_update_func()
 {
-  for (ecs::QueryIterator begin = arccam_update_descr.begin(), end = arccam_update_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = freecamera_update_descr.begin(), end = freecamera_update_descr.end(); begin != end; ++begin)
   {
-    arccam_update(
+    freecamera_update(
       *begin.get_component<FreeCamera>(0),
       *begin.get_component<bool>(1),
       *begin.get_component<Transform>(2)
+    );
+  }
+}
+
+
+void create_camera_manager_handler(const ecs::OnSceneCreated &event);
+
+ecs::EventDescription<ecs::OnSceneCreated> create_camera_manager_descr("create_camera_manager", {
+}, create_camera_manager_handler);
+
+void create_camera_manager_handler(const ecs::OnSceneCreated &event)
+{
+  for (ecs::QueryIterator begin = create_camera_manager_descr.begin(), end = create_camera_manager_descr.end(); begin != end; ++begin)
+  {
+    create_camera_manager(
+      event
     );
   }
 }
@@ -311,6 +346,7 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event);
 
 ecs::EventDescription<MouseMoveEvent> freecam_mouse_move_handler_descr("freecam_mouse_move_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
+  {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_move_handler_handler);
 
@@ -321,7 +357,8 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
     freecam_mouse_move_handler(
       event,
       *begin.get_component<FreeCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<Transform>(1),
+      *begin.get_component<bool>(2)
     );
   }
 }
@@ -344,6 +381,19 @@ void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
       *begin.get_component<bool>(1)
     );
   }
+}
+
+
+void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnSceneCreated> create_camera_manager_singl_descr("create_camera_manager", {
+}, create_camera_manager_singl_handler);
+
+void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
+{
+  create_camera_manager(
+    event
+  );
 }
 
 
@@ -474,6 +524,7 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
 
 ecs::SingleEventDescription<MouseMoveEvent> freecam_mouse_move_handler_singl_descr("freecam_mouse_move_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
+  {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_move_handler_singl_handler);
 
@@ -482,7 +533,8 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
   freecam_mouse_move_handler(
     event,
       *begin.get_component<FreeCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<Transform>(1),
+      *begin.get_component<bool>(2)
   );
 }
 

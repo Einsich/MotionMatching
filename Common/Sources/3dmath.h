@@ -35,3 +35,8 @@ quat to_quat(const T& t)
   return quat(t.w, t.x, t.y, t.z);
 }
 #define float_equal(x, y) (abs((x) - (y)) < 1e-8f)
+
+float mod_f(float x, float n);
+vec2 mod_f(vec2 v, float n);
+vec3 mod_f(vec3 v, float n);
+vec4 mod_f(vec4 v, float n);
