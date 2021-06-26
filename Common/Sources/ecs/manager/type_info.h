@@ -16,17 +16,20 @@ namespace ecs
     const uint32_t hashId = 0;
     const std::string name = "";
     const int sizeOf = 0;
+    const Constructor constructor = nullptr;
     const CopyConstructor copy_constructor = nullptr;
     const Destructor destructor = nullptr;
     const ComponentEdition componentEdition = nullptr;
 
     TypeInfo(const uint32_t hashId, 
-    const compiletime_string &name, 
+    const std::string_view &name, 
     const int sizeOf,
+    const Constructor constructor,
     const CopyConstructor copy_constructor,
     const Destructor destructor,
     const ComponentEdition componentEdition):
-    hashId(hashId), name(name.str, name.n), sizeOf(sizeOf), 
+    hashId(hashId), name(name), sizeOf(sizeOf), 
+    constructor(constructor),
     copy_constructor(copy_constructor),
     destructor(destructor), componentEdition(componentEdition)
     {
@@ -38,7 +41,7 @@ namespace ecs
     
   };
   template<typename... Args>
-  RegisterTypeInfoRT register_type(const compiletime_string &name, Args &&...args)
+  RegisterTypeInfoRT register_type(const std::string_view &name, Args &&...args)
   {
     string_hash hash = HashedString(name);
     TypeInfo::types().try_emplace(hash, hash, name, args...);
@@ -67,10 +70,10 @@ namespace ecs
   template<typename T>
   std::enable_if_t<!HasReflection<T>::value, void> template_component_edition(void *ptr)
   {
-    edit_component(*((T*)ptr), typeid(T).name());
+    edit_component(*((T*)ptr), nameOf<T>::value.data());
   }
   #define REG_TYPE_BASE(T, NAME) \
-  static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type(get_T_name<T>(), sizeof(T), ecs::template_copy_constructor<T>, ecs::template_destructor<T>, ecs::template_component_edition<T>);
+  static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type(nameOf<T>::value, sizeof(T), ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>, ecs::template_component_edition<T>);
   
   #define REG_TYPE(T) REG_TYPE_BASE(T, type_##T)
   #define REG_VEC_TYPE(T) REG_TYPE_BASE(std::vector<T>, vec_##T)

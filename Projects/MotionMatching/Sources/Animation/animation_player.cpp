@@ -9,7 +9,7 @@ AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_ani
 playerType(playerType), speed(1.f), 
 stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 
 motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
-tree(dataBase->tree), 
+tree(&dataBase->tree), 
 index(dataBase, 0, 0),
 currentCadr(index.get_lerped_cadr())
 {

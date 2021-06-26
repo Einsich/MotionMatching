@@ -16,4 +16,19 @@ void entity_viewer_func()
 }
 
 
+void ecs_types_viewer_func();
+
+ecs::SystemDescription ecs_types_viewer_descr("ecs_types_viewer", {
+}, ecs_types_viewer_func, ecs::SystemOrder::UI);
+
+void ecs_types_viewer_func()
+{
+  for (ecs::QueryIterator begin = ecs_types_viewer_descr.begin(), end = ecs_types_viewer_descr.end(); begin != end; ++begin)
+  {
+    ecs_types_viewer(
+    );
+  }
+}
+
+
 

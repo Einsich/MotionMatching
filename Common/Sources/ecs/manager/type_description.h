@@ -33,7 +33,7 @@ namespace ecs
     template<typename T>
     static uint typeDescriptionHash(const char *name)
     {
-      constexpr compiletime_string str = get_T_name<T>();
+      constexpr std::string_view str = nameOf<T>::value;
       return hash(HashedString(name), HashedString(str));
     }
 
@@ -50,7 +50,7 @@ namespace ecs
   template<typename T>
   TypeDescription get_type_description(const char *name)
   {
-    constexpr compiletime_string type = get_T_name<T>();
+    constexpr std::string_view type = nameOf<T>::value;
     static_assert(HashedString(type), "need to register this type to ecs, use REG_TYPE(T)");
     
     constexpr string_hash typeHash = HashedString(type);

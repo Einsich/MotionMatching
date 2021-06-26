@@ -11,7 +11,8 @@ private:
   MaterialPtr material;
   Shader shader;
 public:
- MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader);
+  MeshRender() = default;
+  MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader);
   void render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame = false) const;
   MaterialPtr get_material() const;
   const Shader& get_shader() const;

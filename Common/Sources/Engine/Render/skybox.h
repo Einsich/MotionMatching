@@ -10,5 +10,6 @@ public:
   CubeMap skybox;
   string path;
   SkyBox(string path);
+  SkyBox() = default;
   void render(const mat4 view_projection, const vec3 &camera_position, bool wire_frame = false);
 };

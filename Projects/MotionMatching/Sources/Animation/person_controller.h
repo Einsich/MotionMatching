@@ -13,6 +13,7 @@ public:
   bool disableEvents, crouching;
   int rotationStrafe;
   PersonController(vec3 position);
+  PersonController() = default;
   void set_pos_rotation(Transform &transform, vec3 position, float rotation);
 };
 struct KeyboardEvent;

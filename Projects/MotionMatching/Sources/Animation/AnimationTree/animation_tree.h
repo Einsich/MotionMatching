@@ -20,11 +20,12 @@ public:
 class AnimationTree
 {
 private:
-  const AnimationTreeData &data;
+  const AnimationTreeData *data;
   vector<mat4> transforms;
 public:
   vector<AnimationNode> nodes;
-  AnimationTree(const AnimationTreeData &tree_data);
+  AnimationTree(const AnimationTreeData *tree_data);
+  AnimationTree() = default;
   int get_child(const string& name) const;
   void set_cadr(const AnimationCadr &cadr);
   void calculate_bone_transforms();

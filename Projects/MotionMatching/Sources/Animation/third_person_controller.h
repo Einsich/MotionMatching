@@ -8,6 +8,7 @@ public:
   vec2 wantedCameraRotation, currentCameraRotation;
   float currentZoom, wantedZoom;
   float view_offset;
+  ThirdPersonController() = default;
   ThirdPersonController(vec2 rotation, float zoom):
     wantedCameraOrientation(0),
     currentCameraOrientation(0), 

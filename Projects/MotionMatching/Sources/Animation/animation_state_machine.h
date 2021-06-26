@@ -51,7 +51,7 @@ class Edge
   bool try_change_state(const string& property, int value);
 public:
   AnimationStateMachine(AnimationDataBasePtr dataBase);
-
+  AnimationStateMachine() = default;
   AnimationLerpedIndex get_current_animation() const;
   void update(float dt);
   void play_animation(int anim_index);

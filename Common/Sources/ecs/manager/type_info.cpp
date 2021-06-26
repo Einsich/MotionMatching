@@ -8,7 +8,7 @@
 using namespace std;
 using namespace ecs;
 
-#define MACRO(T) REGISTER_TYPE(T)
+#define MACRO(T, N) REGISTER_TYPE(T)
 
 REGISTER_TYPE(bool)
 REGISTER_TYPE(Camera)

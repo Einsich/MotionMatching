@@ -19,7 +19,7 @@ public:
   int lod;
   MatchingScores bestScore;
   MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType);
-
+  MotionMatching() = default;
   AnimationLerpedIndex get_index() const;
   void update(float dt, const AnimationGoal &goal,
     const MotionMatchingSettings &settings,

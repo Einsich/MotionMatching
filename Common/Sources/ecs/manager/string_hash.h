@@ -1,6 +1,14 @@
 #pragma once
 
+#include <string>
+#include <vector>
+#include "glm/glm.hpp"
 #include <stdint.h>
+#include "../base_types.h"
+#include "entity_id.h"
+#include "compile_time_string.h"
+#include <type_traits>
+
 typedef uint32_t string_hash;
 
 static constexpr unsigned int crc_table[256] = {
@@ -48,12 +56,8 @@ static constexpr unsigned int crc_table[256] = {
     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
-struct compiletime_string
-{
-    const char *str;
-    uint32_t n;
-    constexpr compiletime_string():str(nullptr), n(0){}
-};
+
+
 constexpr string_hash HashedString(const char *s)
 {
   uint32_t crc = 0xffffffff;
@@ -62,23 +66,63 @@ constexpr string_hash HashedString(const char *s)
     return crc ^ 0xffffffff;
 }
 
-constexpr string_hash HashedString(const compiletime_string& str)
+constexpr string_hash HashedString(const std::string_view& str)
 {
   uint32_t crc = 0xffffffff;
-    for (uint32_t i = 0; i < str.n; ++i)
-        crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str.str[i])) & 0xff];
+    for (uint32_t i = 0; i < str.size(); ++i)
+        crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str[i])) & 0xff];
     return crc ^ 0xffffffff;
 }
 template<typename T>
-constexpr compiletime_string get_T_name()
+struct is_vector
+{
+    static constexpr bool value = false;
+};
+
+template<template<typename...> class C, typename U>
+struct is_vector<C<U>>
+{
+  static constexpr bool value = std::is_same<C<U>,std::vector<U>>::value;
+};
+
+
+template <typename T>
+struct nameOf;
+
+
+template <typename T>
+static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl() noexcept
 {
   const char *f = __PRETTY_FUNCTION__;
-  compiletime_string result;
   while(*f && *f != '[')
     ++f;
-  result.str = f + 5;
+  const char *str = f + 5;
   while(*f && *f != ']')
     ++f;
-  result.n = f - result.str;
-  return result;
+  size_t n = f - str;
+  return std::string_view(str, n);
 }
+
+static inline constexpr std::string_view _vec_begin = "vector<";
+static inline constexpr std::string_view _vec_end = ">";
+template <typename T>
+static constexpr std::enable_if_t<is_vector<T>::value, std::string_view> impl() noexcept
+{
+  return join_v<_vec_begin, nameOf<typename T::value_type>::value, _vec_end>;
+}
+
+#define MACRO(NAME, T) \
+template<> constexpr std::string_view impl<T>() noexcept\
+{ return std::string_view(#NAME); }
+
+
+BASE_TYPES
+
+#undef MACRO
+
+
+template <typename T>
+struct nameOf
+{
+  static constexpr std::string_view value = impl<T>();
+};

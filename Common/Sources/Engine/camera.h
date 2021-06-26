@@ -36,6 +36,7 @@ public:
   bool rotationEnable;
   vec2 curRotation;
   ArcballCamera(float distance, vec2 rotation, vec3 target = vec3());
+  ArcballCamera() = default;
   void set_target(vec3 target);
   void calculate_transform(Transform &transform);
 };

@@ -35,7 +35,7 @@ class AnimationPlayer
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;
   AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType);
-
+  AnimationPlayer() = default;
 
   void animation_selector(const KeyboardEvent &event);
   AnimationStateMachine *get_state_machine();

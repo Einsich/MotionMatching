@@ -6,4 +6,5 @@ class MotionMatchingScene
 public:
   AnimationDataBasePtr dataBase;
   MotionMatchingScene(AnimationDataBasePtr dataBase):dataBase(dataBase){}
+  MotionMatchingScene() = default;
 };
