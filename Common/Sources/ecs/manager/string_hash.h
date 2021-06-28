@@ -1,13 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include "glm/glm.hpp"
-#include <stdint.h>
-#include "../base_types.h"
-#include "entity_id.h"
-#include "compile_time_string.h"
-#include <type_traits>
 
 typedef uint32_t string_hash;
 
@@ -73,56 +66,3 @@ constexpr string_hash HashedString(const std::string_view& str)
         crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str[i])) & 0xff];
     return crc ^ 0xffffffff;
 }
-template<typename T>
-struct is_vector
-{
-    static constexpr bool value = false;
-};
-
-template<template<typename...> class C, typename U>
-struct is_vector<C<U>>
-{
-  static constexpr bool value = std::is_same<C<U>,std::vector<U>>::value;
-};
-
-
-template <typename T>
-struct nameOf;
-
-
-template <typename T>
-static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl() noexcept
-{
-  const char *f = __PRETTY_FUNCTION__;
-  while(*f && *f != '[')
-    ++f;
-  const char *str = f + 5;
-  while(*f && *f != ']')
-    ++f;
-  size_t n = f - str;
-  return std::string_view(str, n);
-}
-
-static inline constexpr std::string_view _vec_begin = "vector<";
-static inline constexpr std::string_view _vec_end = ">";
-template <typename T>
-static constexpr std::enable_if_t<is_vector<T>::value, std::string_view> impl() noexcept
-{
-  return join_v<_vec_begin, nameOf<typename T::value_type>::value, _vec_end>;
-}
-
-#define MACRO(NAME, T) \
-template<> constexpr std::string_view impl<T>() noexcept\
-{ return std::string_view(#NAME); }
-
-
-BASE_TYPES
-
-#undef MACRO
-
-
-template <typename T>
-struct nameOf
-{
-  static constexpr std::string_view value = impl<T>();
-};

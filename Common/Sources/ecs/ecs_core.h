@@ -2,10 +2,8 @@
 #include <vector>
 #include <queue>
 #include <functional>
-#include "manager/string_hash.h"
 #include "manager/system_description.h"
-#include "manager/entity_id.h"
-#include "manager/type_description.h"
+
 namespace ecs
 {
   template<typename E>

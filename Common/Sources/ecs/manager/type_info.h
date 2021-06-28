@@ -1,6 +1,6 @@
 #pragma once
+#include "compile_time_string.h"
 #include "string_hash.h"
-#include "Serialization/reflection.h"
 #include "component_function.h"
 #include <unordered_map>
 namespace ecs
@@ -62,13 +62,9 @@ namespace ecs
   {
     return new (dst) T(std::move(*((T*)src)));
   }
+
   template<typename T>
-  std::enable_if_t<HasReflection<T>::value, void> template_component_edition(void *ptr)
-  {
-    ((T*)ptr)->editor_reflect();
-  }
-  template<typename T>
-  std::enable_if_t<!HasReflection<T>::value, void> template_component_edition(void *ptr)
+  void template_component_edition(void *ptr)
   {
     edit_component(*((T*)ptr), nameOf<T>::value.data());
   }

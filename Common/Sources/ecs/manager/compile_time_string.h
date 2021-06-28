@@ -1,6 +1,11 @@
 #include <array>
-#include <iostream>
 #include <string_view>
+#include "is_vector.h"
+
+#include "glm/glm.hpp"
+#include "../base_types.h"
+#include "entity_id.h"
+#include <type_traits>
 
 template <std::string_view const&... Strs>
 struct join
@@ -25,3 +30,45 @@ struct join
 // Helper to get the value out
 template <std::string_view const&... Strs>
 static constexpr auto join_v = join<Strs...>::value;
+
+
+template <typename T>
+struct nameOf;
+
+
+template <typename T>
+static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl() noexcept
+{
+  const char *f = __PRETTY_FUNCTION__;
+  while(*f && *f != '[')
+    ++f;
+  const char *str = f + 5;
+  while(*f && *f != ']')
+    ++f;
+  size_t n = f - str;
+  return std::string_view(str, n);
+}
+
+static inline constexpr std::string_view _vec_begin = "vector<";
+static inline constexpr std::string_view _vec_end = ">";
+template <typename T>
+static constexpr std::enable_if_t<is_vector<T>::value, std::string_view> impl() noexcept
+{
+  return join_v<_vec_begin, nameOf<typename T::value_type>::value, _vec_end>;
+}
+
+#define MACRO(NAME, T) \
+template<> constexpr std::string_view impl<T>() noexcept\
+{ return std::string_view(#NAME); }
+
+
+BASE_TYPES
+
+#undef MACRO
+
+
+template <typename T>
+struct nameOf
+{
+  static constexpr std::string_view value = impl<T>();
+};

@@ -41,13 +41,32 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
 }
 struct TemplateInfo
 {
+private:
   string name;
-  string_hash typeHash;
+  string_hash typeHash, nameHash;
+public:
   void *data;
   TemplateInfo(const string_hash type_hash, const ecs::TypeInfo &type_info):
-  name(""), typeHash(type_hash), data(malloc(type_info.sizeOf))
+  name(""), typeHash(type_hash), nameHash(HashedString("")), data(malloc(type_info.sizeOf))
   {
     type_info.constructor(data);
+  }
+  const char *get_name() const
+  {
+    return name.c_str();
+  }
+  void change_name(const char *new_name)
+  {
+    nameHash = HashedString(new_name);
+    name = string(new_name);
+  }
+  bool operator==(const TemplateInfo &other) const
+  {
+    return typeHash == other.typeHash && nameHash == other.nameHash;
+  }
+  const ecs::TypeInfo &get_type_info() const
+  {
+    return ecs::TypeInfo::types()[typeHash];
   }
 };
 struct Template
@@ -55,8 +74,9 @@ struct Template
   string name;
   vector<TemplateInfo> types;
   vector<Template> subTemplates;
+  bool edited;
   Template():
-  name(""), types(), subTemplates()
+  name(""), types(), subTemplates(), edited(false)
   {
   }
 };
@@ -108,13 +128,16 @@ void edit_template(Template &templ, bool sub_templ = false)
   for (uint i = 0; i < types.size(); ++i)
   {
     TemplateInfo &type = types[i];
-    const ecs::TypeInfo &typeInfo = ecs::TypeInfo::types()[type.typeHash];
+    const ecs::TypeInfo &typeInfo = type.get_type_info();
     ImGui::Text("%s", typeInfo.name.c_str());
     ImGui::SameLine();
-    snprintf(buf, BUFN, "%s", type.name.c_str());
+    snprintf(buf, BUFN, "%s", type.get_name());
     snprintf(bufIndex, BUFN, "##%d", i);
     if (ImGui::InputText(bufIndex, buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue))
-      type.name = std::string(buf);
+    {
+      
+      type.change_name(buf);
+    }
     ImGui::SameLine();
     if (!editComponents[i])
     {

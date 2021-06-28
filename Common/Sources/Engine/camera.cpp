@@ -58,7 +58,6 @@ void edit_component(Camera &camera, const char *name)
   }
   ImGui::Spacing();
 }
-EDIT_VECTOR(Camera)
 
 ArcballCamera::ArcballCamera(float distance, vec2 rotation, vec3 target):
   curZoom(0.2f),

@@ -1,3 +1,4 @@
+
 #include "component_editor.h"
 #include "ecs/manager/entity_id.h"
 #include "Engine/camera.h"
@@ -95,62 +96,3 @@ void edit_component(std::string &component, const char *name)
   ImGui::Spacing();
 }
 
-template<>
-void edit_component(std::vector<bool> &component, const char *name)
-{
-  snprintf(buf, BUFN, "##%p", (void*)&component);
-  if (ImGui::TreeNode(buf))
-  {
-    ImGui::SameLine();
-    int count = component.size();
-    snprintf(buf, BUFN, "count##%p", (void*)&component);
-    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))
-    {
-      component.resize(count);
-    }
-    for (uint i = 0; i < component.size(); ++i)
-    {
-      snprintf(buf, BUFN, "[%u]##%p", i, (void*)&component);
-      if (ImGui::TreeNode(buf))
-      {
-
-        bool b = component[i];
-        snprintf(buf, BUFN, "##%p", (void*)&component);
-        edit_component(b, buf);
-        component[i] = b;
-        ImGui::TreePop();  
-      }
-      ImGui::SameLine();
-      snprintf(buf, BUFN, "remove##%d", i);
-      if (ImGui::Button(buf))
-      {
-        component.erase(component.begin() + i);
-        --i;
-      }
-    }
-    ImGui::TreePop();  
-    ImGui::Spacing();
-  }
-  else
-  {
-    ImGui::SameLine();
-    int count = component.size();
-    snprintf(buf, BUFN, "count##%p", (void*)&component);
-    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))
-    {
-      component.resize(count);
-    }
-  }
-}
-
-#define MACRO(N, T) EDIT_VECTOR(T)
-
-BASE_TYPES
-
-EDIT_STUB(FreeCamera)
-EDIT_VECTOR(FreeCamera)
-EDIT_STUB(ArcballCamera)
-EDIT_VECTOR(ArcballCamera)
-EDIT_REFLECTABLE(Transform)
-EDIT_VECTOR(Transform)
-EDIT_VECTOR(SkyBox)
