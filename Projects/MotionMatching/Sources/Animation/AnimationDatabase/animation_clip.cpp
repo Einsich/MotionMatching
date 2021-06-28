@@ -3,11 +3,15 @@
 #include "animation_nodes.h"
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags):
+ const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags,
+ bool loopable, string nextClip, bool rotatable):
  hipsTranslation(duration), hipsRotation(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), 
- loopable(std::find(tags.begin(), tags.end(), AnimationTag::Loopable) != tags.end()), 
- name(name), tags(tags), features(duration), trajectories(duration)
+ name(name), tags(tags), 
+ loopable(loopable),
+ nextClip(nextClip),
+ nextClipIdx(-1),
+ rotatable(rotatable),features(duration), trajectories(duration)
 {
   debug_log("Animation %s was added, duration %d", name.c_str(), duration);
 
@@ -158,7 +162,7 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
       }
       else
       {
-        float times = 0;//next - duration + 1;
+        float times = next - duration + 1;
         vec3 dt = hipsTranslation[duration - 1] - hipsTranslation[duration - 2];
         float dr = hipsRotation[duration - 1] - hipsRotation[duration - 2];
         pathFeature.trajectory[j].point = q1*(dt * times + hipsTranslation[duration - 1]+point0);
@@ -219,6 +223,9 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, trajectories);
   size += write(os, tags);
   size += write(os, loopable);
+  size += write(os, nextClip);
+  size += write(os, nextClipIdx);
+  size += write(os, rotatable);
   return size;
 }
 size_t AnimationClip::deserialize(std::istream& is)
@@ -235,6 +242,9 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, trajectories);
   size += read(is, tags);
   size += read(is, loopable);
+  size += read(is, nextClip);
+  size += read(is, nextClipIdx);
+  size += read(is, rotatable);
   ground_calculate();
   return size;
 }

@@ -24,12 +24,16 @@ public:
   AnimationClip()=default;
   ~AnimationClip()=default;
   AnimationClip(uint duration, float ticksPerSecond, const string &name, const AnimationTreeData& tree,
-  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags);
+  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags,
+  bool loopable, string nextClip, bool rotatable);
   uint duration;
   float ticksPerSecond;
-  bool loopable;
   string name;
   set<AnimationTag> tags;
+  bool loopable;
+  string nextClip;
+  int nextClipIdx;
+  bool rotatable;
   vector<AnimationFeatures> features;
   vector<AnimationTrajectory> trajectories;
 

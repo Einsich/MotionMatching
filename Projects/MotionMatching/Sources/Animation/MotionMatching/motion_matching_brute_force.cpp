@@ -32,7 +32,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
   int curCadr = index.get_cadr_index();
 
   const AnimationClip &clip = index.get_clip();
-  bool forceJump = clip.loopable ? false : curCadr + 2 >= (int)clip.duration;
+  bool forceJump = !clip.loopable && clip.nextClipIdx < 0 && curCadr + 2 >= (int)clip.duration;
   int nextCadr = (curCadr + 1) % (int)clip.duration;
   Settings::MMCount++;
   if (!forceJump && optimisationSettings.trajectoryErrorToleranceTest &&

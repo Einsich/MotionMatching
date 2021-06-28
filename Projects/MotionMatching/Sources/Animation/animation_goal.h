@@ -2,7 +2,7 @@
 #include <set>
 #include "AnimationDatabase/animation_trajectory.h"
 
-#define TAGS ADD_TAG(Stay), ADD_TAG(Crouch), ADD_TAG(Jump), ADD_TAG(Loopable), ADD_TAG(Idle), ADD_TAG(Speak), ADD_TAG(BadTag)
+#define TAGS ADD_TAG(Stay), ADD_TAG(Crouch), ADD_TAG(Jump), ADD_TAG(Idle), ADD_TAG(Speak), ADD_TAG(BadTag)
 
 #define ADD_TAG(TAG) TAG
 enum class AnimationTag

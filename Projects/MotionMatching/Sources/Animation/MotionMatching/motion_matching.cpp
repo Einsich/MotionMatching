@@ -49,11 +49,11 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
   index.update(dt);
   skip_time += dt;
 
-  if (saveIndex != index.current_index())
-  {
-    
     AnimationIndex currentIndex = index.current_index();
-    bool forceJump = (currentIndex.get_cadr_index() + 1 == (int)currentIndex.get_clip().duration);
+  if (saveIndex != currentIndex)
+  {
+    bool lastFrames = currentIndex.get_cadr_index() + 5 >= (int)currentIndex.get_clip().duration;
+    bool forceJump = lastFrames && !currentIndex.get_clip().loopable;
     lod = optimisationSettings.lodOptimisation ? lod : 0;
     if (forceJump || skip_time >= optimisationSettings.lodSkipSeconds[lod])
     {
@@ -68,6 +68,14 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
       if (can_jump)
       {
         index.play_lerped(best_index);
+      }
+      else
+      {
+        if (forceJump && currentIndex.get_clip().nextClipIdx >= 0)
+        {
+          best_index.set_index(currentIndex.get_clip().nextClipIdx, 0);
+          index.play_lerped(best_index);
+        }
       }
     }
   }

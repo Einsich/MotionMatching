@@ -41,7 +41,7 @@ void get_tag_from_name(const string &s, set<AnimationTag> &tags)
   {size_t t = s.find("_To_"), r = find_last(s, #SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
   #define FIND(SUBSTR, TAG) \
   {size_t r = s.find(#SUBSTR);if (r < s.length()) tags.insert(AnimationTag::TAG);}
-  FIND(Loop, Loopable)
+
   CHECK(Crouch, Crouch)
   CHECK(CrouchWalk, Crouch)
   CHECK(Stand_Relaxed, Stay)
@@ -59,34 +59,44 @@ void get_tag(const string &s, set<AnimationTag> &tags)
   CHECK_TAG(Crouch)
   CHECK_TAG(Jump)
   CHECK_TAG(Idle)
-  CHECK_TAG(Loopable)
 }
-map<string, set<AnimationTag>> read_tag_map(const string &path)
+struct ClipProperty
 {
-  map<string, set<AnimationTag>> tagMap;
+  set<AnimationTag> tags;
+  bool loopable, rotatable;
+  string nextClip;
+};
+map<string, ClipProperty> read_tag_map(const string &path)
+{
+  map<string, ClipProperty> propertyMap;
   try 
   {
     ifstream tagsFile;
     tagsFile.exceptions(ifstream::badbit);
     tagsFile.open(path);
     vector<pair<string, bool>> words;
-    while (!tagsFile.eof())
-    {
       string s;
-      tagsFile >> s;
-      words.push_back({s, s.substr(0, 4) == "MOB1"});
-    }
-    for (uint i = 0; i < words.size();)
+    
+    auto propertyIt = propertyMap.begin();
+    while (tagsFile >> s)
     {
-      if (words[i].second)
+      if (s.substr(0, 4) == "MOB1")
       {
-        set<AnimationTag> &tags = tagMap[words[i].first];
-        get_tag_from_name(words[i].first, tags);
-        i++;
-        for (uint j = i; j < words.size() && !words[j].second; j++, i++)
-        {
-          get_tag(words[j].first, tags);
-        }
+        auto emp = propertyMap.try_emplace(s);
+        if (emp.second)
+          propertyIt = emp.first;
+      }
+      else
+      {
+        if (s == "loopable")
+          propertyIt->second.loopable = true;
+        else
+        if (s == "rotatable")
+          propertyIt->second.rotatable = true;
+        if (s.substr(0, 2) == "->")
+          propertyIt->second.nextClip = s.substr(2);
+        else
+          get_tag(s, propertyIt->second.tags);
       }
     }
   }
@@ -94,7 +104,7 @@ map<string, set<AnimationTag>> read_tag_map(const string &path)
   {
     debug_error("Can't open %s", path.c_str());
   }
-  return tagMap;
+  return propertyMap;
 } 
 
 template<typename T> 
@@ -128,7 +138,7 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
     bisearchList[i] = get_next(i);
   bisearchList.back() = make_pair(max_time, bisearchList[n-1].second);
 
-  debug_log("t0 = %f, tn = %f", bisearchList[0].first, bisearchList[bisearchList.size() - 1].first);
+  //debug_log("t0 = %f, tn = %f", bisearchList[0].first, bisearchList[bisearchList.size() - 1].first);
   float dt = max_time / duration;
   for (uint i = 0; i < duration; ++i)
   {
@@ -208,9 +218,17 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
             
           }
           string animName = string(animation->mName.C_Str());
+          const ClipProperty &property = tagMap[animName];
           animDatabase->clips.emplace_back(duration, 30, animName,
-              animDatabase->tree, rotation, translation, tagMap[animName]);
+              animDatabase->tree, rotation, translation, property.tags, property.loopable, property.nextClip, property.rotatable);
 
+        }
+        vector<AnimationClip> &clips = animDatabase->clips;
+        for (uint i = 0; i < clips.size(); ++i)
+        {
+          auto it = std::find_if(clips.begin(), clips.end(), [&](const AnimationClip &clip)->bool{return clips[i].nextClip == clip.name;});
+          if (it != clips.end())
+            clips[i].nextClipIdx = it - clips.begin();
         }
         
       }

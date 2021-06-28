@@ -35,7 +35,7 @@ void AnimationIndex::increase_cadr()
       //if (dataBase->clips[clip].loopable)
         cadr = 0;
       //else
-      //  cadr--;
+      //  --cadr;      
     }
   }
 }
