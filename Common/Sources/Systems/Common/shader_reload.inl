@@ -2,7 +2,7 @@
 #include "Engine/input.h"
 #include "Engine/Render/Shader/shader_factory.h"
 
-EVENT() reload_shaders(const KeyboardEvent &e)
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) reload_shaders(const KeyboardEvent &e)
 {
   if (e.keycode == SDLK_F5)
   {

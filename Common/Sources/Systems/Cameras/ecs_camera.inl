@@ -8,7 +8,7 @@
 template<typename Callable>
 static void find_all_created_camera(Callable);
 
-EVENT() create_camera_manager(const ecs::OnSceneCreated &)
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) create_camera_manager(const ecs::OnSceneCreated &)
 {
   std::vector<ecs::EntityId> cameras;
   ecs::EntityId mainCamera;
@@ -32,7 +32,7 @@ static void set_main_camera_status(const ecs::EntityId &mainCamera, bool status)
     isMainCamera = status;
   });
 }
-EVENT() set_main_camera(
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_main_camera(
   const OnSetMainCamera &event,
   std::vector<ecs::EntityId> &sceneCameras,
   ecs::EntityId &mainCamera)
@@ -46,7 +46,7 @@ EVENT() set_main_camera(
   }
 }
 
-EVENT() set_next_camera(
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_next_camera(
   const KeyboardEvent &e,
   std::vector<ecs::EntityId> &sceneCameras,
   ecs::EntityId &mainCamera)
@@ -167,7 +167,7 @@ void update_free_cam_from_transform(FreeCamera &freeCamera, const Transform &tra
   }
 }
 
-EVENT() freecam_created(
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_created(
   const ecs::OnEntityCreated &,
   ecs::EntityId eid,
   FreeCamera &freeCamera,
@@ -177,7 +177,7 @@ EVENT() freecam_created(
   register_camera(eid);
 }
 
-EVENT() freecam_mouse_move_handler(
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
   const MouseMoveEvent &e,
   FreeCamera &freeCamera,
   Transform &transform,
@@ -196,7 +196,7 @@ EVENT() freecam_mouse_move_handler(
     freeCamera.wantedPosition += transform.get_right() * d.x +  transform.get_up() * d.y;
   }
 }
-EVENT() freecam_mouse_click_handler(
+EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
   const MouseClickEvent &e,
   FreeCamera &freeCamera,
   bool isMainCamera)
@@ -212,7 +212,7 @@ EVENT() freecam_mouse_click_handler(
   }
 }
 
-SYSTEM() freecamera_update(
+SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
   FreeCamera &freeCamera,
   bool isMainCamera,
   Transform &transform)

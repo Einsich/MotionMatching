@@ -3,7 +3,7 @@
 class IScene
 {
 public:
-  virtual void start_scene() = 0;
+  virtual void start_scene(uint32_t tags) = 0;
   virtual void update_logic() = 0;
   virtual void update_render() = 0;
   virtual void update_ui() = 0;

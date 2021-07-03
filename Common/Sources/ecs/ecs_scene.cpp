@@ -9,8 +9,10 @@ namespace ecs
   {
     return a->order < b->order;
   }
-  void Scene::start_scene()
+  void Scene::start_scene(uint32_t tags)
   {
+    currentSceneTags = tags;
+    core().currentSceneTags = tags;
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
@@ -34,11 +36,12 @@ namespace ecs
   void Scene::update_range(const SystemRange &range)
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
-    {
-      //debug_log("execute %s system", (*it)->name.c_str());
-      ProfilerLabel label((*it)->name.c_str());
-      (*it)->execute();
-    }
+      if ((*it)->tags & currentSceneTags)
+      {
+        //debug_log("execute %s system", (*it)->name.c_str());
+        ProfilerLabel label((*it)->name.c_str());
+        (*it)->execute();
+      }
   }
   void Scene::update_logic()
   {

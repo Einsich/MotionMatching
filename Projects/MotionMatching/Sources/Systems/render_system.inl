@@ -29,7 +29,8 @@ template<typename Callable>
 void render_debug_goal_on_animplayer(Callable);
 
 
-SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRender)
+SYSTEM(ecs::SystemOrder::MIDDLE_RENDER,ecs::SystemTag::Editor,ecs::SystemTag::Game)
+main_render(const SceneRender &sceneRender)
 {
   mat4 camTransform, camProjection;
   if(!main_camera(camTransform, camProjection))

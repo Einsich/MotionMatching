@@ -7,6 +7,7 @@
 #include "Engine/Profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "ecs/editor/template.h"
+#include "ecs/system_tag.h"
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
 scene(scene), context(window_name, width, height, full_screen), timer(),
@@ -23,7 +24,7 @@ commonShaderPath(string(get_config("commonPath")) + "/Shaders")
 void Application::start()
 {
   ecs::load_templates();
-  scene->start_scene();
+  scene->start_scene((uint)(ecs::SystemTag::Game));
   get_profiler();
 }
 bool Application::sdl_event_handler()

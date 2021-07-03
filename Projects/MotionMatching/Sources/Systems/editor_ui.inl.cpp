@@ -4,7 +4,7 @@
 void entity_viewer_func();
 
 ecs::SystemDescription entity_viewer_descr("entity_viewer", {
-}, entity_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
+}, entity_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
 
 void entity_viewer_func()
 {
@@ -19,7 +19,7 @@ void entity_viewer_func()
 void ecs_types_viewer_func();
 
 ecs::SystemDescription ecs_types_viewer_descr("ecs_types_viewer", {
-}, ecs_types_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
+}, ecs_types_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
 
 void ecs_types_viewer_func()
 {
@@ -34,7 +34,7 @@ void ecs_types_viewer_func()
 void entity_creater_func();
 
 ecs::SystemDescription entity_creater_descr("entity_creater", {
-}, entity_creater_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
+}, entity_creater_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
 
 void entity_creater_func()
 {

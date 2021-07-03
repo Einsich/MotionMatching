@@ -4,7 +4,7 @@
 void reload_shaders_handler(const KeyboardEvent &event);
 
 ecs::EventDescription<KeyboardEvent> reload_shaders_descr("reload_shaders", {
-}, reload_shaders_handler, (uint)(ecs::SystemTag::Game));
+}, reload_shaders_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
 void reload_shaders_handler(const KeyboardEvent &event)
 {
@@ -20,7 +20,7 @@ void reload_shaders_handler(const KeyboardEvent &event)
 void reload_shaders_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyboardEvent> reload_shaders_singl_descr("reload_shaders", {
-}, reload_shaders_singl_handler, (uint)(ecs::SystemTag::Game));
+}, reload_shaders_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
 void reload_shaders_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &)
 {
