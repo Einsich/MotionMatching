@@ -16,7 +16,7 @@ class AnimationTrajectory final : public ISerializable
 {
 public: 
   static const int PathLength = 3;
-  static constexpr float timeDelays[PathLength] = { 0.15f, 0.3f, 0.5f};
+  static constexpr std::array<float, PathLength> timeDelays = { 0.15f, 0.3f, 0.5f};
   array<TrajectoryPoint, PathLength> trajectory;
   AnimationTrajectory() = default;
   ~AnimationTrajectory() = default;

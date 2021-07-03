@@ -13,6 +13,7 @@ enum class AnimationTag
 class AnimationGoal
 {
 public:
+  bool rotatable;
   AnimationTrajectory path;
   set<AnimationTag> tags;
 };

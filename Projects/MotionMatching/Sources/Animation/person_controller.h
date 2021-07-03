@@ -6,9 +6,14 @@ class Transform;
 class PersonController
 {
 public:
+  struct PathPrediction
+  {
+    vec3 pos; float rot, time;
+  };
   float simulatedRotation, realRotation, wantedRotation, angularSpeed;
-  vec3 desiredTrajectory[AnimationTrajectory::PathLength];
-  float desiredOrientation[AnimationTrajectory::PathLength];
+  std::array<vec3, AnimationTrajectory::PathLength> desiredTrajectory;
+  std::array<float, AnimationTrajectory::PathLength> desiredOrientation;
+  std::queue<PathPrediction> path;
   vec3 speed, simulatedPosition, realPosition;
   bool disableEvents, crouching;
   int rotationStrafe;
