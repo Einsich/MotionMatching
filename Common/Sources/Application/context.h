@@ -1,5 +1,6 @@
 #pragma once 
-#include <SDL2/SDL.h>
+struct SDL_Window;
+typedef void *SDL_GLContext;
 class Context
 {
 private:

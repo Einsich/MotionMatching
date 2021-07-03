@@ -5,6 +5,7 @@
 #include "Engine/imgui/imgui_impl_sdl.h"
 #include "config.h"
 #include "Engine/Profiler/profiler.h"
+#include <SDL2/SDL.h>
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
 scene(scene), context(window_name, width, height, full_screen), timer(),

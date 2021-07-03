@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 #include "Engine/imgui/imgui_impl_opengl3.h"
 #include "Engine/imgui/imgui_impl_sdl.h"
+#include <SDL2/SDL.h>
 
 Context::Context(string window_name, int width, int height, bool full_screen):
   width(width), height(height)
