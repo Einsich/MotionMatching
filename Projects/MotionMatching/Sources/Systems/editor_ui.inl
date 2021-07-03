@@ -28,7 +28,7 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
             snprintf(buf, N, "%s %s",  full_descr->name.c_str(), typeInfo.name.c_str());
             if (ImGui::TreeNode(buf))
             {
-              typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), true);
+              typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), false);
               ImGui::TreePop();
             }
           }
@@ -176,6 +176,9 @@ void edit_template(ecs::Template &templ, bool view_only = false)
       bool rem = ImGui::Button(bufIndex);
       if (rem)
       {
+        subTemplates[i]->parentTemplates.erase(
+            std::remove(subTemplates[i]->parentTemplates.begin(), subTemplates[i]->parentTemplates.end(), &templ),
+            subTemplates[i]->parentTemplates.end());
         subTemplates.erase(subTemplates.begin() + i);
         --i;
         continue;
@@ -250,7 +253,7 @@ void edit_template(ecs::Template &templ, bool view_only = false)
   }
   if (tryAddSubTempl)
   {
-    auto &templates = ecs::Template::templates();
+    auto &templates = ecs::TemplateManager::instance().templates;
     static std::string searchTemplateString = "";
     snprintf(buf, BUFN, "%s", searchTemplateString.c_str());
     bool nameChanged = ImGui::InputText("SubTemplate: ", buf, BUFN);
@@ -288,7 +291,9 @@ void edit_template(ecs::Template &templ, bool view_only = false)
         imgui_error(error);
       if (ImGui::Button("Ok"))
       {
-        templ.subTemplates.emplace_back(templates[indexes[item_current]]);
+        ecs::Template *subTempl = templates[indexes[item_current]];
+        templ.subTemplates.push_back(subTempl);
+        subTempl->parentTemplates.push_back(&templ);
         tryAddSubTempl = false;
       }
     }
@@ -318,7 +323,7 @@ SYSTEM(ecs::SystemOrder::UI) ecs_types_viewer()
   static bool addedTemplate = false;
   constexpr int BUFN = 255;
   char buf[BUFN];
-  auto &templates = ecs::Template::templates();
+  auto &templates = ecs::TemplateManager::instance().templates;
   if (editTemplate)
   {
     edit_template(*templates[selectedTemplate]);

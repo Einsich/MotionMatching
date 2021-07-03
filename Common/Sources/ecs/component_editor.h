@@ -8,6 +8,7 @@ std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, con
 {
   bool edited = false;
   component.reflect([&](auto &component, const char *name)->void{edited |= edit_component(component, name, view_only);});
+  return edited;
 }
 
 template<typename T>

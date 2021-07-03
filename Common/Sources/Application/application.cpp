@@ -6,6 +6,7 @@
 #include "config.h"
 #include "Engine/Profiler/profiler.h"
 #include <SDL2/SDL.h>
+#include "ecs/editor/template.h"
 
 Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
 scene(scene), context(window_name, width, height, full_screen), timer(),
@@ -21,6 +22,7 @@ commonShaderPath(string(get_config("commonPath")) + "/Shaders")
 }
 void Application::start()
 {
+  ecs::load_templates();
   scene->start_scene();
   get_profiler();
 }
@@ -85,6 +87,7 @@ void Application::main_loop()
 }
 void Application::exit()
 {
+  ecs::save_templates();
   scene->destroy_scene();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();

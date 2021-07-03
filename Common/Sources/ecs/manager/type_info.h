@@ -77,15 +77,15 @@ namespace ecs
   }
   
   template<typename T>
-  void template_serializer(void *ptr, std::ostream& os)
+  size_t template_serializer(std::ostream& os, void *ptr)
   {
-    write(os, *((T*)ptr));
+    return write(os, *((T*)ptr));
   }
 
   template<typename T>
-  void template_deserializer(void *ptr, std::istream& is)
+  size_t template_deserializer(std::istream& is, void *ptr)
   {
-    read(is, *((T*)ptr));
+    return read(is, *((T*)ptr));
   }
   #define REG_TYPE_BASE(T, NAME) \
   static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type(nameOf<T>::value, sizeof(T), \

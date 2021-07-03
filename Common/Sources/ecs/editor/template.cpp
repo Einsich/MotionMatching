@@ -5,7 +5,7 @@ namespace ecs
   
   TemplateInfo::TemplateInfo():name(""), typeHash(0), nameHash(0), data(nullptr){}
   TemplateInfo::TemplateInfo(const string_hash type_hash, const ecs::TypeInfo &type_info, const char *name):
-  name(name), typeHash(type_hash), nameHash(HashedString("")), data(malloc(type_info.sizeOf))
+  name(name), typeHash(type_hash), nameHash(HashedString(name)), data(malloc(type_info.sizeOf))
   {
     type_info.constructor(data);
   }
@@ -45,7 +45,7 @@ namespace ecs
 
   void clear_processed_field()
   {
-    for (Template *t: Template::templates())
+    for (Template *t: TemplateManager::instance().templates)
       t->processed = false;
   }
 
@@ -119,7 +119,7 @@ namespace ecs
   
   bool exists_template_with_name(const char* name)
   {
-    for (const Template *t: Template::templates())
+    for (const Template *t: TemplateManager::instance().templates)
       if (!strcmp(t->name.c_str(), name))
         return true;
     return false;

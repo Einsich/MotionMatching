@@ -1,12 +1,12 @@
 #pragma once
 #include "ecs/manager/type_info.h"
+#include "Serialization/iserializable.h"
 
-//add new template
 
 namespace ecs
 {
  
-  struct TemplateInfo
+  struct TemplateInfo final: public ISerializable
   {
   private:
     string name;
@@ -22,8 +22,10 @@ namespace ecs
     const ecs::TypeInfo &get_type_info() const;
     const char *get_type_name() const;
     const string &get_type_string_name() const;
+    virtual size_t serialize(std::ostream& os) const override;
+    virtual size_t deserialize(std::istream& is) override;
   };
-  struct Template
+  struct Template final: public ISerializable
   {
     string name;
     vector<TemplateInfo> types;
@@ -33,12 +35,10 @@ namespace ecs
     bool processed;
     Template() = default;
     Template(const char *name);
-    static vector<Template*> &templates()
-    {
-      static vector<Template*> templates;
-      return templates;
-    }
+    virtual size_t serialize(std::ostream& os) const override;
+    virtual size_t deserialize(std::istream& is) override;
   };
+
 
   struct TemplateCollision
   {
@@ -52,4 +52,16 @@ namespace ecs
   TemplateCollision can_change_field(Template *t, const TemplateInfo &info);
   TemplateCollision can_add_subtemplate(Template *t, Template *subtempl);
   bool exists_template_with_name(const char* name);
+
+  struct TemplateManager
+  {
+    vector<Template*> templates;
+    static TemplateManager &instance() 
+    {
+      static TemplateManager manager;
+      return manager;
+    }
+  };
+  void load_templates();
+  void save_templates();
 }

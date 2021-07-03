@@ -9,13 +9,7 @@
 #include "Engine/time.h"
 #include "Application/application.h"
 #include "reflection.h"
-class ISerializable
-{
-public:
-  virtual size_t serialize(std::ostream& os) const = 0;
-  virtual size_t deserialize(std::istream& is) = 0;
-};
-
+#include "iserializable.h"
 
 template<typename T>
 inline std::enable_if_t<!std::is_base_of_v<ISerializable, T> && !HasReflection<T>::value, size_t>
