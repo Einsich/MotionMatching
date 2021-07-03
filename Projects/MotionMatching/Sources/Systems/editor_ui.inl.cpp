@@ -31,4 +31,19 @@ void ecs_types_viewer_func()
 }
 
 
+void entity_creater_func();
+
+ecs::SystemDescription entity_creater_descr("entity_creater", {
+}, entity_creater_func, ecs::SystemOrder::UI);
+
+void entity_creater_func()
+{
+  for (ecs::QueryIterator begin = entity_creater_descr.begin(), end = entity_creater_descr.end(); begin != end; ++begin)
+  {
+    entity_creater(
+    );
+  }
+}
+
+
 

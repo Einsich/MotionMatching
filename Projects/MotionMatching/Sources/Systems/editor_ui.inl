@@ -390,3 +390,49 @@ SYSTEM(ecs::SystemOrder::UI) ecs_types_viewer()
     
   ImGui::End();
 }
+
+
+SYSTEM(ecs::SystemOrder::UI) entity_creater()
+{
+  if(!ImGui::Begin("Create entity"))
+  {
+    ImGui::End();
+    return;
+  }
+  const int BUFN = 255;
+  char buf[BUFN];
+  
+  static std::string searchString = "";
+  snprintf(buf, BUFN, "%s", searchString.c_str());
+  if (ImGui::InputText("Search: ", buf, BUFN))
+    searchString = std::string(buf);
+
+  auto &templates = ecs::TemplateManager::instance().templates;
+  vector<const char*> names;
+  vector<const ecs::Template*> templatePtrs;
+  names.reserve(templates.size());
+  int i = 0;
+  for (const ecs::Template *t : templates)
+  {
+    if (strstr(t->name.c_str(), searchString.c_str()))
+    {
+      names.push_back(t->name.c_str());
+      templatePtrs.push_back(t);
+    }
+    ++i;
+  }
+    
+  static int selectedTemplate = -1;
+  bool selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
+  const char *cur_name = selectedSorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
+  ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
+  
+  selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
+  if (selectedSorrectTemplate)
+  {
+    ImGui::SameLine();
+    if (ImGui::Button("Create"))
+      ecs::create_entity(templatePtrs[selectedTemplate]);
+  }
+  ImGui::End();
+}

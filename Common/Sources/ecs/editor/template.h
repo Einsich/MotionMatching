@@ -22,6 +22,8 @@ namespace ecs
     const ecs::TypeInfo &get_type_info() const;
     const char *get_type_name() const;
     const string &get_type_string_name() const;
+    string_hash type_name_hash() const;
+    string_hash type_hash() const;
     virtual size_t serialize(std::ostream& os) const override;
     virtual size_t deserialize(std::istream& is) override;
   };
@@ -61,7 +63,9 @@ namespace ecs
       static TemplateManager manager;
       return manager;
     }
+    static const Template *get_template_by_name(const char *name);
   };
   void load_templates();
   void save_templates();
+  vector<const TemplateInfo*> linearize_field(const Template *t);
 }

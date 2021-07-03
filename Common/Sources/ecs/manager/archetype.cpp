@@ -1,5 +1,5 @@
 #include "archetype.h"
-
+#include "../editor/template.h"
 namespace ecs
 {
   static ComponentContainer *dummyContainer = new ComponentContainer();
@@ -17,13 +17,39 @@ namespace ecs
       components.try_emplace(t.type_name_hash(), typeIt->second.hashId, t.type_name_hash(), capacity, typeIt->second.sizeOf);
     }
   }
-  bool Archetype::in_archetype(const ComponentTypes &types)
+  Archetype::Archetype(const std::vector<const TemplateInfo*> &types, int capacity):
+    components(), count(0), capacity(capacity)
+  {
+    for(const TemplateInfo*t : types)
+    {
+      string_hash typeNameHash = t->type_name_hash();
+      auto it = full_description().find(typeNameHash);
+      assert(it->first && "Don't found full descr for type in Archetype");
+      auto typeIt = TypeInfo::types().find(it->second.typeHash);
+      assert(typeIt->first && "Don't found this type");
+      fullTypeDescriptions.push_back(&it->second);
+      components.try_emplace(typeNameHash, typeIt->second.hashId, typeNameHash, capacity, typeIt->second.sizeOf);
+    }    
+  }
+  bool Archetype::in_archetype(const ComponentTypes &types) const
   {
     if (types.componentsTypes.size() != components.size())
       return false;
     for (const TypeDescription &descr : types.componentsTypes)
     {
       auto it = components.find(descr.type_name_hash());
+      if (it == components.end())
+        return false;
+    }
+    return true;
+  }
+  bool Archetype::in_archetype(const vector<const TemplateInfo*> &types) const
+  {
+    if (types.size() != components.size())
+      return false;
+    for (const TemplateInfo*descr : types)
+    {
+      auto it = components.find(descr->type_name_hash());
       if (it == components.end())
         return false;
     }
@@ -46,7 +72,15 @@ namespace ecs
   {
     for (auto &component : list.components)
     {
-      components[component.first].add_component(component.second);
+      components[component.first].add_component(component.second.data);
+    }
+    count++;
+  }
+  void Archetype::add_entity(const vector<const TemplateInfo*> &list)
+  {
+    for (const TemplateInfo *component : list)
+    {
+      components[component->type_name_hash()].add_component(component->data);
     }
     count++;
   }

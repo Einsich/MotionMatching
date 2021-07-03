@@ -4,6 +4,14 @@
 namespace fs = filesystem;
 namespace ecs
 { 
+  
+  const Template *TemplateManager::get_template_by_name(const char *name)
+  {
+    for (const Template *t : instance().templates)
+      if (t->name == name)
+        return t;
+    return nullptr;
+  }
   size_t TemplateInfo::serialize(std::ostream& os) const
   {
     ecs::TypeInfo &typeInfo = ecs::TypeInfo::types()[typeHash];

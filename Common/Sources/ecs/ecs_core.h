@@ -69,8 +69,11 @@ namespace ecs
   template<typename T>
   T* get_component(const EntityId &entity, const char *name);
 
-  Archetype *add_archetype(const ComponentTypes &types, int capacity);
   EntityId create_entity(ComponentInitializerList &list);
+  EntityId create_entity(const string &template_name);
+  EntityId create_entity(const char *template_name);
+  struct Template;
+  EntityId create_entity(const Template *temp);
   void destroy_entity(const EntityId &eid);
 
 

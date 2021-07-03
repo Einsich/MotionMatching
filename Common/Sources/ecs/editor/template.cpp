@@ -1,5 +1,5 @@
 #include "template.h"
-
+#include "../manager/type_description.h"
 namespace ecs
 {
   
@@ -37,6 +37,14 @@ namespace ecs
   const string &TemplateInfo::get_type_string_name() const
   {
     return ecs::TypeInfo::types()[typeHash].name;
+  }
+  string_hash TemplateInfo::type_name_hash() const
+  {
+    return TypeDescription::hash(nameHash, typeHash);
+  }
+  string_hash TemplateInfo::type_hash() const
+  {
+    return typeHash;
   }
 
   Template::Template(const char *name):

@@ -32,7 +32,7 @@ namespace ecs
       free(data[i]);
   }
 
-  void ComponentContainer::add_component(const ComponentInitializer &component)
+  void ComponentContainer::add_component(void *component_data)
   {
     if (count == capacity)
     {
@@ -44,7 +44,7 @@ namespace ecs
     int j = count / binSize;
     int i = count % binSize;
 
-    copyConstructor(component.data, (char*)data[j] + type_sizeof(typeHash) * i);
+    copyConstructor(component_data, (char*)data[j] + type_sizeof(typeHash) * i);
     count++;
   }
   void ComponentContainer::destroy_component(int i, bool without_copy)
