@@ -14,8 +14,7 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
   char buf[N];
   for (ecs::Archetype *archetype : ecs::core().archetypes)
   {
-    snprintf(buf, N, "archetype[%d]", ++i);
-    if (ImGui::TreeNode(buf))
+    if (ImGui::TreeNode(archetype->synonim.c_str()))
     {
       for (int j = 0; j < archetype->count; ++j)
       {

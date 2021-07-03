@@ -11,8 +11,8 @@ namespace ecs
     std::unordered_map<uint, ComponentContainer> components;
     int count, capacity;
     std::vector<FullTypeDescription*> fullTypeDescriptions;
-    Archetype(const ComponentTypes &types, int count);
-    Archetype(const vector<const TemplateInfo*> &types, int count);
+    string synonim;
+    Archetype(const vector<string_hash> &type_hashes, int count, const string &synonim);
     bool in_archetype(const ComponentTypes &types) const;
     bool in_archetype(const vector<const TemplateInfo*> &types) const;
 

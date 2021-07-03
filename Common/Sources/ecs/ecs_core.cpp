@@ -92,10 +92,9 @@ namespace ecs
       register_archetype_to(system, archetype);
     
   }
-  template<typename T>
-  Archetype *add_archetype(const T &types, int capacity)
+  Archetype *add_archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim)
   {
-    Archetype *archetype = new Archetype(types, capacity);
+    Archetype *archetype = new Archetype(type_hashes, capacity, synonim);
     core().archetypes.push_back(archetype);
     printf("added\n");
     for (const auto &component : archetype->components)
@@ -125,7 +124,10 @@ namespace ecs
     }
     if (!found_archetype)
     {
-      found_archetype = add_archetype(list.types, 1);
+      vector<string_hash> type_hashes(list.types.componentsTypes.size());
+      for (uint i = 0; i < list.types.componentsTypes.size(); ++i)
+        type_hashes[i] = list.types.componentsTypes[i].type_name_hash();
+      found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().archetypes.size()) + "]");
     }
     int index = found_archetype->count;
     EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
@@ -174,7 +176,11 @@ namespace ecs
       auto &fullDecr = full_description();
       for (const TemplateInfo *t: list)
         fullDecr.try_emplace(t->type_name_hash(), t->get_name(), t->type_hash(), t->type_name_hash());
-      found_archetype = add_archetype(list, 1);
+        
+      vector<string_hash> type_hashes(list.size());
+      for (uint i = 0; i < list.size(); ++i)
+        type_hashes[i] = list[i]->type_name_hash();
+      found_archetype = add_archetype(type_hashes, 1, t->name);
     }
     int index = found_archetype->count;
     EntityId eid = core().entityContainer.create_entity(archetype_ind, index);

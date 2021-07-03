@@ -3,26 +3,12 @@
 namespace ecs
 {
   static ComponentContainer *dummyContainer = new ComponentContainer();
-  
-  Archetype::Archetype(const ComponentTypes &types, int capacity):
-    components(), count(0), capacity(capacity)
+
+  Archetype::Archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim):
+    components(), count(0), capacity(capacity), synonim(synonim)
   {
-    for(const auto& t : types.componentsTypes)
+    for(string_hash typeNameHash : type_hashes)
     {
-      auto it = full_description().find(t.type_name_hash());
-      assert(it->first && "Don't found full descr for type in Archetype");
-      auto typeIt = TypeInfo::types().find(it->second.typeHash);
-      assert(typeIt->first && "Don't found this type");
-      fullTypeDescriptions.push_back(&it->second);
-      components.try_emplace(t.type_name_hash(), typeIt->second.hashId, t.type_name_hash(), capacity, typeIt->second.sizeOf);
-    }
-  }
-  Archetype::Archetype(const std::vector<const TemplateInfo*> &types, int capacity):
-    components(), count(0), capacity(capacity)
-  {
-    for(const TemplateInfo*t : types)
-    {
-      string_hash typeNameHash = t->type_name_hash();
       auto it = full_description().find(typeNameHash);
       assert(it->first && "Don't found full descr for type in Archetype");
       auto typeIt = TypeInfo::types().find(it->second.typeHash);
