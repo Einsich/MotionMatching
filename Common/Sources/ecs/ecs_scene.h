@@ -9,6 +9,7 @@ namespace ecs
   {
     string name;
     EntityContainer editorScene, gameScene;
+    bool gamePaused;
   };
   class Scene
   {
@@ -30,7 +31,7 @@ namespace ecs
   public:
     void start_scene();
     bool try_start_scene(const string &name, uint tags);
-    void swap_editor_game_scene();
+    void swap_editor_game_scene(bool pause);
     void update_logic();
     void update_render();
     void update_ui();

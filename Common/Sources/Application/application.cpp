@@ -43,7 +43,10 @@ bool Application::sdl_event_handler()
       case SDL_KEYDOWN: 
       
       if(event.key.keysym.sym == SDLK_F2)
-        scene->swap_editor_game_scene();
+        scene->swap_editor_game_scene(true);
+      else
+      if(event.key.keysym.sym == SDLK_F3)
+        scene->swap_editor_game_scene(false);
       
       case SDL_KEYUP: input.event_process(event.key, Time::time());
 

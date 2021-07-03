@@ -47,26 +47,29 @@ namespace ecs
       }
     return false;
   }
-  void Scene::swap_editor_game_scene()
+  void Scene::swap_editor_game_scene(bool pause)
   {
     uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
     if (currentScene)
     {
-      debug_log("swap to %u", newTags);
       currentSceneTags = newTags;
       core().currentSceneTags = newTags;
       if (newTags == (uint)ecs::SystemTag::Editor)
       {
-        core().destroy_entities();
-        process_only_events();
-        destroy_entities(true);
-        
+        currentScene->gamePaused = pause;
+        if (!pause)
+        {
+          core().destroy_entities();
+          process_only_events();
+          destroy_entities(true);
+        }
         core().replace_entity_container(&currentScene->editorScene);
       }
       else
       {
         core().replace_entity_container(&currentScene->gameScene);
-        send_event(OnSceneCreated());
+        if (!currentScene->gamePaused)        
+          send_event(OnSceneCreated());
       }
     }
   }
