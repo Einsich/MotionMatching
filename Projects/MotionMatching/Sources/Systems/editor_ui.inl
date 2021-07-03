@@ -1,5 +1,6 @@
 #include "ecs/ecs.h"
 #include "Engine/imgui/imgui.h"
+#include "ecs/editor/template.h"
 #include <functional>
 SYSTEM(ecs::SystemOrder::UI) entity_viewer()
 {
@@ -39,109 +40,90 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
   }
   ImGui::End();
 }
-struct TemplateInfo
-{
-private:
-  string name;
-  string_hash typeHash, nameHash;
-public:
-  void *data;
-  TemplateInfo(const string_hash type_hash, const ecs::TypeInfo &type_info):
-  name(""), typeHash(type_hash), nameHash(HashedString("")), data(malloc(type_info.sizeOf))
-  {
-    type_info.constructor(data);
-  }
-  const char *get_name() const
-  {
-    return name.c_str();
-  }
-  void change_name(const char *new_name)
-  {
-    nameHash = HashedString(new_name);
-    name = string(new_name);
-  }
-  bool operator==(const TemplateInfo &other) const
-  {
-    return typeHash == other.typeHash && nameHash == other.nameHash;
-  }
-  const ecs::TypeInfo &get_type_info() const
-  {
-    return ecs::TypeInfo::types()[typeHash];
-  }
-};
-struct Template
-{
-  string name;
-  vector<TemplateInfo> types;
-  vector<Template> subTemplates;
-  bool edited;
-  Template():
-  name(""), types(), subTemplates(), edited(false)
-  {
-  }
-};
-static vector<Template> templates(1);
-bool exists_template_with_name(const char* name)
-{
-  for (Template & t: templates)
-    if (!strcmp(t.name.c_str(), name))
-      return true;
-  return false;
-}
-bool try_change_template_name(const char* new_name)
-{
-  if (exists_template_with_name(new_name))
-    return false;
-  for (Template &t: templates)
-    for (Template &subt: t.subTemplates)
-      subt.name = string(new_name);
-  return true;
-}
 
-void edit_template(Template &templ, bool sub_templ = false)
+string collision_error(const ecs::TemplateCollision &collision)
 {
-  vector<TemplateInfo> &types = templ.types;
-  vector<Template> &subTemplates = templ.subTemplates;
+  string message = collision.collisionTrace[0]->name;
+  string oldField = collision.fieldOld.get_type_string_name() + " " + collision.fieldOld.get_string_name();
+  string newField = collision.fieldNew.get_type_string_name() + " " + collision.fieldNew.get_string_name();
+  for (uint i = 1; i < collision.collisionTrace.size(); ++i)
+  {
+    message = collision.collisionTrace[i]->name + "/" + message;
+  }
+  
+  return "new field " + newField + " collide with " + oldField + " in " + message; 
+}
+void imgui_error(const string &error)
+{
+  ImGui::TextColored(ImVec4(1.0, 0, 0, 1.0), "%s", error.c_str());
+}
+void imgui_error(const char *error)
+{
+  ImGui::TextColored(ImVec4(1.0, 0, 0, 1.0), "%s",  error);
+}
+void edit_template(ecs::Template &templ, bool view_only = false)
+{
+  vector<ecs::TemplateInfo> &types = templ.types;
+  vector<ecs::Template*> &subTemplates = templ.subTemplates;
   static vector<bool> editComponents;
   if (editComponents.size() < types.size())
     editComponents.resize(types.size());
 
-  static vector<bool> editSubTempl;
-  if (editSubTempl.size() < subTemplates.size())
-    editSubTempl.resize(subTemplates.size());
 
   constexpr int BUFN = 255;
   char buf[BUFN];
   char bufIndex[BUFN];
-  if (!sub_templ)
+  if (!view_only)
   {
     snprintf(buf, BUFN, "%s", templ.name.c_str());
     if (ImGui::InputText(bufIndex, buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue) && strcmp(templ.name.c_str(), buf))
     {
-      if (try_change_template_name(buf))
-        templ.name = std::string(buf);
-      else
-        ImGui::TextColored(ImVec4(1.0, 0, 0,1.0), "Enter unique template name");
+      if (!ecs::try_change_template_name(templ, buf))
+        imgui_error("Enter unique template name");
     }
   }
 
   for (uint i = 0; i < types.size(); ++i)
   {
-    TemplateInfo &type = types[i];
+    ecs::TemplateInfo &type = types[i];
     const ecs::TypeInfo &typeInfo = type.get_type_info();
     ImGui::Text("%s", typeInfo.name.c_str());
     ImGui::SameLine();
-    snprintf(buf, BUFN, "%s", type.get_name());
-    snprintf(bufIndex, BUFN, "##%d", i);
-    if (ImGui::InputText(bufIndex, buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue))
+    if (view_only)
+      ImGui::Text("%s", type.get_name());
+    else
     {
-      
-      type.change_name(buf);
+      snprintf(buf, BUFN, "%s", type.get_name());
+      snprintf(bufIndex, BUFN, "##%d", i);
+      static string error = "";
+      if (ImGui::InputText(bufIndex, buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue))
+      {
+        if (!strcmp(buf, type.get_name()))
+        {
+          error = "";
+        }
+        else
+        {
+          ecs::TemplateInfo bufInfo = type;
+          bufInfo.change_name(buf);
+          ecs::TemplateCollision collision = ecs::can_change_field(&templ, bufInfo);
+          if (collision.collision)
+          {
+            error = collision_error(collision);
+          }
+          else
+          {
+            type.change_name(buf);
+          }
+        }
+      }
+      if (error != "")
+        imgui_error(error);
     }
     ImGui::SameLine();
     if (!editComponents[i])
     {
-      snprintf(bufIndex, BUFN, "edit##%d", i);
+      snprintf(bufIndex, BUFN, "open##%d", i);
       if(ImGui::Button(bufIndex))
         editComponents[i] = true;
     } else
@@ -151,7 +133,7 @@ void edit_template(Template &templ, bool sub_templ = false)
         editComponents[i] = false;
 
     }
-    if (!sub_templ)
+    if (!view_only)
     {
       ImGui::SameLine();
       snprintf(bufIndex, BUFN, "remove##%d", i);
@@ -166,29 +148,28 @@ void edit_template(Template &templ, bool sub_templ = false)
     }
     if (editComponents[i])
     {
-      typeInfo.componentEdition(type.data, true);
+      typeInfo.componentEdition(type.data, view_only);
     }
-
   }
   
   for (uint i = 0; i < subTemplates.size(); ++i)
   {
-    Template &subTemplate = subTemplates[i];
-    ImGui::Text("%s", subTemplate.name.c_str());
+    ecs::Template *subTemplate = subTemplates[i];
+    ImGui::Text("%s", subTemplate->name.c_str());
     ImGui::SameLine();
-    if (!editSubTempl[i])
+    if (!subTemplate->opened)
     {
-      snprintf(bufIndex, BUFN, "edit##%d", i);
+      snprintf(bufIndex, BUFN, "open##%d", i);
       if(ImGui::Button(bufIndex))
-        editSubTempl[i] = true;
+        subTemplate->opened = true;
     } else
     {
       snprintf(bufIndex, BUFN, "close##%d", i);
       if(ImGui::Button(bufIndex))
-        editSubTempl[i] = false;
+        subTemplate->opened = false;
 
     }
-    if (!sub_templ)
+    if (!view_only)
     {
       ImGui::SameLine();
       snprintf(bufIndex, BUFN, "remove##%d", i);
@@ -196,23 +177,27 @@ void edit_template(Template &templ, bool sub_templ = false)
       if (rem)
       {
         subTemplates.erase(subTemplates.begin() + i);
-        editSubTempl.erase(editSubTempl.begin() + i);
         --i;
         continue;
       }
     }
-    if (editSubTempl[i])
+    if (subTemplate->opened)
     {
-      edit_template(subTemplate, true);
+      edit_template(*subTemplate, true);
     }
   }
-  if (sub_templ)
+  if (view_only)
     return;
   static bool tryAddField = false;
   static bool tryAddSubTempl = false;
 
   if (tryAddField)
   {
+    static std::string fieldName = "";
+    snprintf(buf, BUFN, "%s", fieldName.c_str());
+    bool nameChanged = ImGui::InputText("Name: ", buf, BUFN);
+    if (nameChanged)
+      fieldName = std::string(buf);
     static std::string searchString = "";
     snprintf(buf, BUFN, "%s", searchString.c_str());
     if (ImGui::InputText("Search: ", buf, BUFN))
@@ -235,13 +220,23 @@ void edit_template(Template &templ, bool sub_templ = false)
     static int item_current = -1;
     const char *cur_name = 0 <= item_current && item_current < (int)names.size()
      ? ecs::TypeInfo::types()[hashes[item_current]].name.c_str() : "";
-    ImGui::ListBox(cur_name, &item_current, names.data(), names.size(), names.size());
+    bool typeChanged = ImGui::ListBox(cur_name, &item_current, names.data(), names.size(), names.size());
     ImGui::SameLine();
     if (0 <= item_current && item_current < (int)names.size())
     {
+      static string error = "";
+      if (nameChanged || typeChanged)
+      {
+        ecs::TemplateCollision collision = ecs::can_change_field(&templ, 
+        ecs::TemplateInfo(hashes[item_current], ecs::TypeInfo::types()[hashes[item_current]], fieldName.c_str()));
+        error = collision.collision ? collision_error(collision) : "";
+      }
+      if (error != "")
+        imgui_error(error);
+      else
       if (ImGui::Button("Ok"))
       {
-        types.emplace_back(hashes[item_current], ecs::TypeInfo::types()[hashes[item_current]]);
+        types.emplace_back(hashes[item_current], ecs::TypeInfo::types()[hashes[item_current]], fieldName.c_str());
         tryAddField = false;
       }
     }
@@ -255,9 +250,11 @@ void edit_template(Template &templ, bool sub_templ = false)
   }
   if (tryAddSubTempl)
   {
+    auto &templates = ecs::Template::templates();
     static std::string searchTemplateString = "";
     snprintf(buf, BUFN, "%s", searchTemplateString.c_str());
-    if (ImGui::InputText("SubTemplate: ", buf, BUFN))
+    bool nameChanged = ImGui::InputText("SubTemplate: ", buf, BUFN);
+    if (nameChanged)
       searchTemplateString = std::string(buf);
 
     vector<const char*> names;
@@ -266,7 +263,7 @@ void edit_template(Template &templ, bool sub_templ = false)
     indexes.reserve(templates.size());
     for (uint i = 0; i < templates.size(); ++i)
     {
-      const Template &t = templates[i];
+      const ecs::Template &t = *templates[i];
       if (strcmp(t.name.c_str(), templ.name.c_str()) && strstr(t.name.c_str(), searchTemplateString.c_str()))
       {
         names.push_back(t.name.c_str());
@@ -276,11 +273,19 @@ void edit_template(Template &templ, bool sub_templ = false)
     
     static int item_current = -1;
     const char *cur_name = 0 <= item_current && item_current < (int)names.size()
-     ? templates[indexes[item_current]].name.c_str() : "";
-    ImGui::ListBox(cur_name, &item_current, names.data(), names.size(), names.size());
+     ? templates[indexes[item_current]]->name.c_str() : "";
+    bool typeChanged = ImGui::ListBox(cur_name, &item_current, names.data(), names.size(), names.size());
     ImGui::SameLine();
     if (0 <= item_current && item_current < (int)names.size())
     {
+      static string error = "";
+      if (typeChanged)
+      {
+        ecs::TemplateCollision collision = ecs::can_add_subtemplate(&templ, templates[indexes[item_current]]);
+        error = collision.collision ? collision_error(collision) : "";
+      }
+      if (error != "")
+        imgui_error(error);
       if (ImGui::Button("Ok"))
       {
         templ.subTemplates.emplace_back(templates[indexes[item_current]]);
@@ -306,41 +311,76 @@ void edit_template(Template &templ, bool sub_templ = false)
 SYSTEM(ecs::SystemOrder::UI) ecs_types_viewer()
 {
   ImGui::Begin("type viewer");
+  ImGui::PushItemWidth(300);
   static vector<const char*> names;
   static int selectedTemplate = -1;
   static bool editTemplate = false;
+  static bool addedTemplate = false;
+  constexpr int BUFN = 255;
+  char buf[BUFN];
+  auto &templates = ecs::Template::templates();
   if (editTemplate)
   {
-    edit_template(templates[selectedTemplate]);
+    edit_template(*templates[selectedTemplate]);
     if (ImGui::Button("Close editing"))
       selectedTemplate = -1, editTemplate = false;
   }
   else
   {
-    names.resize(templates.size());
-    for (uint i = 0; i < templates.size(); ++i)
-      names[i] = templates[i].name.c_str();
-    bool selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
-    const char *cur_name = selectedSorrectTemplate ? templates[selectedTemplate].name.c_str() : "";
-    ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
-    
-    selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
-    if (selectedSorrectTemplate)
-    { 
-      ImGui::SameLine();
-      if (ImGui::Button("Edit"))
-        editTemplate = true;
-    }
-    if (exists_template_with_name(""))
+    if (!addedTemplate)
     {
-      ImGui::TextColored(ImVec4(1.0, 0, 0,1.0), "Give name for your templates");
+      names.resize(templates.size());
+      for (uint i = 0; i < templates.size(); ++i)
+        names[i] = templates[i]->name.c_str();
+      bool selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
+      const char *cur_name = selectedSorrectTemplate ? templates[selectedTemplate]->name.c_str() : "";
+      ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
+      
+      selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
+      if (selectedSorrectTemplate)
+      { 
+        ImGui::SameLine();
+        if (ImGui::Button("Edit"))
+          editTemplate = true;
+      }
+      if (ImGui::Button("add template"))
+      {
+        addedTemplate = true;
+      }
     }
     else
-    if (ImGui::Button("add template"))
     {
-      templates.emplace_back();
+      static std::string templateName = "";
+      snprintf(buf, BUFN, "%s", templateName.c_str());
+      static bool goodName = false;
+      if (ImGui::InputText("Template name", buf, BUFN))
+      {
+        goodName = !ecs::exists_template_with_name(buf);
+        if (!goodName)
+          imgui_error("Give the unique name for your template");
+        else
+          templateName = string(buf);
+      }
+      if (templateName == "")
+      {
+        goodName = false;
+        imgui_error("Name your template");
+      }
+      if (goodName && ImGui::Button("create"))
+      {
+        templates.push_back(new ecs::Template(templateName.c_str()));
+        addedTemplate = false;
+        goodName = false;
+        templateName = "";
+      }
+      if (ImGui::Button("Cancel"))
+      {
+        addedTemplate = false;
+        goodName = false;
+        templateName = "";
+      }
+      
     }
-    
   }
     
   ImGui::End();
