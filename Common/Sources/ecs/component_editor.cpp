@@ -1,58 +1,76 @@
 
 #include "component_editor.h"
 #include "ecs/manager/entity_id.h"
-#include "Engine/camera.h"
-#include "Engine/Render/skybox.h"
 #include "ecs/base_types.h"
 #include "Serialization/reflection.h"
-
+#include "3dmath.h"
 constexpr int BUFN = 255;
 char buf[BUFN];
 
 
 
 template<>
-void edit_component(bool &component, const char *name)
+bool edit_component(bool &component, const char *name, bool view_only)
 {
-  ImGui::Checkbox(name, &component);
+  bool b = component;
+  bool edited = ImGui::Checkbox(name, view_only ? &b : &component);
   ImGui::Spacing();
+  return view_only ? false : edited;
 }
 template<>
-void edit_component(int &component, const char *name)
+bool edit_component(int &component, const char *name, bool view_only)
 {
-  ImGui::InputInt(name, &component);
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  bool edited = ImGui::InputInt(name, &component, flags);
   ImGui::Spacing();
+  return edited;
 }
 template<>
-void edit_component(uint &component, const char *name)
+bool edit_component(uint &component, const char *name, bool view_only)
 {
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
   int v = component;
-  ImGui::InputInt(name, &v);
+  bool edited = ImGui::InputInt(name, &v, flags);
   component = v;
   ImGui::Spacing();
+  return edited;
 }
 template<>
-void edit_component(float &component, const char *name)
+bool edit_component(float &component, const char *name, bool view_only)
 {
-  ImGui::InputFloat(name, &component, 0.1f, 10, 2);
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  bool edited = ImGui::InputFloat(name, &component, 0.1f, 10, 2, flags);
   ImGui::Spacing();
+  return edited;
 }
 
 template<>
-void edit_component(double &component, const char *name)
+bool edit_component(double &component, const char *name, bool view_only)
 {
-  ImGui::InputDouble(name, &component, 0.1f, 10);
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  bool edited = ImGui::InputDouble(name, &component, 0.1f, 10, "%.6f", flags);
   ImGui::Spacing();
+  return edited;
+}
+#define VEC_ITYPE(TYPE, INPUT)\
+template<> bool edit_component(TYPE &component, const char *name, bool view_only)\
+{\
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+  bool edited = ImGui::INPUT(name, &component.x, flags);\
+  ImGui::Spacing();\
+  return edited; \
 }
 #define VEC_TYPE(TYPE, INPUT)\
-template<> void edit_component(TYPE &component, const char *name)\
+template<> bool edit_component(TYPE &component, const char *name, bool view_only)\
 {\
-  ImGui::INPUT(name, &component.x);\
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+  bool edited = ImGui::INPUT(name, &component.x, "%.2f", flags);\
   ImGui::Spacing();\
+  return edited; \
 }
-VEC_TYPE(ivec2, InputInt2)
-VEC_TYPE(ivec3, InputInt3)
-VEC_TYPE(ivec4, InputInt4)
+VEC_ITYPE(ivec2, InputInt2)
+VEC_ITYPE(ivec3, InputInt3)
+VEC_ITYPE(ivec4, InputInt4)
 
 VEC_TYPE(vec2, InputFloat2)
 VEC_TYPE(vec3, InputFloat3)
@@ -60,39 +78,53 @@ VEC_TYPE(vec4, InputFloat4)
 
 
 template<>
-void edit_component(mat4 &component, const char *name)
+bool edit_component(mat4 &component, const char *name, bool view_only)
 {
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
   vec3 rotation;
   glm::extractEulerAngleXYZ(component, rotation.x, rotation.y, rotation.z);
   rotation = glm::degrees(rotation);
-  ImGui::InputFloat3(name, &rotation.x, 2);
-  rotation = glm::radians(rotation);
-  component = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+  bool edited = ImGui::InputFloat3(name, &rotation.x, 2, flags);
+  if (edited)
+  {
+    rotation = glm::radians(rotation);
+    component = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+  }
   ImGui::Spacing();
+  return edited;
 }
 template<>
-void edit_component(mat3 &component, const char *name)
+bool edit_component(mat3 &component, const char *name, bool view_only)
 {
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
   vec3 rotation;
   glm::extractEulerAngleXYZ((mat4)component, rotation.x, rotation.y, rotation.z);
   rotation = glm::degrees(rotation);
-  ImGui::InputFloat3(name, &rotation.x, 2);
-  rotation = glm::radians(rotation);
-  component = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+  bool edited = ImGui::InputFloat3(name, &rotation.x, 2, flags);
+  if (edited)
+  {
+    rotation = glm::radians(rotation);
+    component = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+  }
   ImGui::Spacing();
+  return edited;
 }
 template<>
-void edit_component(ecs::EntityId &component, const char *name)
+bool edit_component(ecs::EntityId &component, const char *name, bool)
 {
   ImGui::Text("%s [%s] archetype %d, index %d", name,component.valid() ? "valid":"not valid",
    component.archetype_index(), component.array_index());
   ImGui::Spacing();
+  return false;
 }
 template<>
-void edit_component(std::string &component, const char *name)
+bool edit_component(std::string &component, const char *name, bool view_only)
 {
-  if (ImGui::InputText(name, buf, BUFN))
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  bool edited = ImGui::InputText(name, buf, BUFN, flags);
+  if (edited)
     component = std::string(buf);
   ImGui::Spacing();
+  return edited;
 }
 

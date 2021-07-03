@@ -4,31 +4,35 @@
 #include "Serialization/reflection.h"
 
 template<typename T>
-std::enable_if_t<HasReflection<T>::value, void> edit_component(T &component, const char *)
+std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, const char *, bool view_only)
 {
-  component.reflect([](auto &component, const char *name)->void{edit_component(component, name);});
+  bool edited = false;
+  component.reflect([&](auto &component, const char *name)->void{edited |= edit_component(component, name, view_only);});
 }
 
 template<typename T>
-std::enable_if_t<!HasReflection<T>::value && !is_vector<T>::value, void>
-edit_component(T &component, const char *name);
+std::enable_if_t<!HasReflection<T>::value && !is_vector<T>::value, bool>
+edit_component(T &component, const char *name, bool view_only);
 
 template<typename T>
-std::enable_if_t<is_vector<T>::value, void>
-edit_component(T &v, const char *name)
+std::enable_if_t<is_vector<T>::value, bool>
+edit_component(T &v, const char *name, bool view_only)
 {
   std::vector<typename T::value_type> &component = v;
   constexpr int BUFN = 255;
   char buf[BUFN];
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
   snprintf(buf, BUFN, "%s##%p", name, (void*)&component);
+  bool edited = false;
   if (ImGui::TreeNode(buf))
   {
     ImGui::SameLine();
     int count = component.size();
     snprintf(buf, BUFN, "count##%p", (void*)&component);
-    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | flags))
     {
       component.resize(count);
+      edited |= true;
     }
     for (uint i = 0; i < component.size(); ++i)
     {
@@ -39,12 +43,12 @@ edit_component(T &v, const char *name)
         if constexpr (std::is_same_v<bool, typename T::value_type>)
         {
           bool b = component[i];
-          edit_component(b, buf);
+          edited |= edit_component(b, buf, view_only);
           b = component[i];
         }
         else
         {
-          edit_component(component[i], buf);
+          edited |= edit_component(component[i], buf, view_only);
         }
         ImGui::TreePop();  
       }
@@ -52,6 +56,7 @@ edit_component(T &v, const char *name)
       snprintf(buf, BUFN, "remove##%d%p", i, (void*)&component);
       if (ImGui::Button(buf))
       {
+        edited |= true;
         component.erase(component.begin() + i);
         --i;
       }
@@ -64,17 +69,20 @@ edit_component(T &v, const char *name)
     ImGui::SameLine();
     int count = component.size();
     snprintf(buf, BUFN, "count##%p", (void*)&component);
-    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))\
+    if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | flags))
     {
+      edited |= true;
       component.resize(count);
     }
   }
+  return edited;
 }
 
 #define EDIT_STUB(T) \
 template<>\
-void edit_component(T &, const char *name)\
+bool edit_component(T &, const char *name, bool)\
 {\
   ImGui::Text("%s", name);\
   ImGui::Spacing();\
+  return false; \
 }

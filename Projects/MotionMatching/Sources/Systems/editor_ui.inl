@@ -27,7 +27,7 @@ SYSTEM(ecs::SystemOrder::UI) entity_viewer()
             snprintf(buf, N, "%s %s",  full_descr->name.c_str(), typeInfo.name.c_str());
             if (ImGui::TreeNode(buf))
             {
-              typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j));
+              typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), true);
               ImGui::TreePop();
             }
           }
@@ -166,7 +166,7 @@ void edit_template(Template &templ, bool sub_templ = false)
     }
     if (editComponents[i])
     {
-      typeInfo.componentEdition(type.data);
+      typeInfo.componentEdition(type.data, true);
     }
 
   }

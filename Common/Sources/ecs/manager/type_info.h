@@ -71,9 +71,9 @@ namespace ecs
   }
 
   template<typename T>
-  void template_component_edition(void *ptr)
+  bool template_component_edition(void *ptr, bool view_only)
   {
-    edit_component(*((T*)ptr), nameOf<T>::value.data());
+    return edit_component(*((T*)ptr), nameOf<T>::value.data(), view_only);
   }
   
   template<typename T>

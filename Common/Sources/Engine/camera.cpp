@@ -36,27 +36,32 @@ const mat4x4& Camera::get_projection() const
 }
 
 template<>
-void edit_component(Camera &camera, const char *name)
+bool edit_component(Camera &camera, const char *name, bool view_only)
 {
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  bool edited = false;
   ImGui::Text("%s", name);
-  ImGui::Checkbox("orthographic", &camera.orthographic);
+  bool b = camera.orthographic;
+  edited |= ImGui::Checkbox("orthographic", view_only ? &b : &camera.orthographic);
   if (camera.orthographic)
   {
-    ImGui::InputFloat("aspectRatio", &camera.aspectRatio, 0.1f, 10, 2);
-    ImGui::InputFloat("orhtoScale", &camera.orhtoScale, 0.1f, 10, 2);
-    ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3);
-    ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1);
-    camera.set_orthographic(camera.aspectRatio, camera.orhtoScale, camera.zNear, camera.zFar);
+    edited |= ImGui::InputFloat("aspectRatio", &camera.aspectRatio, 0.1f, 10, 2, flags);
+    edited |= ImGui::InputFloat("orhtoScale", &camera.orhtoScale, 0.1f, 10, 2, flags);
+    edited |= ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3, flags);
+    edited |= ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1, flags);
+    if (edited)
+      camera.set_orthographic(camera.aspectRatio, camera.orhtoScale, camera.zNear, camera.zFar);
   }
   else
   {
-    ImGui::InputFloat("fieldOfView", &camera.fieldOfView, 10.f, 10, 2);
-    ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3);
-    ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1);
-    camera.set_perspective(camera.fieldOfView, camera.zNear, camera.zFar);
-
+    edited |= ImGui::InputFloat("fieldOfView", &camera.fieldOfView, 10.f, 10, 2, flags);
+    edited |= ImGui::InputFloat("zNear", &camera.zNear, 0.01f, 10, 3, flags);
+    edited |= ImGui::InputFloat("zFar", &camera.zFar, 100.f, 10, 1, flags);
+    if (edited)
+      camera.set_perspective(camera.fieldOfView, camera.zNear, camera.zFar);
   }
   ImGui::Spacing();
+  return edited;
 }
 
 ArcballCamera::ArcballCamera(float distance, vec2 rotation, vec3 target):
