@@ -11,6 +11,7 @@ namespace ecs
     typedef std::vector<SystemDescription*>::iterator SystemIterator;
     struct SystemRange { SystemIterator begin, end; };
     SystemRange logic, render, ui;
+    uint currentSceneTags;
     void update_range(const SystemRange &range);
 
     void keyboard_event_handler(const KeyboardEvent &event);
@@ -20,7 +21,7 @@ namespace ecs
     void destroy_entities(bool without_copy);
     void process_only_events();
   public:
-    void start_scene() override;
+    void start_scene(uint32_t tags) override;
     void update_logic() override;
     void update_render() override;
     void update_ui() override;

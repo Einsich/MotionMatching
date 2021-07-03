@@ -2,14 +2,13 @@
 #include "Engine/imgui/imgui.h"
 #include "ecs/editor/template.h"
 #include <functional>
-SYSTEM(ecs::SystemOrder::UI) entity_viewer()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_viewer()
 {
   if(!ImGui::Begin("Entity viewer"))
   {
     ImGui::End();
     return;
   }
-  int i = 0;
   const int N = 100;
   char buf[N];
   for (ecs::Archetype *archetype : ecs::core().archetypes)
@@ -312,7 +311,7 @@ void edit_template(ecs::Template &templ, bool view_only = false)
 
 }
 
-SYSTEM(ecs::SystemOrder::UI) ecs_types_viewer()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer()
 {
   ImGui::Begin("type viewer");
   ImGui::PushItemWidth(300);
@@ -391,7 +390,7 @@ SYSTEM(ecs::SystemOrder::UI) ecs_types_viewer()
 }
 
 
-SYSTEM(ecs::SystemOrder::UI) entity_creater()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater()
 {
   if(!ImGui::Begin("Create entity"))
   {

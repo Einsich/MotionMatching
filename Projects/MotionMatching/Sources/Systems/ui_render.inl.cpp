@@ -21,7 +21,7 @@ void motion_matching_statistic_func();
 ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, motion_matching_statistic_func,  ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
+}, motion_matching_statistic_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
 
 void motion_matching_statistic_func()
 {
