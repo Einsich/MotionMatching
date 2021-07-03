@@ -23,7 +23,7 @@ void AnimationTreeData::build_tree(aiNode *node, mat4 parent_transform, int inde
   parent_transform = parent_transform * transform ;
   string name(node->mName.C_Str());
 
-  printf("{ \"%s\", \"\"},%d\n", name.c_str(), parent);
+ // printf("{ \"%s\", \"\"},%d\n", name.c_str(), parent);
   nodes.push_back(AnimationNodeData(move(name), transform, inverse(parent_transform), parent));
   childMap[nodes[index].name] = index;
   for (uint i = 0; i < node->mNumChildren; i++)

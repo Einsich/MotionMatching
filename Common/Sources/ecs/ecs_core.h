@@ -3,22 +3,20 @@
 #include <queue>
 #include <functional>
 #include "manager/system_description.h"
-
 namespace ecs
 {
   template<typename E>
   struct EventDescription;
   template<typename E>
   struct SingleEventDescription;
-
+  struct EntityContainer;
   struct Core
   {
     std::unordered_map<uint, FullTypeDescription> types;
-    std::vector<Archetype*> archetypes;
     std::vector<SystemDescription*> systems;
     std::vector<QueryDescription*> queries;
     std::vector<QueryDescription*> event_queries;
-    EntityContainer entityContainer;
+    EntityContainer *entityContainer;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint currentSceneTags;
@@ -37,6 +35,7 @@ namespace ecs
       return handlers;
     }
     void destroy_entities();
+    void replace_entity_container(EntityContainer *container);
   };
   Core &core();
 

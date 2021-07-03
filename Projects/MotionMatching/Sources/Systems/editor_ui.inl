@@ -1,6 +1,7 @@
 #include "ecs/ecs.h"
 #include "Engine/imgui/imgui.h"
 #include "ecs/editor/template.h"
+#include "ecs/manager/entity_container.h"
 #include <functional>
 SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_viewer()
 {
@@ -11,7 +12,7 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_viewer()
   }
   const int N = 100;
   char buf[N];
-  for (ecs::Archetype *archetype : ecs::core().archetypes)
+  for (ecs::Archetype *archetype : ecs::core().entityContainer->archetypes)
   {
     if (ImGui::TreeNode(archetype->synonim.c_str()))
     {

@@ -1,20 +1,23 @@
 #pragma once
 #include "common.h"
-#include "Engine/iscene.h"
 #include "context.h"
 #include "Engine/input.h"
 #include "Engine/time.h"
 
+namespace ecs
+{
+  class Scene;
+}
 class Application
 {
 private:
   inline static Application *application;
-  IScene *scene;
   Context context;
   Time timer;
 public:
+  ecs::Scene *scene;
   const string projectPath, projectResourcesPath, projectShaderPath, commonResourcesPath, commonShaderPath;
-  Application(IScene *scene, string window_name, int width, int height, bool full_screen = false);
+  Application(string window_name, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
   void start();
   void main_loop();
@@ -28,5 +31,8 @@ public:
     return application->context;
   }
 };
+void load_editor_scene(const string &name);
+void load_game_scene(const string &name);
+
 string project_resources_path(const string &path);
 string common_resources_path(const string &path);

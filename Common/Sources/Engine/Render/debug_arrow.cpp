@@ -9,13 +9,13 @@ static DebugArrow *arrow_instance = nullptr;
 
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {
-  if (arrow_instance)
-    arrow_instance->add_arrow(transform * vec4(from, 1), transform * vec4(to, 1), color, size, depth_ignore);
+  //if (arrow_instance)
+  //  arrow_instance->add_arrow(transform * vec4(from, 1), transform * vec4(to, 1), color, size, depth_ignore);
 }
 void draw_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {
-  if (arrow_instance)
-    arrow_instance->add_arrow(from, to, color, size, depth_ignore);
+  //if (arrow_instance)
+  //  arrow_instance->add_arrow(from, to, color, size, depth_ignore);
 
 }
 void draw_transform(const Transform &transform)
@@ -43,7 +43,7 @@ DebugArrow::DebugArrow()
   if (arrow_instance)
   {
     debug_error("Debug arrow instance already exist!");
-    return;
+    arrow_instance = this;
   }
   else
   {

@@ -1,30 +1,33 @@
 #include "shader.h"
 #include <iostream>
 
-static std::map<std::string, GLuint> shaderMap;
+static std::vector<std::pair<std::string, GLuint>> shaderList;
 static Shader badShader("badShader", BAD_PROGRAM);
-Shader::Shader(map<string, GLuint>::iterator program):program(program){}
 
-Shader::Shader(std::string shader_name, unsigned int shader_program)
+
+Shader::Shader(const std::string &shader_name, GLuint shader_program, bool update_list)
 {
-  program = shaderMap.find(shader_name);
-	if (program != shaderMap.end())
+  for (shaderIdx = 0; shaderIdx < (int)shaderList.size() && shaderList[shaderIdx].first != shader_name; ++shaderIdx);
+
+  if (shaderIdx >= (int)shaderList.size())
   {
-    //glad_glDeleteShader(shader_iter->second.program);
-    program->second = shader_program;
+    shaderList.emplace_back(shader_name, shader_program);
   }
-  else
+  if (update_list)
   {
-    shaderMap[shader_name] = shader_program;
-    program = shaderMap.find(shader_name);
+    shaderList[shaderIdx] = make_pair(shader_name, shader_program);
   }
+}
+GLuint Shader::get_shader_program() const
+{
+  return shaderList[shaderIdx].second;
 }
 Shader get_shader(std::string shader_name)
 {
-  auto shader_iter = shaderMap.find(shader_name);
-	if (shader_iter != shaderMap.end())
+  auto shader_iter = std::find_if(shaderList.begin(), shaderList.end(), [&](const auto &p){return p.first == shader_name;});
+	if (shader_iter != shaderList.end())
   {
-    return Shader(shader_iter);
+    return Shader(shader_iter->first, shader_iter->second);
   }
   else
   {
@@ -34,5 +37,5 @@ Shader get_shader(std::string shader_name)
 }
 void Shader::use() const
 {
-  glUseProgram(program->second);
+  glUseProgram(get_shader_program());
 }

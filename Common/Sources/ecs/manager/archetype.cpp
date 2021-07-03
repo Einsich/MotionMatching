@@ -77,5 +77,7 @@ namespace ecs
       container.second.destroy_component(index, without_copy);
     }
     count--;
+    if (count < 0)
+      debug_error("count < 0 in %s", synonim.c_str());
   }
 }

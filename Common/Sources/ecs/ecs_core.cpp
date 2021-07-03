@@ -4,18 +4,16 @@
 #include "manager/system_description.h"
 #include "editor/template.h"
 #include "common.h"
+#include "manager/entity_container.h"
 namespace ecs
 {
   Core::Core()
   {
+    entityContainer = new EntityContainer();
   }
   
   Core::~Core()
   {
-    for (Archetype *archetype : archetypes)
-    {  
-      delete archetype;
-    }
   }
   Core &core()
   {
@@ -24,7 +22,7 @@ namespace ecs
   }
   void Core::destroy_entities()
   {
-    for (auto it = entityContainer.begin(), end = entityContainer.end(); it != end; ++it)
+    for (auto it = entityContainer->entityPull.begin(), end = entityContainer->entityPull.end(); it != end; ++it)
     {
       EntityId eid = it.eid();
       if (eid)
@@ -33,8 +31,23 @@ namespace ecs
         toDestroy.push(eid);
       }
     }
+    entityContainer->entityPull.clear();
   }
 
+  void register_archetype(Archetype *archetype);
+  void Core::replace_entity_container(EntityContainer *container)
+  {
+    core().events = {};
+    for (QueryDescription *query: core().queries)
+      query->archetypes.clear();
+    for (SystemDescription *system: core().systems)
+      system->archetypes.clear();
+    for (QueryDescription *system: core().event_queries)
+      system->archetypes.clear();
+    entityContainer = container;
+    for (Archetype *archetype : container->archetypes)
+      register_archetype(archetype);
+  }
 
 
   
@@ -95,14 +108,17 @@ namespace ecs
   Archetype *add_archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim)
   {
     Archetype *archetype = new Archetype(type_hashes, capacity, synonim);
-    core().archetypes.push_back(archetype);
-    printf("added\n");
-    for (const auto &component : archetype->components)
-    {
-      auto &ecsType = core().types[component.first];
-      auto &cppType = TypeInfo::types()[ecsType.typeHash];
-      printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
-    }
+    core().entityContainer->archetypes.push_back(archetype);
+
+#if 0  
+  printf("added\n");
+  for (const auto &component : archetype->components)
+  {
+    auto &ecsType = core().types[component.first];
+    auto &cppType = TypeInfo::types()[ecsType.typeHash];
+    printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
+  }
+#endif
     register_archetype(archetype);
     
     return archetype;
@@ -113,7 +129,7 @@ namespace ecs
     list.add<EntityId>("eid") = EntityId();
     Archetype *found_archetype = nullptr;
     int archetype_ind = 0;
-    for (Archetype *archetype : core().archetypes)
+    for (Archetype *archetype : core().entityContainer->archetypes)
     {
       if (archetype->in_archetype(list.types))
       {
@@ -127,10 +143,10 @@ namespace ecs
       vector<string_hash> type_hashes(list.types.componentsTypes.size());
       for (uint i = 0; i < list.types.componentsTypes.size(); ++i)
         type_hashes[i] = list.types.componentsTypes[i].type_name_hash();
-      found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().archetypes.size()) + "]");
+      found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().entityContainer->archetypes.size()) + "]");
     }
     int index = found_archetype->count;
-    EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
+    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
     list.get<EntityId>("eid") = eid;
     found_archetype->add_entity(list);
     send_event_immediate(eid, OnEntityCreated());
@@ -162,7 +178,7 @@ namespace ecs
 
     Archetype *found_archetype = nullptr;
     int archetype_ind = 0;
-    for (Archetype *archetype : core().archetypes)
+    for (Archetype *archetype : core().entityContainer->archetypes)
     {
       if (archetype->in_archetype(list))
       {
@@ -183,7 +199,7 @@ namespace ecs
       found_archetype = add_archetype(type_hashes, 1, t->name);
     }
     int index = found_archetype->count;
-    EntityId eid = core().entityContainer.create_entity(archetype_ind, index);
+    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
     eidInfo.copy_constructor(&eid, eidTemplateInfo.data); 
     found_archetype->add_entity(list);
     send_event_immediate(eid, OnEntityCreated());
@@ -204,7 +220,7 @@ namespace ecs
     {
       int index = eid.array_index();
       int archetypeInd = eid.archetype_index();
-      Archetype *archetype = core().archetypes[archetypeInd];
+      Archetype *archetype = core().entityContainer->archetypes[archetypeInd];
 
       auto it = std::find_if(descr.archetypes.begin(), descr.archetypes.end(),
         [archetype](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype == archetype;});

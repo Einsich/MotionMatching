@@ -169,8 +169,6 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
       const aiScene* scene = importer.GetScene();
 
       AnimationTreeData avatar(scene->mRootNode->mChildren[0]);
-      for (uint i = 0 ; i < avatar.nodes.size(); i++)
-        debug_log("%s %s", avatar.nodes[i].name.c_str(), map_unity_name(avatar.nodes[i].name).c_str());
         //avatar.nodes[i].name = map_unity_name(avatar.nodes[i].name);
       //animDatabase->tree.apply_other_tree(avatar);
     }
@@ -197,7 +195,7 @@ AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *mo
           const aiAnimation* animation = scene->mAnimations[animInd];
           float maxTime = animation->mDuration / animation->mTicksPerSecond;
           uint duration = (uint)(maxTime * 30.f);
-              debug_log("dur = %f", animation->mDuration);
+           //   debug_log("dur = %f", animation->mDuration);
 
           map<string, vector<quat>> rotation;
           map<string, vector<vec3>> translation;

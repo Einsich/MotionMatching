@@ -8,9 +8,10 @@
 #include <SDL2/SDL.h>
 #include "ecs/editor/template.h"
 #include "ecs/system_tag.h"
+#include "ecs/ecs_scene.h"
 
-Application::Application(IScene *scene,string window_name, int width, int height, bool full_screen):
-scene(scene), context(window_name, width, height, full_screen), timer(),
+Application::Application(string window_name, int width, int height, bool full_screen):
+context(window_name, width, height, full_screen), timer(), scene(new ecs::Scene()),
 projectPath(string(get_config("projectPath"))),
 projectResourcesPath(string(get_config("projectPath")) + "/Resources"),
 projectShaderPath(string(get_config("projectPath")) + "/Shaders"),
@@ -24,8 +25,9 @@ commonShaderPath(string(get_config("commonPath")) + "/Shaders")
 void Application::start()
 {
   ecs::load_templates();
-  scene->start_scene((uint)(ecs::SystemTag::Game));
+  scene->start_scene();
   get_profiler();
+  load_editor_scene("default");
 }
 bool Application::sdl_event_handler()
 {
@@ -39,11 +41,15 @@ bool Application::sdl_event_handler()
       case SDL_QUIT: running = false; break;
       
       case SDL_KEYDOWN: 
+      
+      if(event.key.keysym.sym == SDLK_F2)
+        scene->swap_editor_game_scene();
+      
       case SDL_KEYUP: input.event_process(event.key, Time::time());
 
       if(event.key.keysym.sym == SDLK_ESCAPE)
         running = false;
-      break;
+        
 
       case SDL_MOUSEBUTTONDOWN:
       case SDL_MOUSEBUTTONUP: input.event_process(event.button, Time::time()); break;
@@ -51,6 +57,7 @@ bool Application::sdl_event_handler()
       case SDL_MOUSEMOTION: input.event_process(event.motion, Time::time()); break;
 
       case SDL_MOUSEWHEEL: input.event_process(event.wheel, Time::time()); break;
+      
       case SDL_WINDOWEVENT: break;
     }
   }
@@ -90,6 +97,7 @@ void Application::exit()
 {
   ecs::save_templates();
   scene->destroy_scene();
+  delete scene;
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
@@ -102,4 +110,18 @@ string project_resources_path(const string &path)
 string common_resources_path(const string &path)
 {
   return Application::instance().commonResourcesPath + "/" + path;
+}
+
+void load_editor_scene(const string &name)
+{
+  ecs::Scene &scene = *Application::instance().scene;
+  if (!scene.try_start_scene(name, (uint)ecs::SystemTag::Editor))
+    debug_error("Can't load scene %s", name.c_str());
+}
+void load_game_scene(const string &name)
+{
+  ecs::Scene &scene = *Application::instance().scene;
+  if (!scene.try_start_scene(name, (uint)ecs::SystemTag::Game))
+    debug_error("Can't load scene %s", name.c_str());
+
 }

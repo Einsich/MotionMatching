@@ -49,10 +49,7 @@ void write_tree(aiNode* root, int d = 1)
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) start_scene(const ecs::OnSceneCreated &)
 {
-  for (const auto &info: ecs::TypeInfo::types())
-  {
-    debug_log("%s %u",info.second.name.c_str(),info.second.hashId);
-  }
+
   fflush(stdout);
   const char* animData[2] = {"", "-AnimData -hUnity"};
   add_configs(2, animData);
@@ -102,7 +99,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) start_scene(const ecs::OnScen
   
   aiNode* root = scene->mRootNode;
   root = root->mChildren[0];
-  write_tree(root);
+  //write_tree(root);
   MeshPtr mesh = make_mesh(scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
   TexturePtr tex = make_texture2d(project_resources_path("MocapOnline/MotusMan_v55/MCG_diff.jpg"), TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
@@ -239,7 +236,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) start_scene(const ecs::OnScen
       ecs::create_entity(list);
     }
   }
-  ecs::system_statistic();
+  //ecs::system_statistic();
 
 }
 

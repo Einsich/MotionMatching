@@ -1,5 +1,6 @@
 #include "core_interface.h"
 #include "../ecs_core.h"
+#include "entity_container.h"
 namespace ecs
 {
   uint type_sizeof(uint type)
@@ -34,7 +35,7 @@ namespace ecs
   void print_archetypes()
   {   
     printf("\n- - - - - \n");
-    for (const Archetype *archetype : core().archetypes)
+    for (const Archetype *archetype : core().entityContainer->archetypes)
     {
       printf("{\n");
       for (const auto &descr : archetype->components)

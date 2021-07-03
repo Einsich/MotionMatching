@@ -1,5 +1,6 @@
 #include "ecs_scene.h"
 #include "ecs/ecs.h"
+#include "manager/entity_container.h"
 #include "config.h"
 #include "glad/glad.h"
 #include "Engine/Profiler/profiler.h"
@@ -9,10 +10,10 @@ namespace ecs
   {
     return a->order < b->order;
   }
-  void Scene::start_scene(uint32_t tags)
+  void Scene::start_scene()
   {
-    currentSceneTags = tags;
-    core().currentSceneTags = tags;
+    scenes.emplace_back(new SceneEntities());
+    scenes.back()->name = "default";
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
@@ -28,10 +29,46 @@ namespace ecs
     Input::input().mouse_click_event() += createMethodEventHandler(*this, &Scene::mouse_click_event_handler);
     Input::input().mouse_move_event() += createMethodEventHandler(*this, &Scene::mouse_move_event_handler);
     Input::input().mouse_wheel_event() += createMethodEventHandler(*this, &Scene::mouse_wheel_event_handler);
-    send_event(OnSceneCreated());
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+  }
+  bool Scene::try_start_scene(const string &name, uint tags)
+  {
+    for (SceneEntities *scene : scenes)
+      if (scene->name == name)
+      {
+        currentScene = scene;
+        currentSceneTags = tags;
+        core().currentSceneTags = tags;
+        core().entityContainer = tags == (uint)ecs::SystemTag::Editor ? &scene->editorScene : &scene->gameScene;
+        send_event(OnSceneCreated());
+        return true;
+      }
+    return false;
+  }
+  void Scene::swap_editor_game_scene()
+  {
+    uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
+    if (currentScene)
+    {
+      debug_log("swap to %u", newTags);
+      currentSceneTags = newTags;
+      core().currentSceneTags = newTags;
+      if (newTags == (uint)ecs::SystemTag::Editor)
+      {
+        core().destroy_entities();
+        process_only_events();
+        destroy_entities(true);
+        
+        core().replace_entity_container(&currentScene->editorScene);
+      }
+      else
+      {
+        core().replace_entity_container(&currentScene->gameScene);
+        send_event(OnSceneCreated());
+      }
+    }
   }
   void Scene::update_range(const SystemRange &range)
   {
@@ -65,7 +102,9 @@ namespace ecs
     for (int i = 0, n = toDestroy.size(); i < n; i++)
     {
       EntityId &eid = toDestroy.front();
-      core().archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), without_copy);
+      debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
+      fflush(stdout);
+      core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), without_copy);
       toDestroy.pop();
     }
   }
@@ -89,7 +128,14 @@ namespace ecs
     core().destroy_entities();
     process_only_events();
     destroy_entities(true);
-    core().~Core();
+    for (SceneEntities *scene: scenes)
+    {
+      for (Archetype *archetype : scene->gameScene.archetypes)
+        delete archetype;
+      for (Archetype *archetype : scene->editorScene.archetypes)
+        delete archetype;
+      delete scene;
+    }
   }
   void Scene::keyboard_event_handler(const KeyboardEvent &event)
   {
