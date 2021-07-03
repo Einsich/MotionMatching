@@ -24,7 +24,7 @@ ecs::SystemDescription third_peson_controller_update_descr("third_peson_controll
   {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, third_peson_controller_update_func, ecs::SystemOrder::LOGIC);
+}, third_peson_controller_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
 
 void third_peson_controller_update_func()
 {
@@ -43,7 +43,7 @@ void third_controller_appear_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> third_controller_appear_descr("third_controller_appear", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, third_controller_appear_handler);
+}, third_controller_appear_handler, (uint)(ecs::SystemTag::Game));
 
 void third_controller_appear_handler(const ecs::OnEntityCreated &event)
 {
@@ -63,7 +63,7 @@ ecs::EventDescription<MouseMoveEvent> mouse_move_handler_descr("mouse_move_handl
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
-}, mouse_move_handler_handler);
+}, mouse_move_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_move_handler_handler(const MouseMoveEvent &event)
 {
@@ -83,7 +83,7 @@ void mouse_wheel_handler_handler(const MouseWheelEvent &event);
 
 ecs::EventDescription<MouseWheelEvent> mouse_wheel_handler_descr("mouse_wheel_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, mouse_wheel_handler_handler);
+}, mouse_wheel_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_wheel_handler_handler(const MouseWheelEvent &event)
 {
@@ -101,7 +101,7 @@ void view_offset_handler_handler(const KeyboardEvent &event);
 
 ecs::EventDescription<KeyboardEvent> view_offset_handler_descr("view_offset_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, view_offset_handler_handler);
+}, view_offset_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void view_offset_handler_handler(const KeyboardEvent &event)
 {
@@ -120,7 +120,7 @@ void crouch_event_handler_handler(const KeyboardEvent &event);
 ecs::EventDescription<KeyboardEvent> crouch_event_handler_descr("crouch_event_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, crouch_event_handler_handler);
+}, crouch_event_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void crouch_event_handler_handler(const KeyboardEvent &event)
 {
@@ -139,7 +139,7 @@ void animation_player_handler_handler(const KeyboardEvent &event);
 ecs::EventDescription<KeyboardEvent> animation_player_handler_descr("animation_player_handler", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, animation_player_handler_handler);
+}, animation_player_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void animation_player_handler_handler(const KeyboardEvent &event)
 {
@@ -157,7 +157,7 @@ void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ec
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> third_controller_appear_singl_descr("third_controller_appear", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, third_controller_appear_singl_handler);
+}, third_controller_appear_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {
@@ -174,7 +174,7 @@ ecs::SingleEventDescription<MouseMoveEvent> mouse_move_handler_singl_descr("mous
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
-}, mouse_move_handler_singl_handler);
+}, mouse_move_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin)
 {
@@ -191,7 +191,7 @@ void mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryI
 
 ecs::SingleEventDescription<MouseWheelEvent> mouse_wheel_handler_singl_descr("mouse_wheel_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, mouse_wheel_handler_singl_handler);
+}, mouse_wheel_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryIterator &begin)
 {
@@ -206,7 +206,7 @@ void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIte
 
 ecs::SingleEventDescription<KeyboardEvent> view_offset_handler_singl_descr("view_offset_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, view_offset_handler_singl_handler);
+}, view_offset_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
 {
@@ -222,7 +222,7 @@ void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIt
 ecs::SingleEventDescription<KeyboardEvent> crouch_event_handler_singl_descr("crouch_event_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, crouch_event_handler_singl_handler);
+}, crouch_event_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
 {
@@ -238,7 +238,7 @@ void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::Que
 ecs::SingleEventDescription<KeyboardEvent> animation_player_handler_singl_descr("animation_player_handler", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, animation_player_handler_singl_handler);
+}, animation_player_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
 {

@@ -44,8 +44,9 @@ namespace ecs
   {
     typedef  void (*EventHandler)(const E&);
     EventHandler eventHandler;
-    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler):
-      QueryDescription(name, args, false), eventHandler(eventHandler)
+    uint tags;
+    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, uint tags):
+      QueryDescription(name, args, false), eventHandler(eventHandler), tags(tags)
     {
       core().events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);
@@ -57,8 +58,9 @@ namespace ecs
   {
     typedef  void (*EventHandler)(const E&, ecs::QueryIterator&);
     EventHandler eventHandler;
-    SingleEventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler):
-      QueryDescription(name, args, false), eventHandler(eventHandler)
+    uint tags;
+    SingleEventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, uint tags):
+      QueryDescription(name, args, false), eventHandler(eventHandler), tags(tags)
     {
       core().single_events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);

@@ -4,7 +4,7 @@ namespace ecs
 {
   enum class SystemTag
   {
-    Editor,
-    TestTag
+    Game = 1 << 0,
+    Editor = 1 << 1
   };
 }

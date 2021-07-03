@@ -4,7 +4,7 @@
 void briefing_ui_func();
 
 ecs::SystemDescription briefing_ui_descr("briefing_ui", {
-}, briefing_ui_func, ecs::SystemOrder::UI);
+}, briefing_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void briefing_ui_func()
 {
@@ -21,7 +21,7 @@ void motion_matching_statistic_func();
 ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, motion_matching_statistic_func,  ecs::SystemOrder::UI);
+}, motion_matching_statistic_func,  ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
 
 void motion_matching_statistic_func()
 {
@@ -39,7 +39,7 @@ void current_anim_index_func();
 ecs::SystemDescription current_anim_index_descr("current_anim_index", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, current_anim_index_func, ecs::SystemOrder::UI);
+}, current_anim_index_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void current_anim_index_func()
 {
@@ -55,7 +55,7 @@ void current_anim_index_func()
 void menu_ui_func();
 
 ecs::SystemDescription menu_ui_descr("menu_ui", {
-}, menu_ui_func, ecs::SystemOrder::UI);
+}, menu_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void menu_ui_func()
 {
@@ -70,7 +70,7 @@ void menu_ui_func()
 void mm_early_text_perf_func();
 
 ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
-}, mm_early_text_perf_func, ecs::SystemOrder::UI);
+}, mm_early_text_perf_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void mm_early_text_perf_func()
 {

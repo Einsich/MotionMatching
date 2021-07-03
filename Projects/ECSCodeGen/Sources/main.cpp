@@ -24,7 +24,7 @@ struct ParserSystemDescription
 {
   std::string sys_file, sys_name;
   std::string order = "ecs::SystemOrder::NO_ORDER";
-  std::vector<std::string> tags;
+  std::string tags;
   std::vector<ParserFunctionArgument> args;
   std::vector<ParserFunctionArgument> req_args;
 };
@@ -152,18 +152,25 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
   args_range.end--;
   std::string row_args = args_range.str();
   auto matched_args = get_matches(row_args, arg_regex);
+  std::vector<std::string> tags;
   for (const std::string &arg : matched_args)
   {
     if (arg.find("SystemOrder") != std::string::npos)
       parserDescr.order = arg;
     else
     if (arg.find("SystemTag") != std::string::npos)
-      parserDescr.tags.push_back(arg);
+      tags.push_back(arg);
     else 
     {
       parserDescr.req_args.push_back(clear_arg(arg));
     }
   }
+  if (tags.empty())
+    tags.push_back("ecs::SystemTag::Game");
+  parserDescr.tags = "(uint)(" + tags[0];
+  for (uint i = 1; i < tags.size(); ++i)
+    parserDescr.tags += "|" + tags[i];
+  parserDescr.tags += ")";
 }
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
   const std::string &file, const std::string &file_path,
@@ -354,7 +361,7 @@ void process_inl_file(const fs::path& path)
     fill_arguments(outFile, system.args, system.req_args);
   
     write(outFile,
-    "}, %s, %s);\n\n", sys_func.c_str(), system.order.c_str());
+    "}, %s, %s, %s);\n\n", sys_func.c_str(), system.order.c_str(), system.tags.c_str());
 
     write(outFile,
     "void %s()\n"
@@ -384,7 +391,7 @@ void process_inl_file(const fs::path& path)
 
     fill_arguments(outFile, event.args, event.req_args, true);
     write(outFile, 
-    "}, %s);\n\n", event_handler.c_str());
+    "}, %s, %s);\n\n", event_handler.c_str(), event.tags.c_str());
 
     write(outFile,
     "void %s(const %s &event)\n"
@@ -418,7 +425,7 @@ void process_inl_file(const fs::path& path)
     fill_arguments(outFile, event.args, event.req_args, true);
 
     write(outFile,
-    "}, %s);\n\n", event_singl_handler.c_str());
+    "}, %s, %s);\n\n", event_singl_handler.c_str(), event.tags.c_str());
 
     bool noAgrs = (uint)event.args.size() == 1;
     write(outFile,

@@ -4,7 +4,7 @@
 void start_scene_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> start_scene_descr("start_scene", {
-}, start_scene_handler);
+}, start_scene_handler, (uint)(ecs::SystemTag::Game));
 
 void start_scene_handler(const ecs::OnSceneCreated &event)
 {
@@ -21,7 +21,7 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event);
 
 ecs::EventDescription<ecs::OnEntityDestroyed> scene_destroy_descr("scene_destroy", {
   {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false}
-}, scene_destroy_handler);
+}, scene_destroy_handler, (uint)(ecs::SystemTag::Game));
 
 void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
 {
@@ -38,7 +38,7 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
 void start_scene_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> start_scene_singl_descr("start_scene", {
-}, start_scene_singl_handler);
+}, start_scene_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void start_scene_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
 {
@@ -52,7 +52,7 @@ void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::Query
 
 ecs::SingleEventDescription<ecs::OnEntityDestroyed> scene_destroy_singl_descr("scene_destroy", {
   {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false}
-}, scene_destroy_singl_handler);
+}, scene_destroy_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin)
 {

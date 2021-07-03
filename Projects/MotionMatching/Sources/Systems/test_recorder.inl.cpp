@@ -8,7 +8,7 @@ ecs::SystemDescription recorder_ui_descr("recorder_ui", {
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, recorder_ui_func, ecs::SystemOrder::UI);
+}, recorder_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void recorder_ui_func()
 {
@@ -31,7 +31,7 @@ ecs::EventDescription<KeyboardEvent> listener_keybord_descr("listener_keybord", 
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, listener_keybord_handler);
+}, listener_keybord_handler, (uint)(ecs::SystemTag::Game));
 
 void listener_keybord_handler(const KeyboardEvent &event)
 {
@@ -55,7 +55,7 @@ ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemo
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, listener_mousemove_handler);
+}, listener_mousemove_handler, (uint)(ecs::SystemTag::Game));
 
 void listener_mousemove_handler(const MouseMoveEvent &event)
 {
@@ -79,7 +79,7 @@ ecs::SingleEventDescription<KeyboardEvent> listener_keybord_singl_descr("listene
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, listener_keybord_singl_handler);
+}, listener_keybord_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void listener_keybord_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
 {
@@ -100,7 +100,7 @@ ecs::SingleEventDescription<MouseMoveEvent> listener_mousemove_singl_descr("list
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, listener_mousemove_singl_handler);
+}, listener_mousemove_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin)
 {

@@ -192,7 +192,7 @@ void profiler()
   
 }
 
-SYSTEM(ecs::SystemTag::TestTag, ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
+SYSTEM(ecs::SystemTag::Editor, ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
   const AnimationPlayer &animationPlayer)
 {
 

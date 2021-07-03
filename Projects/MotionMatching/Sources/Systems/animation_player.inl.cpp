@@ -10,7 +10,7 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), true},
   {ecs::get_type_description<int>("mmIndex"), true},
   {ecs::get_type_description<int>("mmOptimisationIndex"), true}
-}, animation_player_update_func, ecs::SystemOrder::LOGIC);
+}, animation_player_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
 
 void animation_player_update_func()
 {

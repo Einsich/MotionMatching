@@ -130,7 +130,7 @@ void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
   {ecs::get_type_description<SceneRender>("sceneRender"), false}
-}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER);
+}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::Game));
 
 void main_render_func()
 {

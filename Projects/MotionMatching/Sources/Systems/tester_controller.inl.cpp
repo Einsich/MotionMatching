@@ -22,7 +22,7 @@ void tester_update_func();
 ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationTester>("animationTester"), false}
-}, tester_update_func, ecs::SystemOrder::LOGIC);
+}, tester_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
 
 void tester_update_func()
 {
@@ -43,7 +43,7 @@ ecs::EventDescription<OnAnimationTestStart> start_test_descr("start_test", {
   {ecs::get_type_description<vec3>("testOffset"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
-}, start_test_handler);
+}, start_test_handler, (uint)(ecs::SystemTag::Game));
 
 void start_test_handler(const OnAnimationTestStart &event)
 {
@@ -67,7 +67,7 @@ ecs::SingleEventDescription<OnAnimationTestStart> start_test_singl_descr("start_
   {ecs::get_type_description<vec3>("testOffset"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false}
-}, start_test_singl_handler);
+}, start_test_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void start_test_singl_handler(const OnAnimationTestStart &event, ecs::QueryIterator &begin)
 {
