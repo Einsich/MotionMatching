@@ -17,6 +17,12 @@ currentCadr(index.get_lerped_cadr())
   {
     stateMachine.play_animation(0);
   }
+  for (uint i = 0; i < dataBase->clips.size(); ++i)
+    if (dataBase->clips[i].name == first_anim)
+    {
+      index = AnimationLerpedIndex(dataBase, i, 0);
+      currentCadr = index.get_lerped_cadr();
+    }
 }
 
 

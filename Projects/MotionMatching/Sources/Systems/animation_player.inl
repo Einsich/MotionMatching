@@ -143,3 +143,11 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   animationPlayer.tree.set_cadr(animationPlayer.currentCadr);
   animationPlayer.tree.calculate_bone_transforms();
 }
+
+EVENT(ecs::SystemTag::GameEditor) init_animation_character(
+  const ecs::OnEntityCreated &,
+  AnimationPlayer &animationPlayer)
+{
+  animationPlayer.tree.set_cadr(animationPlayer.currentCadr);
+  animationPlayer.tree.calculate_bone_transforms();
+}

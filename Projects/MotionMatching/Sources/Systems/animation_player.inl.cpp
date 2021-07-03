@@ -28,4 +28,37 @@ void animation_player_update_func()
 }
 
 
+void init_animation_character_handler(const ecs::OnEntityCreated &event);
+
+ecs::EventDescription<ecs::OnEntityCreated> init_animation_character_descr("init_animation_character", {
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, init_animation_character_handler, (uint)(ecs::SystemTag::GameEditor));
+
+void init_animation_character_handler(const ecs::OnEntityCreated &event)
+{
+  for (ecs::QueryIterator begin = init_animation_character_descr.begin(), end = init_animation_character_descr.end(); begin != end; ++begin)
+  {
+    init_animation_character(
+      event,
+      *begin.get_component<AnimationPlayer>(0)
+    );
+  }
+}
+
+
+void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityCreated> init_animation_character_singl_descr("init_animation_character", {
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, init_animation_character_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+
+void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
+{
+  init_animation_character(
+    event,
+      *begin.get_component<AnimationPlayer>(0)
+  );
+}
+
+
 

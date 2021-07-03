@@ -4,8 +4,9 @@ namespace ecs
 {
   enum class SystemTag : uint32_t
   {
-    Game = 1 << 0,
-    Editor = 1 << 1
+    Game = 1,
+    Editor = 2,
+    GameEditor = 3
   };
   constexpr enum SystemTag operator|(const enum SystemTag selfValue, const enum SystemTag inValue )
   {
