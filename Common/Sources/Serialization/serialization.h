@@ -146,9 +146,16 @@ inline size_t read(std::istream& is, std::vector<T>& value)
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
 
   value.resize(len);
-  for (T & t : value)
+  for (uint i = 0, n = value.size(); i < n; ++i)
   {
-    read(is, t);
+    if constexpr (std::is_same_v<bool, T>)
+    {
+      T v = value[i];
+      read(is, v);
+      value[i] = v;
+    }
+    else
+      read(is, value[i]);
   }
   return static_cast<size_t>(is.tellg() - pos);
 }

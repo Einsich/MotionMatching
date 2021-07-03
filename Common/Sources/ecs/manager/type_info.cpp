@@ -5,6 +5,7 @@
 #include "Engine/Render/skybox.h"
 #include "ecs/manager/entity_id.h"
 #include "ecs/base_types.h"
+#include "Serialization/serialization.h"
 using namespace std;
 using namespace ecs;
 

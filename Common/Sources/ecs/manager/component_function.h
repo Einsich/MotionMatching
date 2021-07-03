@@ -6,4 +6,6 @@ namespace ecs
   typedef void *(*CopyConstructor)(void*, void*);
   typedef void (*Destructor)(void*);
   typedef void (*ComponentEdition)(void*);
+  typedef void (*Serializer)(void*, std::ostream&);
+  typedef void (*Deserializer)(void*, std::istream&);
 }

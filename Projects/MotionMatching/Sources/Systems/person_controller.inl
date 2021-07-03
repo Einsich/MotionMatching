@@ -109,7 +109,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
     //debug_log("[%f]", input.get_key(SDLK_w));
   }
   
-  bool onlySideway = abs(speed.z) < 0.1f && abs(speed.x) > 0.f;
+  //bool onlySideway = abs(speed.z) < 0.1f && abs(speed.x) > 0.f;
   bool moveForward = speed.z >= 0.f;
   float sidewayRotation = moveForward ? safe_2d_signed_angle(speed, vec3(0,0,1)) : safe_2d_signed_angle(-speed, vec3(0,0,1));
 
@@ -133,7 +133,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
         settings.hipsHeightCrouchIdle : settings.hipsHeightCrouch;
   }
   
-  bool onlyForward = speed.z > 0.f && abs(speed.x) < 0.1f;
+  //bool onlyForward = speed.z > 0.f && abs(speed.x) < 0.1f;
   speed = glm::rotateY(speed, -wantedRotation - sidewayRotation);
 
   auto &trajectory = animationPlayer.inputGoal.path.trajectory;
