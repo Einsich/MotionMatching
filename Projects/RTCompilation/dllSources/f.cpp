@@ -1,23 +1,24 @@
 #include <iostream>
 #include "listener.h"
+#include <assert.h>
 #include "Engine/time.h"
-#include "config.h"
+#include "ecs/ecs.h"
 void log(const char *str)
 {
+  assert(strcmp(str, "null"));
   str = str ? str : "nullptr";
-  int l = strlen(str);
-  std::cout << str << l <<std::endl;
+  std::cout << str << Time::time() <<std::endl;
 }
 
 static TestStruct t("a");
 static TestStruct s("b");
-extern "C" {
+ecs::QueryDescription d("aaa", {}, false);
+ extern "C" {
   
 __declspec(dllexport) void f()
 {
+
   const char* m[1] ={"aaa"};
-  add_configs(1, m);
-  std::cout << Time::time() << std::endl;
   log ("hahahaa");
 }
 }

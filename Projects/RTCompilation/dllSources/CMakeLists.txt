@@ -9,11 +9,23 @@ cmake_minimum_required(VERSION ${CMAKE_VER})
 set(ADDITIONAL_LIBS "")
 if(WIN32)
 
+    set(PARENT_DIR ${CMAKE_SOURCE_DIR}/../../..)
     add_subdirectory(../../../Common ../../../Builds/win/TestDll/dev/Engine)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
     set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE})
     set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib)
+    set (BuildDir "${PARENT_DIR}/Builds")
+    add_library(SDL2 STATIC IMPORTED)
+    set_target_properties(SDL2 PROPERTIES
+        IMPORTED_LOCATION_RELEASE "${BuildDir}/win/libSDL2.a"
+        IMPORTED_LOCATION_DEBUG "${BuildDir}/win/libSDL2.a"
+        LINKER_LANGUAGE C)
+    add_library(assimp STATIC IMPORTED)
+    set_target_properties(assimp PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${BuildDir}/win/assimp-vc142-mt.lib"
+            IMPORTED_LOCATION_RELEASE "${BuildDir}/win/assimp-vc142-mt.lib"
+            LINKER_LANGUAGE C)
 else()
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
     set(ADDITIONAL_LIBS -ldl)
@@ -39,6 +51,7 @@ message("${PROJECT_ROOT}")
 #file(GLOB_RECURSE PROJECT_SOURCES  ${PROJECT_ROOT}/*.cpp)
 #file(GLOB_RECURSE PROJECT_C_SOURCES ${PROJECT_ROOT}/*.c)
 add_library(${PROJECT_NAME} SHARED f.cpp ../Sources/listener.cpp)
+target_link_libraries(${PROJECT_NAME} SDL2 assimp Engine-${BUILD_TYPE} ${ADDITIONAL_LIBS})
 
 
 

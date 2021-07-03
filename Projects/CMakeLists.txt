@@ -9,9 +9,9 @@ cmake_minimum_required(VERSION ${CMAKE_VER})
 set(ADDITIONAL_LIBS "")
 if(WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
-    set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
+    #set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE})
-    set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib )#msvcrtd.lib libvcruntime.lib vcruntime.lib vcruntimed.lib msvcrtd.lib)
+    set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib vcruntimed.lib  )
 else()
     set(PROJECT_NAME ${PROJECT}-${BUILD_TYPE}.exe)
     set(ADDITIONAL_LIBS -ldl)
@@ -32,12 +32,12 @@ if(WIN32)
     set_target_properties(SDL2 PROPERTIES
         IMPORTED_LOCATION_RELEASE "${BuildDir}/win/libSDL2.a"
         IMPORTED_LOCATION_DEBUG "${BuildDir}/win/libSDL2.a"
-        LINKER_LANGUAGE C)
+        LINKER_LANGUAGE CXX)
     add_library(assimp STATIC IMPORTED)
     set_target_properties(assimp PROPERTIES
             IMPORTED_LOCATION_DEBUG "${BuildDir}/win/assimp-vc142-mt.lib"
             IMPORTED_LOCATION_RELEASE "${BuildDir}/win/assimp-vc142-mt.lib"
-            LINKER_LANGUAGE C)
+            LINKER_LANGUAGE CXX)
 else()
     add_subdirectory(${PARENT_DIR}/Common ${PARENT_DIR}/Builds/unix/${PROJECT}/${BUILD_TYPE}/Engine)
     find_package(SDL2 REQUIRED)
