@@ -35,9 +35,8 @@ static constexpr auto join_v = join<Strs...>::value;
 template <typename T>
 struct nameOf;
 
-
 template <typename T>
-static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl() noexcept
+static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> dirty_impl() noexcept
 {
   const char *f = __PRETTY_FUNCTION__;
   while(*f && *f != '[')
@@ -47,6 +46,19 @@ static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl()
     ++f;
   size_t n = f - str;
   return std::string_view(str, n);
+}
+
+template <typename T>
+struct dirtyNameOf
+{
+  static constexpr std::string_view value = dirty_impl<T>();
+};
+
+static inline constexpr std::string_view _word_end = "";
+template <typename T>
+static constexpr std::enable_if_t<!is_vector<T>::value, std::string_view> impl() noexcept
+{
+  return join_v<dirtyNameOf<T>::value, _word_end>;
 }
 
 static inline constexpr std::string_view _vec_begin = "vector<";
