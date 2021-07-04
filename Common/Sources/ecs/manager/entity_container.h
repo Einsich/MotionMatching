@@ -8,5 +8,6 @@ namespace ecs
   {
     std::vector<Archetype*> archetypes;
     EntityPull entityPull;
+    void copy_from(EntityContainer *other);
   };
 }

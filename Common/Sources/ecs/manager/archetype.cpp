@@ -17,25 +17,14 @@ namespace ecs
       components.try_emplace(typeNameHash, typeIt->second.hashId, typeNameHash, capacity, typeIt->second.sizeOf);
     }    
   }
-  bool Archetype::in_archetype(const ComponentTypes &types) const
+
+  bool Archetype::in_archetype(const vector<string_hash> &type_hashes) const
   {
-    if (types.componentsTypes.size() != components.size())
+    if (type_hashes.size() != components.size())
       return false;
-    for (const TypeDescription &descr : types.componentsTypes)
+    for (string_hash descr : type_hashes)
     {
-      auto it = components.find(descr.type_name_hash());
-      if (it == components.end())
-        return false;
-    }
-    return true;
-  }
-  bool Archetype::in_archetype(const vector<const TemplateInfo*> &types) const
-  {
-    if (types.size() != components.size())
-      return false;
-    for (const TemplateInfo*descr : types)
-    {
-      auto it = components.find(descr->type_name_hash());
+      auto it = components.find(descr);
       if (it == components.end())
         return false;
     }
@@ -79,5 +68,18 @@ namespace ecs
     count--;
     if (count < 0)
       debug_error("count < 0 in %s", synonim.c_str());
+  }
+  
+  void Archetype::copy(const Archetype *src)
+  {
+    for (const auto & component : src->components)
+    {
+      auto it = components.find(component.first);
+      if (it == components.end())
+        assert("Tried to copy archetype without need components");
+
+      it->second.copy_components(component.second);
+    }
+    count = src->count;
   }
 }

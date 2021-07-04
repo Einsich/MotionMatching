@@ -33,6 +33,7 @@ namespace ecs
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
   }
+
   bool Scene::try_start_scene(const string &name, uint tags)
   {
     for (SceneEntities *scene : scenes)
@@ -47,6 +48,9 @@ namespace ecs
       }
     return false;
   }
+  
+  void create_entities_from_archetypes(const vector<Archetype *> &src);//ecs_core.cpp
+
   void Scene::swap_editor_game_scene(bool pause)
   {
     uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
@@ -62,14 +66,26 @@ namespace ecs
           core().destroy_entities();
           process_only_events();
           destroy_entities(true);
+          debug_log("before replacing");
+          for (const Archetype * arch : core().entityContainer->archetypes)
+            debug_log("archetype %s %d / %d", arch->synonim.c_str(), arch->count, arch->capacity);
+            fflush(stdout);
         }
         core().replace_entity_container(&currentScene->editorScene);
+        
+          debug_log("after replacing");
+          for (const Archetype * arch : core().entityContainer->archetypes)
+            debug_log("archetype %s %d / %d", arch->synonim.c_str(), arch->count, arch->capacity);
+            fflush(stdout);
       }
       else
       {
         core().replace_entity_container(&currentScene->gameScene);
-        if (!currentScene->gamePaused)        
+        if (!currentScene->gamePaused) 
+        {       
+          create_entities_from_archetypes(currentScene->editorScene.archetypes);
           send_event(OnSceneCreated());
+        }
       }
     }
   }

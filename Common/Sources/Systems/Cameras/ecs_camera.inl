@@ -7,20 +7,34 @@
 
 template<typename Callable>
 static void find_all_created_camera(Callable);
+template<typename Callable>
+static void check_camera_manager(Callable);
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) create_camera_manager(const ecs::OnSceneCreated &)
+EVENT(ecs::SystemTag::GameEditor) create_camera_manager(const ecs::OnSceneCreated &)
 {
+
   std::vector<ecs::EntityId> cameras;
-  ecs::EntityId mainCamera;
+  ecs::EntityId foundMainCamera;
   QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
     cameras.push_back(eid);
     if (isMainCamera)
-      mainCamera = eid;
+      foundMainCamera = eid;
   });
-  ecs::ComponentInitializerList list;
-  list.add<std::vector<ecs::EntityId>>("sceneCameras") = cameras;
-  list.add<ecs::EntityId>("mainCamera") = mainCamera;
-  ecs::create_entity(list);
+  bool camera_manager_exists = false;
+  QUERY() check_camera_manager([&](
+      std::vector<ecs::EntityId> &sceneCameras,
+      ecs::EntityId &mainCamera) {
+        sceneCameras = cameras;
+        mainCamera = foundMainCamera;
+      camera_manager_exists = true;
+  });
+  if (!camera_manager_exists)
+  {
+    ecs::ComponentInitializerList list;
+    list.add<std::vector<ecs::EntityId>>("sceneCameras") = cameras;
+    list.add<ecs::EntityId>("mainCamera") = foundMainCamera;
+    ecs::create_entity(list);
+  }
 }
 
 template<typename Callable>

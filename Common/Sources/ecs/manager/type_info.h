@@ -65,9 +65,9 @@ namespace ecs
     return ((T*)(memory))->~T();
   }
   template<typename T>
-  void* template_copy_constructor(void *src, void *dst)
+  void* template_copy_constructor(const void *src, void *dst)
   {
-    return new (dst) T(std::move(*((T*)src)));
+    return new (dst) T(*((T*)src));
   }
 
   template<typename T>
@@ -77,7 +77,7 @@ namespace ecs
   }
   
   template<typename T>
-  size_t template_serializer(std::ostream& os, void *ptr)
+  size_t template_serializer(std::ostream& os, const void *ptr)
   {
     return write(os, *((T*)ptr));
   }

@@ -47,7 +47,7 @@ void write_tree(aiNode* root, int d = 1)
     write_tree(root->mChildren[i], d + 1);
 }
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) start_scene(const ecs::OnSceneCreated &)
+EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
 {
 
   fflush(stdout);

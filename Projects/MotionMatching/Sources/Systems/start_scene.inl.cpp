@@ -4,7 +4,7 @@
 void start_scene_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> start_scene_descr("start_scene", {
-}, start_scene_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, start_scene_handler, (uint)(ecs::SystemTag::Editor));
 
 void start_scene_handler(const ecs::OnSceneCreated &event)
 {
@@ -38,7 +38,7 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
 void start_scene_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> start_scene_singl_descr("start_scene", {
-}, start_scene_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, start_scene_singl_handler, (uint)(ecs::SystemTag::Editor));
 
 void start_scene_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
 {

@@ -13,8 +13,7 @@ namespace ecs
     std::vector<FullTypeDescription*> fullTypeDescriptions;
     string synonim;
     Archetype(const vector<string_hash> &type_hashes, int count, const string &synonim);
-    bool in_archetype(const ComponentTypes &types) const;
-    bool in_archetype(const vector<const TemplateInfo*> &types) const;
+    bool in_archetype(const vector<string_hash> &type_hashes) const;
 
     ComponentContainer *get_container(const TypeDescription &type);
     template<typename T>
@@ -23,6 +22,7 @@ namespace ecs
     void add_entity(const vector<const TemplateInfo*> &list);
     void destroy_entity(int index, bool without_copy = false);
     ~Archetype() = default;
+    void copy(const Archetype *src);
     
   };
 }

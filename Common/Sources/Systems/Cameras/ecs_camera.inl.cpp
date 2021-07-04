@@ -20,6 +20,24 @@ void find_all_created_camera(Callable lambda)
 }
 
 
+ecs::QueryDescription check_camera_manager_descr("check_camera_manager", {
+  {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
+  {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
+});
+
+template<typename Callable>
+void check_camera_manager(Callable lambda)
+{
+  for (ecs::QueryIterator begin = check_camera_manager_descr.begin(), end = check_camera_manager_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<std::vector<ecs::EntityId>>(0),
+      *begin.get_component<ecs::EntityId>(1)
+    );
+  }
+}
+
+
 ecs::QueryDescription register_cam_query_descr("register_cam_query", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false}
 });
@@ -185,7 +203,7 @@ void freecamera_update_func()
 void create_camera_manager_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> create_camera_manager_descr("create_camera_manager", {
-}, create_camera_manager_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, create_camera_manager_handler, (uint)(ecs::SystemTag::GameEditor));
 
 void create_camera_manager_handler(const ecs::OnSceneCreated &event)
 {
@@ -387,7 +405,7 @@ void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
 void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> create_camera_manager_singl_descr("create_camera_manager", {
-}, create_camera_manager_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, create_camera_manager_singl_handler, (uint)(ecs::SystemTag::GameEditor));
 
 void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
 {

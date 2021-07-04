@@ -79,6 +79,7 @@ namespace ecs
     }
     void destroy_component(int i, bool without_copy);
     void add_component(void *component_data);
+    void copy_components(const ComponentContainer &other);
     ~ComponentContainer();
   };
 }

@@ -3,7 +3,7 @@
 #include "ecs/editor/template.h"
 #include "ecs/manager/entity_container.h"
 #include <functional>
-SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_viewer()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
 {
   if(!ImGui::Begin("Entity viewer"))
   {

@@ -61,4 +61,24 @@ namespace ecs
       copyConstructor(copied, removed);
     }
   }
+  
+  void ComponentContainer::copy_components(const ComponentContainer &other)
+  {
+    assert(count == 0 && "Need empty container to copy to");
+    while (other.count >= capacity)
+    {
+      data.push_back(malloc(binSize * type_sizeof(typeHash)));
+      capacity += binSize;
+    }
+    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
+
+    for (;count < other.count; ++count)
+    {
+      int j = count / binSize;
+      int i = count % binSize;
+      const void *scr = (char*)other.data[j] + type_sizeof(typeHash) * i;
+            void *dst = (char*)      data[j] + type_sizeof(typeHash) * i;
+      copyConstructor(scr, dst);
+    }
+  }
 }
