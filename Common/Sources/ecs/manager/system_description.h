@@ -61,7 +61,10 @@ namespace ecs
     template<typename T>
     T *get_component(int ind)
     {
-      return query->archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
+      if constexpr (is_singleton<T>::value)
+        return &get_singleton<T>();
+      else
+        return query->archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
     }
   private:
     const QueryDescription *query;

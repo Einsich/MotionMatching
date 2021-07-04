@@ -3,6 +3,7 @@
 #include "string_hash.h"
 #include "component_function.h"
 #include <unordered_map>
+#include "../singleton.h"
 namespace ecs
 {
 
@@ -13,6 +14,7 @@ namespace ecs
       static std::unordered_map<uint32_t, TypeInfo> types;
       return types;
     }
+    
     const uint32_t hashId = 0;
     const std::string name = "";
     const int sizeOf = 0;
@@ -22,38 +24,22 @@ namespace ecs
     const ComponentEdition componentEdition = nullptr;
     const Serializer serialiser = nullptr;
     const Deserializer deserialiser = nullptr;
-
-    TypeInfo(const uint32_t hashId, 
-    const std::string_view &name, 
-    const int sizeOf,
-    const Constructor constructor,
-    const CopyConstructor copy_constructor,
-    const Destructor destructor,
-    const ComponentEdition componentEdition,
-    const Serializer serialiser,
-    const Deserializer deserialiser):
-    hashId(hashId), name(name), sizeOf(sizeOf), 
-    constructor(constructor),
-    copy_constructor(copy_constructor),
-    destructor(destructor),
-    componentEdition(componentEdition),
-    serialiser(serialiser),
-    deserialiser(deserialiser)
+  
+  };
+  struct SingletonTypeInfo : public TypeInfo
+  {
+    const GetSingleton getSingleton = nullptr;
+    static std::unordered_map<uint32_t, SingletonTypeInfo>& types()
     {
+      static std::unordered_map<uint32_t, SingletonTypeInfo> types;
+      return types;
     }
-    TypeInfo(){}
   };
   struct RegisterTypeInfoRT
   {
     
   };
-  template<typename... Args>
-  RegisterTypeInfoRT register_type(const std::string_view &name, Args &&...args)
-  {
-    string_hash hash = HashedString(name);
-    TypeInfo::types().try_emplace(hash, hash, name, args...);
-    return RegisterTypeInfoRT();
-  }
+
   template<class T>
   void* template_constructor(void *memory)
   {
@@ -87,10 +73,35 @@ namespace ecs
   {
     return read(is, *((T*)ptr));
   }
+  template<typename T>
+  void* template_singleton_instance()
+  {
+    return &get_singleton<T>();
+  }
+  template<typename T>
+  RegisterTypeInfoRT register_type()
+  {
+    constexpr string_hash hash = HashedString(nameOf<T>::value);
+    
+    if constexpr (is_singleton<T>::value)
+    {
+      SingletonTypeInfo::types().try_emplace(
+        hash, SingletonTypeInfo{hash, string(nameOf<T>::value), sizeof(T), 
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>,
+        template_singleton_instance<T>});
+    }
+    else
+    {
+      TypeInfo::types().try_emplace(
+        hash, TypeInfo{hash, string(nameOf<T>::value), sizeof(T), 
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>});
+    }
+    return RegisterTypeInfoRT();
+  }
   #define REG_TYPE_BASE(T, NAME) \
-  static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type(nameOf<T>::value, sizeof(T), \
-    ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>, \
-    ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>);
+  static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type<T>();
   
   #define REG_TYPE(T) REG_TYPE_BASE(T, type_##T)
   #define REG_VEC_TYPE(T) REG_TYPE_BASE(std::vector<T>, vec_##T)

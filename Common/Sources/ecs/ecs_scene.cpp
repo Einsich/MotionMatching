@@ -62,6 +62,11 @@ namespace ecs
     {
       currentSceneTags = newTags;
       core().currentSceneTags = newTags;
+      for (auto &p : ecs::SingletonTypeInfo::types())
+      {
+        auto &singleton = p.second;
+        singleton.constructor(singleton.getSingleton());        
+      }
       if (newTags == (uint)ecs::SystemTag::Editor)
       {
         currentScene->gamePaused = pause;

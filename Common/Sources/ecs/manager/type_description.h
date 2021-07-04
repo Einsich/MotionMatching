@@ -51,17 +51,22 @@ namespace ecs
   TypeDescription get_type_description(const char *name)
   {
     constexpr std::string_view type = nameOf<T>::value;
-    static_assert(HashedString(type), "need to register this type to ecs, use REG_TYPE(T)");
-    
     constexpr string_hash typeHash = HashedString(type);
-    string_hash typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
-    auto it = full_description().find(typeNameHash);
-    if (it == full_description().end())
+    if constexpr (is_singleton<T>::value)
     {
-      auto result = full_description().try_emplace(typeNameHash, name, typeHash, typeNameHash);
-      assert(result.second && "Failed to add new type in get_type_description");
-      it = result.first;
+      return TypeDescription(typeHash);
     }
-    return TypeDescription(typeNameHash);
+    else
+    {
+      string_hash typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
+      auto it = full_description().find(typeNameHash);
+      if (it == full_description().end())
+      {
+        auto result = full_description().try_emplace(typeNameHash, name, typeHash, typeNameHash);
+        assert(result.second && "Failed to add new type in get_type_description");
+        it = result.first;
+      }
+      return TypeDescription(typeNameHash);
+    }
   }
 }
