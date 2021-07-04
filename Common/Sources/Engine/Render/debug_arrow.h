@@ -5,7 +5,7 @@
 #include "vertex_array_object.h"
 #include "../transform.h"
 #include "ecs/singleton.h"
-class DebugArrow : Singleton
+class DebugArrow : ecs::Singleton
 {
 private:
   struct ArrowSet
