@@ -30,7 +30,7 @@ void render_debug_goal_on_animplayer(Callable);
 
 
 SYSTEM(ecs::SystemOrder::MIDDLE_RENDER,ecs::SystemTag::Editor,ecs::SystemTag::Game)
-main_render(const SceneRender &sceneRender)
+main_render(const SceneRender &sceneRender, DebugArrow &debugArrows)
 {
   mat4 camTransform, camProjection;
   if(!main_camera(camTransform, camProjection))
@@ -155,11 +155,8 @@ main_render(const SceneRender &sceneRender)
       }
     });
   });
-  QUERY() render_arrows([&](
-    DebugArrow &debugArrows)
-  {
-    debugArrows.render(viewProjection, cameraPosition, light, wire_frame);
-  });
+
+  debugArrows.render(viewProjection, cameraPosition, light, wire_frame);
 
 
 

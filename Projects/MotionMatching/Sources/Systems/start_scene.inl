@@ -73,11 +73,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     list.get<SceneRender>("sceneRender").sun = vec3(0.1f, -0.5f, 0.1f);
     ecs::create_entity(list);
   }
-  {
-    ecs::ComponentInitializerList list;
-    list.add<DebugArrow>("debugArrows") = DebugArrow();
-    ecs::create_entity(list);
-  }
+
   {
     ecs::ComponentInitializerList list;
     list.add<SkyBox>("skyBox") = SkyBox(common_resources_path("Textures/Skyboxes/CloudSky"));

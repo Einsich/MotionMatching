@@ -50,14 +50,14 @@ namespace ecs
   template<typename T>
   TypeDescription get_type_description(const char *name)
   {
-    constexpr std::string_view type = nameOf<T>::value;
-    constexpr string_hash typeHash = HashedString(type);
     if constexpr (is_singleton<T>::value)
     {
-      return TypeDescription(typeHash);
+      return TypeDescription(0);
     }
     else
     {
+      constexpr std::string_view type = nameOf<T>::value;
+      constexpr string_hash typeHash = HashedString(type);
       string_hash typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
       auto it = full_description().find(typeNameHash);
       if (it == full_description().end())

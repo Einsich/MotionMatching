@@ -76,16 +76,19 @@ namespace ecs
     int i = 0;
     for(auto& arg : query->args)
     {
-      ComponentContainer* container = archetype->get_container(arg.descr);
-      if (!arg.optional)
+      if (arg.descr.type_name_hash() != 0)//singleton case
       {
-        if (container == nullptr || container->typeNameHash != arg.descr.type_name_hash())
+        ComponentContainer* container = archetype->get_container(arg.descr);
+        if (!arg.optional)
         {
-          breaked = true;
-          break;
+          if (container == nullptr || container->typeNameHash != arg.descr.type_name_hash())
+          {
+            breaked = true;
+            break;
+          }
         }
+        containers[i] = container;
       }
-      containers[i] = container;
       i++;
     }
     if (!breaked)

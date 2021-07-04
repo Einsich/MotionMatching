@@ -43,7 +43,8 @@ namespace ecs
     template<typename T>
     ComponentInitializer &add(const char *name)
     {
-      
+      static_assert(!is_singleton<T>::value);//can't added singleton components
+
       TypeDescription type = get_type_description<T>(name);
       if (std::find(types.componentsTypes.begin(), types.componentsTypes.end(), type) == types.componentsTypes.end())
         types.componentsTypes.push_back(type);

@@ -77,22 +77,6 @@ void render_debug_goal_on_animplayer(Callable lambda)
 }
 
 
-ecs::QueryDescription render_arrows_descr("render_arrows", {
-  {ecs::get_type_description<DebugArrow>("debugArrows"), false}
-});
-
-template<typename Callable>
-void render_arrows(Callable lambda)
-{
-  for (ecs::QueryIterator begin = render_arrows_descr.begin(), end = render_arrows_descr.end(); begin != end; ++begin)
-  {
-    lambda(
-      *begin.get_component<DebugArrow>(0)
-    );
-  }
-}
-
-
 ecs::QueryDescription render_skybox_descr("render_skybox", {
   {ecs::get_type_description<SkyBox>("skyBox"), false}
 });
@@ -129,7 +113,8 @@ void bone_render_animation(const ecs::EntityId &eid, Callable lambda)
 void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
-  {ecs::get_type_description<SceneRender>("sceneRender"), false}
+  {ecs::get_type_description<SceneRender>("sceneRender"), false},
+  {ecs::get_type_description<DebugArrow>("debugArrows"), false}
 }, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
 void main_render_func()
@@ -137,7 +122,8 @@ void main_render_func()
   for (ecs::QueryIterator begin = main_render_descr.begin(), end = main_render_descr.end(); begin != end; ++begin)
   {
     main_render(
-      *begin.get_component<SceneRender>(0)
+      *begin.get_component<SceneRender>(0),
+      *begin.get_component<DebugArrow>(1)
     );
   }
 }

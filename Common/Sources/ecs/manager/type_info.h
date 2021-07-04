@@ -86,9 +86,9 @@ namespace ecs
     if constexpr (is_singleton<T>::value)
     {
       SingletonTypeInfo::types().try_emplace(
-        hash, SingletonTypeInfo{hash, string(nameOf<T>::value), sizeof(T), 
+        hash, SingletonTypeInfo{{hash, string(nameOf<T>::value), sizeof(T), 
         ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>,
-        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>},
         template_singleton_instance<T>});
     }
     else
