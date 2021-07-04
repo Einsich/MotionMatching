@@ -115,7 +115,7 @@ void main_render_func();
 ecs::SystemDescription main_render_descr("main_render", {
   {ecs::get_type_description<SceneRender>("sceneRender"), false},
   {ecs::get_type_description<DebugArrow>("debugArrows"), false}
-}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::GameEditor));
 
 void main_render_func()
 {

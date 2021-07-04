@@ -25,6 +25,7 @@ public:
   vec3 get_forward() const;
   vec3 get_right() const;
   vec3 get_up() const;
+  vec3 get_scale() const;
   void set_rotation(const mat4& rotation);
   void set_rotation(float yaw = 0, float pitch = 0, float roll = 0);
   void set_position(const vec3 position);

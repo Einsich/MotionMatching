@@ -199,7 +199,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   {
     personController.speed = lerp(personController.speed, speed, dt * settings.decelerationRate);
   }
-  personController.simulatedPosition += v0 * dt;
+  personController.simulatedPosition += v0 * dt * transform.get_scale();
   vec3 rootDelta = apply_root_motion_to_speed(speed, animationPlayer.rootDeltaTranslation);
 
 
