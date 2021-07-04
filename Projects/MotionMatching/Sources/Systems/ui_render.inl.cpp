@@ -55,7 +55,7 @@ void current_anim_index_func()
 void menu_ui_func();
 
 ecs::SystemDescription menu_ui_descr("menu_ui", {
-}, menu_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
+}, menu_ui_func, ecs::SystemOrder::UIMENU, (uint)(ecs::SystemTag::Game));
 
 void menu_ui_func()
 {

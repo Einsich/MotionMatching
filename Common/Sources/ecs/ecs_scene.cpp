@@ -4,6 +4,7 @@
 #include "config.h"
 #include "glad/glad.h"
 #include "Engine/Profiler/profiler.h"
+#include "Engine/imgui/imgui.h"
 namespace ecs
 {
   bool system_comparator(const SystemDescription *a, const SystemDescription *b)
@@ -23,7 +24,10 @@ namespace ecs
     render.end = std::find_if(systems.begin(), systems.end(),
       [](const SystemDescription *a){return a->order >= (int)SystemOrder::UI;});
     ui.begin = render.end;
-    ui.end = systems.end();
+    ui.end = std::find_if(systems.begin(), systems.end(),
+      [](const SystemDescription *a){return a->order >= (int)SystemOrder::UIMENU;});
+    menu.begin = ui.end;
+    menu.end = systems.end();
 
     Input::input().keyboard_event(KeyAction::Down) += createMethodEventHandler(*this, &Scene::keyboard_event_handler);
     Input::input().mouse_click_event() += createMethodEventHandler(*this, &Scene::mouse_click_event_handler);
@@ -66,17 +70,9 @@ namespace ecs
           core().destroy_entities();
           process_only_events();
           destroy_entities(true);
-          debug_log("before replacing");
-          for (const Archetype * arch : core().entityContainer->archetypes)
-            debug_log("archetype %s %d / %d", arch->synonim.c_str(), arch->count, arch->capacity);
-            fflush(stdout);
         }
         core().replace_entity_container(&currentScene->editorScene);
         
-          debug_log("after replacing");
-          for (const Archetype * arch : core().entityContainer->archetypes)
-            debug_log("archetype %s %d / %d", arch->synonim.c_str(), arch->count, arch->capacity);
-            fflush(stdout);
       }
       else
       {
@@ -113,6 +109,11 @@ namespace ecs
   void Scene::update_ui()
   {
     update_range(ui);
+    if (ImGui::BeginMainMenuBar())
+    {
+      update_range(menu);
+      ImGui::EndMainMenuBar();
+    }
 
   }
   void Scene::destroy_entities(bool without_copy)

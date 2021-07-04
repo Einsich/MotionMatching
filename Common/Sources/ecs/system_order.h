@@ -11,6 +11,7 @@ namespace ecs
     EARLY_RENDER = 200,
     MIDDLE_RENDER = 300,
     LATE_RENDER = 400,
-    UI = 500
+    UI = 500,
+    UIMENU = 600
   };
 }

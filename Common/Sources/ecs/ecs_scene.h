@@ -16,7 +16,7 @@ namespace ecs
   private:
     typedef std::vector<SystemDescription*>::iterator SystemIterator;
     struct SystemRange { SystemIterator begin, end; };
-    SystemRange logic, render, ui;
+    SystemRange logic, render, ui, menu;
     uint currentSceneTags;
     vector<SceneEntities*> scenes;
     SceneEntities *currentScene;

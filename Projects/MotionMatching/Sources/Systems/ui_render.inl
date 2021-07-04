@@ -3,8 +3,6 @@
 #include "Engine/imgui/imgui.h"
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
-#include "Engine/Profiler/profiler.h"
-#include <stack>
 #include "Animation/third_person_controller.h"
 #include "ecs/manager/type_info.h"
 void show_settings(SettingsSet *settings)
@@ -142,55 +140,6 @@ SYSTEM(ecs::SystemOrder::UI) briefing_ui()
     "");
   ImGui::End();
 }
-void profiler()
-{
-  auto& history = get_profiler().get_frame_history();
-  if (history.size() == 0)
-  {
-    ImGui::End();
-    return;
-  }
-  //ImVec2 corner = ImGui::GetWindowPos();
-  //float width = ImGui::GetWindowWidth();
-  //float height = 10.f;
-  float maxdt = get_profiler().get_averange(history.back().label);
-
-  stack<float> openTimes;
-  openTimes.push(0.f);
-
-  //ImDrawList* draw_list = ImGui::GetWindowDrawList();
-  float lastCloseTime = 0.f;
-  for (const TimeLabel &label : history)
-  {
-    float dt = get_profiler().get_averange(label.label);
-    int level = openTimes.size();
-    if (label.open)
-    {
-      openTimes.push(lastCloseTime);
-      float hardness = sqrt(dt / maxdt);
-      vec3 color = glm::lerp(vec3(1), vec3(1,0,0), hardness);
-      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: %.2f ms",level*3, ' ', label.label.c_str(), dt);
-
-    }
-    else
-    {
-      float dt = get_profiler().get_averange(label.label);
-      float openTime = openTimes.top();
-      float closeTime = openTime + dt;
-      lastCloseTime = closeTime;
-      openTimes.pop();
-      /*
-
-      float c = dt / maxdt;
-      auto color = ImGui::ColorConvertFloat4ToU32(ImVec4(1, c, c,1.f));
-      ImVec2 p_min = ImVec2((openTime) * scale + corner.x, 100+level * height + corner.y);
-      ImVec2 p_max = ImVec2((closeTime) * scale + corner.x, 100+(level+1) * height + corner.y);
-      draw_list->AddRectFilled(p_min, p_max, color);
-      */
-    }
-  }
-  
-}
 
 SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
   const AnimationPlayer &animationPlayer)
@@ -306,27 +255,17 @@ void settings_manager(vector<pair<string, T>> &settings, const char *settings_na
 }
 
 
-SYSTEM(ecs::SystemOrder::UI) menu_ui()
+SYSTEM(ecs::SystemOrder::UIMENU) menu_ui()
 {
-  if (ImGui::BeginMainMenuBar())
+  if (ImGui::BeginMenu("Settings"))
   {
-    
-    if (ImGui::BeginMenu("Settings"))
-    {
-      show_settings(Settings::instance);
-      ImGui::EndMenu();
-    }
-    if (ImGui::BeginMenu("Profiler"))
-    {
-      profiler();
-      ImGui::EndMenu();
-    }
-    
-    settings_manager(SettingsContainer::instance->controllerSettings, "Controller");
-    settings_manager(SettingsContainer::instance->motionMatchingSettings, "Motion matching");
-    settings_manager(SettingsContainer::instance->motionMatchingOptimisationSettings, "Motion matching optimisation");
-    ImGui::EndMainMenuBar();
+    show_settings(Settings::instance);
+    ImGui::EndMenu();
   }
+  
+  settings_manager(SettingsContainer::instance->controllerSettings, "Controller");
+  settings_manager(SettingsContainer::instance->motionMatchingSettings, "Motion matching");
+  settings_manager(SettingsContainer::instance->motionMatchingOptimisationSettings, "Motion matching optimisation");
 }
 
 
