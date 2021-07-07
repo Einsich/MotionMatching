@@ -80,7 +80,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
 }
 
 EVENT() listener_keybord(
-  const KeyboardEvent &e,
+  const KeyEventAnyActionKey &e,
   MotionMatchingScene &motionMatchingScene,
   int recordedTest,
   int recordedState,
@@ -88,7 +88,7 @@ EVENT() listener_keybord(
 {
   if (recordedTest >= 0 && recordedState == 1)
   {
-    KeyboardEvent event = e;
+    KeyEventAnyActionKey event = e;
     event.time -= recorderStartTime;
     motionMatchingScene.dataBase->tests[recordedTest].keyboardEvents.push_back(event);
   }

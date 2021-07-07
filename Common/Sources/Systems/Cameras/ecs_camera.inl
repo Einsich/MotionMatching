@@ -61,24 +61,21 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_main_camera(
 }
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_next_camera(
-  const KeyboardEvent &e,
+  const KeyDownEvent<SDLK_F1> &,
   std::vector<ecs::EntityId> &sceneCameras,
   ecs::EntityId &mainCamera)
 {
-  if (e.keycode == SDLK_F1)
+  auto it = std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera);
+  if (it != sceneCameras.end())
   {
-    auto it = std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera);
-    if (it != sceneCameras.end())
-    {
-      int i = it - sceneCameras.begin();
-      i = (i + 1) % sceneCameras.size();
-      set_main_camera_status(mainCamera, false);
-      mainCamera = sceneCameras[i];
-      set_main_camera_status(mainCamera, true);
-    }
-    else
-      debug_error("Can't set next camera to main Camera");
+    int i = it - sceneCameras.begin();
+    i = (i + 1) % sceneCameras.size();
+    set_main_camera_status(mainCamera, false);
+    mainCamera = sceneCameras[i];
+    set_main_camera_status(mainCamera, true);
   }
+  else
+    debug_error("Can't set next camera to main Camera");
 }
 
 
@@ -119,15 +116,15 @@ EVENT() arccam_mouse_move_handler(
   }
 }
 EVENT() arccam_mouse_click_handler(
-  const MouseClickEvent &e,
+  const MouseClickEventAnyEvent &e,
   ArcballCamera &arcballCamera,
   bool isMainCamera)
 {
   if (!isMainCamera)
     return;
-  if (e.buttonType == MouseButtonType::RightButton)
+  if (e.buttonType == MouseButton::RightButton)
   {
-    arcballCamera.rotationEnable = e.action == MouseButtonAction::Down;
+    arcballCamera.rotationEnable = e.action == MouseAction::Down;
   }
 }
 
@@ -211,7 +208,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
   }
 }
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
-  const MouseClickEvent &e,
+  const MouseClickEventAnyEvent &e,
   FreeCamera &freeCamera,
   bool isMainCamera)
 {
@@ -219,8 +216,8 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
     return;
   switch (e.buttonType)
   {
-  case MouseButtonType::RightButton: freeCamera.rotationable = e.action == MouseButtonAction::Down; break;
-  case MouseButtonType::MiddleButton: freeCamera.screenSpaceMovable = e.action == MouseButtonAction::Down; break;
+  case MouseButton::RightButton: freeCamera.rotationable = e.action == MouseAction::Down; break;
+  case MouseButton::MiddleButton: freeCamera.screenSpaceMovable = e.action == MouseAction::Down; break;
   default:
     break;
   }

@@ -86,7 +86,7 @@ EVENT() mouse_wheel_handler(
 }
 
 EVENT() view_offset_handler(
-  const KeyboardEvent &e,
+  const KeyEventAnyActionKey &e,
   ThirdPersonController &thirdPersonController)
 {
   switch (e.keycode)
@@ -100,13 +100,13 @@ EVENT() view_offset_handler(
 }
 
 EVENT(ThirdPersonController thirdPersonController) crouch_event_handler(
-  const KeyboardEvent &e,
+  const KeyEventAnyActionKey &e,
   ecs::EntityId eid)
 {
   ecs::send_event_immediate(eid, ControllerKeyBoardEvent(e));
 }
 EVENT(ThirdPersonController thirdPersonController) animation_player_handler(
-  const KeyboardEvent &e,
+  const KeyEventAnyActionKey &e,
   AnimationPlayer &animationPlayer)
 {
   int d = 0;

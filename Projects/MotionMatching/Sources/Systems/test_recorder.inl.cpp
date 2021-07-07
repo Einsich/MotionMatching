@@ -24,16 +24,16 @@ void recorder_ui_func()
 }
 
 
-void listener_keybord_handler(const KeyboardEvent &event);
+void listener_keybord_handler(const KeyEventAnyActionKey &event);
 
-ecs::EventDescription<KeyboardEvent> listener_keybord_descr("listener_keybord", {
+ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_keybord", {
   {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
 }, listener_keybord_handler, (uint)(ecs::SystemTag::Game));
 
-void listener_keybord_handler(const KeyboardEvent &event)
+void listener_keybord_handler(const KeyEventAnyActionKey &event)
 {
   for (ecs::QueryIterator begin = listener_keybord_descr.begin(), end = listener_keybord_descr.end(); begin != end; ++begin)
   {
@@ -72,16 +72,16 @@ void listener_mousemove_handler(const MouseMoveEvent &event)
 }
 
 
-void listener_keybord_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> listener_keybord_singl_descr("listener_keybord", {
+ecs::SingleEventDescription<KeyEventAnyActionKey> listener_keybord_singl_descr("listener_keybord", {
   {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
 }, listener_keybord_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void listener_keybord_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin)
 {
   listener_keybord(
     event,

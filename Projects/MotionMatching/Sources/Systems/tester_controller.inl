@@ -24,7 +24,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     animationTester.curTime += dt;
     while ((int)test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
     {
-      const KeyboardEvent &e = test.keyboardEvents[animationTester.keyboardInd];
+      const KeyEventAnyActionKey &e = test.keyboardEvents[animationTester.keyboardInd];
       SDL_KeyboardEvent event;
       memset(&event, 0, sizeof(event));
       event.keysym.sym = e.keycode;

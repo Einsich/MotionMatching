@@ -1,39 +1,49 @@
 #pragma once
 #include "common.h"
 #include <map>
-#include <vector>
-#include "event.h"
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>
-enum class MouseButtonType
+enum class MouseButton
 {
   LeftButton,
   RightButton,
-  MiddleButton,
-  Count
+  MiddleButton
 };
-enum class MouseButtonAction
+enum class MouseAction
 {
   Down,
-  Up,
-  Count
+  Up
 };
 
-enum class KeyAction
-{
-  Down,
-  Press,
-  Up,
-  Count
-};
 
+template<MouseButton buttonType, MouseAction action>
 struct MouseClickEvent
 {
-  MouseButtonType buttonType;
-  MouseButtonAction action;
   int x, y;
   float time;
 };
+template<MouseButton buttonType>
+struct MouseClickEventAnyAction
+{
+  MouseAction action;
+  int x, y;
+  float time;
+};
+template<MouseAction action>
+struct MouseClickEventAnyType
+{
+  MouseButton buttonType;
+  int x, y;
+  float time;
+};
+struct MouseClickEventAnyEvent
+{
+  MouseButton buttonType;
+  MouseAction action;
+  int x, y;
+  float time;
+};
+
 struct MouseMoveEvent
 {
   int x, y;
@@ -46,7 +56,42 @@ struct MouseWheelEvent
   float time;
 };
 
-struct KeyboardEvent
+enum class KeyAction
+{
+  Down,
+  Press,
+  Up
+};
+
+template<SDL_Keycode Key>
+struct KeyDownEvent
+{
+  float time;
+};
+template<SDL_Keycode Key>
+struct KeyUpEvent
+{
+  float time;
+};
+template<SDL_Keycode Key>
+struct KeyPressEvent
+{
+  float time;
+};
+template<SDL_Keycode Key>
+struct KeyEventAnyAction
+{
+  KeyAction action;
+  float time;
+};
+template<KeyAction Action>
+struct KeyEventAnyKey
+{
+  SDL_Keycode keycode;
+  float time;
+};
+
+struct KeyEventAnyActionKey
 {
   SDL_Keycode keycode;
   KeyAction action;
@@ -55,24 +100,7 @@ struct KeyboardEvent
 
 class Input
 {
-  template<int n, class InputEvent>
-  class  InputEventHandler
-  {
-  private:
-    vector<map<int, Event<InputEvent>>> events;
-  public:
-    InputEventHandler(): events(n, map<int, Event<InputEvent>>()) {}
 
-    Event<InputEvent> & get_event(int i, int j)
-    {
-      return events[i][j];
-    }  
-  };
-
-  InputEventHandler<(int)KeyAction::Count, const KeyboardEvent &> keyboardEvent;
-  InputEventHandler<(int)MouseButtonType::Count, const MouseClickEvent &> mouseClickEvent;
-  InputEventHandler<1, const MouseMoveEvent &> mouseMoveEvent;
-  InputEventHandler<1, const MouseWheelEvent &> mouseWheelEvent;
 
   map<SDL_Keycode, pair<int, float>> keyMap;
   struct WheelData
@@ -83,12 +111,7 @@ class Input
 
 public:
   static Input& input();
-  IEvent<const KeyboardEvent &> & keyboard_event(KeyAction action, SDL_Keycode keycode);
-  IEvent<const KeyboardEvent &> & keyboard_event(KeyAction action);
-  IEvent<const MouseClickEvent &> & mouse_click_event(MouseButtonType type, MouseButtonAction action);
-  IEvent<const MouseClickEvent &> & mouse_click_event();
-  IEvent<const MouseMoveEvent &> & mouse_move_event();
-  IEvent<const MouseWheelEvent &> & mouse_wheel_event();
+
   void event_process(const SDL_KeyboardEvent& event, float time);
   void event_process(const SDL_MouseButtonEvent& event, float time);
   void event_process(const SDL_MouseMotionEvent& event, float time);

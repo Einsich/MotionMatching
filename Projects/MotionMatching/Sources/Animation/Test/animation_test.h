@@ -3,7 +3,7 @@
 #include "Serialization/serialization.h"
 struct AnimationTest final : public ISerializable
 {
-  std::vector<KeyboardEvent> keyboardEvents;
+  std::vector<KeyEventAnyActionKey> keyboardEvents;
   std::vector<MouseMoveEvent> mouseMoveEvents;
   std::string name;
   float totalTime;

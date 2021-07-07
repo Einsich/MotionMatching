@@ -37,7 +37,7 @@ class AnimationPlayer
   AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType);
   AnimationPlayer() = default;
 
-  void animation_selector(const KeyboardEvent &event);
+  void animation_selector(const KeyEventAnyActionKey &event);
   AnimationStateMachine *get_state_machine();
   MotionMatching *get_motion_matching();
   const MotionMatching *get_motion_matching() const;

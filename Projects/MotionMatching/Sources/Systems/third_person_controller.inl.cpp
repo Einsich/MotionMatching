@@ -97,13 +97,13 @@ void mouse_wheel_handler_handler(const MouseWheelEvent &event)
 }
 
 
-void view_offset_handler_handler(const KeyboardEvent &event);
+void view_offset_handler_handler(const KeyEventAnyActionKey &event);
 
-ecs::EventDescription<KeyboardEvent> view_offset_handler_descr("view_offset_handler", {
+ecs::EventDescription<KeyEventAnyActionKey> view_offset_handler_descr("view_offset_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, view_offset_handler_handler, (uint)(ecs::SystemTag::Game));
 
-void view_offset_handler_handler(const KeyboardEvent &event)
+void view_offset_handler_handler(const KeyEventAnyActionKey &event)
 {
   for (ecs::QueryIterator begin = view_offset_handler_descr.begin(), end = view_offset_handler_descr.end(); begin != end; ++begin)
   {
@@ -115,14 +115,14 @@ void view_offset_handler_handler(const KeyboardEvent &event)
 }
 
 
-void crouch_event_handler_handler(const KeyboardEvent &event);
+void crouch_event_handler_handler(const KeyEventAnyActionKey &event);
 
-ecs::EventDescription<KeyboardEvent> crouch_event_handler_descr("crouch_event_handler", {
+ecs::EventDescription<KeyEventAnyActionKey> crouch_event_handler_descr("crouch_event_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, crouch_event_handler_handler, (uint)(ecs::SystemTag::Game));
 
-void crouch_event_handler_handler(const KeyboardEvent &event)
+void crouch_event_handler_handler(const KeyEventAnyActionKey &event)
 {
   for (ecs::QueryIterator begin = crouch_event_handler_descr.begin(), end = crouch_event_handler_descr.end(); begin != end; ++begin)
   {
@@ -134,14 +134,14 @@ void crouch_event_handler_handler(const KeyboardEvent &event)
 }
 
 
-void animation_player_handler_handler(const KeyboardEvent &event);
+void animation_player_handler_handler(const KeyEventAnyActionKey &event);
 
-ecs::EventDescription<KeyboardEvent> animation_player_handler_descr("animation_player_handler", {
+ecs::EventDescription<KeyEventAnyActionKey> animation_player_handler_descr("animation_player_handler", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, animation_player_handler_handler, (uint)(ecs::SystemTag::Game));
 
-void animation_player_handler_handler(const KeyboardEvent &event)
+void animation_player_handler_handler(const KeyEventAnyActionKey &event)
 {
   for (ecs::QueryIterator begin = animation_player_handler_descr.begin(), end = animation_player_handler_descr.end(); begin != end; ++begin)
   {
@@ -202,13 +202,13 @@ void mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryI
 }
 
 
-void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+void view_offset_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> view_offset_handler_singl_descr("view_offset_handler", {
+ecs::SingleEventDescription<KeyEventAnyActionKey> view_offset_handler_singl_descr("view_offset_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, view_offset_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+void view_offset_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin)
 {
   view_offset_handler(
     event,
@@ -217,14 +217,14 @@ void view_offset_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIte
 }
 
 
-void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+void crouch_event_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> crouch_event_handler_singl_descr("crouch_event_handler", {
+ecs::SingleEventDescription<KeyEventAnyActionKey> crouch_event_handler_singl_descr("crouch_event_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, crouch_event_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+void crouch_event_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin)
 {
   crouch_event_handler(
     event,
@@ -233,14 +233,14 @@ void crouch_event_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIt
 }
 
 
-void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+void animation_player_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> animation_player_handler_singl_descr("animation_player_handler", {
+ecs::SingleEventDescription<KeyEventAnyActionKey> animation_player_handler_singl_descr("animation_player_handler", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, animation_player_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void animation_player_handler_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+void animation_player_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin)
 {
   animation_player_handler(
     event,

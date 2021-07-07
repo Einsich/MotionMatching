@@ -48,7 +48,7 @@ void AnimationPlayer::set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, 
 }
 
 
-void AnimationPlayer::animation_selector(const KeyboardEvent &event)
+void AnimationPlayer::animation_selector(const KeyEventAnyActionKey &event)
 {
   if (playerType !=  AnimationPlayerType::AnimationPlayer)
     return;

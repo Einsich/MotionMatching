@@ -236,14 +236,14 @@ void set_main_camera_handler(const OnSetMainCamera &event)
 }
 
 
-void set_next_camera_handler(const KeyboardEvent &event);
+void set_next_camera_handler(const KeyDownEvent<SDLK_F1> &event);
 
-ecs::EventDescription<KeyboardEvent> set_next_camera_descr("set_next_camera", {
+ecs::EventDescription<KeyDownEvent<SDLK_F1>> set_next_camera_descr("set_next_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_next_camera_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void set_next_camera_handler(const KeyboardEvent &event)
+void set_next_camera_handler(const KeyDownEvent<SDLK_F1> &event)
 {
   for (ecs::QueryIterator begin = set_next_camera_descr.begin(), end = set_next_camera_descr.end(); begin != end; ++begin)
   {
@@ -298,14 +298,14 @@ void arccam_mouse_move_handler_handler(const MouseMoveEvent &event)
 }
 
 
-void arccam_mouse_click_handler_handler(const MouseClickEvent &event);
+void arccam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event);
 
-ecs::EventDescription<MouseClickEvent> arccam_mouse_click_handler_descr("arccam_mouse_click_handler", {
+ecs::EventDescription<MouseClickEventAnyEvent> arccam_mouse_click_handler_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_handler, (uint)(ecs::SystemTag::Game));
 
-void arccam_mouse_click_handler_handler(const MouseClickEvent &event)
+void arccam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event)
 {
   for (ecs::QueryIterator begin = arccam_mouse_click_handler_descr.begin(), end = arccam_mouse_click_handler_descr.end(); begin != end; ++begin)
   {
@@ -382,14 +382,14 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
 }
 
 
-void freecam_mouse_click_handler_handler(const MouseClickEvent &event);
+void freecam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event);
 
-ecs::EventDescription<MouseClickEvent> freecam_mouse_click_handler_descr("freecam_mouse_click_handler", {
+ecs::EventDescription<MouseClickEventAnyEvent> freecam_mouse_click_handler_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
+void freecam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event)
 {
   for (ecs::QueryIterator begin = freecam_mouse_click_handler_descr.begin(), end = freecam_mouse_click_handler_descr.end(); begin != end; ++begin)
   {
@@ -432,14 +432,14 @@ void set_main_camera_singl_handler(const OnSetMainCamera &event, ecs::QueryItera
 }
 
 
-void set_next_camera_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin);
+void set_next_camera_singl_handler(const KeyDownEvent<SDLK_F1> &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<KeyboardEvent> set_next_camera_singl_descr("set_next_camera", {
+ecs::SingleEventDescription<KeyDownEvent<SDLK_F1>> set_next_camera_singl_descr("set_next_camera", {
   {ecs::get_type_description<std::vector<ecs::EntityId>>("sceneCameras"), false},
   {ecs::get_type_description<ecs::EntityId>("mainCamera"), false}
 }, set_next_camera_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void set_next_camera_singl_handler(const KeyboardEvent &event, ecs::QueryIterator &begin)
+void set_next_camera_singl_handler(const KeyDownEvent<SDLK_F1> &event, ecs::QueryIterator &begin)
 {
   set_next_camera(
     event,
@@ -485,14 +485,14 @@ void arccam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::Q
 }
 
 
-void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
+void arccam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEvent> arccam_mouse_click_handler_singl_descr("arccam_mouse_click_handler", {
+ecs::SingleEventDescription<MouseClickEventAnyEvent> arccam_mouse_click_handler_singl_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin)
+void arccam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin)
 {
   arccam_mouse_click_handler(
     event,
@@ -557,14 +557,14 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
 }
 
 
-void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
+void freecam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEvent> freecam_mouse_click_handler_singl_descr("freecam_mouse_click_handler", {
+ecs::SingleEventDescription<MouseClickEventAnyEvent> freecam_mouse_click_handler_singl_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin)
+void freecam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin)
 {
   freecam_mouse_click_handler(
     event,

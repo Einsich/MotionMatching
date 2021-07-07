@@ -21,12 +21,12 @@ public:
   PersonController() = default;
   void set_pos_rotation(Transform &transform, vec3 position, float rotation);
 };
-struct KeyboardEvent;
+struct KeyEventAnyActionKey;
 struct MouseMoveEvent;
 struct ControllerKeyBoardEvent
 {
-  KeyboardEvent e;
-  ControllerKeyBoardEvent(const KeyboardEvent &e):e(e){}
+  KeyEventAnyActionKey e;
+  ControllerKeyBoardEvent(const KeyEventAnyActionKey &e):e(e){}
 };
 struct ControllerMouseMoveEvent
 {

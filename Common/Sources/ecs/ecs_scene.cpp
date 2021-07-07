@@ -29,10 +29,6 @@ namespace ecs
     menu.begin = ui.end;
     menu.end = systems.end();
 
-    Input::input().keyboard_event(KeyAction::Down) += createMethodEventHandler(*this, &Scene::keyboard_event_handler);
-    Input::input().mouse_click_event() += createMethodEventHandler(*this, &Scene::mouse_click_event_handler);
-    Input::input().mouse_move_event() += createMethodEventHandler(*this, &Scene::mouse_move_event_handler);
-    Input::input().mouse_wheel_event() += createMethodEventHandler(*this, &Scene::mouse_wheel_event_handler);
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -162,20 +158,5 @@ namespace ecs
       delete scene;
     }
   }
-  void Scene::keyboard_event_handler(const KeyboardEvent &event)
-  {
-    ecs::send_event(event);
-  }
-  void Scene::mouse_click_event_handler(const MouseClickEvent &event)
-  {
-    ecs::send_event(event);
-  }
-  void Scene::mouse_move_event_handler(const MouseMoveEvent &event)
-  {
-    ecs::send_event(event);
-  }
-  void Scene::mouse_wheel_event_handler(const MouseWheelEvent &event)
-  {
-    ecs::send_event(event);
-  }
+
 }

@@ -3,7 +3,7 @@
 #include "input.h"
 #include "Engine/time.h"
 #include "3dmath.h"
-
+#include "ecs/ecs.h"
 
 const float wheelDecayTime = 0.03f;
 const float wheelHalfDecayTime = wheelDecayTime * 0.5f;
@@ -15,102 +15,127 @@ Input& Input::input()
   return *instance;
 }
 
-IEvent<const KeyboardEvent &> & Input::keyboard_event(KeyAction action, SDL_Keycode keycode)
-{
-  return keyboardEvent.get_event((int)action, (int)keycode);
-}
-IEvent<const KeyboardEvent &> & Input::keyboard_event(KeyAction action)
-{
-  return keyboardEvent.get_event((int)action, 0);
-}
-IEvent<const MouseClickEvent &> & Input::mouse_click_event(MouseButtonType type, MouseButtonAction action)
-{
-  return mouseClickEvent.get_event((int)type, (int)action);
-}
-IEvent<const MouseClickEvent &> & Input::mouse_click_event()
-{
-  return mouseClickEvent.get_event(0, -1);
-}
-IEvent<const MouseMoveEvent &> & Input::mouse_move_event()
-{
-  return mouseMoveEvent.get_event(0, 0);
-}
-IEvent<const MouseWheelEvent &> & Input::mouse_wheel_event()
-{
-  return mouseWheelEvent.get_event(0, 0);
-}
+#define KEY_CODE_SWITCH(A) \
+MACRO(SDLK_0, A) MACRO(SDLK_1, A) MACRO(SDLK_2, A) MACRO(SDLK_3, A) MACRO(SDLK_4, A) \
+MACRO(SDLK_5, A) MACRO(SDLK_6, A) MACRO(SDLK_7, A) MACRO(SDLK_8, A) MACRO(SDLK_9, A) \
+MACRO(SDLK_a, A) MACRO(SDLK_b, A) MACRO(SDLK_c, A) MACRO(SDLK_d, A) MACRO(SDLK_e, A) \
+MACRO(SDLK_f, A) MACRO(SDLK_g, A) MACRO(SDLK_h, A) MACRO(SDLK_i, A) MACRO(SDLK_j, A) \
+MACRO(SDLK_k, A) MACRO(SDLK_l, A) MACRO(SDLK_m, A) MACRO(SDLK_n, A) MACRO(SDLK_o, A) \
+MACRO(SDLK_p, A) MACRO(SDLK_q, A) MACRO(SDLK_r, A) MACRO(SDLK_s, A) MACRO(SDLK_t, A) \
+MACRO(SDLK_u, A) MACRO(SDLK_v, A) MACRO(SDLK_w, A) MACRO(SDLK_x, A) MACRO(SDLK_y, A) \
+MACRO(SDLK_z, A) \
+MACRO(SDLK_F1, A) MACRO(SDLK_F2, A) MACRO(SDLK_F3, A) MACRO(SDLK_F4, A) MACRO(SDLK_F5, A) MACRO(SDLK_F6, A)\
+MACRO(SDLK_F7, A) MACRO(SDLK_F8, A) MACRO(SDLK_F9, A) MACRO(SDLK_F10, A) MACRO(SDLK_F11, A) MACRO(SDLK_F12, A) \
+MACRO(SDLK_BACKSPACE, A) MACRO(SDLK_TAB, A) MACRO(SDLK_SPACE, A) MACRO(SDLK_RETURN, A) MACRO(SDLK_ESCAPE, A) \
+MACRO(SDLK_RIGHT, A) MACRO(SDLK_LEFT, A) MACRO(SDLK_DOWN, A) MACRO(SDLK_UP, A) \
+MACRO(SDLK_LCTRL, A) MACRO(SDLK_LSHIFT, A) MACRO(SDLK_LALT, A) \
+MACRO(SDLK_RCTRL, A) MACRO(SDLK_RSHIFT, A) MACRO(SDLK_RALT, A)
+
+
 void Input::event_process(const SDL_KeyboardEvent& event, float time)
 {
-  KeyboardEvent e;
-  e.keycode = event.keysym.sym;
-  e.time = time;
-  if (event.repeat)
-    e.action = KeyAction::Press;
-  else
-  if (event.state == SDL_PRESSED)
-  {
-    e.action = KeyAction::Down;
-    keyMap[e.keycode] = {1, time};
-  }
-  else
-  {
-    e.action = KeyAction::Up;
-    keyMap[e.keycode] = {0, time};
+  SDL_Keycode key = event.keysym.sym;
+  KeyAction action = event.repeat ? KeyAction::Press : event.state == SDL_PRESSED ? KeyAction::Down : KeyAction::Up;
+  
+  if (action == KeyAction::Down)
+    keyMap[key] = {1, time};
+  if (action == KeyAction::Up)
+    keyMap[key] = {0, time};
 
-  }  
-  keyboardEvent.get_event((int)e.action, 0)(e);
-  keyboardEvent.get_event((int)e.action, (int)e.keycode)(e);
+  ecs::send_event(KeyEventAnyActionKey{key, action, time});
+  #define MACRO(key, Action) case key: ecs::send_event(Key## Action ##Event<key>{time}); break;
+
+  #define KEY_ACTION_CASE(Action) case KeyAction::Action: \
+  ecs::send_event(KeyEventAnyKey<KeyAction::Action>{key, time}); \
+    switch (key) { \
+      KEY_CODE_SWITCH(Action) \
+      default: debug_error("KeyAction::" #Action " unknown keyCode %d", key); break;} break; 
+
+  switch (action)
+  {
+    KEY_ACTION_CASE(Press)
+    KEY_ACTION_CASE(Down)
+    KEY_ACTION_CASE(Up)
+  
+  default:debug_error("unknown KeyAction %d", (int)action);break;
+  }
+  #undef MACRO
+  #define MACRO(Key, Action) case Key: ecs::send_event(KeyEventAnyAction<Key>{action, time}); break;
+  switch (key)
+  {
+    KEY_CODE_SWITCH(_)
+    default: debug_error("keyCode %d", key); break;
+  }
+  #undef MACRO
 }
+
+#define BUTTON_SWITCH(Action) \
+MACRO(LeftButton, Action) MACRO(RightButton, Action) MACRO(MiddleButton, Action)
+
 void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 {
-  MouseClickEvent e;
-  e.time = time;
-  
+  MouseButton button = (MouseButton)-1;
+  MouseAction action = (MouseAction)-1;
+  int x = event.x, y = event.y;
   switch (event.button)
   {
-    case SDL_BUTTON_LEFT: e.buttonType = MouseButtonType::LeftButton; break;
-    case SDL_BUTTON_RIGHT: e.buttonType = MouseButtonType::RightButton; break;
-    case SDL_BUTTON_MIDDLE: e.buttonType = MouseButtonType::MiddleButton; break;
-    default: break;
+    case SDL_BUTTON_LEFT: button = MouseButton::LeftButton; break;
+    case SDL_BUTTON_RIGHT: button = MouseButton::RightButton; break;
+    case SDL_BUTTON_MIDDLE: button = MouseButton::MiddleButton; break;
+    default: return; break;
   }
   switch (event.type)
   {
-    case SDL_MOUSEBUTTONDOWN: e.action = MouseButtonAction::Down; break;
-    case SDL_MOUSEBUTTONUP: e.action = MouseButtonAction::Up; break;
-    default: break;
+    case SDL_MOUSEBUTTONDOWN: action = MouseAction::Down; break;
+    case SDL_MOUSEBUTTONUP: action = MouseAction::Up; break;
+    default: return; break;
   }
-  mouseClickEvent.get_event(0, -1)(e);
-  mouseClickEvent.get_event((int)e.buttonType, (int)e.action)(e);
+  ecs::send_event(MouseClickEventAnyEvent{button, action, x, y, time});
+
+  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseClickEvent<MouseButton::Button, MouseAction::Action>{x, y, time}); break;
+
+  #define MOUSE_ACTION_TYPE_CASE(Action) case MouseAction::Action: \
+  ecs::send_event(MouseClickEventAnyType<MouseAction::Action>{button, x, y, time}); \
+    switch (button) { \
+      BUTTON_SWITCH(Action) \
+      default: debug_error("ButtonAction::" #Action " unknown button %d", button); break;} break; 
+
+  switch (action)
+  {
+    MOUSE_ACTION_TYPE_CASE(Down)
+    MOUSE_ACTION_TYPE_CASE(Up)
+  
+  default:debug_error("unknown MouseAction %d", (int)action);break;
+  }
+  #undef MACRO
+  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseClickEventAnyAction<MouseButton::Button>{action, x, y, time}); break;
+  switch (button)
+  {
+    BUTTON_SWITCH(_)
+    default: debug_error("unknown mouse button  %d", button); break;
+  }
   
 }
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
-  MouseMoveEvent e
-  {
-    e.x = event.x, e.y = event.y,
-    e.dx = event.xrel, e.dy = event.yrel,
-    e.time = time
-  };
-  mouseMoveEvent.get_event(0, 0)(e);
+  ecs::send_event(MouseMoveEvent {event.x, event.y, event.xrel, event.yrel, time});
 }
 void Input::event_process(const SDL_MouseWheelEvent& event, float time)
 {
-  MouseWheelEvent e;
-  e.wheel = event.y;
-  e.time = time;
+  int wheel = event.y;
   if (Time::time() - wheelData.lastTime > wheelDecayTime)
   {
     wheelData.lastValue = 0;
-    wheelData.targetValue = glm::clamp(wheelScrollSpeed * e.wheel, -1.f, 1.f);
+    wheelData.targetValue = glm::clamp(wheelScrollSpeed * wheel, -1.f, 1.f);
   }
   else
   {
     wheelData.lastValue = get_wheel();
-    wheelData.targetValue = glm::clamp(wheelData.targetValue + wheelScrollSpeed * e.wheel, -1.f, 1.f);
+    wheelData.targetValue = glm::clamp(wheelData.targetValue + wheelScrollSpeed * wheel, -1.f, 1.f);
   }
   
   wheelData.lastTime = Time::time();
-  mouseWheelEvent.get_event(0, 0)(e);
+  ecs::send_event(MouseWheelEvent{wheel, time});
 }
 
 float Input::get_key(SDL_Keycode keycode, float reaction_time)
@@ -159,3 +184,4 @@ float Input::get_wheel()
   }
   return wheel;
 }
+
