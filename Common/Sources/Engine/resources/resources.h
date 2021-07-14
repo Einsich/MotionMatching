@@ -17,21 +17,27 @@ public:
   //type, name, cast to Asset<T>
   std::map<std::string_view, ResourceMap> assets;
   std::map<std::string, std::string_view> extToAssetName;
-  static inline Resources *instance;
+  static Resources &instance()
+  {
+    static Resources instance;
+    return instance;
+  }
 };
 
 template<typename T>
 void create_asset(const filesystem::path &path)
 {
-  constexpr string_view &typeName = nameOf<T>::value;
-  auto resourcesMap = Resources::instance->assets[typeName];
-  resourcesMap.resources.try_emplace(path.filename().string(), path.string());
+  constexpr const string_view &typeName = nameOf<T>::value;
+  auto &resourcesMap = Resources::instance().assets[typeName];
+  Asset<T> asset(path);
+  Asset<AssetStub> *stub = (Asset<AssetStub>*)&asset;
+  resourcesMap.resources.try_emplace(path.filename().string(), *stub);
 }
 
 template<typename T>
 void save_asset(const Asset<AssetStub> &asset)
 {
-  static_cast<Asset<T>>(asset).save();
+  ((const Asset<T> *)(&asset))->save();
 }
 template<typename T>
 struct ResourceRegister
@@ -40,21 +46,21 @@ struct ResourceRegister
   {
     constexpr const string_view &assetName = nameOf<T>::value;
     for (const std::string &extension : extensions)
-      Resources::instance->extToAssetName.try_emplace(extension, assetName);
+      Resources::instance().extToAssetName.try_emplace(extension, assetName);
       
-    Resources::instance->assets.try_emplace(assetName, {true, {}, create_asset<T>, save_asset<T>})
+    Resources::instance().assets.try_emplace(assetName, ResourceMap{true, {}, create_asset<T>, save_asset<T>});
   }
   ResourceRegister()
   {
     constexpr const string_view &assetName = nameOf<T>::value;
-    Resources::instance->assets.try_emplace(assetName, {false, {}, create_asset<T>, save_asset<T>})
+    Resources::instance().assets.try_emplace(assetName, ResourceMap{false, {}, create_asset<T>, save_asset<T>});
   }
 };
 template<typename T>
 Asset<T> get_resource(const string &name)
 {
   constexpr string_view &typeName = nameOf<T>::value;
-  auto resourcesMap = Resources::instance->assets[typeName].resources;
+  auto &resourcesMap = Resources::instance().assets[typeName].resources;
   auto it = resourcesMap.find(name);
   if (it == resourcesMap.end())
   {

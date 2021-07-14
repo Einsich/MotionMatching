@@ -1,5 +1,6 @@
 #pragma once
 #include "../Shader/shader.h"
+#include "Engine/Resources/asset.h"
 enum TextureType
 {
   Texture2DType = GL_TEXTURE_2D,
@@ -45,6 +46,8 @@ protected:
   TextureType textureType;
   TextureColorFormat colorFormat;
   TextureFormat textureFormat;
+  TextureWrappFormat wrapping;
+  TexturePixelFormat pixelFormat;
   int textureWidth, textureHeight, textureDepth;
   string textureName;
   GLenum get_internal_format(TextureColorFormat colorFormat, TextureFormat textureFormat);

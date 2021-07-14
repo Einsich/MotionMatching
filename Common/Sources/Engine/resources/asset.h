@@ -5,6 +5,7 @@
 #include <string_view>
 #include <istream>
 #include <fstream>
+#include <filesystem>
 #include "ecs/manager/compile_time_string.h"
 #include "Serialization/serialization.h"
 class IAsset
@@ -18,7 +19,6 @@ class IAsset
 };
 
 /*
-  virtual void create(std::istream &io) override;
   virtual void load(const std::string &path) override;
   virtual void free() override;
   virtual bool edit() override;
@@ -69,9 +69,13 @@ class Asset
   };
   ResourceInfo *resource;
 public:
+  ResourceInfo *get_resource() const
+  {
+    return resource;
+  }
   //create asset and init them from .meta file or only default value
-  Asset(const std::string &resource_path) :
-  resource(new ResourceInfo{T(), resource_path, false, false})
+  Asset(const filesystem::path &resource_path) :
+  resource(new ResourceInfo{T(), resource_path.string(), false, false})
   {  
     ifstream file(resource_path, ios::binary);
     if (!file.fail())
@@ -91,9 +95,9 @@ public:
     else
       resource->load();
   }
-  void save()
+  void save() const
   {
-    ofstream file(resource_path, ios::binary);
+    ofstream file(resource->path, ios::binary);
     if (!file.fail())
     {
       write(file, resource->asset);
