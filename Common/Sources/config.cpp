@@ -14,8 +14,8 @@ void add_configs(int config_count, const char** config_value)
   }
   string buildPath = std::filesystem::current_path().string();
   string project = configs["project"];
-  configs["projectPath"] = buildPath + "/../../../Projects/" + project;
-  configs["commonPath"] = buildPath + "/../../../Common";
+  configs["projectPath"] = buildPath + "\\..\\..\\..\\Projects\\" + project;
+  configs["commonPath"] = buildPath + "\\..\\..\\..\\Common";
 }
 const char* get_config(const string &config_name)
 {

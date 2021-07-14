@@ -13,10 +13,10 @@
 Application::Application(string window_name, int width, int height, bool full_screen):
 context(window_name, width, height, full_screen), timer(), scene(new ecs::Scene()),
 projectPath(string(get_config("projectPath"))),
-projectResourcesPath(string(get_config("projectPath")) + "/Resources"),
-projectShaderPath(string(get_config("projectPath")) + "/Shaders"),
-commonResourcesPath(string(get_config("commonPath")) + "/Resources"),
-commonShaderPath(string(get_config("commonPath")) + "/Shaders")
+projectResourcesPath(string(get_config("projectPath")) + "\\Resources"),
+projectShaderPath(string(get_config("projectPath")) + "\\Shaders"),
+commonResourcesPath(string(get_config("commonPath")) + "\\Resources"),
+commonShaderPath(string(get_config("commonPath")) + "\\Shaders")
 {
   assert(scene);
   application = this;
