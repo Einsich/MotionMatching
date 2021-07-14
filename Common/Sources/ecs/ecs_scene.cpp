@@ -5,6 +5,9 @@
 #include "glad/glad.h"
 #include "Engine/Profiler/profiler.h"
 #include "Engine/imgui/imgui.h"
+
+void create_all_resources_from_metadata();
+void save_all_resources_to_metadata();
 namespace ecs
 {
   bool system_comparator(const SystemDescription *a, const SystemDescription *b)
@@ -13,6 +16,7 @@ namespace ecs
   }
   void Scene::start_scene()
   {
+    create_all_resources_from_metadata();
     scenes.emplace_back(new SceneEntities());
     scenes.back()->name = "default";
     auto &systems = core().systems;
@@ -157,6 +161,7 @@ namespace ecs
         delete archetype;
       delete scene;
     }
+    save_all_resources_to_metadata();
   }
 
 }
