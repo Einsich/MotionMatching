@@ -10,6 +10,8 @@ struct ResourceMap
   std::map<std::string, Asset<AssetStub>> resources;
   std::function<void(const filesystem::path&)> createAsset;
   std::function<void(const Asset<AssetStub>&)> saveAsset;
+  std::function<bool(Asset<AssetStub>&)> editAsset;
+  std::function<void(Asset<AssetStub>&, bool)> loadAsset;
 };
 class Resources
 {
@@ -40,6 +42,16 @@ void save_asset(const Asset<AssetStub> &asset)
   ((const Asset<T> *)(&asset))->save();
 }
 template<typename T>
+bool edit_asset(Asset<AssetStub> &asset)
+{
+  return ((Asset<T> *)(&asset))->edit();
+}
+template<typename T>
+void load_asset(Asset<AssetStub> &asset, bool async)
+{
+  return ((Asset<T> *)(&asset))->load(async);
+}
+template<typename T>
 struct ResourceRegister
 {
   ResourceRegister(const std::vector<std::string> &extensions)
@@ -48,12 +60,14 @@ struct ResourceRegister
     for (const std::string &extension : extensions)
       Resources::instance().extToAssetName.try_emplace(extension, assetName);
       
-    Resources::instance().assets.try_emplace(assetName, ResourceMap{true, {}, create_asset<T>, save_asset<T>});
+    Resources::instance().assets.try_emplace(assetName, 
+    ResourceMap{true, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>});
   }
   ResourceRegister()
   {
     constexpr const string_view &assetName = nameOf<T>::value;
-    Resources::instance().assets.try_emplace(assetName, ResourceMap{false, {}, create_asset<T>, save_asset<T>});
+    Resources::instance().assets.try_emplace(assetName, 
+    ResourceMap{false, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>});
   }
 };
 template<typename T>

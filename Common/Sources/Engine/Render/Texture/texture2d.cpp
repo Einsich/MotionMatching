@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Engine/Resources/resources.h"
+#include "Engine/imgui/imgui.h"
 
 Texture2D::Texture2D()
 {
@@ -27,16 +28,22 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     wrapping = wrapping_format;
     pixelFormat = pixel_format;
     
-    load(texture_path_from_textures_folder);
+    load_from_path(texture_path_from_textures_folder);
   }
   
-  void Texture2D::load(const std::string &path)
+  void Texture2D::load(const filesystem::path &path)
   {
-    textureName = path;
+    filesystem::path tmp = path;
+    tmp.replace_extension("");
+    load_from_path(tmp);//without .meta
+  }
+  void Texture2D::load_from_path(const filesystem::path &path)
+  {
+    textureName = path.filename().string();
     int w, h, ch;
     stbi_set_flip_vertically_on_load(true);
-    auto image = stbi_load(textureName.c_str(), &w, &h, &ch, 0);
-		
+    auto image = stbi_load(path.string().c_str(), &w, &h, &ch, 0);
+
 		if (image)
 		{
   
@@ -99,9 +106,66 @@ void Texture2D::free()
 {
 
 }
+template<int N, typename E>
+bool list_box(const array<const char *, N> &str, const array<E, N> &e, const char* label, E &curE)
+{
+  static int curStr = -1;
+  static bool buttonPressed = false;
+  int curI = 0;
+  bool edited = false;
+  for (; curI < N && curE != e[curI]; curI++);
+
+  if (ImGui::Button(str[curI]))
+    buttonPressed = !buttonPressed;
+
+  if (buttonPressed)
+  {
+    if (ImGui::ListBox(label, &curStr, str.data(), N, N))
+    {
+      edited = true;
+      curE = e[curStr];
+      curStr = -1;
+      buttonPressed = false;
+    }
+  }
+  return edited;
+}
 bool Texture2D::edit()
 {
+  bool edited = false;
+  ImGui::Text("%s [%d x %d]", textureName.c_str(), textureWidth, textureHeight);
+
+  edited |= list_box<6, TextureColorFormat>({"R", "RG", "RGB", "RGBA", "Depth", "DepthStensil"}, 
+  {TextureColorFormat::R,TextureColorFormat::RG,TextureColorFormat::RGB,
+    TextureColorFormat::RGBA,TextureColorFormat::Depth, TextureColorFormat::DepthStencil},
+    "Color format", colorFormat);
+  
+  edited |= list_box<8, TextureFormat>({"Byte", "UnsignedByte", "Short", "UnsignedShort", "HalfFloat", "Int", "UnsignedInt", "Float"}, 
+  {TextureFormat::Byte, TextureFormat::UnsignedByte, TextureFormat::Short, 
+  TextureFormat::UnsignedShort, TextureFormat::HalfFloat, TextureFormat::Int, TextureFormat::UnsignedInt, TextureFormat::Float},
+    "Texture format", textureFormat);
+
+  edited |= list_box<3, TextureWrappFormat>({"Repeat", "ClampToBorder", "ClampToEdge"}, 
+  {TextureWrappFormat::Repeat, TextureWrappFormat::ClampToBorder, TextureWrappFormat::ClampToEdge},
+    "Wrapping", wrapping);
+
+  edited |= list_box<2, TexturePixelFormat>({"Point", "Linear"}, 
+  {TexturePixelFormat::Pixel, TexturePixelFormat::Linear},
+    "Pixel format", pixelFormat);
+
+  if (ImGui::Checkbox("Generate mip maps", &generateMips))
+    edited |= true;
   return false;
 }
 
+size_t Texture2D::serialize(std::ostream& os) const 
+{
+  return write(os, textureName, textureType, colorFormat, textureFormat, wrapping, 
+              pixelFormat, textureWidth, textureHeight, generateMips);
+}
+size_t Texture2D::deserialize(std::istream& is) 
+{
+  return read(is, textureName, textureType, colorFormat, textureFormat, wrapping, 
+              pixelFormat, textureWidth, textureHeight, generateMips);
+}
 ResourceRegister<Texture2D> texture2DRegister({".jpg", ".png"});
