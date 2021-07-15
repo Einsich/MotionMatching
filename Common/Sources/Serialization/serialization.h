@@ -101,6 +101,11 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& fil
     //printf("ls %d\n", fileSize);
   return fileSize + sizeof(fileSize);
 }
+template<typename T, typename ...Args>
+inline size_t write(std::ostream& os, const T &value, const Args &... args)
+{
+  return write(os, value) + write(os, args...);
+}
 
 
 template<typename T> 
@@ -228,6 +233,12 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
   }
   return fileSize;
 }
+template<typename T, typename ...Args>
+inline size_t read(std::istream& is, T &value, Args &... args)
+{
+  return read(is, value) + read(is, args...);
+}
+
 void print_file_size(const std::string &path, size_t fileSize);
 
 template <typename T>
