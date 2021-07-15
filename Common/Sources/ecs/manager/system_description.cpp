@@ -20,29 +20,37 @@ namespace ecs
   }
 
 
-  QueryDescription::QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query):
-    name(name), args(std::move(args)), archetypes()
+  QueryDescription::QueryDescription(const char *name, const std::vector<FunctionArgument> &in_args, bool query):
+    name(name), args(std::move(in_args)), archetypes()
   {
     if (query)
       add_query(this);
+    withoutArgs = true;
+    for (auto &arg : args)
+      if(arg.descr.type_name_hash())
+        withoutArgs = false;
   }
-  SingleQueryDescription::SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query):
-    name(name), args(std::move(args)), archetypes()
+  SingleQueryDescription::SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &in_args, bool query):
+    name(name), args(std::move(in_args)), archetypes()
   {
     if (query)
       add_query((QueryDescription*)this);
+    withoutArgs = true;
+    for (auto &arg : args)
+      if(arg.descr.type_name_hash())
+        withoutArgs = false;
   }
 
   QueryIterator QueryDescription::begin()
   {
     QueryIterator it(this, 0, 0);
-    if (args.size() != 0)
+    if (!withoutArgs)
       it.skip_empty_archetype();
     return it;
   }
   QueryIterator QueryDescription::end()
   {
-    return args.size() != 0 ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
+    return !withoutArgs ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
   }
 
   QueryIterator::QueryIterator():

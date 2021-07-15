@@ -25,6 +25,7 @@ namespace ecs
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
+    bool withoutArgs;
     QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
@@ -35,6 +36,7 @@ namespace ecs
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
+    bool withoutArgs;
     SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
