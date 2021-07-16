@@ -4,11 +4,13 @@
 #include "material.h"
 #include "direction_light.h"
 #include "Engine/transform.h"
+#include "Serialization/reflection.h"
 class MeshRender
 {
 private:
   MeshPtr mesh;
-  Asset<Material> material;
+  REFLECT(MeshRender,
+  (Asset<Material>) (material))
   Shader shader;
 public:
   MeshRender() = default;

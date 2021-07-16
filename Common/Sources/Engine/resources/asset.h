@@ -151,6 +151,14 @@ public:
   {
     return asset->edited;
   }
+  bool is_copy() const
+  {
+    return asset->isCopy;
+  }
+  string asset_name() const
+  {
+    return get_asset_name(asset->path);
+  }
 
   virtual size_t serialize(std::ostream& os) const override
   {

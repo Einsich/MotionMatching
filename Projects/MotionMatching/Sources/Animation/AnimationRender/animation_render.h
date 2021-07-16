@@ -5,11 +5,13 @@
 #include "Engine/Render/material.h"
 #include "Engine/Render/direction_light.h"
 #include "Engine/transform.h"
+#include "Serialization/reflection.h"
 class AnimationRender
 {
 private:
   MeshPtr mesh;
-  Asset<Material> material;
+  REFLECT(MeshRender,
+  (Asset<Material>) (material))
   Shader shader;
 public:
   AnimationRender() = default;

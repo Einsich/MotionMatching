@@ -26,12 +26,10 @@
 
 #define CUSTOM_TYPE \
 MACRO(AnimationPlayer)\
-MACRO(AnimationRender)\
 MACRO(ThirdPersonController)\
 MACRO(PersonController)\
 MACRO(AnimationTester)\
 MACRO(DebugArrow)\
-MACRO(MeshRender)\
 MACRO(BoneRender)\
 MACRO(SceneRender)\
 MACRO(MotionMatchingScene)
@@ -39,6 +37,8 @@ MACRO(MotionMatchingScene)
 #define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
 
 CUSTOM_TYPE
+REG_TYPE(MeshRender)
+REG_TYPE(AnimationRender)
 
 void write_tree(aiNode* root, int d = 1)
 {
