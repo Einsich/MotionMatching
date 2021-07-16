@@ -46,7 +46,7 @@ MeshRender create_plane(bool create_uv)
     notUvMesh = make_mesh(VertexArrayObject(indices, vertices, normals));
   }
 
-  MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
+  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
 
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
@@ -103,7 +103,7 @@ MeshRender create_cube(bool create_uv)
     uvMesh = make_mesh(VertexArrayObject(indices, vertices, normals, uv));
     notUvMesh = make_mesh(VertexArrayObject(indices, vertices, normals));
   }
-  MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
+  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
@@ -153,6 +153,6 @@ MeshRender create_sphere(int detailed, bool smooth, bool create_uv)
       }
     mesh = spheres[t] =  make_mesh(VertexArrayObject(indices, vertices, normals, uv));
   }
-  MaterialPtr material = create_uv ? standart_textured_material(nullptr): standart_material();
+  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }

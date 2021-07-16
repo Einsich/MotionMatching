@@ -16,7 +16,7 @@ public:
   TextureWrappFormat wrapping = TextureWrappFormat::Repeat, 
   bool generate_mips = false);
   
-  virtual void load(const filesystem::path &path) override;
+  virtual void load(const filesystem::path &path, bool reload) override;
   virtual void free() override;
   virtual bool edit() override;
   

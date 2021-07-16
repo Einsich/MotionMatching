@@ -21,7 +21,7 @@
 #include "Engine/input.h"
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/settings.h"
-#include "Engine/resources.h"
+#include "Engine/Resources/resources.h"
 #include "Engine/imgui/imgui.h"
 
 #define CUSTOM_TYPE \
@@ -98,9 +98,10 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   //write_tree(root);
   MeshPtr mesh = make_mesh(scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
-  TexturePtr tex = make_texture2d(project_resources_path("MocapOnline/MotusMan_v55/MCG_diff.jpg"), TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
-  TexturePtr floor = make_texture2d(common_resources_path("Textures/ground.jpg"), TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
-  TexturePtr tex1 = make_texture2d(common_resources_path("Textures/screen.jpg"), TexturePixelFormat::Linear, TextureWrappFormat::Repeat, true);
+
+  Asset<Texture2D> tex = get_resource<Texture2D>("MCG_diff.jpg");
+  Asset<Texture2D> floor = get_resource<Texture2D>("ground.jpg");
+  Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
   MaterialPtr material;
   {
     ecs::ComponentInitializerList list;

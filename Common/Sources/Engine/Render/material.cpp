@@ -64,7 +64,7 @@ MaterialPtr standart_material()
     Property("Shininess", 5.5f)
     });
 }
-MaterialPtr standart_textured_material(TexturePtr texture)
+MaterialPtr standart_textured_material(Asset<Texture2D> texture)
 {
   return make_material({
     Property("Ambient", vec3(0.2f, 0.2f, 0.2f)),

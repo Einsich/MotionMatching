@@ -3,7 +3,7 @@
 #include "stb_image.h"
 #include "Engine/Resources/resources.h"
 #include "Engine/imgui/imgui.h"
-
+#include "ecs/component_editor.h"
 Texture2D::Texture2D()
 {
   generateMips = false;
@@ -13,6 +13,7 @@ Texture2D::Texture2D()
   wrapping = TextureWrappFormat::Repeat;
   pixelFormat = TexturePixelFormat::Linear;
   textureName = "empty texture";
+  glGenTextures(1, &textureObject);
 }
 Texture2D::Texture2D(string texture_path_from_textures_folder,
   TextureColorFormat color_format, 
@@ -28,34 +29,66 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     wrapping = wrapping_format;
     pixelFormat = pixel_format;
     
+    glGenTextures(1, &textureObject);
     load_from_path(texture_path_from_textures_folder);
   }
   
-  void Texture2D::load(const filesystem::path &path)
+  void Texture2D::load(const filesystem::path &path, bool )
   {
     filesystem::path tmp = path;
     tmp.replace_extension("");
     load_from_path(tmp);//without .meta
   }
+  bool is_power_of_2(int x) 
+  {
+    return x > 0 && !(x & (x - 1));
+  }
   void Texture2D::load_from_path(const filesystem::path &path)
   {
-    textureName = path.filename().string();
+    textureName = path.stem().string();
     int w, h, ch;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load(path.string().c_str(), &w, &h, &ch, 0);
-
 		if (image)
 		{
+      powerOfTwo = is_power_of_2(w) && is_power_of_2(h);
   
-      glGenTextures(1, &textureObject);
       glBindTexture(textureType, textureObject);
 			textureWidth = w;
 			textureHeight = h;
-      
-			glTexImage2D(textureType, 0, colorFormat, textureWidth, textureHeight, 0, colorFormat, textureFormat, image);
 
-      glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapping);
-      glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapping);
+      size_t size = sizeof(image[0]);
+      switch(textureFormat)
+      {
+        case TextureFormat::Byte :
+        case TextureFormat::UnsignedByte:
+        if (size == 1) 
+			    glTexImage2D(textureType, 0, colorFormat, textureWidth, textureHeight, 0, colorFormat, textureFormat, image);
+        else
+          debug_error("Wrong sizeof for texture format");
+        break;
+        case TextureFormat::Short :
+        case TextureFormat::UnsignedShort :
+        case TextureFormat::HalfFloat :
+        if (size == 2) 
+			    glTexImage2D(textureType, 0, colorFormat, textureWidth, textureHeight, 0, colorFormat, textureFormat, image);
+        else
+          debug_error("Wrong sizeof for texture format");
+        break;  
+        case TextureFormat::Int :
+        case TextureFormat::UnsignedInt :
+        case TextureFormat::Float :
+        if (size == 4) 
+			    glTexImage2D(textureType, 0, colorFormat, textureWidth, textureHeight, 0, colorFormat, textureFormat, image);
+        else
+          debug_error("Wrong sizeof for texture format");
+        break;  
+      }
+      if (!powerOfTwo && wrapping != TextureWrappFormat::ClampToEdge)
+      {
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapping);
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapping);
+      }
       if (generateMips)
       {
         glGenerateMipmap(textureType);
@@ -155,9 +188,42 @@ bool Texture2D::edit()
 
   if (ImGui::Checkbox("Generate mip maps", &generateMips))
     edited |= true;
-  return false;
+  return edited;
 }
 
+template<>
+bool edit_component(Asset<Texture2D> &component, const char *name, bool view_only)
+{
+  ImGui::Text("Texture2D %s %s", component->get_name().c_str(), name);
+  bool edited = false;
+  if (!view_only)
+  {
+    static bool select = false;
+    if (ImGui::Button("Select texture"))
+      select = !select;
+    if (select)
+    {
+      vector<const char *> names;
+      const auto &resMap = Resources::instance().assets[nameOf<Texture2D>::value];
+      for (const auto &asset : resMap.resources)
+      {
+        names.push_back(asset.first.c_str());
+      }
+      static int curTex = -1;
+      if (ImGui::ListBox("", &curTex, names.data(), names.size(), 10))
+      {
+        select = false;
+        auto it = resMap.resources.find(string(names[curTex]));
+        if (it != resMap.resources.end())
+        {
+          component = *((Asset<Texture2D>*)&it->second);
+          edited = true;
+        }
+      }
+    }
+  }
+  return edited;
+}
 size_t Texture2D::serialize(std::ostream& os) const 
 {
   return write(os, textureName, textureType, colorFormat, textureFormat, wrapping, 

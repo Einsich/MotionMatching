@@ -6,15 +6,15 @@ class Property
 {
 private:
   vec4 property;
-  TexturePtr texture;
+  Asset<Texture2D> texture;
   string name;
   int vecType;
 public:
 
-  Property(const string& name, TexturePtr property)
+  Property(const string& name, Asset<Texture2D> property)
     :property(vec4()), texture(property), name(name) {vecType = 5;}
   Property(const string& name, vec4 property)
-    :property(property), texture(nullptr), name(name) {vecType = 4;}
+    :property(property), texture(), name(name) {vecType = 4;}
   Property(const string& name, vec3 property)
     :Property(name, vec4(property, 0)) {vecType = 3;}
   Property(const string& name, vec2 property)
@@ -40,4 +40,4 @@ using MaterialPtr = shared_ptr<Material>;
 
 MaterialPtr make_material(const vector<Property> & properties);
 MaterialPtr standart_material();
-MaterialPtr standart_textured_material(TexturePtr texture);
+MaterialPtr standart_textured_material(Asset<Texture2D> texture);

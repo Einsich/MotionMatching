@@ -2,7 +2,7 @@
 static const int maxActiveTexturesCount = 10;
 static bool activeTextures[maxActiveTexturesCount] = {false};
 
-void Texture::bind(const Shader &shader, const char * textureName)
+void Texture::bind(const Shader &shader, const char * textureName) const
 {
   int offset = 0;
   for (; offset < maxActiveTexturesCount; offset++)

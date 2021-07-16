@@ -31,7 +31,10 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::GameEditor) resources_menu(Sele
             }
           }
           if (asset.second.loaded() && selectedAsset.asset == &asset.second)
-            p.second.editAsset(asset.second);
+          {
+            if (p.second.editAsset(asset.second))
+              p.second.reloadAsset(asset.second);
+          }
         }
         ImGui::TreePop();
       }

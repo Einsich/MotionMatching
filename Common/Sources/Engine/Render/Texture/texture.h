@@ -50,12 +50,13 @@ protected:
   TexturePixelFormat pixelFormat;
   int textureWidth, textureHeight, textureDepth;
   string textureName;
+  bool powerOfTwo;
   GLenum get_internal_format(TextureColorFormat colorFormat, TextureFormat textureFormat);
 private:
-  GLuint activationUnit;
+  mutable GLuint activationUnit;
 public:
   Texture():textureObject(0), textureDepth(1){}
-  void bind(const Shader &shader, const char * textureName);
+  void bind(const Shader &shader, const char * textureName) const;
   const string &get_name() const;
   void unbind() const;
   void dispose();

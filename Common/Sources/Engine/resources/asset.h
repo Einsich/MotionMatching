@@ -11,7 +11,7 @@
 class IAsset
 {
   //called when this resource really needed - load data from disk 
-  virtual void load(const filesystem::path &path) = 0;
+  virtual void load(const filesystem::path &path, bool reload) = 0;
   //dispose resource - called on application end, or when we can unload resource
   virtual void free() = 0;
   //this fuction need to edit resource and call reload if it changed
@@ -26,7 +26,7 @@ class IAsset
 class AssetStub : IAsset
 {
 public:
-  virtual void load(const filesystem::path &) override{}
+  virtual void load(const filesystem::path &, bool) override{}
   virtual void free() override{}
   virtual bool edit() override{return false;}
 };
@@ -44,7 +44,7 @@ class Asset
       if (!loaded && !loading)
       {
         loading = true;
-        asset.load(path);
+        asset.load(path, false);
         loaded = true;
       }
     }
@@ -53,8 +53,13 @@ class Asset
       if (!loaded && !loading)
       {
         loading = true;      
-        auto asyncState = std::async(std::launch::async, [&](){asset.load(path);});
+        auto asyncState = std::async(std::launch::async, [&](){asset.load(path, false);});
       }
+    }
+    void reload()
+    {
+      if (loaded)
+        asset.load(path, true);
     }
     void save()
     {
@@ -74,6 +79,8 @@ public:
     return resource;
   }
   //create asset and init them from .meta file or only default value
+  Asset():resource(nullptr){}
+
   Asset(const filesystem::path &resource_path) :
   resource(new ResourceInfo{resource_path, false, false, T()})
   {  
@@ -88,12 +95,22 @@ public:
   {
     return &resource->asset;
   }
+  const T* operator->() const 
+  {
+    if (!resource->loaded)
+      resource->load();
+    return &resource->asset;
+  }
   void load(bool async = false)
   {
     if (async)
       resource->load_async();
     else
       resource->load();
+  }
+  void reload()
+  {
+    resource->reload();
   }
   void save() const
   {
@@ -110,9 +127,5 @@ public:
   bool loaded() const
   {
     return resource->loaded;
-  }
-  constexpr std::string_view type() const
-  {
-    return nameOf<T>::value;
   }
 };

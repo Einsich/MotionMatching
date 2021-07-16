@@ -12,6 +12,7 @@ struct ResourceMap
   std::function<void(const Asset<AssetStub>&)> saveAsset;
   std::function<bool(Asset<AssetStub>&)> editAsset;
   std::function<void(Asset<AssetStub>&, bool)> loadAsset;
+  std::function<void(Asset<AssetStub>&)> reloadAsset;
 };
 class Resources
 {
@@ -33,7 +34,7 @@ void create_asset(const filesystem::path &path)
   auto &resourcesMap = Resources::instance().assets[typeName];
   Asset<T> asset(path);
   Asset<AssetStub> *stub = (Asset<AssetStub>*)&asset;
-  resourcesMap.resources.try_emplace(path.filename().string(), *stub);
+  resourcesMap.resources.try_emplace(path.stem().string(), *stub);
 }
 
 template<typename T>
@@ -52,36 +53,44 @@ void load_asset(Asset<AssetStub> &asset, bool async)
   return ((Asset<T> *)(&asset))->load(async);
 }
 template<typename T>
+void reload_asset(Asset<AssetStub> &asset)
+{
+  return ((Asset<T> *)(&asset))->reload();
+}
+template<typename T>
 struct ResourceRegister
 {
+  void add_asset(const string_view &assetName)
+  {
+    Resources::instance().assets.try_emplace(assetName, 
+    ResourceMap{true, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
+
+  }
   ResourceRegister(const std::vector<std::string> &extensions)
   {
     constexpr const string_view &assetName = nameOf<T>::value;
     for (const std::string &extension : extensions)
       Resources::instance().extToAssetName.try_emplace(extension, assetName);
-      
-    Resources::instance().assets.try_emplace(assetName, 
-    ResourceMap{true, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>});
+    add_asset(assetName);
   }
   ResourceRegister()
   {
     constexpr const string_view &assetName = nameOf<T>::value;
-    Resources::instance().assets.try_emplace(assetName, 
-    ResourceMap{false, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>});
+    add_asset(assetName);
   }
 };
 template<typename T>
 Asset<T> get_resource(const string &name)
 {
-  constexpr string_view &typeName = nameOf<T>::value;
+  constexpr const string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName].resources;
   auto it = resourcesMap.find(name);
   if (it == resourcesMap.end())
   {
     debug_error("Can't find %s asset %s", typeName.data(), name.c_str());
-    return;
+    return Asset<T>();
   }
-  return static_cast<Asset<T>>(it->second);
+  return *((Asset<T>*)&it->second);
 }
 void create_all_resources_from_metadata();
 
