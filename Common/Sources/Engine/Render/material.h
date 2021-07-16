@@ -3,16 +3,14 @@
 #include "Shader/shader.h"
 #include "Texture/textures.h"
 #include "Engine/Resources/asset.h"
-#include "Serialization/reflection.h"
-class Property
+#include "Serialization/iserializable.h"
+class Property : public ISerializable
 {
 private:
-  REFLECT(Property,
-  (vec4) (property),
-  (Asset<Texture2D>) (texture),
-  (string) (name),
-  (int) (vecType)
-  )
+  string name;
+  int vecType;
+  vec4 property;
+  Asset<Texture2D> texture;
 public:
   Property() = default;
   Property(const string& name, Asset<Texture2D> property)
@@ -29,6 +27,8 @@ public:
   void unbind_to_shader(const Shader &shader) const;
   bool operator== (const Property & other) const;
   static bool edit_property(Property& property);
+  virtual size_t serialize(std::ostream& os) const override;
+  virtual size_t deserialize(std::istream& is) override;
 };
 class Material : IAsset
 {

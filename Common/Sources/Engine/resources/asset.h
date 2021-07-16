@@ -150,13 +150,16 @@ public:
 
   virtual size_t serialize(std::ostream& os) const override
   {
-    return asset ? write(os, asset->path.string()) : 0;
+    return write(os, asset ? asset->path.string() : "null");
   }
   virtual size_t deserialize(std::istream& is) override
   {
     string path;
     size_t size = read(is, path);
-    *this = create_asset<T>(filesystem::path(path));
+    if (path != "null")
+      *this = create_asset<T>(filesystem::path(path));
+    else 
+      *this = Asset<T>();
     return size;
   }
 };

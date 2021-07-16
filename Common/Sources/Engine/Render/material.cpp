@@ -31,7 +31,28 @@ bool Property::operator== (const Property & other) const
 {
   return name == other.name;
 }
-
+size_t Property::serialize(std::ostream& os) const
+{
+  size_t size = write(os, name, vecType);
+  switch (vecType)
+  {
+    case 1: case 2: case 3: case 4: size += write(os, property); break;
+    case 5: size += write(os, texture); break;    
+    default:break;
+  }
+  return size;
+}
+size_t Property::deserialize(std::istream& is)
+{
+  size_t size = read(is, name, vecType);
+  switch (vecType)
+  {
+    case 1: case 2: case 3: case 4: size += read(is, property); break;
+    case 5: size += read(is, texture); break;    
+    default:break;
+  }
+  return size;  
+}
 void Material::bind_to_shader(const Shader& shader) const
 {
   for (const Property & property : properties)
@@ -63,6 +84,7 @@ void Material::free()
 {
 
 }
+
 bool Property::edit_property(Property& property)
 {
   bool edited = false;
