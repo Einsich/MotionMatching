@@ -172,7 +172,8 @@ bool Texture2D::edit()
 template<>
 bool edit_component(Asset<Texture2D> &component, const char *name, bool view_only)
 {
-  ImGui::Text("Texture2D %s %s", component->get_name().c_str(), name);
+  ImGui::Text("Texture2D %s %s", component.resource() ? component->get_name().c_str() : "null", name);
+
   bool edited = false;
   if (!view_only)
   {
@@ -188,7 +189,7 @@ bool edit_component(Asset<Texture2D> &component, const char *name, bool view_onl
         names.push_back(asset.first.c_str());
       }
       static int curTex = -1;
-      if (ImGui::ListBox("", &curTex, names.data(), names.size(), 10))
+      if (ImGui::ListBox("##Texture2DMap", &curTex, names.data(), names.size(), 10))
       {
         select = false;
         auto it = resMap.resources.find(string(names[curTex]));

@@ -19,10 +19,19 @@ class IAsset
 };
 
 /*
-  virtual void load(const filesystem::path &path) override;
+  virtual void load(const filesystem::path &path, bool reload) override;
   virtual void free() override;
   virtual bool edit() override;
 */
+
+string get_asset_name(const filesystem::path &path);
+
+template<typename T>
+class Asset;
+
+template<typename T>
+Asset<T> create_asset(const filesystem::path &path);
+
 class AssetStub : IAsset
 {
 public:
@@ -31,13 +40,13 @@ public:
   virtual bool edit() override{return false;}
 };
 template<typename T>
-class Asset
+class Asset : public ISerializable
 {
   static_assert(std::is_base_of<IAsset, T>::value);
   struct ResourceInfo
   {
     filesystem::path path;
-    bool loading, loaded;
+    bool loading, loaded, edited;
     T asset;
     void load()
     {
@@ -72,60 +81,82 @@ class Asset
         std::async(std::launch::async, &IAsset::save, iasset, path);
     }
   };
-  ResourceInfo *resource;
+  ResourceInfo *asset;
 public:
-  ResourceInfo *get_resource() const
+  ResourceInfo *resource() const
   {
-    return resource;
+    return asset;
   }
   //create asset and init them from .meta file or only default value
-  Asset():resource(nullptr){}
+  Asset():asset(nullptr){}
 
   Asset(const filesystem::path &resource_path) :
-  resource(new ResourceInfo{resource_path, false, false, T()})
+  asset(new ResourceInfo{resource_path, false, false, false, T()})
   {  
     ifstream file(resource_path, ios::binary);
     if (!file.fail())
     {
-      read(file, resource->asset);
+      read(file, asset->asset);
     }
   }
-
+  template<typename U>
+  operator Asset<U>() const
+  {
+    return *((Asset<U>*)this);
+  }
   T* operator->()
   {
-    return &resource->asset;
+    return &asset->asset;
   }
   const T* operator->() const 
   {
-    if (!resource->loaded)
-      resource->load();
-    return &resource->asset;
+    if (!asset->loaded)
+      asset->load();
+    return &asset->asset;
   }
   void load(bool async = false)
   {
     if (async)
-      resource->load_async();
+      asset->load_async();
     else
-      resource->load();
+      asset->load();
   }
   void reload()
   {
-    resource->reload();
+    asset->reload();
   }
   void save() const
   {
-    ofstream file(resource->path, ios::binary);
+    ofstream file(asset->path, ios::binary);
     if (!file.fail())
     {
-      write(file, resource->asset);
+      write(file, asset->asset);
     }
   }
   bool edit()
   {
-    return resource->asset.edit();
+    bool edited = asset->asset.edit();
+    asset->edited |= edited;
+    return edited;
   }
   bool loaded() const
   {
-    return resource->loaded;
+    return asset->loaded;
+  }
+  bool edited() const
+  {
+    return asset->edited;
+  }
+
+  virtual size_t serialize(std::ostream& os) const override
+  {
+    return asset ? write(os, asset->path.string()) : 0;
+  }
+  virtual size_t deserialize(std::istream& is) override
+  {
+    string path;
+    size_t size = read(is, path);
+    *this = create_asset<T>(filesystem::path(path));
+    return size;
   }
 };

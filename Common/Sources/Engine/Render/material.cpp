@@ -1,5 +1,8 @@
 #include "material.h"
 #include <algorithm>
+#include "Engine/Resources/resources.h"
+#include "Engine/Resources/editor.h"
+#include "ecs/component_editor.h"
 void Property::bind_to_shader(const Shader &shader) const
 {
   switch (vecType)
@@ -28,6 +31,7 @@ bool Property::operator== (const Property & other) const
 {
   return name == other.name;
 }
+
 void Material::bind_to_shader(const Shader& shader) const
 {
   for (const Property & property : properties)
@@ -51,6 +55,49 @@ void Material::set_property(const Property &property)
     *it = property;
   }  
 }
+void Material::load(const filesystem::path &, bool )
+{
+
+}
+void Material::free()
+{
+
+}
+bool Property::edit_property(Property& property)
+{
+  bool edited = false;
+  constexpr int BUFN = 255;
+  char buf[BUFN];
+  snprintf(buf, BUFN, "%s", property.name.c_str());
+  if (ImGui::InputText("##PropertyName", buf, BUFN))
+    property.name.assign(buf), edited = true;
+  if (property.name.empty())
+    ImGui::TextColored(ImVec4(1,0,0,1), "Enter name");
+  constexpr int propertyCount = 5;
+  const char *names[propertyCount] = {"float" , "float2", "float3", "float4", "texture2D"};
+  int curType = property.vecType - 1;
+  
+  if (ImGui::ListBox("##PropertyType", &curType, names, propertyCount, propertyCount))
+    property.vecType = curType + 1, edited = true;
+  switch (property.vecType)
+  {
+  case 1: edited |= ImGui::InputFloat("##Float", &property.property.x, 0.01, 10, 2); break;
+  case 2: edited |= ImGui::InputFloat2("##Float2", &property.property.x, 2); break;
+  case 3: edited |= ImGui::InputFloat3("##Float3", &property.property.x, 2); break;
+  case 4: edited |= ImGui::InputFloat4("##Float4", &property.property.x, 2); break;
+  case 5: edited |= edit_component(property.texture, "", false); break;
+  default:
+    break;
+  }
+  return edited;
+}
+bool Material::edit()
+{
+  std::function<bool(Property&)> f = Property::edit_property;
+  return edit_vector(properties, "properties", f);
+}
+ResourceRegister<Material> materialRegister;
+
 MaterialPtr make_material(const vector<Property> & properties)
 {
   return make_shared<Material>(properties);

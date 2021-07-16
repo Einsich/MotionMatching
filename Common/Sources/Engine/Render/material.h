@@ -2,15 +2,19 @@
 #include "common.h"
 #include "Shader/shader.h"
 #include "Texture/textures.h"
+#include "Engine/Resources/asset.h"
+#include "Serialization/reflection.h"
 class Property
 {
 private:
-  vec4 property;
-  Asset<Texture2D> texture;
-  string name;
-  int vecType;
+  REFLECT(Property,
+  (vec4) (property),
+  (Asset<Texture2D>) (texture),
+  (string) (name),
+  (int) (vecType)
+  )
 public:
-
+  Property() = default;
   Property(const string& name, Asset<Texture2D> property)
     :property(vec4()), texture(property), name(name) {vecType = 5;}
   Property(const string& name, vec4 property)
@@ -24,17 +28,24 @@ public:
   void bind_to_shader(const Shader &shader) const;
   void unbind_to_shader(const Shader &shader) const;
   bool operator== (const Property & other) const;
+  static bool edit_property(Property& property);
 };
-class Material
+class Material : IAsset
 {
 private:
-  vector<Property> properties;
+  REFLECT(Material,
+  (vector<Property>) (properties)
+  )
 public:
+  Material() = default;
   Material(const vector<Property> & properties):
     properties(properties) { }
   void set_property(const Property &property);
   void bind_to_shader(const Shader& shader) const;
   void unbind_to_shader(const Shader &shader) const;
+  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void free() override;
+  virtual bool edit() override;
 };
 using MaterialPtr = shared_ptr<Material>;
 

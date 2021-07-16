@@ -55,8 +55,15 @@ void save_all_resources_to_metadata()
     debug_log("saving assets with %s extension", p.first.data());
     for (const auto &asset : p.second.resources)
     {
-      debug_log("saving asset %s", asset.first.c_str());
-      p.second.saveAsset(asset.second);
+      if (asset.second.edited())
+      {
+        debug_log("saving asset %s", asset.first.c_str());
+        p.second.saveAsset(asset.second);
+      }
+      else
+      {
+        debug_log("asset %s wasn't edit (don't save)", asset.first.c_str());
+      }
     }
   }
 }
