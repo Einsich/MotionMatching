@@ -2,7 +2,7 @@
 #include "Engine/camera.h"
 
 static vector<mat4> curTransform;
-AnimationRender::AnimationRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader):
+AnimationRender::AnimationRender(MeshPtr mesh_ptr, Asset<Material> materail_ptr, const Shader& shader):
     mesh(mesh_ptr), material(materail_ptr), shader(shader)
   {}
 
@@ -30,7 +30,7 @@ void AnimationRender::render(const Transform &transform, const mat4 view_project
   material->unbind_to_shader(shader);
   light.unbind_to_shader(shader);
 }
-MaterialPtr AnimationRender::get_material() const
+Asset<Material> AnimationRender::get_material() const
 {
   return material;
 }

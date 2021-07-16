@@ -38,10 +38,6 @@ Asset<T> create_asset(const filesystem::path &path)
   if (it == resourcesMap.resources.end())
   {
     Asset<T> asset(path);
-    if (assetName == "name")
-    {
-      int t =0;
-    }
     resourcesMap.resources.try_emplace(assetName, asset);
     return asset;
   }

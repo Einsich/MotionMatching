@@ -77,7 +77,7 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
     ecs::create_entity(list); 
   } 
   MeshPtr flag = create_flag(1, 2, 1.5f, 0.02f); 
-  MaterialPtr flag_mat = standart_textured_material(tex); 
+  Asset<Material> flag_mat = standart_textured_material(tex); 
    
   uint N = 5; 
   for (uint i = 0; i < N; i++) 

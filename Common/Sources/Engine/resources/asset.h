@@ -46,7 +46,7 @@ class Asset : public ISerializable
   struct ResourceInfo
   {
     filesystem::path path;
-    bool loading, loaded, edited;
+    bool loading, loaded, edited, isCopy;
     T asset;
     void load()
     {
@@ -91,7 +91,7 @@ public:
   Asset():asset(nullptr){}
 
   Asset(const filesystem::path &resource_path) :
-  asset(new ResourceInfo{resource_path, false, false, false, T()})
+  asset(new ResourceInfo{resource_path, false, false, false, false, T()})
   {  
     ifstream file(resource_path, ios::binary);
     if (!file.fail())
@@ -107,6 +107,10 @@ public:
   T* operator->()
   {
     return &asset->asset;
+  }
+  operator bool() const
+  {
+    return asset != nullptr;
   }
   const T* operator->() const 
   {
@@ -161,5 +165,16 @@ public:
     else 
       *this = Asset<T>();
     return size;
+  }
+  Asset<T> copy() const
+  {
+    if (asset)
+    {
+      Asset<T> a;
+      a.asset = new ResourceInfo{asset->path, false, false, false, true, asset->asset};
+      return a;
+    }
+    else
+    return Asset<T>();
   }
 };

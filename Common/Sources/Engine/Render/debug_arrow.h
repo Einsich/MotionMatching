@@ -14,7 +14,7 @@ private:
     vector<vec3> arrowColors;
   };
   Shader arrowShader;
-  MaterialPtr arrowMaterial;
+  Asset<Material> arrowMaterial;
   VertexArrayObject arrow;
   ArrowSet depthIgnore;
   ArrowSet depthNotIgnore;

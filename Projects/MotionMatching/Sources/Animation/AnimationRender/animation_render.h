@@ -9,11 +9,11 @@ class AnimationRender
 {
 private:
   MeshPtr mesh;
-  MaterialPtr material;
+  Asset<Material> material;
   Shader shader;
 public:
   AnimationRender() = default;
-  AnimationRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader);
+  AnimationRender(MeshPtr mesh_ptr, Asset<Material> materail_ptr, const Shader& shader);
   void render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position,  const DirectionLight& light, const AnimationTree &tree, bool wire_frame = false) const ;
-  MaterialPtr get_material() const;
+  Asset<Material> get_material() const;
 };

@@ -1,7 +1,7 @@
 #include "mesh_render.h"
 #include "Engine/camera.h"
 
-MeshRender::MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader):
+MeshRender::MeshRender(MeshPtr mesh_ptr, Asset<Material> materail_ptr, const Shader& shader):
   mesh(mesh_ptr), material(materail_ptr), shader(shader)
 {
   
@@ -20,7 +20,7 @@ void MeshRender::render(const Transform &transform, const mat4 view_projection, 
   material->unbind_to_shader(shader);
   light.unbind_to_shader(shader);
 }
-MaterialPtr MeshRender::get_material() const
+Asset<Material> MeshRender::get_material() const
 {
   return material;
 }
@@ -46,7 +46,7 @@ MeshRender create_plane(bool create_uv)
     notUvMesh = make_mesh(VertexArrayObject(indices, vertices, normals));
   }
 
-  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
+  Asset<Material> material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
 
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
@@ -103,7 +103,7 @@ MeshRender create_cube(bool create_uv)
     uvMesh = make_mesh(VertexArrayObject(indices, vertices, normals, uv));
     notUvMesh = make_mesh(VertexArrayObject(indices, vertices, normals));
   }
-  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
+  Asset<Material> material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   MeshPtr mesh = create_uv ? uvMesh : notUvMesh;
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }
@@ -153,6 +153,6 @@ MeshRender create_sphere(int detailed, bool smooth, bool create_uv)
       }
     mesh = spheres[t] =  make_mesh(VertexArrayObject(indices, vertices, normals, uv));
   }
-  MaterialPtr material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
+  Asset<Material> material = create_uv ? standart_textured_material(Asset<Texture2D>()): standart_material();
   return MeshRender(mesh, material, create_uv ? get_shader("standart_normal_uv") : get_shader("standart_normal"));  
 }

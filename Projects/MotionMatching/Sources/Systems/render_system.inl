@@ -86,7 +86,7 @@ main_render(const SceneRender &sceneRender, DebugArrow &debugArrows)
       mat4 transformation = transform.get_transform();
 
 
-      MaterialPtr material = debugGoalSphere.get_material();
+      Asset<Material> material = debugGoalSphere.get_material();
       const auto& feature = index.current_index().get_feature();
       
       /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);

@@ -8,13 +8,13 @@ class MeshRender
 {
 private:
   MeshPtr mesh;
-  MaterialPtr material;
+  Asset<Material> material;
   Shader shader;
 public:
   MeshRender() = default;
-  MeshRender(MeshPtr mesh_ptr, MaterialPtr materail_ptr, const Shader& shader);
+  MeshRender(MeshPtr mesh_ptr, Asset<Material> materail_ptr, const Shader& shader);
   void render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame = false) const;
-  MaterialPtr get_material() const;
+  Asset<Material> get_material() const;
   const Shader& get_shader() const;
   Shader& get_shader();
 };

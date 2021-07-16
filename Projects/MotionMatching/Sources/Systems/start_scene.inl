@@ -102,7 +102,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   Asset<Texture2D> tex = get_resource<Texture2D>("MCG_diff.jpg");
   Asset<Texture2D> floor = get_resource<Texture2D>("ground.jpg");
   Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
-  MaterialPtr material;
+  Asset<Material> material;
   {
     ecs::ComponentInitializerList list;
     list.add<MotionMatchingScene>("motionMatchingScene") = MotionMatchingScene(dataBase);

@@ -11,8 +11,10 @@ void Property::bind_to_shader(const Shader &shader) const
     case 2: shader.set_vec2(name.c_str(), property); break;
     case 3: shader.set_vec3(name.c_str(), property); break;
     case 4: shader.set_vec4(name.c_str(), property); break;    
-    case 5: texture->bind(shader, name.c_str()); break;    
-    default:debug_error("Can't set %s to shader", name.c_str());break;
+    case 5: if (texture) texture->bind(shader, name.c_str()); break;    
+    default:
+    //debug_error("Can't set %s to shader", name.c_str());
+    break;
   }
 }
 void Property::unbind_to_shader(const Shader &shader) const
@@ -23,8 +25,10 @@ void Property::unbind_to_shader(const Shader &shader) const
     case 2: shader.set_vec2(name.c_str(), vec2()); break;
     case 3: shader.set_vec3(name.c_str(), vec3()); break;
     case 4: shader.set_vec4(name.c_str(), vec4()); break;    
-    case 5: texture->unbind(); break;    
-    default:debug_error("Can't unbind %s from shader", name.c_str());break;
+    case 5: if (texture) texture->unbind(); break;    
+    default:
+    //debug_error("Can't unbind %s from shader", name.c_str());
+    break;
   }
 }
 bool Property::operator== (const Property & other) const
@@ -120,28 +124,15 @@ bool Material::edit()
 }
 ResourceRegister<Material> materialRegister;
 
-MaterialPtr make_material(const vector<Property> & properties)
+Asset<Material> standart_material()
 {
-  return make_shared<Material>(properties);
+  return get_resource<Material>("standart").copy();
 }
-MaterialPtr standart_material()
+Asset<Material> standart_textured_material(Asset<Texture2D> texture)
 {
-  return make_material({
-    Property("Ambient", vec3(0.2f, 0.2f, 0.2f)),
-    Property("Diffuse", vec3(0.8f, 0.8f, 0.8f)),
-    Property("Specular", vec3(0.9f, 0.9f, 0.9f)),
-    Property("Shininess", 5.5f)
-    });
-}
-MaterialPtr standart_textured_material(Asset<Texture2D> texture)
-{
-  return make_material({
-    Property("Ambient", vec3(0.2f, 0.2f, 0.2f)),
-    Property("Diffuse", vec3(0.8f, 0.8f, 0.8f)),
-    Property("Specular", vec3(0.9f, 0.9f, 0.9f)),
-    Property("Shininess", 5.5f),
-    Property("uvScale", vec2(1.0f, 1.0f)),
-    Property("uvOffset", vec2(0.0f, 0.0f)),
-    Property("mainTex", texture)
-    });
+  Asset<Material> material = get_resource<Material>("standart").copy();
+  material->set_property(Property("mainTex", texture));
+  material->set_property(Property("uvScale", vec2(1.f)));
+  material->set_property(Property("uvOffset", vec2(0.f)));
+  return material;
 }

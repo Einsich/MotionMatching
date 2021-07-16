@@ -4,13 +4,13 @@
 #include "Texture/textures.h"
 #include "Engine/Resources/asset.h"
 #include "Serialization/iserializable.h"
-class Property : public ISerializable
+class Property final: public ISerializable
 {
 private:
-  string name;
-  int vecType;
   vec4 property;
   Asset<Texture2D> texture;
+  string name;
+  int vecType;
 public:
   Property() = default;
   Property(const string& name, Asset<Texture2D> property)
@@ -47,8 +47,8 @@ public:
   virtual void free() override;
   virtual bool edit() override;
 };
-using MaterialPtr = shared_ptr<Material>;
+template<typename T>
+class Asset;
 
-MaterialPtr make_material(const vector<Property> & properties);
-MaterialPtr standart_material();
-MaterialPtr standart_textured_material(Asset<Texture2D> texture);
+Asset<Material> standart_material();
+Asset<Material> standart_textured_material(Asset<Texture2D> texture);
