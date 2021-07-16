@@ -65,4 +65,3 @@ public:
   int depth() const;
   
 };
-using TexturePtr = shared_ptr<Texture>;

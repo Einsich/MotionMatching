@@ -86,7 +86,12 @@
     "xtree": "cpp",
     "xutility": "cpp",
     "stack": "cpp",
-    "*.rh": "cpp"
+    "*.rh": "cpp",
+    "coroutine": "cpp",
+    "resumable": "cpp",
+    "future": "cpp",
+    "mutex": "cpp",
+    "thread": "cpp"
   },
   "launchOption.options": {
     "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "Editor"],

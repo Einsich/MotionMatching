@@ -30,18 +30,6 @@ Texture3D::Texture3D(int size_x, int size_y, int size_z,
   glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
   glBindTexture(textureType, 0); 
 }
-TexturePtr make_texture3d(int size_x, int size_y, int size_z, const string & name)
-{
-  return make_shared<Texture3D>(size_x, size_y, size_z, name);
-}
-TexturePtr make_texture3d(int size_x, int size_y, int size_z, const string & name,
-  TextureColorFormat color_format, 
-  TextureFormat texture_format, 
-  TexturePixelFormat pixelFormat,
-  TextureWrappFormat wrapping)
-{
-  return make_shared<Texture3D>(size_x, size_y, size_z, name, color_format, texture_format, pixelFormat, wrapping);
-}
 
 void Texture3D::execute_dispatch(int work_group_size)
 {

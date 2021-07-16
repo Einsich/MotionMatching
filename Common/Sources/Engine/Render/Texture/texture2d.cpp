@@ -112,28 +112,6 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
 			return;
 		}
   }
-TexturePtr make_texture2d()
-{
-  return make_shared<Texture2D>();
-}
-TexturePtr make_texture2d(const string& texture_path_from_textures_folder,
-  TextureColorFormat color_format, 
-  TextureFormat texture_format, 
-  TexturePixelFormat pixelFormat,
-  TextureWrappFormat wrapping, 
-  bool generate_mips)
-{
-  return make_shared<Texture2D>(texture_path_from_textures_folder, color_format, texture_format, pixelFormat, wrapping, generate_mips);
-}
-TexturePtr make_texture2d(const string& texture_path_from_textures_folder,
-  TexturePixelFormat pixelFormat,
-  TextureWrappFormat wrapping, 
-  bool generate_mips,
-  TextureColorFormat color_format, 
-  TextureFormat texture_format)
-{
-  return make_shared<Texture2D>(texture_path_from_textures_folder, color_format, texture_format, pixelFormat, wrapping, generate_mips);
-}
 
 void Texture2D::free()
 {
