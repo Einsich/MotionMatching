@@ -99,6 +99,10 @@ public:
       read(file, asset->asset);
     }
   }
+  Asset(const filesystem::path &resource_path, const Asset<T> &other) :
+  asset(new ResourceInfo{resource_path, false, false, true, false, other.asset->asset})
+  {
+  }
   template<typename U>
   operator Asset<U>() const
   {

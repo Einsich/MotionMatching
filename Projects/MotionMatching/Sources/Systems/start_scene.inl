@@ -99,8 +99,6 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   MeshPtr mesh = make_mesh(scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
 
-  Asset<Texture2D> tex = get_resource<Texture2D>("MCG_diff.jpg");
-  Asset<Texture2D> floor = get_resource<Texture2D>("ground.jpg");
   Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
   Asset<Material> material;
   {
@@ -120,7 +118,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     list.add<PersonController>("personController") = PersonController(pos);
     list.add<AnimationRender>("animationRender") = AnimationRender(
       mesh,
-      standart_textured_material(tex),
+      get_resource<Material>("man material"),
       get_shader("animation_normal_uv"));
     
     list.add<BoneRender>("boneRender") = BoneRender();
@@ -149,12 +147,11 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       list.add<PersonController>("personController") = PersonController(pos);
       list.add<AnimationRender>("animationRender") = AnimationRender(
       mesh,
-      standart_textured_material(tex),
+      get_resource<Material>("man material"),
       get_shader("animation_normal_uv"));
 
       list.add<BoneRender>("boneRender") = BoneRender();
       
-      list.get<AnimationRender>("animationRender").get_material()->set_property(Property("Shininess", 100.f));
 
       list.add<AnimationPlayer>("animationPlayer") =  AnimationPlayer(dataBase, "MOB1_Stand_Relaxed_Idle_v2", AnimationPlayerType::MotionMatching);
       list.add<AnimationTester>("animationTester") = AnimationTester();
@@ -168,23 +165,15 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("debugTransform") = Transform();
-    list.add<MeshRender>("debugGoalSphere") = create_sphere(10);
-    material = list.get<MeshRender>("debugGoalSphere").get_material();
-    material->set_property(Property("Ambient", vec3(1,1,1)));
-    material->set_property(Property("Diffuse", vec3(0,0,0)));
-    material->set_property(Property("Specular", vec3(0,0,0)));
+    list.add<MeshRender>("debugGoalSphere") = create_sphere(get_resource<Material>("debug sphere"), 10);
     ecs::create_entity(list);
   }
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("transform") = Transform(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));
-    list.add<MeshRender>("meshRender") = create_plane(true);
+    list.add<MeshRender>("meshRender") = create_plane(get_resource<Material>("floor_ground"), true);
     list.get<MeshRender>("meshRender").get_shader() = get_shader("section_plane");
-    material = list.get<MeshRender>("meshRender").get_material();
-    material->set_property(Property("mainTex", floor));
-    material->set_property(Property("uvScale", vec2(80.f,80.f)));
-    material->set_property(Property("Specular", vec3(0.f)));
-    material->set_property(Property("sectionScale", sectionSize));
+
     //add_collider(plane, make_collider<PlaneCollider>());
     ecs::create_entity(list);
   }

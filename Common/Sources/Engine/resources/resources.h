@@ -10,6 +10,7 @@ struct ResourceMap
   bool metaDataAsset;
   std::map<std::string, Asset<AssetStub>> resources;
   std::function<void(const filesystem::path&)> createAsset;
+  std::function<void(const filesystem::path&, const Asset<AssetStub>&)> createCopyAsset;
   std::function<void(const Asset<AssetStub>&)> saveAsset;
   std::function<bool(Asset<AssetStub>&)> editAsset;
   std::function<void(Asset<AssetStub>&, bool)> loadAsset;
@@ -45,6 +46,21 @@ Asset<T> create_asset(const filesystem::path &path)
 }
 
 template<typename T>
+Asset<T> create_copy_asset(const filesystem::path &path, const Asset<AssetStub>& dest)
+{
+  constexpr const string_view &typeName = nameOf<T>::value;
+  auto &resourcesMap = Resources::instance().assets[typeName];
+  const string assetName = get_asset_name(path);
+  auto it = resourcesMap.resources.find(assetName);
+  if (it == resourcesMap.resources.end())
+  {
+    Asset<T> asset(path, dest);
+    resourcesMap.resources.try_emplace(assetName, asset);
+    return asset;
+  }
+  return it->second;
+}
+template<typename T>
 void save_asset(const Asset<AssetStub> &asset)
 {
   static_cast<const Asset<T>>(asset).save();
@@ -70,7 +86,7 @@ struct ResourceRegister
   void add_asset(const string_view &assetName, bool metaDataAsset)
   {
     Resources::instance().assets.try_emplace(assetName, 
-    ResourceMap{string(assetName), metaDataAsset, {}, create_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
+    ResourceMap{string(assetName), metaDataAsset, {}, create_asset<T>, create_copy_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
 
   }
   ResourceRegister(const std::vector<std::string> &extensions)

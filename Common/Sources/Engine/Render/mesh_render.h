@@ -23,4 +23,7 @@ public:
 MeshRender create_plane(bool create_uv = false);
 MeshRender create_cube(bool create_uv = false);
 MeshRender create_sphere(int detailed = 1, bool smooth = false, bool create_uv = false);
+MeshRender create_plane(Asset<Material> material, bool create_uv = false);
+MeshRender create_cube(Asset<Material> material, bool create_uv = false);
+MeshRender create_sphere(Asset<Material> material, int detailed = 1, bool smooth = false, bool create_uv = false);
 MeshRender create_postfx();

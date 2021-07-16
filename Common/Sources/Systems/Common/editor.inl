@@ -28,6 +28,8 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(Selected
 
 SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset &selectedAsset)
 {
+  constexpr int BUFN = 255;
+  char buf[BUFN];
   if (selectedAsset.resourceType)
   {
     if (ImGui::Begin("asset viewer"))
@@ -38,14 +40,13 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
       {
         if (adding)
         {
-          constexpr int BUFN = 255;
-          char buf[BUFN];
           static string bufString = "";
           snprintf(buf, BUFN, "%s", bufString.c_str());
           if (ImGui::InputText("", buf, BUFN))
           {
             bufString.assign(buf);
           }
+            
           if (bufString == "")
             ImGui::TextColored(ImVec4(1,0,0,1), "Enter name");
           else
@@ -57,16 +58,47 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
             }
             else
             {
+              static bool wantCopy = false;
+              static Asset<AssetStub> stub;
+              static const char *copyName;
               ImGui::SameLine();
-              if (ImGui::Button("Create"))
+              if (ImGui::Button("Copy"))
+                wantCopy = !wantCopy, stub = Asset<AssetStub>();
+              if (wantCopy)
+              {
+                static string searchString = "";
+                snprintf(buf, BUFN, "%s", searchString.c_str());
+                if (ImGui::InputText("Search substr", buf, BUFN))
+                {
+                  searchString.assign(buf);
+                }
+                static int curCopy = -1;
+                vector<const char *> names;
+                
+                for (auto &asset : selectedAsset.resourceType->resources)
+                  if (strstr(asset.first.c_str(), searchString.c_str()))
+                    names.push_back(asset.first.c_str());
+                if (ImGui::ListBox("", &curCopy, names.data(), names.size()))
+                {
+                  stub = selectedAsset.resourceType->resources[string(names[curCopy])];
+                  copyName = names[curCopy];
+                }
+              }
+              ImGui::SameLine();
+              snprintf(buf, BUFN, "%s%s", stub ? "Copy " : "Create", stub ?  copyName : "");
+              if (ImGui::Button(buf))
               {
                 string folder = project_resources_path(selectedAsset.resourceType->name);
                 if (!filesystem::exists(folder))
                   filesystem::create_directory(folder);
-                selectedAsset.resourceType->createAsset(folder + "\\" + bufString + "." + selectedAsset.resourceType->name);
+                if (stub)
+                  selectedAsset.resourceType->createCopyAsset(folder + "\\" + bufString + "." + selectedAsset.resourceType->name, stub);
+                else
+                  selectedAsset.resourceType->createAsset(folder + "\\" + bufString + "." + selectedAsset.resourceType->name);
                 adding = false;
                 bufString = "";
               }
+              
             }
           }
         }
@@ -101,9 +133,9 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
             selectedAsset.resourceType->loadAsset(asset.second, false);
           }
         }
-        if (asset.second.loaded() && selectedAsset.asset == &asset.second)
+        if (asset.second.loaded())
         {
-          if (selectedAsset.resourceType->editAsset(asset.second))
+          if (selectedAsset.asset == &asset.second && selectedAsset.resourceType->editAsset(asset.second))
             selectedAsset.resourceType->reloadAsset(asset.second);
         }
       }

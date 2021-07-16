@@ -4,6 +4,7 @@
 #include "direction_light.h"
 #include "Shader/shader.h"
 #include "../camera.h"
+#include "Engine/Resources/resources.h"
 
 
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
@@ -38,7 +39,7 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 DebugArrow::DebugArrow()
 {
   arrowShader = get_shader("bones");
-  arrowMaterial = standart_material();
+  arrowMaterial = get_resource<Material>("standart");
   vector<uint> indices;
   vector<vec3> vert;
   vector<vec3> normal;
