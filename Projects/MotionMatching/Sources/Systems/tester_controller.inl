@@ -9,6 +9,8 @@
 
 template<typename Callable>
 void get_test_query(Callable);
+template<typename Callable>
+void get_test2_query(Callable);
 
 
 SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
@@ -51,24 +53,26 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     }
     if (test.totalTime <= animationTester.curTime)
     {
-      ecs::send_event(eid, OnAnimationTestStart(animationTester.testInd));
+      ecs::send_event(eid, ecs::OnEntityCreated());
     }
   });
   
 }
 
 EVENT() start_test(
-  const OnAnimationTestStart &test,
+  const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
   const vec3 &testOffset,
   Transform &transform,
   PersonController &personController)
 {
-  animationTester.testInd = test.test;
+  int maxTest = 1;
+  QUERY() get_test2_query([&](MotionMatchingScene &motionMatchingScene){maxTest = motionMatchingScene.dataBase->tests.size();});
+  animationTester.testInd = rand() % maxTest;
   animationTester.curTime = 0;
   animationTester.testStartTime = Time::time();
   animationTester.keyboardInd = 0;
   animationTester.mouseMoveInd = 0;
-  animationTester.testInput = Input();
+  animationTester.testInput = Input(false);
   personController.set_pos_rotation(transform, testOffset, 0);
 }

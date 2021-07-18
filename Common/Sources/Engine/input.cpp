@@ -41,6 +41,9 @@ void Input::event_process(const SDL_KeyboardEvent& event, float time)
     keyMap[key] = {1, time};
   if (action == KeyAction::Up)
     keyMap[key] = {0, time};
+  
+  if (!eventable)
+    return;
 
   ecs::send_event(KeyEventAnyActionKey{key, action, time});
   #define MACRO(key, Action) case key: ecs::send_event(Key## Action ##Event<key>{time}); break;
@@ -90,6 +93,8 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
     case SDL_MOUSEBUTTONUP: action = MouseAction::Up; break;
     default: return; break;
   }
+  if (!eventable)
+    return;
   ecs::send_event(MouseClickEventAnyEvent{button, action, x, y, time});
 
   #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseClickEvent<MouseButton::Button, MouseAction::Action>{x, y, time}); break;
@@ -118,7 +123,8 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 }
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
-  ecs::send_event(MouseMoveEvent {event.x, event.y, event.xrel, event.yrel, time});
+  if (eventable)
+    ecs::send_event(MouseMoveEvent {event.x, event.y, event.xrel, event.yrel, time});
 }
 void Input::event_process(const SDL_MouseWheelEvent& event, float time)
 {
@@ -135,7 +141,8 @@ void Input::event_process(const SDL_MouseWheelEvent& event, float time)
   }
   
   wheelData.lastTime = Time::time();
-  ecs::send_event(MouseWheelEvent{wheel, time});
+  if (eventable)
+    ecs::send_event(MouseWheelEvent{wheel, time});
 }
 
 float Input::get_key(SDL_Keycode keycode, float reaction_time)

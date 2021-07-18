@@ -157,8 +157,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       list.add<AnimationTester>("animationTester") = AnimationTester();
       list.add<vec3>("testOffset") = pos;
 
-      ecs::EntityId tester = ecs::create_entity(list);
-      ecs::send_event(tester, OnAnimationTestStart(i % dataBase->tests.size()));
+      ecs::create_entity(list);
     }
   }
   

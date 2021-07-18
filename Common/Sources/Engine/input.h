@@ -108,8 +108,10 @@ class Input
     float lastTime = 0, lastValue = 0, targetValue = 0;
   } wheelData; 
 
-
+  bool eventable = true;
 public:
+  Input(bool eventable) : eventable(eventable){}
+  Input() = default;
   static Input& input();
 
   void event_process(const SDL_KeyboardEvent& event, float time);

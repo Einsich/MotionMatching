@@ -9,8 +9,3 @@ public:
   float testStartTime, curTime;
   Input testInput;
 };
-struct OnAnimationTestStart
-{
-  int test;
-  OnAnimationTestStart(int test):test(test){}
-};

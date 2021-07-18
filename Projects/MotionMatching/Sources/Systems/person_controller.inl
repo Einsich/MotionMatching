@@ -233,11 +233,13 @@ EVENT() controller_crouch_event_handler(
   const ControllerKeyBoardEvent &e,
   PersonController &personController)
 {
-
-  if (e.e.keycode == SDLK_SPACE)
-    personController.disableEvents = !personController.disableEvents;
-  if (e.e.keycode == SDLK_z)
-    personController.crouching = !personController.crouching;
+  if (e.e.action == KeyAction::Down)
+  {
+    if (e.e.keycode == SDLK_SPACE)
+      personController.disableEvents = !personController.disableEvents;
+    if (e.e.keycode == SDLK_z)
+      personController.crouching = !personController.crouching;
+  }
 }
 
 PersonController::PersonController(vec3 position) :
