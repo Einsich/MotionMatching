@@ -2,7 +2,7 @@
 #include "ecs/manager/is_vector.h"
 #include "Engine/imgui/imgui.h"
 #include "Serialization/reflection.h"
-
+#include "Engine/Resources/asset.h"
 template<typename T>
 std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, const char *, bool view_only)
 {
@@ -79,6 +79,52 @@ edit_component(T &v, const char *name, bool view_only)
   return edited;
 }
 
+template<typename T>
+std::enable_if_t<is_base_of<IAsset, T>::value, bool>
+ edit_component(Asset<T> &component, const char *name, bool view_only)
+{
+  constexpr const string_view &tName = nameOf<T>::value;
+  if (component)
+    ImGui::Text("%s %s %s %s", tName.data(), name, component.asset_name().c_str(), component.is_copy() ? "(copy)" : "");
+  else
+    ImGui::Text("%s %s null", tName.data(), name);
+
+  bool edited = false;
+  if (!view_only)
+  {
+    if (component.is_copy())
+    {
+      return component.edit();
+    }
+    else
+    {
+      static bool select = false;
+      if (ImGui::Button("Select asset"))
+        select = !select;
+      if (select)
+      {
+        vector<const char *> names;
+        const auto &resMap = Resources::instance().assets[tName];
+        for (const auto &asset : resMap.resources)
+        {
+          names.push_back(asset.first.c_str());
+        }
+        static int curTex = -1;
+        if (ImGui::ListBox("##Asset", &curTex, names.data(), names.size(), 10))
+        {
+          select = false;
+          auto it = resMap.resources.find(string(names[curTex]));
+          if (it != resMap.resources.end())
+          {
+            component = it->second;
+            edited = true;
+          }
+        }
+      }
+    }
+  }
+  return edited;
+}
 #define EDIT_STUB(T) \
 template<>\
 bool edit_component(T &, const char *name, bool)\

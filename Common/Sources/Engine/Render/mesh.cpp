@@ -66,7 +66,18 @@ void Mesh::render(bool wire_frame)
 {
   vertexArrayObject.render(wire_frame);
 }
+void Mesh::load(const filesystem::path &path, bool reload)
+{
 
+}
+void Mesh::free()
+{
+
+}
+bool Mesh::edit()
+{
+  return false;
+}
 MeshPtr make_mesh(VertexArrayObject vao)
 {
   return make_shared<Mesh>(vao);

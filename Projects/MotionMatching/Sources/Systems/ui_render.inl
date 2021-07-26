@@ -36,7 +36,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteS
   AnimationIndex cur = mm.get_index().current_index();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-  float scale = 10;
+  static float scale = 10;
   ImGui::SliderFloat("Scale", &scale, 0, 100);
   ImVec2 stringsSize = ImVec2(270, animations.size() * ImGui::GetTextLineHeightWithSpacing());
   for(const AnimationClip &animation : animations)

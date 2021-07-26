@@ -3,8 +3,11 @@
 #include <assimp/scene.h>
 #include "common.h"
 #include "vertex_array_object.h"
-class Mesh
+#include "Engine/Resources/asset.h"
+#include "Serialization/iserializable.h"
+class Mesh : IAsset
 {
+  
   VertexArrayObject vertexArrayObject;
   int numVert;
   int numFaces;
@@ -19,6 +22,9 @@ public:
   Mesh(VertexArrayObject vao);
   Mesh(const aiMesh *mesh);
   void render(bool wire_frame = false);
+  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void free() override;
+  virtual bool edit() override;
 };
 
 using MeshPtr = shared_ptr<Mesh>;

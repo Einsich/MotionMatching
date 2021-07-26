@@ -112,31 +112,30 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
         }
       }
       ImGui::SameLine();
-      if (ImGui::Button("Close"))
+      if (ImGui::Button("Close viewer"))
       {
         selectedAsset.resourceType = nullptr;
         selectedAsset.asset = nullptr;
         goto end;
       }
       if (!adding)
-      for (auto &asset : selectedAsset.resourceType->resources)
       {
-        if (ImGui::Button(asset.first.c_str()))
+        if (selectedAsset.asset)
         {
-          if (selectedAsset.asset == &asset.second)
-          {
+          if (ImGui::Button("Back"))
             selectedAsset.asset = nullptr;
-          }
           else
+          if (selectedAsset.asset->loaded() && selectedAsset.resourceType->editAsset(*selectedAsset.asset))
+            selectedAsset.resourceType->reloadAsset(*selectedAsset.asset);
+        }
+        else
+        for (auto &asset : selectedAsset.resourceType->resources)
+        {
+          if (ImGui::Button(asset.first.c_str()))
           {
             selectedAsset.asset = &asset.second;
             selectedAsset.resourceType->loadAsset(asset.second, false);
           }
-        }
-        if (asset.second.loaded())
-        {
-          if (selectedAsset.asset == &asset.second && selectedAsset.resourceType->editAsset(asset.second))
-            selectedAsset.resourceType->reloadAsset(asset.second);
         }
       }
     }

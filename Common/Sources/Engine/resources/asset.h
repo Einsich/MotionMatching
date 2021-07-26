@@ -103,6 +103,12 @@ public:
   asset(new ResourceInfo{resource_path, false, false, true, false, other.asset->asset})
   {
   }
+  
+  template<typename ...Args>
+  Asset(const filesystem::path &path_or_name, bool need_save, Args &&...args) :
+  asset(new ResourceInfo{path_or_name, true, true, false, !need_save, T(args...)})
+  {
+  }
   template<typename U>
   operator Asset<U>() const
   {
