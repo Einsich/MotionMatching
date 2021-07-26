@@ -203,6 +203,8 @@ namespace ecs
         
       found_archetype = add_archetype(typeHashes, 1, t->name);
     }
+    if (found_archetype->synonim.find(t->name) >= found_archetype->synonim.size())
+      found_archetype->synonim += "+" + t->name;
     int index = found_archetype->count;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
     eidInfo.copy_constructor(&eid, eidTemplateInfo.data); 

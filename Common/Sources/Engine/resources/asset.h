@@ -118,21 +118,33 @@ public:
   {
     return *((Asset<U>*)this);
   }
+  operator bool() const
+  {
+    return asset != nullptr;
+  }
   T* operator->()
   {
     if (!asset->loaded)
       asset->load();
     return &asset->asset;
   }
-  operator bool() const
-  {
-    return asset != nullptr;
-  }
   const T* operator->() const 
   {
     if (!asset->loaded)
       asset->load();
     return &asset->asset;
+  }
+  T &operator*()
+  {
+    if (!asset->loaded)
+      asset->load();
+    return asset->asset;
+  }
+  const T &operator*() const 
+  {
+    if (!asset->loaded)
+      asset->load();
+    return asset->asset;
   }
   void load(bool async = false)
   {

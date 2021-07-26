@@ -89,15 +89,12 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
   if (component)
     ImGui::Text("%s %s %s %s", tName.data(), name, component.asset_name().c_str(), component.is_copy() ? "(copy)" : "");
   else
-  {
     ImGui::Text("%s %s null", tName.data(), name);
-    return false;
-  }
 
   bool edited = false;
   if (!view_only)
   {
-    if (component.is_copy())
+    if (component && component.is_copy())
     {
       return component.edit();
     }

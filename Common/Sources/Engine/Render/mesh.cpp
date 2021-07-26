@@ -78,17 +78,37 @@ void Mesh::load(const filesystem::path &path, bool reload)
 {
   if (reload)
     return;
-  int ind = std::stoi(path.parent_path().filename().string());
-  string strPath = path.parent_path().parent_path().string();
-    Assimp::Importer importer;
-  importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-  importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
+  string pathStr = path.string();
   
-  importer.ReadFile(strPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
-    aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
+  if (pathStr == "cube")
+    *this = *cube_mesh(true);
+  else if (pathStr == "cube (without uv)")
+    *this = *cube_mesh(false);
+  else if (pathStr == "plane")
+    *this = *plane_mesh(true);
+  else if (pathStr == "plane (without uv)")
+    *this = *plane_mesh(false);
+  else if (pathStr.substr(0, 6) == "sphere")
+  {
+    pathStr = pathStr.substr(7);
+    int detailed = std::stoi(pathStr);
+    bool witout_uv = pathStr.size() > 4;
+    *this = *sphere_mesh(detailed, !witout_uv);
+  }
+  else
+  {
+    int ind = std::stoi(path.parent_path().filename().string());
+    string strPath = path.parent_path().parent_path().string();
+      Assimp::Importer importer;
+    importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+    importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
+    
+    importer.ReadFile(strPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
+      aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
-  const aiScene* scene = importer.GetScene();
-  load_assimp(scene->mMeshes[ind]);
+    const aiScene* scene = importer.GetScene();
+    load_assimp(scene->mMeshes[ind]);
+  }
 }
 void Mesh::free()
 {
