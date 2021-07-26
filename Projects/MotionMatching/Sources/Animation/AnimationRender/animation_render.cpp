@@ -2,7 +2,7 @@
 #include "Engine/camera.h"
 
 static vector<mat4> curTransform;
-AnimationRender::AnimationRender(MeshPtr mesh_ptr, Asset<Material> materail_ptr, const Shader& shader):
+AnimationRender::AnimationRender(Asset<Mesh> mesh_ptr, Asset<Material> materail_ptr, const Shader& shader):
     mesh(mesh_ptr), material(materail_ptr), shader(shader)
   {}
 

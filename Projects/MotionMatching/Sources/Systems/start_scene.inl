@@ -96,7 +96,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   aiNode* root = scene->mRootNode;
   root = root->mChildren[0];
   //write_tree(root);
-  MeshPtr mesh = make_mesh(scene->mMeshes[0]);
+  Asset<Mesh> mesh = Asset<Mesh>("motusman", false, scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
 
   Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
@@ -164,14 +164,15 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("debugTransform") = Transform();
-    list.add<MeshRender>("debugGoalSphere") = create_sphere(get_resource<Material>("debug sphere"), 10);
+    list.add<MeshRender>("debugGoalSphere") =
+     MeshRender(sphere_mesh(5, false), get_resource<Material>("debug sphere"),get_shader("standart_normal"));
     ecs::create_entity(list);
   }
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("transform") = Transform(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));
-    list.add<MeshRender>("meshRender") = create_plane(get_resource<Material>("floor_ground"), true);
-    list.get<MeshRender>("meshRender").get_shader() = get_shader("section_plane");
+    list.add<MeshRender>("meshRender") = 
+     MeshRender(plane_mesh(true), get_resource<Material>("floor_ground"),get_shader("section_plane"));
 
     //add_collider(plane, make_collider<PlaneCollider>());
     ecs::create_entity(list);
@@ -183,9 +184,9 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       vec3 rotation = radians(vec3(0, 0, 0));
       vec3 offset = vec3(0, i* 0.2f, i);
       list.add<Transform>("transform") = Transform(offset, rotation, vec3(0.7f,0.4f,0.7f));
-      list.add<MeshRender>("meshRender") = create_cube(true);
+      list.add<MeshRender>("meshRender") = 
+      MeshRender(cube_mesh(true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
       material = list.get<MeshRender>("meshRender").get_material();
-      material->set_property(Property("mainTex", tex1));
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(cube, make_collider<BoxCollider>());
       ecs::create_entity(list);
@@ -199,9 +200,9 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       float scale = 15;
       vec3 offset = -vec3(rx * scale * 0.5f, 0.0f, ry * scale * 0.5f);
       list.add<Transform>("transform") = Transform(offset, rotation, vec3(scale,scale,scale));
-      list.add<MeshRender>("meshRender") = create_plane(true);
+      list.add<MeshRender>("meshRender") = 
+      MeshRender(plane_mesh(true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
       material = list.get<MeshRender>("meshRender").get_material();
-      material->set_property(Property("mainTex", tex1));
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(plane, make_collider<PlaneCollider>());
       ecs::create_entity(list);
@@ -213,9 +214,9 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       ecs::ComponentInitializerList list; 
       vec3 offset = vec3(-1.f,0.f,-1.f) + vec3(-i, i*0.5, i)*0.4f;
       list.add<Transform>("transform") = Transform(offset, vec3(), vec3(0.4f));
-      list.add<MeshRender>("meshRender") = create_sphere(20, true, true);
+      list.add<MeshRender>("meshRender") = 
+      MeshRender(sphere_mesh(20, true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
       material = list.get<MeshRender>("meshRender").get_material();
-      material->set_property(Property("mainTex", tex1));
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(sphere, make_collider<SphereCollider>(0.4f));
       ecs::create_entity(list);

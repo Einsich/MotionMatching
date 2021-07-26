@@ -1,5 +1,6 @@
 #include "resources.h"
 #include "Application/application.h"
+#include "../Render/mesh.h"
 
 namespace fs = filesystem;
 
@@ -45,6 +46,12 @@ void create_all_resources_from_metadata()
 
   create_all_resources_from_metadata(Application::instance().commonResourcesPath);
   create_all_resources_from_metadata(Application::instance().projectResourcesPath);
+  
+  sphere_mesh(1, true);
+  sphere_mesh(5, true);
+  sphere_mesh(20, true);
+  cube_mesh(true);
+  plane_mesh(true);
 }
 
 void save_all_resources_to_metadata()

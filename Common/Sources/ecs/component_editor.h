@@ -84,10 +84,15 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
  edit_component(Asset<T> &component, const char *name, bool view_only)
 {
   constexpr const string_view &tName = nameOf<T>::value;
+  constexpr int BUFN = 255;
+  char buf[BUFN];
   if (component)
     ImGui::Text("%s %s %s %s", tName.data(), name, component.asset_name().c_str(), component.is_copy() ? "(copy)" : "");
   else
+  {
     ImGui::Text("%s %s null", tName.data(), name);
+    return false;
+  }
 
   bool edited = false;
   if (!view_only)
@@ -99,7 +104,8 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
     else
     {
       static bool select = false;
-      if (ImGui::Button("Select asset"))
+      snprintf(buf, BUFN, "Select asset##%p", (void*)&component);
+      if (ImGui::Button(buf))
         select = !select;
       if (select)
       {
@@ -110,7 +116,8 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
           names.push_back(asset.first.c_str());
         }
         static int curTex = -1;
-        if (ImGui::ListBox("##Asset", &curTex, names.data(), names.size(), 10))
+        snprintf(buf, BUFN, "##%p", (void*)&component);
+        if (ImGui::ListBox(buf, &curTex, names.data(), names.size(), 10))
         {
           select = false;
           auto it = resMap.resources.find(string(names[curTex]));

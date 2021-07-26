@@ -44,6 +44,19 @@ Asset<T> create_asset(const filesystem::path &path)
   }
   return it->second;
 }
+template<typename T>
+bool register_asset(const string &assetName, const Asset<T> &asset)
+{
+  constexpr const string_view &typeName = nameOf<T>::value;
+  auto &resourcesMap = Resources::instance().assets[typeName];
+  auto it = resourcesMap.resources.find(assetName);
+  if (it == resourcesMap.resources.end())
+  {
+    resourcesMap.resources.try_emplace(assetName, asset);
+    return true;
+  }
+  return false;
+}
 
 template<typename T>
 Asset<T> create_copy_asset(const filesystem::path &path, const Asset<AssetStub>& dest)

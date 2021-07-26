@@ -101,6 +101,8 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
               
             }
           }
+          if (ImGui::Button("Back"))
+            adding = false;
         }
         else
         {
@@ -116,6 +118,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
       {
         selectedAsset.resourceType = nullptr;
         selectedAsset.asset = nullptr;
+        adding = false;
         goto end;
       }
       if (!adding)

@@ -32,6 +32,8 @@ class Asset;
 template<typename T>
 Asset<T> create_asset(const filesystem::path &path);
 
+template<typename T>
+bool register_asset(const string &assetName, const Asset<T> &asset);
 class AssetStub : IAsset
 {
 public:
@@ -100,14 +102,16 @@ public:
     }
   }
   Asset(const filesystem::path &resource_path, const Asset<T> &other) :
-  asset(new ResourceInfo{resource_path, false, false, true, false, other.asset->asset})
+  asset(new ResourceInfo{resource_path, other.asset->loading, other.asset->loaded, 
+        other.asset->edited, other.asset->isCopy, other.asset->asset})
   {
   }
   
   template<typename ...Args>
   Asset(const filesystem::path &path_or_name, bool need_save, Args &&...args) :
-  asset(new ResourceInfo{path_or_name, true, true, false, !need_save, T(args...)})
+  asset(new ResourceInfo{path_or_name, true, true, need_save, false, T(args...)})
   {
+    register_asset(path_or_name.string(), *this);
   }
   template<typename U>
   operator Asset<U>() const
@@ -116,6 +120,8 @@ public:
   }
   T* operator->()
   {
+    if (!asset->loaded)
+      asset->load();
     return &asset->asset;
   }
   operator bool() const
