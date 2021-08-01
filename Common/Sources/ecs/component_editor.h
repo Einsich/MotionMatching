@@ -80,7 +80,7 @@ edit_component(T &v, const char *name, bool view_only)
 }
 
 template<typename T>
-std::enable_if_t<is_base_of<IAsset, T>::value, bool>
+std::enable_if_t<std::is_base_of<IAsset, T>::value, bool>
  edit_component(Asset<T> &component, const char *name, bool view_only)
 {
   constexpr const string_view &tName = nameOf<T>::value;

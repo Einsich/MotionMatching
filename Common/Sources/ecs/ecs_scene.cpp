@@ -5,6 +5,7 @@
 #include "glad/glad.h"
 #include "Engine/Profiler/profiler.h"
 #include "Engine/imgui/imgui.h"
+#include "common.h"
 
 void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();

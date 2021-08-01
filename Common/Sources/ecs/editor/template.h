@@ -1,27 +1,24 @@
 #pragma once
 #include "ecs/manager/type_info.h"
 #include "Serialization/iserializable.h"
-
-
 namespace ecs
 {
- 
   struct TemplateInfo final: public ISerializable
   {
   private:
-    string name;
+    std::string name;
     string_hash typeHash, nameHash;
   public:
     void *data;
     TemplateInfo();
     TemplateInfo(const string_hash type_hash, const ecs::TypeInfo &type_info, const char *name);
     const char *get_name() const;
-    const string &get_string_name() const;
+    const std::string &get_string_name() const;
     void change_name(const char *new_name);
     bool operator==(const TemplateInfo &other) const;
     const ecs::TypeInfo &get_type_info() const;
     const char *get_type_name() const;
-    const string &get_type_string_name() const;
+    const std::string &get_type_string_name() const;
     string_hash type_name_hash() const;
     string_hash type_hash() const;
     virtual size_t serialize(std::ostream& os) const override;
@@ -29,10 +26,10 @@ namespace ecs
   };
   struct Template final: public ISerializable
   {
-    string name;
-    vector<TemplateInfo> types;
-    vector<Template*> subTemplates;
-    vector<Template*> parentTemplates;
+    std::string name;
+    std::vector<TemplateInfo> types;
+    std::vector<Template*> subTemplates;
+    std::vector<Template*> parentTemplates;
     bool opened;
     bool processed;
     Template() = default;
@@ -47,7 +44,7 @@ namespace ecs
     bool collision;
     TemplateInfo fieldNew;
     TemplateInfo fieldOld;//field->get_type_name() field->get_name()
-    vector<const Template*> collisionTrace;//t->name()
+    std::vector<const Template*> collisionTrace;//t->name()
     TemplateCollision() = default;
   };
   bool try_change_template_name(Template &t, const char* new_name);
@@ -57,7 +54,7 @@ namespace ecs
 
   struct TemplateManager
   {
-    vector<Template*> templates;
+    std::vector<Template*> templates;
     static TemplateManager &instance() 
     {
       static TemplateManager manager;
@@ -67,5 +64,5 @@ namespace ecs
   };
   void load_templates();
   void save_templates();
-  vector<const TemplateInfo*> linearize_field(const Template *t);
+  std::vector<const TemplateInfo*> linearize_field(const Template *t);
 }

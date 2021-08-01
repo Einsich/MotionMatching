@@ -1,17 +1,19 @@
+
+#include <iostream>
 #include "core_interface.h"
 #include "../ecs_core.h"
 #include "entity_container.h"
 namespace ecs
 {
-  uint type_sizeof(uint type)
+  uint32_t type_sizeof(uint32_t type)
   {
     return TypeInfo::types()[type].sizeOf;
   }
-  CopyConstructor type_copy_constructor(uint type)
+  CopyConstructor type_copy_constructor(uint32_t type)
   {
     return TypeInfo::types()[type].copy_constructor;
   }
-  Destructor type_destructor(uint type)
+  Destructor type_destructor(uint32_t type)
   {
     return TypeInfo::types()[type].destructor;
   }
@@ -28,7 +30,7 @@ namespace ecs
 
 
 
-  std::unordered_map<uint, FullTypeDescription> &full_description()
+  std::unordered_map<uint32_t, FullTypeDescription> &full_description()
   {
     return core().types;
   }

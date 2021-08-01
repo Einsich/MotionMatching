@@ -6,11 +6,11 @@
 
 struct ResourceMap
 {
-  string name;
+  std::string name;
   bool metaDataAsset;
   std::map<std::string, Asset<AssetStub>> resources;
-  std::function<void(const filesystem::path&)> createAsset;
-  std::function<void(const filesystem::path&, const Asset<AssetStub>&)> createCopyAsset;
+  std::function<void(const std::filesystem::path&)> createAsset;
+  std::function<void(const std::filesystem::path&, const Asset<AssetStub>&)> createCopyAsset;
   std::function<void(const Asset<AssetStub>&)> saveAsset;
   std::function<bool(Asset<AssetStub>&)> editAsset;
   std::function<void(Asset<AssetStub>&, bool)> loadAsset;
@@ -30,11 +30,11 @@ public:
 };
 
 template<typename T>
-Asset<T> create_asset(const filesystem::path &path)
+Asset<T> create_asset(const std::filesystem::path &path)
 {
-  constexpr const string_view &typeName = nameOf<T>::value;
+  constexpr const std::string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName];
-  const string assetName = get_asset_name(path);
+  const std::string assetName = get_asset_name(path);
   auto it = resourcesMap.resources.find(assetName);
   if (it == resourcesMap.resources.end())
   {
@@ -45,9 +45,9 @@ Asset<T> create_asset(const filesystem::path &path)
   return it->second;
 }
 template<typename T>
-bool register_asset(const string &assetName, const Asset<T> &asset)
+bool register_asset(const std::string &assetName, const Asset<T> &asset)
 {
-  constexpr const string_view &typeName = nameOf<T>::value;
+  constexpr const std::string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName];
   auto it = resourcesMap.resources.find(assetName);
   if (it == resourcesMap.resources.end())
@@ -59,9 +59,9 @@ bool register_asset(const string &assetName, const Asset<T> &asset)
 }
 
 template<typename T>
-Asset<T> create_copy_asset(const filesystem::path &path, const Asset<AssetStub>& dest)
+Asset<T> create_copy_asset(const std::filesystem::path &path, const Asset<AssetStub>& dest)
 {
-  constexpr const string_view &typeName = nameOf<T>::value;
+  constexpr const std::string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName];
   const string assetName = get_asset_name(path);
   auto it = resourcesMap.resources.find(assetName);
@@ -96,30 +96,30 @@ void reload_asset(Asset<AssetStub> &asset)
 template<typename T>
 struct ResourceRegister
 {
-  void add_asset(const string_view &assetName, bool metaDataAsset)
+  void add_asset(const std::string_view &assetName, bool metaDataAsset)
   {
     Resources::instance().assets.try_emplace(assetName, 
-    ResourceMap{string(assetName), metaDataAsset, {}, create_asset<T>, create_copy_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
+    ResourceMap{std::string(assetName), metaDataAsset, {}, create_asset<T>, create_copy_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
 
   }
   ResourceRegister(const std::vector<std::string> &extensions)
   {
-    constexpr const string_view &assetName = nameOf<T>::value;
+    constexpr const std::string_view &assetName = nameOf<T>::value;
     for (const std::string &extension : extensions)
       Resources::instance().extToAssetName.try_emplace(extension, assetName);
     add_asset(assetName, true);
   }
   ResourceRegister()
   {
-    constexpr const string_view &assetName = nameOf<T>::value;
+    constexpr const std::string_view &assetName = nameOf<T>::value;
     Resources::instance().extToAssetName.try_emplace("."+string(assetName), assetName);
     add_asset(assetName, false);
   }
 };
 template<typename T>
-Asset<T> get_resource(const string &name)
+Asset<T> get_resource(const std::string &name)
 {
-  constexpr const string_view &typeName = nameOf<T>::value;
+  constexpr const std::string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName].resources;
   auto it = resourcesMap.find(name);
   if (it == resourcesMap.end())

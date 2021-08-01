@@ -7,7 +7,6 @@
 #include <fstream>
 #include <sstream>
 #include "Engine/time.h"
-#include "Application/application.h"
 #include "reflection.h"
 #include "iserializable.h"
 
@@ -240,6 +239,7 @@ inline size_t read(std::istream& is, T &value, Args &... args)
 }
 
 void print_file_size(const std::string &path, size_t fileSize);
+std::string project_resources_path(const std::string &path);
 
 template <typename T>
 size_t save_object(const T &object, const std::string &path)

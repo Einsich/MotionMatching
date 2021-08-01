@@ -3,7 +3,7 @@
 void print_file_size(const std::string &path, size_t fileSize)
 {
   double s = 0;
-  string b = "";
+  std::string b = "";
   if (fileSize < 1e3)
   {
     s = fileSize;

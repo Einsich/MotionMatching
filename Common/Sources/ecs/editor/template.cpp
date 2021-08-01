@@ -1,5 +1,6 @@
 #include "template.h"
 #include "../manager/type_description.h"
+#include "common.h"
 namespace ecs
 {
   

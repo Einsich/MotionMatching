@@ -1,9 +1,9 @@
 #pragma once
 #include <stdlib.h>
 #include <vector>
-#include "common.h"
 namespace ecs
 {
+  typedef uint32_t uint;
   class EntityId
   {
   private:

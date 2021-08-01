@@ -1,6 +1,7 @@
 #include "template.h"
 #include "Serialization/serialization.h"
 #include <filesystem>
+#include "common.h"
 namespace fs = filesystem;
 namespace ecs
 { 

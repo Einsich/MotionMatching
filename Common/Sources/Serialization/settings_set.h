@@ -54,7 +54,7 @@ public:
 
   virtual size_t serialize(std::ostream& os) const override
   {
-    #define VAR_MAP(type) std::map<string, type> type##Vars;
+    #define VAR_MAP(type) std::map<std::string, type> type##Vars;
     VAR_MAPS();
     #undef VAR_MAP
     for (VarBase *varBase : vars)
@@ -77,7 +77,7 @@ public:
   virtual size_t deserialize(std::istream& is) override
   {
     size_t size = 0;
-    #define VAR_MAP(type) std::map<string, type> type##Vars;
+    #define VAR_MAP(type) std::map<std::string, type> type##Vars;
     VAR_MAPS();
     #undef VAR_MAP
     #define VAR_MAP(type) size += read(is, type##Vars);
