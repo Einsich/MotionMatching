@@ -1,4 +1,5 @@
 #pragma once
+#include "common.h"
 #include <map>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>
@@ -101,7 +102,7 @@ class Input
 {
 
 
-  std::map<SDL_Keycode, std::pair<int, float>> keyMap;
+  map<SDL_Keycode, pair<int, float>> keyMap;
   struct WheelData
   {
     float lastTime = 0, lastValue = 0, targetValue = 0;

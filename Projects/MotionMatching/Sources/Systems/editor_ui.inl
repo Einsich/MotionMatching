@@ -1,5 +1,4 @@
 #include "ecs/ecs.h"
-#include "common.h"
 #include "Engine/imgui/imgui.h"
 #include "ecs/editor/template.h"
 #include "ecs/manager/entity_container.h"

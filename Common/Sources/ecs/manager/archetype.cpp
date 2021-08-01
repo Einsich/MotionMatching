@@ -1,6 +1,5 @@
 #include "archetype.h"
 #include "../editor/template.h"
-#include "common.h"
 namespace ecs
 {
   static ComponentContainer *dummyContainer = new ComponentContainer();
@@ -19,7 +18,7 @@ namespace ecs
     }    
   }
 
-  bool Archetype::in_archetype(const std::vector<string_hash> &type_hashes) const
+  bool Archetype::in_archetype(const vector<string_hash> &type_hashes) const
   {
     if (type_hashes.size() != components.size())
       return false;
@@ -52,7 +51,7 @@ namespace ecs
     }
     count++;
   }
-  void Archetype::add_entity(const std::vector<const TemplateInfo*> &list)
+  void Archetype::add_entity(const vector<const TemplateInfo*> &list)
   {
     for (const TemplateInfo *component : list)
     {

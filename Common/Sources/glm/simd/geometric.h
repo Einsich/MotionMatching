@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "common.h"
 
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 

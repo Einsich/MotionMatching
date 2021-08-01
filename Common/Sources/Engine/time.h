@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL2/SDL_timer.h>
 #include <assert.h>
-#include "debug_log.h"
-#include <string>
+#include "common.h"
+
 struct Time
 {
 private:
@@ -61,10 +61,10 @@ class TimeScope
 {
 private:
   Uint32 start;
-  const std::string message;
+  const string message;
   bool stopped;
 public:
-  TimeScope(const std::string &message):
+  TimeScope(const string &message):
     start(SDL_GetTicks()), message(message), stopped(false)
   { }
   void stop()

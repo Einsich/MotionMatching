@@ -1,13 +1,10 @@
 #include "common.h"
-#include "debug_log.h"
 
 #include "Engine/imgui/imgui.h"
 #include "Engine/imgui/imgui_internal.h"
 #include "Engine/time.h"
 #include <list>
-#include <iostream>
 #include <stdarg.h>
-using namespace std;
 const int MaxQueueSize = 10;
 struct Message
 {

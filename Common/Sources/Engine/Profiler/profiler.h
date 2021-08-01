@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/time.h"
-#include "common.h"
+#include <vector>
 #include <map>
 class ProfilerLabel
 {

@@ -11,7 +11,7 @@
 class IAsset
 {
   //called when this resource really needed - load data from disk 
-  virtual void load(const std::filesystem::path &path, bool reload) = 0;
+  virtual void load(const filesystem::path &path, bool reload) = 0;
   //dispose resource - called on application end, or when we can unload resource
   virtual void free() = 0;
   //this fuction need to edit resource and call reload if it changed
@@ -24,20 +24,20 @@ class IAsset
   virtual bool edit() override;
 */
 
-std::string get_asset_name(const std::filesystem::path &path);
+string get_asset_name(const filesystem::path &path);
 
 template<typename T>
 class Asset;
 
 template<typename T>
-Asset<T> create_asset(const std::filesystem::path &path);
+Asset<T> create_asset(const filesystem::path &path);
 
 template<typename T>
-bool register_asset(const std::string &assetName, const Asset<T> &asset);
+bool register_asset(const string &assetName, const Asset<T> &asset);
 class AssetStub : IAsset
 {
 public:
-  virtual void load(const std::filesystem::path &, bool) override{}
+  virtual void load(const filesystem::path &, bool) override{}
   virtual void free() override{}
   virtual bool edit() override{return false;}
 };
@@ -47,7 +47,7 @@ class Asset : public ISerializable
   static_assert(std::is_base_of<IAsset, T>::value);
   struct ResourceInfo
   {
-    std::filesystem::path path;
+    filesystem::path path;
     bool loading, loaded, edited, isCopy;
     T asset;
     void load()
@@ -92,7 +92,7 @@ public:
   //create asset and init them from .meta file or only default value
   Asset():asset(nullptr){}
 
-  Asset(const std::filesystem::path &resource_path) :
+  Asset(const filesystem::path &resource_path) :
   asset(new ResourceInfo{resource_path, false, false, false, false, T()})
   {  
     ifstream file(resource_path, ios::binary);
@@ -101,14 +101,14 @@ public:
       read(file, asset->asset);
     }
   }
-  Asset(const std::filesystem::path &resource_path, const Asset<T> &other) :
+  Asset(const filesystem::path &resource_path, const Asset<T> &other) :
   asset(new ResourceInfo{resource_path, other.asset->loading, other.asset->loaded, 
         other.asset->edited, other.asset->isCopy, other.asset->asset})
   {
   }
   
   template<typename ...Args>
-  Asset(const std::filesystem::path &path_or_name, bool need_save, Args &&...args) :
+  Asset(const filesystem::path &path_or_name, bool need_save, Args &&...args) :
   asset(new ResourceInfo{path_or_name, true, true, need_save, false, T(args...)})
   {
     register_asset(path_or_name.string(), *this);
@@ -183,7 +183,7 @@ public:
   {
     return asset->isCopy;
   }
-  std::string asset_name() const
+  string asset_name() const
   {
     return get_asset_name(asset->path);
   }
@@ -194,10 +194,10 @@ public:
   }
   virtual size_t deserialize(std::istream& is) override
   {
-    std::string path;
+    string path;
     size_t size = read(is, path);
     if (path != "null")
-      *this = create_asset<T>(std::filesystem::path(path));
+      *this = create_asset<T>(filesystem::path(path));
     else 
       *this = Asset<T>();
     return size;

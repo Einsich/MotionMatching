@@ -1,12 +1,12 @@
 #pragma once
-#include <stdint.h>
+#include "common.h"
 #include "component_function.h"
 #include <unordered_map>
 namespace ecs
 {
-  uint32_t type_sizeof(uint32_t type);
-  CopyConstructor type_copy_constructor(uint32_t type);
-  Destructor type_destructor(uint32_t type);
+  uint type_sizeof(uint type);
+  CopyConstructor type_copy_constructor(uint type);
+  Destructor type_destructor(uint type);
 
 
   struct SystemDescription;
@@ -17,5 +17,5 @@ namespace ecs
   void print_archetypes();
   struct FullTypeDescription;
 
-  std::unordered_map<uint32_t, FullTypeDescription> &full_description();
+  std::unordered_map<uint, FullTypeDescription> &full_description();
 }

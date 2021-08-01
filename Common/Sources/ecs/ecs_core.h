@@ -72,7 +72,7 @@ namespace ecs
   T* get_component(const EntityId &entity, const char *name);
 
   EntityId create_entity(ComponentInitializerList &list);
-  EntityId create_entity(const std::string &template_name);
+  EntityId create_entity(const string &template_name);
   EntityId create_entity(const char *template_name);
   struct Template;
   EntityId create_entity(const Template *temp);
@@ -148,5 +148,3 @@ namespace ecs
   void system_statistic();
 
 }
-
-  typedef uint32_t uint;

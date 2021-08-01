@@ -1,4 +1,3 @@
-#include "common.h"
 #include "fbx_importer.h"
 #include "resources.h"
 #include <assimp/Importer.hpp>

@@ -7,7 +7,7 @@ namespace ecs
 {
   struct SceneEntities
   {
-    std::string name;
+    string name;
     EntityContainer editorScene, gameScene;
     bool gamePaused;
   };
@@ -18,14 +18,14 @@ namespace ecs
     struct SystemRange { SystemIterator begin, end; };
     SystemRange logic, render, ui, menu;
     uint currentSceneTags;
-    std::vector<SceneEntities*> scenes;
+    vector<SceneEntities*> scenes;
     SceneEntities *currentScene;
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
     void process_only_events();
   public:
     void start_scene();
-    bool try_start_scene(const std::string &name, uint tags);
+    bool try_start_scene(const string &name, uint tags);
     void swap_editor_game_scene(bool pause);
     void update_logic();
     void update_render();
