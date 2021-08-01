@@ -4,6 +4,8 @@ set BUILD_TYPE=%2
 set REBUILD=%3
 set ECS_CODEGEN=%4
 set CMAKE=%5
+set RELEASE=%6
+
 set CWD=%cd%
 cd Builds
 
@@ -25,7 +27,7 @@ Rem call build_lib_script.bat Projects/%PROJECT%/Sources %PROJECT% %BUILD_TYPE% 
 cd Projects
 
 if "%CMAKE%"=="yes" (
-    cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/win/%PROJECT%/%BUILD_TYPE%
+    cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -DRELEASE=%RELEASE% -B ../Builds/win/%PROJECT%/%BUILD_TYPE%
     echo builded
 )
 cd ../Builds/win/%PROJECT%/%BUILD_TYPE% 

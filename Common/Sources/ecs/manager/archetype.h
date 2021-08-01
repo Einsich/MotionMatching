@@ -12,6 +12,10 @@ namespace ecs
     int count, capacity;
     std::vector<FullTypeDescription*> fullTypeDescriptions;
     string synonim;
+    bool dontSave;
+
+    //after this constructor need to feel components and fullTypeDescriptions correctly
+    Archetype(int count, const string &synonim, int type_count);
     Archetype(const vector<string_hash> &type_hashes, int count, const string &synonim);
     bool in_archetype(const vector<string_hash> &type_hashes) const;
 

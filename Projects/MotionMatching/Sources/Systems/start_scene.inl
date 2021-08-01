@@ -46,8 +46,8 @@ void write_tree(aiNode* root, int d = 1)
   for (int i = 0, n = root->mNumChildren; i < n; i++)
     write_tree(root->mChildren[i], d + 1);
 }
-
-EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
+#define EVEN(...) void
+EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
 {
 
   fflush(stdout);
@@ -92,15 +92,15 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
   const aiScene* scene = importer.GetScene();
   
-  
+  Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
+  Asset<Material> material;
+  /*
   aiNode* root = scene->mRootNode;
   root = root->mChildren[0];
   //write_tree(root);
   Asset<Mesh> mesh = Asset<Mesh>("motusman", false, scene->mMeshes[0]);
   AnimationDataBasePtr dataBase = animation_preprocess(importer, root);
 
-  Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
-  Asset<Material> material;
   {
     ecs::ComponentInitializerList list;
     list.add<MotionMatchingScene>("motionMatchingScene") = MotionMatchingScene(dataBase);
@@ -168,6 +168,7 @@ EVENT(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
      MeshRender(sphere_mesh(5, false), get_resource<Material>("debug sphere"),get_shader("standart_normal"));
     ecs::create_entity(list);
   }
+  */
   {
     ecs::ComponentInitializerList list; 
     list.add<Transform>("transform") = Transform(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));

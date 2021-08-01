@@ -14,11 +14,15 @@ namespace ecs
   {
     return a->order < b->order;
   }
-  void Scene::start_scene()
+  void SceneManager::start(bool editor)
   {
     create_all_resources_from_metadata();
-    scenes.emplace_back(new SceneEntities());
-    scenes.back()->name = "default";
+    if (editor)
+    {
+      scenes.emplace_back(new Scene{"default", "", {}, {}, true, true, false});
+      scenes.back()->editorScene.dontAddable = scenes.back()->gameScene.dontAddable = true;
+    }
+
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
@@ -38,15 +42,25 @@ namespace ecs
     glCullFace(GL_BACK);
   }
 
-  bool Scene::try_start_scene(const string &name, uint tags)
+  void save(std::ostream& os, const std::vector<Archetype*> &archetypes);
+  void load(std::istream& is, std::vector<Archetype*> &archetypes, EntityPull &entityPull);
+
+  bool SceneManager::try_start_scene(const string &name, uint tags)
   {
-    for (SceneEntities *scene : scenes)
+    for (Scene *scene : scenes)
       if (scene->name == name)
       {
         currentScene = scene;
         currentSceneTags = tags;
+        bool editor = tags == (uint)ecs::SystemTag::Editor;
         core().currentSceneTags = tags;
-        core().entityContainer = tags == (uint)ecs::SystemTag::Editor ? &scene->editorScene : &scene->gameScene;
+        core().entityContainer = editor ? &scene->editorScene : &scene->gameScene;
+        if (!currentScene->loaded)
+        {
+          std::ifstream file(currentScene->path, ios::binary);
+          load(file, core().entityContainer->archetypes, core().entityContainer->entityPull);
+          currentScene->loaded = true;
+        }
         send_event(OnSceneCreated());
         return true;
       }
@@ -55,7 +69,7 @@ namespace ecs
   
   void create_entities_from_archetypes(const vector<Archetype *> &src);//ecs_core.cpp
 
-  void Scene::swap_editor_game_scene(bool pause)
+  void SceneManager::swap_editor_game_scene(bool pause)
   {
     uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
     if (currentScene)
@@ -67,7 +81,8 @@ namespace ecs
         auto &singleton = p.second;
         singleton.constructor(singleton.getSingleton());        
       }
-      if (newTags == (uint)ecs::SystemTag::Editor)
+      currentScene->inEditor = newTags == (uint)ecs::SystemTag::Editor;
+      if (currentScene->inEditor)
       {
         currentScene->gamePaused = pause;
         if (!pause)
@@ -90,7 +105,7 @@ namespace ecs
       }
     }
   }
-  void Scene::update_range(const SystemRange &range)
+  void SceneManager::update_range(const SystemRange &range)
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
       if ((*it)->tags & currentSceneTags)
@@ -100,18 +115,18 @@ namespace ecs
         (*it)->execute();
       }
   }
-  void Scene::update_logic()
+  void SceneManager::update_logic()
   {
     update_range(logic);
   }
-  void Scene::update_render()
+  void SceneManager::update_render()
   {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     update_range(render);
     glFlush();
   }
-  void Scene::update_ui()
+  void SceneManager::update_ui()
   {
     update_range(ui);
     if (ImGui::BeginMainMenuBar())
@@ -121,7 +136,7 @@ namespace ecs
     }
 
   }
-  void Scene::destroy_entities(bool without_copy)
+  void SceneManager::destroy_entities(bool without_copy)
   {
     auto &toDestroy = core().toDestroy;
     for (int i = 0, n = toDestroy.size(); i < n; i++)
@@ -133,7 +148,7 @@ namespace ecs
       toDestroy.pop();
     }
   }
-  void Scene::process_only_events()
+  void SceneManager::process_only_events()
   {
     auto &events = core().events;
     for (int i = 0, n = events.size(); i < n; i++)
@@ -142,18 +157,30 @@ namespace ecs
       events.pop();
     }
   }
-  void Scene::process_events()
+  void SceneManager::process_events()
   {
     //debug_log("process events");
     process_only_events();
     destroy_entities(false);
   }
-  void Scene::destroy_scene()
+  
+  void SceneManager::save_current_scene()
   {
+    #ifndef RELEASE
+    if (currentScene && filesystem::exists(currentScene->path))
+    {
+      ofstream file (currentScene->path, ios::binary);
+      save(file, currentScene->editorScene.archetypes);
+    }
+    #endif
+  }
+  void SceneManager::destroy_scene()
+  {
+    save_current_scene();
     core().destroy_entities();
     process_only_events();
     destroy_entities(true);
-    for (SceneEntities *scene: scenes)
+    for (Scene *scene: scenes)
     {
       for (Archetype *archetype : scene->gameScene.archetypes)
         delete archetype;
@@ -163,5 +190,17 @@ namespace ecs
     }
     save_all_resources_to_metadata();
   }
-
+  
+  void SceneManager::add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open)
+  {
+    if (need_to_add)
+    {
+      scenes.emplace_back(new Scene{path.stem().string(), path.string(), {}, {}, false, false, false});
+    }
+    if (need_to_open)
+    {
+      save_current_scene();
+      try_start_scene(path.stem().string(), (uint)ecs::SystemTag::Editor);
+    }
+  }
 }

@@ -35,6 +35,13 @@ void create_all_resources_from_metadata(const string &path)
           debug_log("creating asset %s", pathToAsset.string().c_str());
           it->second.createAsset(pathToAsset);
         }
+        else
+        {
+          if (ext == ".scene")
+          {
+            add_open_scene(path);
+          }
+        }
       }
     }
 

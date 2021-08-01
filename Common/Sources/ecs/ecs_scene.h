@@ -1,30 +1,36 @@
 #pragma once
 #include <vector>
+#include <filesystem>
 #include "manager/system_description.h"
 #include "Engine/input.h"
 #include "manager/entity_container.h"
+
 namespace ecs
 {
-  struct SceneEntities
+  struct Scene
   {
     string name;
+    filesystem::path path;
     EntityContainer editorScene, gameScene;
+    bool loaded;
+    bool inEditor;
     bool gamePaused;
   };
-  class Scene
+  class SceneManager
   {
   private:
     typedef std::vector<SystemDescription*>::iterator SystemIterator;
     struct SystemRange { SystemIterator begin, end; };
     SystemRange logic, render, ui, menu;
     uint currentSceneTags;
-    vector<SceneEntities*> scenes;
-    SceneEntities *currentScene;
+    vector<Scene*> scenes;
+    Scene *currentScene;
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
     void process_only_events();
+    void save_current_scene();
   public:
-    void start_scene();
+    void start(bool editor);
     bool try_start_scene(const string &name, uint tags);
     void swap_editor_game_scene(bool pause);
     void update_logic();
@@ -32,5 +38,6 @@ namespace ecs
     void update_ui();
     void process_events();
     void destroy_scene();
+    void add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open);
   };
 }

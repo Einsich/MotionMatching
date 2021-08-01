@@ -2,24 +2,27 @@
 #include "Engine/input.h"
 #include "Engine/file_dialog.h"
 
+void open_scene(const filesystem::path &path, bool need_to_add);
+
 SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog()
 {
-  if (ImGui::BeginMenu("Scene"))
+  if (ImGui::BeginMenu("File"))
   {
-    if (ImGui::Button("get open file"))
+    if (ImGui::Button("open scene"))
     {
-      string fileName;
-      if (get_open_file(fileName, {"Templates", ".tmpl"}))
+      filesystem::path path;
+      if (get_open_file(path, {"Scene", ".scene"}))
       {
-        debug_error("path: %s", fileName.c_str());
+        add_open_scene(path, false, true);
       }
     }
-    if (ImGui::Button("get save file"))
+    if (ImGui::Button("create scene"))
     {
-      string fileName;
-      if (get_save_file(fileName, ".loh"))
+      filesystem::path path;
+      if (get_save_file(path, ".scene"))
       {
-        debug_error("path: %s", fileName.c_str());
+        std::ofstream outfile(path, ios_base::binary);
+        add_open_scene(path, true, true);
       }
     }
 

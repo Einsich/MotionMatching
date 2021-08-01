@@ -78,6 +78,17 @@ namespace ecs
       }
       return nullptr;
     }
+    template<typename T>
+    const T* get_component(int i) const
+    {
+      if (0 <= i && i < count)
+      {
+        int j = i / binSize;
+        i %= binSize;
+        return (T*)((char*)data[j] + i * sizeOf);
+      }
+      return nullptr;
+    }
     void destroy_component(int i, bool without_copy);
     void add_component(void *component_data);
     void copy_components(const ComponentContainer &other);

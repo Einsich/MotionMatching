@@ -11,7 +11,7 @@ namespace ecs
   const TypeInfo &FullTypeDescription::get_type_info() const
   {
     auto it = TypeInfo::types().find(typeHash);
-    assert(it == TypeInfo::types().end());
+    assert(it != TypeInfo::types().end());
     return it->second;
   }
   TypeDescription::TypeDescription(string_hash name_hash, string_hash type_hash):

@@ -17,6 +17,24 @@ void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event)
 }
 
 
+void reload_sky_box_handler(const ecs::OnEntityCreated &event);
+
+ecs::EventDescription<ecs::OnEntityCreated> reload_sky_box_descr("reload_sky_box", {
+  {ecs::get_type_description<SkyBox>("skyBox"), false}
+}, reload_sky_box_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+
+void reload_sky_box_handler(const ecs::OnEntityCreated &event)
+{
+  for (ecs::QueryIterator begin = reload_sky_box_descr.begin(), end = reload_sky_box_descr.end(); begin != end; ++begin)
+  {
+    reload_sky_box(
+      event,
+      *begin.get_component<SkyBox>(0)
+    );
+  }
+}
+
+
 void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_singl_descr("reload_shaders", {
@@ -26,6 +44,21 @@ void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::Query
 {
   reload_shaders(
     event
+  );
+}
+
+
+void reload_sky_box_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityCreated> reload_sky_box_singl_descr("reload_sky_box", {
+  {ecs::get_type_description<SkyBox>("skyBox"), false}
+}, reload_sky_box_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+
+void reload_sky_box_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
+{
+  reload_sky_box(
+    event,
+      *begin.get_component<SkyBox>(0)
   );
 }
 

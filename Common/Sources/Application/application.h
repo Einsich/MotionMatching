@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include "common.h"
 #include "context.h"
 #include "Engine/input.h"
@@ -6,7 +7,7 @@
 
 namespace ecs
 {
-  class Scene;
+  class SceneManager;
 }
 class Application
 {
@@ -15,7 +16,7 @@ private:
   Context context;
   Time timer;
 public:
-  ecs::Scene *scene;
+  ecs::SceneManager *scene;
   const string projectPath, projectResourcesPath, projectShaderPath, commonResourcesPath, commonShaderPath;
   Application(string window_name, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
@@ -31,8 +32,9 @@ public:
     return application->context;
   }
 };
-void load_editor_scene(const string &name);
-void load_game_scene(const string &name);
+void load_scene(const string &name, bool editor);
 
 string project_resources_path(const string &path);
 string common_resources_path(const string &path);
+
+void add_open_scene(const filesystem::path &path, bool need_to_add = true, bool need_to_open = false);

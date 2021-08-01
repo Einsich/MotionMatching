@@ -48,11 +48,3 @@ void SkyBox::render(const mat4 view_projection, const vec3 &camera_position, boo
 
 	
 }
-template<>
-bool edit_component(SkyBox &component, const char *name, bool )
-{
-  //ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
-  ImGui::Text("%s : %s", name, component.path.c_str());
-  ImGui::Spacing();
-	return false;
-}

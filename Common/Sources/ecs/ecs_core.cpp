@@ -130,6 +130,8 @@ namespace ecs
 
   EntityId create_entity(ComponentInitializerList &list)
   {
+    if (core().entityContainer->dontAddable)
+      return EntityId();
     list.add<EntityId>("eid") = EntityId();
     Archetype *found_archetype = nullptr;
     int archetype_ind = 0;
@@ -164,6 +166,8 @@ namespace ecs
   }
   EntityId create_entity(const char *template_name)
   {
+    if (core().entityContainer->dontAddable)
+      return EntityId();
     const Template *t = TemplateManager::get_template_by_name(template_name);
     if (!t)
     {
@@ -174,6 +178,8 @@ namespace ecs
   }
   EntityId create_entity(const Template *t)
   {
+    if (core().entityContainer->dontAddable)
+      return EntityId();
     constexpr string_hash eidHash  = HashedString(nameOf<EntityId>::value);
     static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
     static TemplateInfo eidTemplateInfo(eidHash, eidInfo, "eid");
