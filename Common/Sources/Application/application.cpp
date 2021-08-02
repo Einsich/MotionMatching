@@ -9,6 +9,7 @@
 #include "ecs/editor/template.h"
 #include "ecs/system_tag.h"
 #include "ecs/ecs_scene.h"
+#include "application_metainfo.h"
 
 Application::Application(string window_name, int width, int height, bool full_screen):
 context(window_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
@@ -25,14 +26,21 @@ commonShaderPath(string(get_config("commonPath")) + "\\Shaders")
 void Application::start()
 {
   ecs::load_templates();
+  load_meta_info(projectPath + "/project.config");
   bool editor = false;
   #ifndef RELEASE
   editor = true;
   #endif
+  ApplicationMetaInfo &metaInfo = get_meta_info();
   scene->start(editor);
   get_profiler();
+  string sceneName;
+  uint tags = editor ? (uint)ecs::SystemTag::Editor : (uint)ecs::SystemTag::Game;
 
-  load_scene(editor ? "default" : get_config("scene"), editor);
+  if (!scene->try_start_scene(metaInfo.firstScene, tags))
+  {
+    scene->try_start_scene("default", tags);
+  }
 }
 bool Application::sdl_event_handler()
 {
@@ -104,6 +112,7 @@ void Application::main_loop()
 void Application::exit()
 {
   ecs::save_templates();
+  save_meta_info(projectPath + "/project.config");
   scene->destroy_scene();
   delete scene;
   ImGui_ImplOpenGL3_Shutdown();
@@ -127,11 +136,9 @@ void load_scene(const string &name, bool editor)
     debug_error("Can't load scene %s", name.c_str());
 }
 
-void start_scene(const string &name)
-{
-
-}
 void add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open)
 {
+  if (need_to_open)
+    get_meta_info().firstScene = path.stem().string();
   Application::instance().scene->add_open_scene(path, need_to_add, need_to_open);
 }
