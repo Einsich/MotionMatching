@@ -28,8 +28,8 @@ namespace ecs
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
     void process_only_events();
-    void save_current_scene();
   public:
+    void save_current_scene();
     void start(bool editor);
     bool try_start_scene(const string &name, uint tags);
     void swap_editor_game_scene(bool pause);
