@@ -185,6 +185,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_created(
   Transform &transform)
 { 
   update_free_cam_from_transform(freeCamera, transform);
+  freeCamera.screenSpaceMovable = freeCamera.rotationable = false;
   register_camera(eid);
 }
 
