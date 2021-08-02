@@ -1,12 +1,10 @@
 #pragma once
-#include "Engine//input.h"
-#include "animation_state_machine.h"
+#include "Engine/input.h"
 #include "MotionMatching/motion_matching.h"
 #include "AnimationTree/animation_tree.h"
 #include "animation_goal.h"
 enum class AnimationPlayerType
 {
-  StateMachine,
   MotionMatching, 
   AnimationPlayer
 };
@@ -16,7 +14,6 @@ class AnimationPlayer
   public:
   AnimationPlayerType playerType;
   float speed;
-  AnimationStateMachine stateMachine;
   MotionMatching motionMatching;
   AnimationTree tree;
   struct IKFoot
@@ -38,7 +35,6 @@ class AnimationPlayer
   AnimationPlayer() = default;
 
   void animation_selector(const KeyEventAnyActionKey &event);
-  AnimationStateMachine *get_state_machine();
   MotionMatching *get_motion_matching();
   const MotionMatching *get_motion_matching() const;
   AnimationLerpedIndex get_index() const;

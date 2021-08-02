@@ -39,11 +39,6 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
 {
   float dt = Time::delta_time();
   
-  if (animationPlayer.playerType ==  AnimationPlayerType::StateMachine)
-  {
-    animationPlayer.stateMachine.update(dt);
-    animationPlayer.index = animationPlayer.stateMachine.get_current_animation();
-  }
   if (animationPlayer.playerType ==  AnimationPlayerType::MotionMatching)
   {
     const MotionMatchingSettings &settings = SettingsContainer::instance->motionMatchingSettings[mmIndex ? *mmIndex : 0].second;

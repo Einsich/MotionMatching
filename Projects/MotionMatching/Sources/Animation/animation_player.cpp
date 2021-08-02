@@ -7,16 +7,11 @@
 #include "Engine/Profiler/profiler.h"
 AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f), 
-stateMachine(playerType ==  AnimationPlayerType::StateMachine ? dataBase : nullptr), 
 motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
 tree(&dataBase->tree), 
 index(dataBase, 0, 0),
 currentCadr(index.get_lerped_cadr())
 {
-  if (playerType ==  AnimationPlayerType::StateMachine)
-  {
-    stateMachine.play_animation(0);
-  }
   for (uint i = 0; i < dataBase->clips.size(); ++i)
     if (dataBase->clips[i].name == first_anim)
     {
@@ -63,10 +58,6 @@ void AnimationPlayer::animation_selector(const KeyEventAnyActionKey &event)
   index.current_index().set_index(anim, 1);
 }
 
-AnimationStateMachine *AnimationPlayer::get_state_machine()
-{
-  return playerType ==  AnimationPlayerType::StateMachine ? &stateMachine : nullptr;
-}
 MotionMatching *AnimationPlayer::get_motion_matching()
 {
   return playerType ==  AnimationPlayerType::MotionMatching ? &motionMatching : nullptr;
