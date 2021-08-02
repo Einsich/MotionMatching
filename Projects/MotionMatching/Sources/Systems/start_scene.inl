@@ -25,7 +25,6 @@
 #include "Engine/imgui/imgui.h"
 
 #define CUSTOM_TYPE \
-MACRO(ThirdPersonController)\
 MACRO(PersonController)\
 MACRO(DebugArrow)\
 MACRO(BoneRender)\
@@ -39,6 +38,7 @@ REG_TYPE(MeshRender)
 REG_TYPE(AnimationRender)
 REG_TYPE(AnimationPlayer)
 REG_TYPE(AnimationTester)
+REG_TYPE(ThirdPersonController)
 
 void write_tree(aiNode* root, int d = 1)
 {

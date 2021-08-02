@@ -7,18 +7,11 @@
 #include "Animation/person_controller.h"
 
 
-constexpr float lerp_strength = 4.f;
-constexpr float zoom_strength = 0.4f;
-
 vec3 rotation_to_orientation(vec2 rotation)
 {
   float x = rotation.x;
   float y = rotation.y;
   return vec3(cos(y) * cos(x), sin(y), cos(y) * sin(x));
-}
-float clamp_zoom(float zoom)
-{
-  return glm::clamp(zoom, 0.5f, 10.f);
 }
 
 EVENT() third_controller_appear(
@@ -28,7 +21,8 @@ EVENT() third_controller_appear(
   thirdPersonController.wantedCameraOrientation = thirdPersonController.currentCameraOrientation =
       rotation_to_orientation(thirdPersonController.currentCameraRotation);
 
-  thirdPersonController.currentZoom  = thirdPersonController.wantedZoom = clamp_zoom(thirdPersonController.currentZoom);
+  thirdPersonController.currentZoom  = thirdPersonController.wantedZoom = 
+    glm::clamp(thirdPersonController.currentZoom, thirdPersonController.minZoom, thirdPersonController.maxZoom);
 }
 
 template<typename Callable>
@@ -40,12 +34,12 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
   ThirdPersonController &thirdPersonController) 
 {
   
-  float dt = Time::delta_time();
+  float dt = Time::delta_time() * thirdPersonController.lerpStrength;
   thirdPersonController.currentCameraRotation =
   lerp(thirdPersonController.currentCameraRotation,
     thirdPersonController.wantedCameraRotation + vec2(PI * 0.5f * thirdPersonController.view_offset, 0),
-    dt * lerp_strength);
-  thirdPersonController.currentZoom = lerp(thirdPersonController.currentZoom, thirdPersonController.wantedZoom, dt * lerp_strength);
+    dt);
+  thirdPersonController.currentZoom = lerp(thirdPersonController.currentZoom, thirdPersonController.wantedZoom, dt);
   thirdPersonController.currentCameraOrientation = rotation_to_orientation(thirdPersonController.currentCameraRotation);
 
   QUERY() update_attached_camera(attachedCamera, [&](Transform &transform)
@@ -82,7 +76,9 @@ EVENT() mouse_wheel_handler(
   const MouseWheelEvent &e,
   ThirdPersonController &thirdPersonController)
 {
-  thirdPersonController.wantedZoom = clamp_zoom(thirdPersonController.wantedZoom + -e.wheel * zoom_strength);
+  thirdPersonController.wantedZoom = 
+  glm::clamp(thirdPersonController.wantedZoom + -e.wheel * thirdPersonController.zoomStrength,
+    thirdPersonController.minZoom, thirdPersonController.maxZoom);
 }
 
 EVENT() view_offset_handler(
