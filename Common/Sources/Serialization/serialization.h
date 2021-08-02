@@ -242,19 +242,46 @@ inline size_t read(std::istream& is, T &value, Args &... args)
 void print_file_size(const std::string &path, size_t fileSize);
 
 template <typename T>
-size_t save_object(const T &object, const std::string &path)
+size_t save_object_path(const T &object, const std::filesystem::path &path)
 {
-  ofstream file (project_resources_path(path), ios::binary);
+  ofstream file (path, ios::binary);
+  size_t fileSize = write(file, object);
+  print_file_size(path.string(), fileSize);
+  file.close();
+  return fileSize;
+}
+template <typename T>
+size_t save_object_path(const T &object, const std::string &path)
+{
+  ofstream file (path, ios::binary);
   size_t fileSize = write(file, object);
   print_file_size(path, fileSize);
   file.close();
   return fileSize;
 }
-
 template <typename T>
-size_t load_object(T &object, const std::string &path)
+size_t save_object(const T &object, const std::string &path)
 {
-  ifstream file(project_resources_path(path), ios::binary);
+  return save_object_path(object, project_resources_path(path));
+}
+template <typename T>
+size_t load_object_path(T &object, const std::filesystem::path &path)
+{
+  ifstream file(path, ios::binary);
+  if (file.fail())
+  {
+    debug_error("Can not open %s, skip load object", path.c_str());
+    return 0;
+  }
+  size_t fileSize = read(file, object);
+  print_file_size(path.string(), fileSize);
+  file.close();
+  return fileSize;
+}
+template <typename T>
+size_t load_object_path(T &object, const std::string &path)
+{
+  ifstream file(path, ios::binary);
   if (file.fail())
   {
     debug_error("Can not open %s, skip load object", path.c_str());
@@ -264,4 +291,9 @@ size_t load_object(T &object, const std::string &path)
   print_file_size(path, fileSize);
   file.close();
   return fileSize;
+}
+template <typename T>
+size_t load_object(T &object, const std::string &path)
+{
+  return load_object_path(object, project_resources_path(path));
 }

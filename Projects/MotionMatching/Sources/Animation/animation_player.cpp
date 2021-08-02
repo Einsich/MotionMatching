@@ -7,7 +7,7 @@
 #include "Engine/Profiler/profiler.h"
 AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f), 
-motionMatching(playerType ==  AnimationPlayerType::MotionMatching ? dataBase : nullptr, first_anim, MotionMatchingSolverType::BruteForce),
+motionMatching(dataBase, first_anim, MotionMatchingSolverType::BruteForce),
 tree(&dataBase->tree), 
 index(dataBase, 0, 0),
 currentCadr(index.get_lerped_cadr())

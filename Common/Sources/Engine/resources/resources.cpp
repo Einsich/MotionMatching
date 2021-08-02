@@ -14,7 +14,7 @@ void create_all_resources_from_metadata(const string &path)
       const fs::path &path = entry.path();
       if (path.extension() == ".meta")
       {
-        debug_log("meta file %s", path.stem().string().c_str());
+        //debug_log("meta file %s", path.stem().string().c_str());
         string strPath = path.string();
         fs::path resPath = strPath.substr(0, strPath.size() - 5);
         if (!fs::exists(resPath))
@@ -32,7 +32,7 @@ void create_all_resources_from_metadata(const string &path)
         if (it != assets.end())
         {
           const fs::path &pathToAsset = it->second.metaDataAsset ? path.string() + ".meta" : path;
-          debug_log("creating asset %s", pathToAsset.string().c_str());
+          //debug_log("creating asset %s", pathToAsset.string().c_str());
           it->second.createAsset(pathToAsset);
         }
         else
@@ -76,7 +76,7 @@ void save_all_resources_to_metadata()
       }
       else
       {
-        debug_log("asset %s wasn't edit (don't save)", asset.first.c_str());
+        //debug_log("asset %s wasn't edit (don't save)", asset.first.c_str());
       }
     }
   }

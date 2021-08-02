@@ -1,7 +1,5 @@
 #pragma once
-#include "common.h"
-#include "animation_database.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 
-AnimationDataBasePtr animation_preprocess(Assimp::Importer& importer, aiNode *root);
+class AnimationDataBase;
+
+void animation_preprocess(AnimationDataBase *data_base, const filesystem::path &lib_path, bool from_fbx);

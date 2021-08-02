@@ -140,7 +140,7 @@ namespace ecs
   {
     entityPull.clear();
     constexpr string_hash eidTypeHash = HashedString(nameOf<EntityId>::value);
-    constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
+    //constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
     size_t n = 0;
     size_t size = read(is, n);
     archetypes.resize(n);

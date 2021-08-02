@@ -90,7 +90,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   string manPath = project_resources_path("MocapOnline/MotusMan_v55/MotusMan_v55.fbx");
   importer.ReadFile(manPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
-  const aiScene* scene = importer.GetScene();
+  //const aiScene* scene = importer.GetScene();
   
   Asset<Texture2D> tex1 = get_resource<Texture2D>("screen.jpg");
   Asset<Material> material;

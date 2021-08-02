@@ -91,6 +91,7 @@ public:
   }
   //create asset and init them from .meta file or only default value
   Asset():asset(nullptr){}
+  Asset(nullptr_t ):asset(nullptr){}
 
   Asset(const filesystem::path &resource_path) :
   asset(new ResourceInfo{resource_path, false, false, false, false, T()})
@@ -187,7 +188,11 @@ public:
   {
     return get_asset_name(asset->path);
   }
-
+  const filesystem::path &asset_path() const
+  {
+    static filesystem::path defPath = "";
+    return asset ? asset->path : defPath;
+  }
   virtual size_t serialize(std::ostream& os) const override
   {
     return write(os, asset ? asset->path.string() : "null");

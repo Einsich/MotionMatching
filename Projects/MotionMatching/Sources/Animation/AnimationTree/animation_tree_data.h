@@ -29,6 +29,7 @@ private:
 public:
   vector<AnimationNodeData> nodes;
   AnimationTreeData(aiNode * node);
+  AnimationTreeData() = default;
   int get_child(const string& name) const;
   void apply_other_tree(const AnimationTreeData &other_tree);
 };

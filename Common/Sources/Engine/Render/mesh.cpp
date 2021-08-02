@@ -99,7 +99,7 @@ void Mesh::load(const filesystem::path &path, bool reload)
   {
     int ind = std::stoi(path.parent_path().filename().string());
     string strPath = path.parent_path().parent_path().string();
-      Assimp::Importer importer;
+    Assimp::Importer importer;
     importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
     importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
     
