@@ -8,6 +8,7 @@ struct SelectedAsset : ecs::Singleton
   Asset<AssetStub> *asset = nullptr;
   string_view name;
   ResourceMap *resourceType = nullptr;
+  bool selectNewResourceType = false;
 };
 SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(SelectedAsset &selectedAsset)
 {
@@ -18,8 +19,11 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(Selected
     {
       if (ImGui::Button(p.first.data()))
       {
+        selectedAsset.selectNewResourceType = selectedAsset.resourceType !=  &p.second;
         selectedAsset.resourceType = &p.second;
         selectedAsset.name = p.first;
+        if (selectedAsset.selectNewResourceType)
+          selectedAsset.asset = nullptr;
       }
     }
     ImGui::EndMenu();
@@ -30,11 +34,14 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
 {
   constexpr int BUFN = 255;
   char buf[BUFN];
+  bool selectNewResourceType = selectedAsset.selectNewResourceType;
+  selectedAsset.selectNewResourceType = false;
   if (selectedAsset.resourceType)
   {
     if (ImGui::Begin("asset viewer"))
     {
       static bool adding = false;
+      adding &= !selectNewResourceType;
       ImGui::Text("%s", selectedAsset.name.data());
       if (!selectedAsset.resourceType->metaDataAsset)
       {
