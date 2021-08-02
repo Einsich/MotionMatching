@@ -66,7 +66,7 @@ void imgui_error(const char *error)
 {
   ImGui::TextColored(ImVec4(1.0, 0, 0, 1.0), "%s",  error);
 }
-void edit_template(ecs::Template &templ, bool view_only = false)
+void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
 {
   vector<ecs::TemplateInfo> &types = templ.types;
   vector<ecs::Template*> &subTemplates = templ.subTemplates;
@@ -164,12 +164,12 @@ void edit_template(ecs::Template &templ, bool view_only = false)
     ImGui::SameLine();
     if (!subTemplate->opened)
     {
-      snprintf(bufIndex, BUFN, "open##%d", i);
+      snprintf(bufIndex, BUFN, "open##%d %d", depth, i);
       if(ImGui::Button(bufIndex))
         subTemplate->opened = true;
     } else
     {
-      snprintf(bufIndex, BUFN, "close##%d", i);
+      snprintf(bufIndex, BUFN, "close##%d %d", depth, i);
       if(ImGui::Button(bufIndex))
         subTemplate->opened = false;
 
@@ -177,7 +177,7 @@ void edit_template(ecs::Template &templ, bool view_only = false)
     if (!view_only)
     {
       ImGui::SameLine();
-      snprintf(bufIndex, BUFN, "remove##%d", i);
+      snprintf(bufIndex, BUFN, "remove##%d %d", depth, i);
       bool rem = ImGui::Button(bufIndex);
       if (rem)
       {
@@ -191,7 +191,7 @@ void edit_template(ecs::Template &templ, bool view_only = false)
     }
     if (subTemplate->opened)
     {
-      edit_template(*subTemplate, true);
+      edit_template(*subTemplate, true, depth + 1);
     }
   }
   if (view_only)

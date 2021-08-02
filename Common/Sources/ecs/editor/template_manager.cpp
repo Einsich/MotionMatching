@@ -48,7 +48,7 @@ namespace ecs
     vector<Template*> &templates = TemplateManager::instance().templates;
     size_t s = 0;
     s += read(is, types);
-    uint subTemplSize = 0;
+    size_t subTemplSize = 0;
     s += read(is, subTemplSize);
     subTemplates.reserve(subTemplSize);
     for (uint i = 0; i < subTemplSize; ++i)

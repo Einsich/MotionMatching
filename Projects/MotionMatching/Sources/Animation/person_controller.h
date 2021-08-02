@@ -1,6 +1,7 @@
 #pragma once
 #include "3dmath.h"
 #include "AnimationDatabase/animation_trajectory.h"
+#include "Serialization/reflection.h"
 class AnimationPlayer;
 class Transform;
 class PersonController
@@ -10,6 +11,8 @@ public:
   {
     vec3 pos; float rot, time;
   };
+  REFLECT(PersonController, 
+  (bool) (fake_field))
   float simulatedRotation, realRotation, wantedRotation, angularSpeed;
   std::array<vec3, AnimationTrajectory::PathLength> desiredTrajectory;
   std::array<float, AnimationTrajectory::PathLength> desiredOrientation;

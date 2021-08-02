@@ -72,6 +72,7 @@ namespace ecs
       capacity += binSize;
     }
     CopyConstructor copyConstructor = type_copy_constructor(typeHash);
+    Constructor constructor = copy_constructor(typeHash);
 
     for (;count < other.count; ++count)
     {
@@ -79,6 +80,7 @@ namespace ecs
       int i = count % binSize;
       const void *scr = (char*)other.data[j] + type_sizeof(typeHash) * i;
             void *dst = (char*)      data[j] + type_sizeof(typeHash) * i;
+      constructor(dst);
       copyConstructor(scr, dst);
     }
   }

@@ -7,21 +7,15 @@
 #include "Animation/person_controller.h"
 #include "motion_matching_scene.h"
 
-template<typename Callable>
-void get_test_query(Callable);
-template<typename Callable>
-void get_test2_query(Callable);
-
 
 SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
   ecs::EntityId eid,
-  AnimationTester &animationTester)
+  AnimationTester &animationTester,
+  AnimationPlayer &animationPlayer)
 {
-  QUERY() get_test_query([&](MotionMatchingScene &motionMatchingScene)
-  {
     float dt = Time::delta_time();
     
-    AnimationTest &test = motionMatchingScene.dataBase->tests[animationTester.testInd];
+    AnimationTest &test = animationPlayer.dataBase->tests[animationTester.testInd];
 
     animationTester.curTime += dt;
     while ((int)test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
@@ -55,19 +49,17 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     {
       ecs::send_event(eid, ecs::OnEntityCreated());
     }
-  });
-  
 }
 
-EVENT() start_test(
+EVENT(ecs::SystemTag::GameEditor) start_test(
   const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
+  const AnimationPlayer &animationPlayer,
   const vec3 &testOffset,
   Transform &transform,
   PersonController &personController)
 {
-  int maxTest = 1;
-  QUERY() get_test2_query([&](MotionMatchingScene &motionMatchingScene){maxTest = motionMatchingScene.dataBase->tests.size();});
+  int maxTest = animationPlayer.dataBase->tests.size();
   animationTester.testInd = rand() % maxTest;
   animationTester.curTime = 0;
   animationTester.testStartTime = Time::time();

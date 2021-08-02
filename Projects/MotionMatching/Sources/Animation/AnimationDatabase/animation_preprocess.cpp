@@ -234,7 +234,6 @@ void animation_preprocess(AnimationDataBase *animDatabase)
   //  debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
   //debug_log("Animation at all: %d", animDatabase->clips.size());
 
-  animDatabase->load_runtime_parameters();
    
   //print_tree(animDatabase->tree, 0, 0);
 }

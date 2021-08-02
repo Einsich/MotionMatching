@@ -32,6 +32,7 @@ void AnimationDataBase::load(const filesystem::path &path, bool reload)
   if (!reload)
   {
     reload_tree(tree, treeSource.asset_path());
+    load_runtime_parameters();
   }
   if (needForceReload)
     animation_preprocess(this);

@@ -27,7 +27,6 @@
 #define CUSTOM_TYPE \
 MACRO(ThirdPersonController)\
 MACRO(PersonController)\
-MACRO(AnimationTester)\
 MACRO(DebugArrow)\
 MACRO(BoneRender)\
 MACRO(SceneRender)\
@@ -39,6 +38,7 @@ CUSTOM_TYPE
 REG_TYPE(MeshRender)
 REG_TYPE(AnimationRender)
 REG_TYPE(AnimationPlayer)
+REG_TYPE(AnimationTester)
 
 void write_tree(aiNode* root, int d = 1)
 {
