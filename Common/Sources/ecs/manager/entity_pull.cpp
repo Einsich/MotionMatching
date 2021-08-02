@@ -62,6 +62,16 @@ namespace ecs
     totalCount++;
     return EntityId(entity, archetype, index);
   }
+  EntityId EntityPull::find_entity(uint archetype, uint index)
+  {
+    for (auto it = begin(), e = end(); it != e; ++it)
+    {
+      const EntityId &eid = it.eid();
+      if (eid.archetype_index() == archetype && eid.array_index() == index)
+        return eid;
+    }
+    return EntityId();
+  }
   void EntityPull::destroy_entity(const EntityId &eid)
   {
     if (eid)

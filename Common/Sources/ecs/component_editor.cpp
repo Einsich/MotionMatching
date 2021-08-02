@@ -2,6 +2,8 @@
 #include "component_editor.h"
 #include "ecs/manager/entity_id.h"
 #include "ecs/base_types.h"
+#include "ecs/ecs_core.h"
+#include "ecs/manager/entity_container.h"
 #include "Serialization/reflection.h"
 #include "3dmath.h"
 constexpr int BUFN = 255;
@@ -110,12 +112,20 @@ bool edit_component(mat3 &component, const char *name, bool view_only)
   return edited;
 }
 template<>
-bool edit_component(ecs::EntityId &component, const char *name, bool)
+bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
 {
-  ImGui::Text("%s [%s] archetype %d, index %d", name,component.valid() ? "valid":"not valid",
+  ImGui::Text("%s [%s] archetype %d, index %d", name, component.valid() ? "valid":"not valid",
    component.archetype_index(), component.array_index());
+  bool edited = false;
+  if (!view_only && strcmp(name, "eid"))
+  {
+    int archIndex[2] = {component.archetype_index(), (int)component.array_index()};
+    edited = ImGui::InputInt2("archetype&array index", archIndex);
+    if (edited)
+      component = ecs::core().entityContainer->entityPull.find_entity(archIndex[0], archIndex[1]);
+  }
   ImGui::Spacing();
-  return false;
+  return edited;
 }
 template<>
 bool edit_component(std::string &component, const char *name, bool view_only)
