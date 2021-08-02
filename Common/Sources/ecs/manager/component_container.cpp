@@ -48,7 +48,7 @@ namespace ecs
     copyConstructor(component_data, dst);
     count++;
   }
-  void ComponentContainer::destroy_component(int i, bool without_copy)
+  void ComponentContainer::destroy_component(int i, bool with_swap)
   {
     count--;
     CopyConstructor copyConstructor = type_copy_constructor(typeHash);
@@ -56,7 +56,7 @@ namespace ecs
     int j = count;
     void *removed = (char*)data[i / binSize] + type_sizeof(typeHash) * (i % binSize);
     destructor(removed);
-    if (!without_copy && j != i)
+    if (with_swap && j != i)
     {
       void *copied = (char*)data[j / binSize] + type_sizeof(typeHash) * (j % binSize);
       copyConstructor(copied, removed);

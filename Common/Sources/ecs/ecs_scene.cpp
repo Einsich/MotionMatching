@@ -89,7 +89,7 @@ namespace ecs
         {
           core().destroy_entities();
           process_only_events();
-          destroy_entities(true);
+          destroy_entities(false);
         }
         core().replace_entity_container(&currentScene->editorScene);
         
@@ -136,7 +136,7 @@ namespace ecs
     }
 
   }
-  void SceneManager::destroy_entities(bool without_copy)
+  void SceneManager::destroy_entities(bool with_swap)
   {
     auto &toDestroy = core().toDestroy;
     for (int i = 0, n = toDestroy.size(); i < n; i++)
@@ -144,7 +144,7 @@ namespace ecs
       EntityId &eid = toDestroy.front();
       debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
       fflush(stdout);
-      core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), without_copy);
+      core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap);
       toDestroy.pop();
     }
   }
@@ -161,7 +161,7 @@ namespace ecs
   {
     //debug_log("process events");
     process_only_events();
-    destroy_entities(false);
+    destroy_entities(true);
   }
   
   void SceneManager::save_current_scene()
@@ -179,7 +179,7 @@ namespace ecs
     save_current_scene();
     core().destroy_entities();
     process_only_events();
-    destroy_entities(true);
+    destroy_entities(false);
     for (Scene *scene: scenes)
     {
       for (Archetype *archetype : scene->gameScene.archetypes)

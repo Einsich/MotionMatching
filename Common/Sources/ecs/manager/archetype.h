@@ -24,7 +24,7 @@ namespace ecs
     ComponentContainer *get_container(const char *name);
     void add_entity(const ComponentInitializerList &list);
     void add_entity(const vector<const TemplateInfo*> &list);
-    void destroy_entity(int index, bool without_copy = false);
+    void destroy_entity(int index, bool with_swap);
     ~Archetype() = default;
     void copy(const Archetype *src);
     

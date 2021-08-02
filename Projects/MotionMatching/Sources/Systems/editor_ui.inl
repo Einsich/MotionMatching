@@ -21,6 +21,12 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
         snprintf(buf, N, "entity[%d]", j);
         if (ImGui::TreeNode(buf))
         {
+          ImGui::SameLine();
+          if (ImGui::Button("destroy"))
+          {
+            archetype->destroy_entity(j, true);
+          }
+          else
           for (const ecs::FullTypeDescription *full_descr : archetype->fullTypeDescriptions)
           {
             const ecs::TypeInfo &typeInfo = ecs::TypeInfo::types()[full_descr->typeHash];
