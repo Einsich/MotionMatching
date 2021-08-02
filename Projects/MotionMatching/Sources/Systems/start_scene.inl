@@ -25,7 +25,6 @@
 #include "Engine/imgui/imgui.h"
 
 #define CUSTOM_TYPE \
-MACRO(AnimationPlayer)\
 MACRO(ThirdPersonController)\
 MACRO(PersonController)\
 MACRO(AnimationTester)\
@@ -39,12 +38,24 @@ MACRO(MotionMatchingScene)
 CUSTOM_TYPE
 REG_TYPE(MeshRender)
 REG_TYPE(AnimationRender)
+REG_TYPE(AnimationPlayer)
 
 void write_tree(aiNode* root, int d = 1)
 {
   debug_log("%*c%s",d, ' ', root->mName.C_Str());
   for (int i = 0, n = root->mNumChildren; i < n; i++)
     write_tree(root->mChildren[i], d + 1);
+}
+
+EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &)
+{
+
+  SettingsContainer::instance = new SettingsContainer();
+  load_object(*SettingsContainer::instance, "settings.bin");
+  SettingsContainer::instance->after_loading();
+
+  Settings::instance = new Settings();
+  load_object(*Settings::instance, "man_property.bin");
 }
 #define EVEN(...) void
 EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
@@ -54,12 +65,6 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
   const char* animData[2] = {"", "-AnimData -hUnity"};
   add_configs(2, animData);
 
-  SettingsContainer::instance = new SettingsContainer();
-  load_object(*SettingsContainer::instance, "settings.bin");
-  SettingsContainer::instance->after_loading();
-
-  Settings::instance = new Settings();
-  load_object(*Settings::instance, "man_property.bin");
   ecs::EntityId attachedCamera;
   {
     attachedCamera = create_camera();

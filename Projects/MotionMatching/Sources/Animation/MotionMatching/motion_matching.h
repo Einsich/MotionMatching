@@ -10,15 +10,14 @@ enum class MotionMatchingSolverType
 };
 class MotionMatching
 {
-private:
+public:
   AnimationDataBasePtr dataBase;
   MotionMatchingSolverPtr solver;
   AnimationLerpedIndex index;
   float skip_time;
-public:
   int lod;
   MatchingScores bestScore;
-  MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType);
+  MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType);
   MotionMatching() = default;
   AnimationLerpedIndex get_index() const;
   void update(float dt, const AnimationGoal &goal,

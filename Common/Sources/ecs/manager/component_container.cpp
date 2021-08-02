@@ -40,11 +40,12 @@ namespace ecs
       capacity += binSize;
     }
     CopyConstructor copyConstructor = type_copy_constructor(typeHash);
-
+    Constructor constructor = copy_constructor(typeHash);
     int j = count / binSize;
     int i = count % binSize;
-
-    copyConstructor(component_data, (char*)data[j] + type_sizeof(typeHash) * i);
+    void *dst = (char*)data[j] + type_sizeof(typeHash) * i;
+    constructor(dst);
+    copyConstructor(component_data, dst);
     count++;
   }
   void ComponentContainer::destroy_component(int i, bool without_copy)

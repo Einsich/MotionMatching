@@ -8,6 +8,7 @@ private:
 public:
   AnimationIndex(AnimationDataBasePtr dataBase = nullptr, int clip = -1, int cadr = -1);
   bool valid() const;
+  operator bool() const;
   void set_index(int clip, int cadr);
   void increase_cadr();
   bool operator()() const;
@@ -36,6 +37,7 @@ public:
   AnimationLerpedIndex(AnimationDataBasePtr dataBase = nullptr, int clip1 = -1, int cadr1 = -1);
   AnimationCadr get_lerped_cadr();
   AnimationDataBasePtr get_data_base() const;
+  operator bool() const;
   float ticks_per_second() const;
   void update(float dt);
   void play_lerped(AnimationIndex next);

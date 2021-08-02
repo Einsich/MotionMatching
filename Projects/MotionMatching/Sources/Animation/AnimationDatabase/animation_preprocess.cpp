@@ -147,15 +147,14 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
 
 string map_unity_name(const string &name);
 
-void animation_preprocess(AnimationDataBase *animDatabase, const filesystem::path &lib_path, bool from_fbx)
+void animation_preprocess(AnimationDataBase *animDatabase)
 {
   Assimp::Importer importer;
   animDatabase->clips.clear();
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
   auto tagMap = read_tag_map(project_resources_path("AnimationTags.txt"));
-  if (from_fbx)
-  {
+
     TimeScope scope("Animation Reading from fbx file");
     bool unityData = false;// !strcmp(get_config("AnimData"), "Unity");
     string path = project_resources_path(unityData ? "retarget_clips" : "MocapOnline/Root_Motion");
@@ -230,17 +229,7 @@ void animation_preprocess(AnimationDataBase *animDatabase, const filesystem::pat
         
       }
     }
-    size_t t1 = save_object_path(*animDatabase, lib_path);
-    int cadr_count = animDatabase->cadr_count();
-    debug_log("Bin file use %ld KB instead %ld KB, %ld cadres, %ld bytes on cadr", t1 / 1024, animation_size / 1024, cadr_count, t1 / cadr_count);
-  }
-  else
-  {
-    size_t t2 = load_object_path(*animDatabase, lib_path);
-    int cadr_count = animDatabase->cadr_count();
-    if (cadr_count > 0)
-      debug_log("Bin file use %ld KB, %ld cadres, %ld bytes on cadr", t2 / 1024, cadr_count, t2 / cadr_count);
-  }
+
   //for (const AnimationClip &animation : animDatabase->clips)
   //  debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
   //debug_log("Animation at all: %d", animDatabase->clips.size());

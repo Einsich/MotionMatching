@@ -201,7 +201,7 @@ public:
   {
     string path;
     size_t size = read(is, path);
-    if (path != "null")
+    if (path != "null" && path != "")
       *this = create_asset<T>(filesystem::path(path));
     else 
       *this = Asset<T>();

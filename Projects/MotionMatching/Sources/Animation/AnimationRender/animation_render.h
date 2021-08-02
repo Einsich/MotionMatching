@@ -9,9 +9,10 @@
 class AnimationRender
 {
 private:
-  Asset<Mesh> mesh;
   REFLECT(MeshRender,
-  (Asset<Material>) (material))
+  (Asset<Mesh>) (mesh),
+  (Asset<Material>) (material)
+  )
 
 public:
   AnimationRender() = default;

@@ -7,6 +7,10 @@ namespace ecs
   {
     return TypeInfo::types()[type].sizeOf;
   }
+  Constructor copy_constructor(uint type)
+  {
+    return TypeInfo::types()[type].constructor;
+  }
   CopyConstructor type_copy_constructor(uint type)
   {
     return TypeInfo::types()[type].copy_constructor;

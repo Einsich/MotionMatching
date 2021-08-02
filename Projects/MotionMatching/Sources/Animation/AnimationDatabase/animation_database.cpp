@@ -24,17 +24,17 @@ void reload_tree(AnimationTreeData &tree, const filesystem::path &path)
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
   const aiScene* scene = importer.GetScene();
-  tree = AnimationTreeData(scene->mRootNode->mChildren[0]);
+  if (scene && scene->mRootNode && scene->mRootNode->mChildren[0])
+    tree = AnimationTreeData(scene->mRootNode->mChildren[0]);
 }
 void AnimationDataBase::load(const filesystem::path &path, bool reload)
 {
   if (!reload)
   {
     reload_tree(tree, treeSource.asset_path());
-    animation_preprocess(this, path, false);
   }
   if (needForceReload)
-    animation_preprocess(this, path, true);
+    animation_preprocess(this);
 
 }
 void AnimationDataBase::free()

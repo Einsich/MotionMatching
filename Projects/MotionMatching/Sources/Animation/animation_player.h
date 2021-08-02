@@ -3,17 +3,19 @@
 #include "MotionMatching/motion_matching.h"
 #include "AnimationTree/animation_tree.h"
 #include "animation_goal.h"
+#include "Serialization/iserializable.h"
 enum class AnimationPlayerType
 {
   MotionMatching, 
   AnimationPlayer
 };
 class Transform;
-class AnimationPlayer
+class AnimationPlayer final : ISerializable
 {
   public:
   AnimationPlayerType playerType;
   float speed;
+  AnimationLerpedIndex index;
   MotionMatching motionMatching;
   AnimationTree tree;
   struct IKFoot
@@ -25,13 +27,13 @@ class AnimationPlayer
   IKFoot ikFoot[2];
   void set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, vec3 norm, const char *foot_name, const char *toe_name);
 
-  AnimationLerpedIndex index;
   AnimationCadr currentCadr;
   uint8 onGround;
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;
-  AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType);
+  AnimationDataBasePtr dataBase;
+  AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType);
   AnimationPlayer() = default;
 
   void animation_selector(const KeyEventAnyActionKey &event);
@@ -39,5 +41,7 @@ class AnimationPlayer
   const MotionMatching *get_motion_matching() const;
   AnimationLerpedIndex get_index() const;
   const AnimationTree &get_tree() const;
+
+  virtual size_t serialize(std::ostream& os) const override;
+  virtual size_t deserialize(std::istream& is) override; 
 };
-using AnimationPlayerPtr = shared_ptr<AnimationPlayer>;

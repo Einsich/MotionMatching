@@ -1,23 +1,17 @@
 #include "animation_player.h"
-#include "Engine/time.h"
 #include "animation_ik.h"
-#include "Engine/Render/debug_arrow.h"
 #include "Engine/Physics/physics.h"
-#include "config.h"
-#include "Engine/Profiler/profiler.h"
-AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, string first_anim, AnimationPlayerType playerType):
-playerType(playerType), speed(1.f), 
-motionMatching(dataBase, first_anim, MotionMatchingSolverType::BruteForce),
+#include "ecs/component_editor.h"
+#include "Engine/Resources/resources.h"
+
+AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType):
+playerType(playerType), speed(1.f),
+index(dataBase, 0, 0), 
+motionMatching(dataBase, index, MotionMatchingSolverType::BruteForce),
 tree(&dataBase->tree), 
-index(dataBase, 0, 0),
-currentCadr(index.get_lerped_cadr())
+currentCadr(index.get_lerped_cadr()),
+dataBase(dataBase)
 {
-  for (uint i = 0; i < dataBase->clips.size(); ++i)
-    if (dataBase->clips[i].name == first_anim)
-    {
-      index = AnimationLerpedIndex(dataBase, i, 0);
-      currentCadr = index.get_lerped_cadr();
-    }
 }
 
 
@@ -74,4 +68,71 @@ AnimationLerpedIndex AnimationPlayer::get_index() const
 const AnimationTree &AnimationPlayer::get_tree() const
 {
   return tree;
+}
+
+template<>
+bool edit_component(AnimationPlayer &component, const char *, bool view_only)
+{
+  bool edited = false;
+  AnimationIndex index = component.index ? component.index.current_index() : AnimationIndex();
+  int clipFrame[2]{index.get_clip_index(), index.get_cadr_index()};
+
+  {
+    bool playerType = !(bool)component.playerType;
+    edited |= ImGui::Checkbox("motion matching", &playerType);
+    component.playerType = (AnimationPlayerType)!playerType;
+  }
+  edited |= ImGui::InputFloat("speed", &component.speed);
+  if (index)
+  {
+    bool indexChange = ImGui::InputInt2("clip index", clipFrame);
+    edited |= indexChange;
+    if (indexChange)
+    {
+      clipFrame[0] = glm::clamp(clipFrame[0], 0, (int)index.get_data_base()->clips.size() - 1);
+      clipFrame[1] = glm::clamp(clipFrame[1], 0, (int)index.get_data_base()->clips[clipFrame[0]].duration - 1);
+    
+      component.index = AnimationLerpedIndex(component.dataBase, clipFrame[0], clipFrame[1]);
+      component.currentCadr = AnimationCadr(component.index.get_lerped_cadr());
+      component.motionMatching.index = component.index;
+      component.tree.set_cadr(component.currentCadr);
+      component.tree.calculate_bone_transforms();
+    }
+  }
+  bool datasetChange = edit_component(component.dataBase, "dataset", view_only);
+  edited |= datasetChange;
+  
+  if (datasetChange && component.dataBase)
+  {    
+    component.index = index ? AnimationLerpedIndex(component.dataBase, clipFrame[0], clipFrame[1]) 
+       : AnimationLerpedIndex(component.dataBase, 0, 0);
+    component.currentCadr = AnimationCadr(component.index.get_lerped_cadr());
+    component.tree = AnimationTree(&component.dataBase->tree);
+    component.tree.set_cadr(component.currentCadr);
+    component.tree.calculate_bone_transforms();
+    component.motionMatching = MotionMatching(component.dataBase, component.index, MotionMatchingSolverType::BruteForce);
+  }
+  return edited;
+}
+
+size_t AnimationPlayer::serialize(std::ostream& os) const
+{
+  int clip = 0, frame = 0;
+  if (index)
+    clip = index.current_index().get_clip_index(), frame = index.current_index().get_cadr_index();
+  return write(os, dataBase, playerType, speed, clip, frame);
+}
+size_t AnimationPlayer::deserialize(std::istream& is)
+{
+  int clip = 0, frame = 0;
+  size_t size = read(is, dataBase, playerType, speed, clip, frame);
+  if (dataBase)
+  {
+    index = AnimationLerpedIndex(dataBase, clip, frame);
+    if (index)
+      currentCadr = AnimationCadr(index.get_lerped_cadr());
+    tree = AnimationTree(&dataBase->tree);
+    motionMatching = MotionMatching(dataBase, index, MotionMatchingSolverType::BruteForce);
+  }
+  return size;
 }

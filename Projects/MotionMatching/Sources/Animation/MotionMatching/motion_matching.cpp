@@ -4,19 +4,11 @@
 
 static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
 
-MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, string first_anim, MotionMatchingSolverType solverType):
-dataBase(dataBase), solver(nullptr), index(dataBase, 0, 0), skip_time(0), lod(0)
+MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
+dataBase(dataBase), solver(nullptr), index(index), skip_time(0), lod(0)
 {
   if (!dataBase)
     return;
-  for (uint i = 0; i < dataBase->clips.size(); i++)
-  {
-    if (dataBase->clips[i].name == first_anim)
-    {
-      index = AnimationLerpedIndex(dataBase, i, 0);
-      break;
-    }
-  }
   auto &solverMap = solvers[(int)solverType];
   auto it = solverMap.find(dataBase);
   if (it == solverMap.end())

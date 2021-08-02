@@ -10,6 +10,10 @@ bool AnimationIndex::valid() const
 {
   return dataBase && 0 <= clip && clip < (int)dataBase->clips.size() && 0 <= cadr && cadr < (int)dataBase->clips[clip].duration;
 }
+AnimationIndex::operator bool() const
+{
+  return valid();
+}
 void AnimationIndex::set_index(int clip, int cadr)
 {
   if (dataBase)
@@ -116,6 +120,10 @@ AnimationLerpedIndex::AnimationLerpedIndex(
   AnimationDataBasePtr dataBase, int clip1, int cadr1):
 dataBase(dataBase), indexes({AnimationIndex(dataBase, clip1, cadr1)}), indexesT({0})
 {}
+AnimationLerpedIndex::operator bool() const
+{
+  return indexes.size() > 0 && indexes.back();
+}
 AnimationCadr AnimationLerpedIndex::get_lerped_cadr()
 {
   AnimationCadr lateFrame = indexes[0].get_cadr(indexesT[0]);

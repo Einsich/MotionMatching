@@ -5,6 +5,7 @@
 namespace ecs
 {
   uint type_sizeof(uint type);
+  Constructor copy_constructor(uint type);
   CopyConstructor type_copy_constructor(uint type);
   Destructor type_destructor(uint type);
 
