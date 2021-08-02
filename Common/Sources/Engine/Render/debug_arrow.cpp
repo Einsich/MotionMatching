@@ -38,7 +38,6 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 }
 DebugArrow::DebugArrow()
 {
-  arrowShader = get_shader("bones");
   arrowMaterial = get_resource<Material>("standart");
   vector<uint> indices;
   vector<vec3> vert;
@@ -108,16 +107,17 @@ void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &mat
 }
 void DebugArrow::render(const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame)
 {
+  const Shader &arrowShader = arrowMaterial->get_shader();
   arrowShader.use();
   light.bind_to_shader(arrowShader);
   set_camera_to_shader(arrowShader, view_projection, camera_position);
-  arrowMaterial->bind_to_shader(arrowShader);
+  arrowMaterial->bind_to_shader();
   glDisable(GL_CULL_FACE);
 
   render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow, wire_frame);
   render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow, wire_frame);
 
-  arrowMaterial->unbind_to_shader(arrowShader);
+  arrowMaterial->unbind_to_shader();
   light.unbind_to_shader(arrowShader);
   glEnable(GL_CULL_FACE);
 }

@@ -173,7 +173,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     ecs::ComponentInitializerList list; 
     list.add<Transform>("transform") = Transform(vec3(0.f,0.0f,0.0f), vec3(), vec3(500,1,500));
     list.add<MeshRender>("meshRender") = 
-     MeshRender(plane_mesh(true), get_resource<Material>("floor_ground"),get_shader("section_plane"));
+     MeshRender(plane_mesh(true), get_resource<Material>("floor_ground"));
 
     //add_collider(plane, make_collider<PlaneCollider>());
     ecs::create_entity(list);
@@ -186,7 +186,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       vec3 offset = vec3(0, i* 0.2f, i);
       list.add<Transform>("transform") = Transform(offset, rotation, vec3(0.7f,0.4f,0.7f));
       list.add<MeshRender>("meshRender") = 
-      MeshRender(cube_mesh(true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
+      MeshRender(cube_mesh(true), standart_textured_material(tex1));
       material = list.get<MeshRender>("meshRender").get_material();
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(cube, make_collider<BoxCollider>());
@@ -202,7 +202,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       vec3 offset = -vec3(rx * scale * 0.5f, 0.0f, ry * scale * 0.5f);
       list.add<Transform>("transform") = Transform(offset, rotation, vec3(scale,scale,scale));
       list.add<MeshRender>("meshRender") = 
-      MeshRender(plane_mesh(true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
+      MeshRender(plane_mesh(true), standart_textured_material(tex1));
       material = list.get<MeshRender>("meshRender").get_material();
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(plane, make_collider<PlaneCollider>());
@@ -216,7 +216,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
       vec3 offset = vec3(-1.f,0.f,-1.f) + vec3(-i, i*0.5, i)*0.4f;
       list.add<Transform>("transform") = Transform(offset, vec3(), vec3(0.4f));
       list.add<MeshRender>("meshRender") = 
-      MeshRender(sphere_mesh(20, true), standart_textured_material(tex1), get_shader("standart_normal_uv"));
+      MeshRender(sphere_mesh(20, true), standart_textured_material(tex1));
       material = list.get<MeshRender>("meshRender").get_material();
       material->set_property(Property("Specular", vec3(0.f)));
       //add_collider(sphere, make_collider<SphereCollider>(0.4f));

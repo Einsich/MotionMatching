@@ -2,7 +2,7 @@
 #include <iostream>
 
 static std::vector<std::pair<std::string, GLuint>> shaderList;
-static Shader badShader("badShader", BAD_PROGRAM);
+static Shader badShader("invalid shader", BAD_PROGRAM);
 
 
 Shader::Shader(const std::string &shader_name, GLuint shader_program, bool update_list)
@@ -22,7 +22,7 @@ GLuint Shader::get_shader_program() const
 {
   return shaderList[shaderIdx].second;
 }
-Shader get_shader(std::string shader_name)
+Shader get_shader(std::string shader_name, bool with_log)
 {
   auto shader_iter = std::find_if(shaderList.begin(), shaderList.end(), [&](const auto &p){return p.first == shader_name;});
 	if (shader_iter != shaderList.end())
@@ -31,11 +31,19 @@ Shader get_shader(std::string shader_name)
   }
   else
   {
-    std::cerr << "Can't find shader " << shader_name << std::endl;
+    if (with_log)
+      debug_error("Can't find shader %s", shader_name.c_str());
     return badShader;
   }
 }
 void Shader::use() const
 {
   glUseProgram(get_shader_program());
+}
+const vector<const char*>get_shaders_names()
+{
+  std::vector<const char *> shadersNames(shaderList.size());
+  for (uint i = 0; i < shaderList.size(); ++i)
+    shadersNames[i] = shaderList[i].first.c_str();
+  return shadersNames;
 }

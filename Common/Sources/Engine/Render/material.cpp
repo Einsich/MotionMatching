@@ -57,17 +57,25 @@ size_t Property::deserialize(std::istream& is)
   }
   return size;  
 }
-void Material::bind_to_shader(const Shader& shader) const
+void Material::bind_to_shader() const
 {
   for (const Property & property : properties)
     property.bind_to_shader(shader);
 }
-void Material::unbind_to_shader(const Shader &shader) const
+void Material::unbind_to_shader() const
 {
   for (const Property & property : properties)
     property.unbind_to_shader(shader);
 }
 
+Shader &Material::get_shader()
+{
+  return shader;
+}
+const Shader &Material::get_shader() const
+{
+  return shader;
+}
 void Material::set_property(const Property &property)
 {
   auto it = find(properties.begin(), properties.end(), property);
@@ -80,9 +88,10 @@ void Material::set_property(const Property &property)
     *it = property;
   }  
 }
-void Material::load(const filesystem::path &, bool )
+void Material::load(const filesystem::path &, bool reload)
 {
-
+  if (!reload)
+    shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
 }
 void Material::free()
 {
@@ -117,10 +126,56 @@ bool Property::edit_property(Property& property)
   }
   return edited;
 }
+bool select_string(const vector<const char *> &names, string &name, const char *label, bool &selecting)
+{
+  if (selecting)
+  {
+    int curItem = -1;
+    if (ImGui::ListBox("", &curItem, names.data(), names.size(), 10))
+    {
+      name.assign(names[curItem]);
+      selecting = false;
+      return true;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("back##selecting"))
+    {
+      selecting = false;
+      return false;
+    }
+  }
+  else
+  {
+    if (ImGui::Button(label))
+    {
+      selecting = true;
+    }
+  }
+  return false;
+}
 bool Material::edit()
 {
+  static bool selecting = false;
+  if (!selecting)
+  {
+    ImGui::Text("shader: \"%s\"", shaderName.c_str());
+    ImGui::SameLine();
+  }
+  bool edited = select_string(get_shaders_names(), shaderName, "select", selecting);
+
+  Shader tempShader = ::get_shader(shaderName, false);
+  if (!tempShader)
+  {
+    if (selecting)
+      ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1, 0, 0, 1), "Bad shader name");
+  }
+  else
+    shader = tempShader;
+
   std::function<bool(Property&)> f = Property::edit_property;
-  return edit_vector(properties, "properties", f);
+  edited |= edit_vector(properties, "properties", f);
+  return edited;
 }
 ResourceRegister<Material> materialRegister;
 

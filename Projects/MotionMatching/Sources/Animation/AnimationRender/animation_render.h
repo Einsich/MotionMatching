@@ -12,10 +12,10 @@ private:
   Asset<Mesh> mesh;
   REFLECT(MeshRender,
   (Asset<Material>) (material))
-  Shader shader;
+
 public:
   AnimationRender() = default;
-  AnimationRender(Asset<Mesh> mesh_ptr, Asset<Material> materail_ptr, const Shader& shader);
+  AnimationRender(Asset<Mesh> mesh, Asset<Material> material);
   void render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position,  const DirectionLight& light, const AnimationTree &tree, bool wire_frame = false) const ;
   Asset<Material> get_material() const;
 };

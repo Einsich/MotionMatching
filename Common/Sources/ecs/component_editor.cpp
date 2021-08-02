@@ -121,6 +121,7 @@ template<>
 bool edit_component(std::string &component, const char *name, bool view_only)
 {
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  snprintf(buf, BUFN, "%s", component.c_str());
   bool edited = ImGui::InputText(name, buf, BUFN, flags);
   if (edited)
     component = std::string(buf);

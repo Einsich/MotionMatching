@@ -33,16 +33,19 @@ public:
 class Material : IAsset
 {
 private:
+  Shader shader;
   REFLECT(Material,
-  (vector<Property>) (properties)
-  )
+  (vector<Property>) (properties),
+  (string) (shaderName))
 public:
   Material() = default;
   Material(const vector<Property> & properties):
     properties(properties) { }
+  Shader &get_shader();
+  const Shader &get_shader() const;
   void set_property(const Property &property);
-  void bind_to_shader(const Shader& shader) const;
-  void unbind_to_shader(const Shader &shader) const;
+  void bind_to_shader() const;
+  void unbind_to_shader() const;
   virtual void load(const filesystem::path &path, bool reload) override;
   virtual void free() override;
   virtual bool edit() override;

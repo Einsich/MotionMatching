@@ -105,4 +105,5 @@ public:
 	}
 };
 
-Shader get_shader(std::string shader_name);
+Shader get_shader(std::string shader_name, bool with_log = true);
+const vector<const char*>get_shaders_names();
