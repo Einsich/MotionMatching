@@ -56,17 +56,18 @@ EVENT() mouse_move_handler(
   const MouseMoveEvent &e,
   ecs::EntityId eid,
   ThirdPersonController &thirdPersonController,
-  PersonController &personController)
+  PersonController &personController,
+  const Settings &settings)
 {
-  if (Settings::disableCameraRotation)
+  if (settings.disableCameraRotation)
   {
     ecs::send_event_immediate(eid, ControllerMouseMoveEvent(e));
     return;
   }
   if (personController.disableEvents )
     return;
-  float dx = (Settings::mouseInvertXaxis ? 1 : -1) * e.dx;
-  thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * Settings::mouseSensitivity;
+  float dx = (settings.mouseInvertXaxis ? 1 : -1) * e.dx;
+  thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * settings.mouseSensitivity;
 
   thirdPersonController.wantedCameraRotation.y = glm::clamp(thirdPersonController.wantedCameraRotation.y, -180 * 0.45f, 180 * 0.1f);
   thirdPersonController.wantedCameraOrientation = rotation_to_orientation(thirdPersonController.wantedCameraRotation * DegToRad);
@@ -103,7 +104,7 @@ EVENT(ThirdPersonController thirdPersonController) animation_player_handler(
     int n = animationPlayer.index.get_data_base()->clips.size();
     int clip = animationPlayer.index.current_index().get_clip_index();
     clip = (clip + d + n) %n;
-    animationPlayer.index.play_lerped(AnimationIndex(animationPlayer.index.get_data_base(), clip, 0));
+    animationPlayer.index.play_lerped(AnimationIndex(animationPlayer.index.get_data_base(), clip, 0), 2);
     debug_log("Play anim %s", animationPlayer.index.current_index().get_clip().name.c_str());
   }
 }

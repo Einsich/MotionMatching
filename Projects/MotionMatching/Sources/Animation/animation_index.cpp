@@ -141,11 +141,11 @@ float AnimationLerpedIndex::ticks_per_second() const
 {
   return dataBase ? (dataBase->clips.size() > 0 ? dataBase->clips[0].ticksPerSecond : 0) : 0;
 }
-void AnimationLerpedIndex::update(float dt)
+void AnimationLerpedIndex::update(float dt, float lerpTime)
 {
 
   for (int i = 0; i < (int)indexes.size() - 1; i++)
-    mixWeights[i] += dt / Settings::lerpTime;
+    mixWeights[i] += dt / lerpTime;
   dt *= ticks_per_second();
   for (int i = 0; i < (int)indexes.size(); i++)
     indexesT[i] += dt;
@@ -168,9 +168,10 @@ void AnimationLerpedIndex::update(float dt)
   }
 }
 
-void AnimationLerpedIndex::play_lerped(AnimationIndex next)
+void AnimationLerpedIndex::play_lerped(AnimationIndex next, int maxLerpIndex)
 {
-  if ((int)indexes.size() > Settings::maxLerpIndex)
+  maxLerpIndex = maxLerpIndex > 1 ? maxLerpIndex : 1;
+  if ((int)indexes.size() > maxLerpIndex)
   {
     mixWeights.erase(mixWeights.begin());
     indexesT.erase(indexesT.begin());

@@ -5,24 +5,7 @@
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
 #include "ecs/manager/type_info.h"
-void show_settings(SettingsSet *settings)
-{
 
-  for (VarBase *var : settings->vars)
-  {
-    switch (var->varType)
-    {
-    case VarType::FLOAT: {Var<float>* fvar = (Var<float>*)var; ImGui::SliderFloat(var->name.c_str(), &fvar->value, fvar->min_val, fvar->max_val); break;}
-    case VarType::INT:   {Var<int>* ivar = (Var<int>*)var; ImGui::SliderInt(var->name.c_str(), &ivar->value, ivar->min_val, ivar->max_val); break;}
-    case VarType::BOOL:  {Var<bool>* bvar = (Var<bool>*)var; ImGui::Checkbox(var->name.c_str(), &bvar->value); break;}
-    case VarType::LABEL: {ImGui::Text("%s", var->name.c_str());}
-    
-    default:
-      break;
-    }
-  }
-  
-}
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
 {
 
@@ -142,10 +125,11 @@ SYSTEM(ecs::SystemOrder::UI) briefing_ui()
 }
 
 SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
-  const AnimationPlayer &animationPlayer)
+  const AnimationPlayer &animationPlayer,
+  const Settings &settings)
 {
 
-  if (!Settings::MatchingStatistic)
+  if (!settings.MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())
   {
@@ -191,6 +175,10 @@ void display_property(float &property, const char *name)
 {
   ImGui::InputFloat(name, &property, 0.1f, 10.f, 2);
 }
+void display_property(int &property, const char *name)
+{
+  ImGui::InputInt(name, &property);
+}
 void display_property(bool &property, const char *name)
 {
   ImGui::Checkbox(name, &property);
@@ -202,6 +190,16 @@ void display_property(vec3 &property, const char *name)
 void display_property(vec4 &property, const char *name)
 {
   ImGui::InputFloat4(name, &property.x);
+}
+template<typename T>
+void show_settings(T &settings, const char *settings_name)
+{
+  if (ImGui::BeginMenu(settings_name))
+  {
+    const auto &f = [](auto &arg, const char *name){display_property(arg, name);};
+    settings.reflect(f);
+    ImGui::EndMenu();
+  }
 }
 template<typename T>
 void settings_manager(vector<pair<string, T>> &settings, const char *settings_name)
@@ -255,24 +253,21 @@ void settings_manager(vector<pair<string, T>> &settings, const char *settings_na
 }
 
 
-SYSTEM(ecs::SystemOrder::UIMENU) menu_ui()
+SYSTEM(ecs::SystemOrder::UIMENU) menu_ui(
+  Settings &settings,
+  SettingsContainer &settingsContainer)
 {
-  if (ImGui::BeginMenu("Settings"))
-  {
-    show_settings(Settings::instance);
-    ImGui::EndMenu();
-  }
-  
-  settings_manager(SettingsContainer::instance->controllerSettings, "Controller");
-  settings_manager(SettingsContainer::instance->motionMatchingSettings, "Motion matching");
-  settings_manager(SettingsContainer::instance->motionMatchingOptimisationSettings, "Motion matching optimisation");
+  show_settings(settings, "Settings");
+  settings_manager(settingsContainer.controllerSettings, "Controller");
+  settings_manager(settingsContainer.motionMatchingSettings, "Motion matching");
+  settings_manager(settingsContainer.motionMatchingOptimisationSettings, "Motion matching optimisation");
 }
 
 
-SYSTEM(ecs::SystemOrder::UI) mm_early_text_perf()
+SYSTEM(ecs::SystemOrder::UI) mm_early_text_perf(Settings &settings)
 {
 
   ImGui::Begin("Early mm test");
-  ImGui::Text("perf = %f %%", 100.f * (float)Settings::earlyTestMMCount / Settings::MMCount);
+  ImGui::Text("perf = %f %%", 100.f * (float)settings.earlyTestMMCount / settings.MMCount);
   ImGui::End();
 }

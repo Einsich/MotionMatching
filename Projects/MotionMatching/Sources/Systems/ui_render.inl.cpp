@@ -20,6 +20,7 @@ void motion_matching_statistic_func();
 
 ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
+  {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, motion_matching_statistic_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
@@ -28,7 +29,8 @@ void motion_matching_statistic_func()
   for (ecs::QueryIterator begin = motion_matching_statistic_descr.begin(), end = motion_matching_statistic_descr.end(); begin != end; ++begin)
   {
     motion_matching_statistic(
-      *begin.get_component<AnimationPlayer>(0)
+      *begin.get_component<AnimationPlayer>(0),
+      *begin.get_component<Settings>(1)
     );
   }
 }
@@ -55,6 +57,8 @@ void current_anim_index_func()
 void menu_ui_func();
 
 ecs::SystemDescription menu_ui_descr("menu_ui", {
+  {ecs::get_type_description<Settings>("settings"), false},
+  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, menu_ui_func, ecs::SystemOrder::UIMENU, (uint)(ecs::SystemTag::Game));
 
 void menu_ui_func()
@@ -62,6 +66,8 @@ void menu_ui_func()
   for (ecs::QueryIterator begin = menu_ui_descr.begin(), end = menu_ui_descr.end(); begin != end; ++begin)
   {
     menu_ui(
+      *begin.get_component<Settings>(0),
+      *begin.get_component<SettingsContainer>(1)
     );
   }
 }
@@ -70,6 +76,7 @@ void menu_ui_func()
 void mm_early_text_perf_func();
 
 ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
+  {ecs::get_type_description<Settings>("settings"), false}
 }, mm_early_text_perf_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Game));
 
 void mm_early_text_perf_func()
@@ -77,6 +84,7 @@ void mm_early_text_perf_func()
   for (ecs::QueryIterator begin = mm_early_text_perf_descr.begin(), end = mm_early_text_perf_descr.end(); begin != end; ++begin)
   {
     mm_early_text_perf(
+      *begin.get_component<Settings>(0)
     );
   }
 }

@@ -35,15 +35,17 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   AnimationRender &animationRender,
   ThirdPersonController *thirdPersonController,
   int *mmIndex,
-  int *mmOptimisationIndex)
+  int *mmOptimisationIndex,
+  Settings &settings,
+  SettingsContainer &settingsContainer)
 {
   float dt = Time::delta_time();
   
   if (animationPlayer.playerType ==  AnimationPlayerType::MotionMatching)
   {
-    const MotionMatchingSettings &settings = SettingsContainer::instance->motionMatchingSettings[mmIndex ? *mmIndex : 0].second;
+    const MotionMatchingSettings &mmsettings = settingsContainer.motionMatchingSettings[mmIndex ? *mmIndex : 0].second;
     const MotionMatchingOptimisationSettings &OptimisationSettings = 
-      SettingsContainer::instance->motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
+      settingsContainer.motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
     float dist = length(main_camera_position() - transform.get_position());
 
     int j = 0;
@@ -63,13 +65,13 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     animationRender.get_material()->set_property(Property("Diffuse", lodColor));
     static int i = 0;
     ProfilerLabel motion_matching("motion_matching" + to_string(i));
-    i = (i + 1) % (Settings::testCount + 1);
-    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, settings, OptimisationSettings, thirdPersonController != nullptr);
+    i = (i + 1) % (settings.testCount + 1);
+    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, mmsettings, OptimisationSettings, thirdPersonController != nullptr, settings);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }
   if (animationPlayer.playerType == AnimationPlayerType::AnimationPlayer)
   {
-    animationPlayer.index.update(dt);
+    animationPlayer.index.update(dt, settings.lerpTime);
   }
   float ticks = animationPlayer.index.ticks_per_second();
   

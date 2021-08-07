@@ -30,15 +30,16 @@ AnimationLerpedIndex MotionMatching::get_index() const
   return index;
 }
 void MotionMatching::update(float dt, const AnimationGoal &goal,
-  const MotionMatchingSettings &settings,
+  const MotionMatchingSettings &mmsettings,
   const MotionMatchingOptimisationSettings &optimisationSettings,
-  bool updateStatistic)
+  bool updateStatistic,
+  Settings &settings)
 {
   
   if (!solver)
     return;
   AnimationIndex saveIndex = index.current_index();
-  index.update(dt);
+  index.update(dt, settings.lerpTime);
   skip_time += dt;
 
     AnimationIndex currentIndex = index.current_index();
@@ -52,21 +53,21 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
       skip_time = 0;
       bestScore = {0,0,0,0,0};
       solver->updateScoreStatistic = updateStatistic;
-      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore, settings, optimisationSettings);
+      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore, settings, mmsettings, optimisationSettings);
       
       bool can_jump = true;
       for (const AnimationIndex &index : index.get_indexes())
         can_jump &= AnimationIndex::can_jump(index, best_index);
       if (can_jump)
       {
-        index.play_lerped(best_index);
+        index.play_lerped(best_index, settings.maxLerpIndex);
       }
       else
       {
         if (forceJump && currentIndex.get_clip().nextClipIdx >= 0)
         {
           best_index.set_index(currentIndex.get_clip().nextClipIdx, 0);
-          index.play_lerped(best_index);
+          index.play_lerped(best_index, settings.maxLerpIndex);
         }
       }
     }

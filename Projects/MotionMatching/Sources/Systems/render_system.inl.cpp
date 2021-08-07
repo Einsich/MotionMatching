@@ -21,7 +21,8 @@ ecs::QueryDescription render_animation_descr("render_animation", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationRender>("animationRender"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<Settings>("settings"), false}
 });
 
 template<typename Callable>
@@ -33,7 +34,8 @@ void render_animation(Callable lambda)
       *begin.get_component<ecs::EntityId>(0),
       *begin.get_component<AnimationRender>(1),
       *begin.get_component<AnimationPlayer>(2),
-      *begin.get_component<Transform>(3)
+      *begin.get_component<Transform>(3),
+      *begin.get_component<Settings>(4)
     );
   }
 }
@@ -77,7 +79,8 @@ void render_debug_goal(Callable lambda)
 
 ecs::QueryDescription render_debug_goal_on_animplayer_descr("render_debug_goal_on_animplayer", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<Settings>("settings"), false}
 });
 
 template<typename Callable>
@@ -87,7 +90,8 @@ void render_debug_goal_on_animplayer(Callable lambda)
   {
     lambda(
       *begin.get_component<AnimationPlayer>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<Transform>(1),
+      *begin.get_component<Settings>(2)
     );
   }
 }

@@ -1,51 +1,25 @@
 #pragma once
 #include <functional>
 #include "3dmath.h"
-#include "Serialization/settings_set.h"
 #include "AnimationDatabase/animation_nodes.h"
-struct Settings : SettingsSet
+#include "ecs/singleton.h"
+struct Settings : ecs::Singleton
 {
-  static inline Settings *instance;
-  static inline int testCount = 0;
-  static inline int earlyTestMMCount = 0;
-  static inline int MMCount = 0;
-  #define FVAR DECL_FVAR
-  #define IVAR DECL_IVAR
-  #define BVAR DECL_BVAR
-  #define LABEL(s)
+  int testCount = 0;
+  int earlyTestMMCount = 0;
+  int MMCount = 0;
 
-  #define PARAMS()\
-  FVAR(mouseSensitivity, 0.2f, 0.f, 1.f)\
-  BVAR(mouseInvertXaxis, true)\
-  BVAR(disableCameraRotation, true)\
-  FVAR(lerpTime, 0.2f, 0.f, 1.f)\
-  IVAR(maxLerpIndex, 2, 2, 10)\
-  BVAR(debugNodes, false)\
-  BVAR(debugTrajectory, false)\
-  BVAR(debugBones, false)\
-  BVAR(MatchingStatistic, false)
-
-  PARAMS()
-  #undef FVAR
-  #undef IVAR
-  #undef BVAR
-  #undef LABEL
-
-
-  Settings()
-  {
-    #define FVAR INIT_FVAR
-    #define IVAR INIT_IVAR
-    #define BVAR INIT_BVAR
-    #define LABEL INIT_LABEL
-    PARAMS() 
-    #undef PARAMS
-    #undef FVAR
-    #undef IVAR
-    #undef BVAR
-    #undef LABEL
-  }
-
+REFLECT(
+    Settings,
+  (float)(mouseSensitivity),
+  (bool) (mouseInvertXaxis),
+  (bool) (disableCameraRotation),
+  (float)(lerpTime),
+  (int)  (maxLerpIndex),
+  (bool) (debugNodes),
+  (bool) (debugTrajectory),
+  (bool) (debugBones),
+  (bool) (MatchingStatistic))
 
 };
 struct ControllerSettings
@@ -119,9 +93,8 @@ struct MotionMatchingOptimisationSettings
   )
 
 };
-struct SettingsContainer
+struct SettingsContainer : ecs::Singleton
 {
-  static inline SettingsContainer *instance;
   REFLECT(
     SettingsContainer,
     (std::vector<std::pair<std::string, ControllerSettings>>) (controllerSettings),

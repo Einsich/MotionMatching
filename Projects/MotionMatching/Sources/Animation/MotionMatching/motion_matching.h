@@ -8,6 +8,7 @@ enum class MotionMatchingSolverType
   BruteForce,
   Count
 };
+struct Settings;
 class MotionMatching
 {
 public:
@@ -21,9 +22,10 @@ public:
   MotionMatching() = default;
   AnimationLerpedIndex get_index() const;
   void update(float dt, const AnimationGoal &goal,
-    const MotionMatchingSettings &settings,
+    const MotionMatchingSettings &mmsettings,
     const MotionMatchingOptimisationSettings &optimisationSettings,
-    bool updateStatistic);
+    bool updateStatistic,
+    Settings &settings);
   AnimationDataBasePtr get_data_base() const;
   MotionMatchingSolverPtr get_solver() const;
 };

@@ -55,11 +55,12 @@ main_render(DebugArrow &debugArrows)
     ecs::EntityId eid,
     const AnimationRender &animationRender,
     const AnimationPlayer &animationPlayer,
-    const Transform &transform)
+    const Transform &transform,
+    const Settings &settings)
   {
     animationRender.render(transform, viewProjection, cameraPosition, light, animationPlayer.get_tree(), wire_frame);
 
-    if (Settings::debugBones)
+    if (settings.debugBones)
     {
       QUERY() bone_render_animation(eid, [&](
         const BoneRender &boneRender)
@@ -83,7 +84,8 @@ main_render(DebugArrow &debugArrows)
   {
     QUERY() render_debug_goal_on_animplayer([&](
       const AnimationPlayer &animationPlayer,
-      const Transform &transform)
+      const Transform &transform,
+      const Settings &settings)
     {
       AnimationLerpedIndex index = animationPlayer.get_motion_matching() ? animationPlayer.get_motion_matching()->get_index() : animationPlayer.get_index();
 
@@ -98,7 +100,7 @@ main_render(DebugArrow &debugArrows)
       Collision collision = ray_cast(ray);
       draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);*/
 
-      if (Settings::debugNodes)
+      if (settings.debugNodes)
       {
         #define DEBUG_NODE(node)\
         {\
@@ -139,7 +141,7 @@ main_render(DebugArrow &debugArrows)
           debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
         }
       }
-      if (Settings::debugTrajectory)
+      if (settings.debugTrajectory)
       {
         constexpr float dirLength = 0.3f;
         constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};

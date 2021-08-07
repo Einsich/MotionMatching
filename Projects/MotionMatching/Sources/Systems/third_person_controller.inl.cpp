@@ -62,7 +62,8 @@ void mouse_move_handler_handler(const MouseMoveEvent &event);
 ecs::EventDescription<MouseMoveEvent> mouse_move_handler_descr("mouse_move_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
-  {ecs::get_type_description<PersonController>("personController"), false}
+  {ecs::get_type_description<PersonController>("personController"), false},
+  {ecs::get_type_description<Settings>("settings"), false}
 }, mouse_move_handler_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_move_handler_handler(const MouseMoveEvent &event)
@@ -73,7 +74,8 @@ void mouse_move_handler_handler(const MouseMoveEvent &event)
       event,
       *begin.get_component<ecs::EntityId>(0),
       *begin.get_component<ThirdPersonController>(1),
-      *begin.get_component<PersonController>(2)
+      *begin.get_component<PersonController>(2),
+      *begin.get_component<Settings>(3)
     );
   }
 }
@@ -155,7 +157,8 @@ void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 ecs::SingleEventDescription<MouseMoveEvent> mouse_move_handler_singl_descr("mouse_move_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
-  {ecs::get_type_description<PersonController>("personController"), false}
+  {ecs::get_type_description<PersonController>("personController"), false},
+  {ecs::get_type_description<Settings>("settings"), false}
 }, mouse_move_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin)
@@ -164,7 +167,8 @@ void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
     event,
       *begin.get_component<ecs::EntityId>(0),
       *begin.get_component<ThirdPersonController>(1),
-      *begin.get_component<PersonController>(2)
+      *begin.get_component<PersonController>(2),
+      *begin.get_component<Settings>(3)
   );
 }
 

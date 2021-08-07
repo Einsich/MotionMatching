@@ -39,8 +39,8 @@ public:
   AnimationDataBasePtr get_data_base() const;
   operator bool() const;
   float ticks_per_second() const;
-  void update(float dt);
-  void play_lerped(AnimationIndex next);
+  void update(float dt, float lerpTime);
+  void play_lerped(AnimationIndex next, int maxLerpIndex);
   AnimationIndex current_index() const;
   const vector<AnimationIndex> &get_indexes() const;
 };

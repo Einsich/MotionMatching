@@ -46,15 +46,14 @@ void write_tree(aiNode* root, int d = 1)
     write_tree(root->mChildren[i], d + 1);
 }
 
-EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &)
+EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
+  Settings &settings,
+  SettingsContainer &settingsContainer)
 {
+  load_object(settingsContainer, "settings.bin");
+  settingsContainer.after_loading();
 
-  SettingsContainer::instance = new SettingsContainer();
-  load_object(*SettingsContainer::instance, "settings.bin");
-  SettingsContainer::instance->after_loading();
-
-  Settings::instance = new Settings();
-  load_object(*Settings::instance, "man_property.bin");
+  load_object(settings, "man_property.bin");
 }
 #define EVEN(...) void
 EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
@@ -225,12 +224,14 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
 
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,
-  const AnimationDataBasePtr dataBase)
+  const AnimationDataBasePtr dataBase,
+  const Settings &settings,
+  const SettingsContainer &settingsContainer)
 {
   dataBase->save_runtime_parameters();
   
-  save_object(*Settings::instance, "man_property.bin");
+  save_object(settings, "man_property.bin");
   
-  save_object(*SettingsContainer::instance, "settings.bin");
+  save_object(settingsContainer, "settings.bin");
   std::fflush(stdout);
 }

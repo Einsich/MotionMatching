@@ -94,9 +94,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   PersonController &personController,
   AnimationTester *animationTester,
   Transform &transform,
-  int *controllerIndex) 
+  int *controllerIndex,
+  SettingsContainer &settingsContainer) 
 {
-  const ControllerSettings &settings = SettingsContainer::instance->controllerSettings[controllerIndex ? *controllerIndex : 0].second;
+  const ControllerSettings &settings = settingsContainer.controllerSettings[controllerIndex ? *controllerIndex : 0].second;
 
   Input &input = animationTester ? animationTester->testInput : Input::input();
   float dt = Time::delta_time();
@@ -220,10 +221,11 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
 EVENT() controller_mouse_move_handler(
   const ControllerMouseMoveEvent &e,
-  PersonController &personController)
+  PersonController &personController,
+  const Settings &settings)
 {
-  float dx = e.e.dx * DegToRad * Settings::mouseSensitivity;
-  personController.wantedRotation += (Settings::mouseInvertXaxis ? 1 : -1) * dx;
+  float dx = e.e.dx * DegToRad * settings.mouseSensitivity;
+  personController.wantedRotation += (settings.mouseInvertXaxis ? 1 : -1) * dx;
 }
 
 

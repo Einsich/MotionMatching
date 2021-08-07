@@ -9,7 +9,9 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<AnimationRender>("animationRender"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), true},
   {ecs::get_type_description<int>("mmIndex"), true},
-  {ecs::get_type_description<int>("mmOptimisationIndex"), true}
+  {ecs::get_type_description<int>("mmOptimisationIndex"), true},
+  {ecs::get_type_description<Settings>("settings"), false},
+  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, animation_player_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
 
 void animation_player_update_func()
@@ -22,7 +24,9 @@ void animation_player_update_func()
       *begin.get_component<AnimationRender>(2),
        begin.get_component<ThirdPersonController>(3),
        begin.get_component<int>(4),
-       begin.get_component<int>(5)
+       begin.get_component<int>(5),
+      *begin.get_component<Settings>(6),
+      *begin.get_component<SettingsContainer>(7)
     );
   }
 }
