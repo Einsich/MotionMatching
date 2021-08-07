@@ -1,9 +1,9 @@
-#include "ecs/ecs.h"
-#include "Engine/input.h"
-#include "Engine/file_dialog.h"
-#include "Application/application.h"
-#include "ecs/ecs_scene.h"
-#include "ecs/editor/template.h"
+#include <ecs/ecs.h>
+#include <Engine/input.h>
+#include <Engine/file_dialog.h>
+#include <Application/application.h>
+#include <ecs/ecs_scene.h>
+#include <ecs/editor/template.h>
 
 void open_scene(const filesystem::path &path, bool need_to_add);
 

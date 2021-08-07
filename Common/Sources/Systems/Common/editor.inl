@@ -1,7 +1,7 @@
-#include "ecs/ecs.h"
-#include "Engine/imgui/imgui.h"
-#include "Engine/Resources/resources.h"
-#include "ecs/singleton.h"
+#include <ecs/ecs.h>
+#include <Engine/imgui/imgui.h>
+#include <Engine/Resources/resources.h>
+#include <ecs/singleton.h>
 
 struct SelectedAsset : ecs::Singleton
 {

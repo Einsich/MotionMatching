@@ -2,7 +2,7 @@
 #include "listener.h"
 #include <assert.h>
 #include "Engine/time.h"
-#include "ecs/ecs.h"
+#include <ecs/ecs.h>
 void log(const char *str)
 {
   assert(strcmp(str, "null"));

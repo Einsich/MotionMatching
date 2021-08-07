@@ -1,27 +1,27 @@
-#include "ecs/ecs.h"
-#include "Engine/camera.h"
+#include <ecs/ecs.h>
+#include <Engine/camera.h>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include "Application/application.h"
-#include "Engine/Render/Texture/textures.h"
-#include "Engine/Render/material.h"
-#include "Engine/Render/skybox.h"
-#include "Engine/Render/debug_arrow.h"
+#include <Application/application.h>
+#include <Engine/Render/Texture/textures.h>
+#include <Engine/Render/material.h>
+#include <Engine/Render/skybox.h>
+#include <Engine/Render/debug_arrow.h>
 #include "Animation/AnimationDatabase/animation_database.h"
-#include "Engine/Render/mesh_render.h"
+#include <Engine/Render/mesh_render.h>
 #include "Animation/AnimationDatabase/animation_preprocess.h"
 #include "Animation/AnimationRender/animation_render.h"
 #include "Animation/animation_player.h"
 #include "Animation/third_person_controller.h"
 #include "Animation/person_controller.h"
-#include "config.h"
+
 #include "Animation/Test/animation_tester.h"
-#include "Engine/input.h"
+#include <Engine/input.h>
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/settings.h"
-#include "Engine/Resources/resources.h"
-#include "Engine/imgui/imgui.h"
+#include <Engine/Resources/resources.h>
+#include <Engine/imgui/imgui.h>
 
 #define CUSTOM_TYPE \
 MACRO(PersonController)\
@@ -58,9 +58,6 @@ EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
 EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
 {
 
-  fflush(stdout);
-  const char* animData[2] = {"", "-AnimData -hUnity"};
-  add_configs(2, animData);
 
   ecs::EntityId attachedCamera;
   {

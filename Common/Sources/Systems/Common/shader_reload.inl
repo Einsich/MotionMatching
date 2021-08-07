@@ -1,8 +1,8 @@
-#include "ecs/ecs.h"
-#include "Engine/input.h"
-#include "Engine/Render/Shader/shader_factory.h"
-#include "Engine/Render/skybox.h"
-#include "Engine/Render/direction_light.h"
+#include <ecs/ecs.h>
+#include <Engine/input.h>
+#include <Engine/Render/Shader/shader_factory.h>
+#include <Engine/Render/skybox.h>
+#include <Engine/Render/direction_light.h>
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) reload_shaders(const KeyDownEvent<SDLK_F5> &)
 {

@@ -1,8 +1,8 @@
 #include "animation_player.h"
 #include "animation_ik.h"
-#include "Engine/Physics/physics.h"
-#include "ecs/component_editor.h"
-#include "Engine/Resources/resources.h"
+#include <Engine/Physics/physics.h>
+#include <ecs/component_editor.h>
+#include <Engine/Resources/resources.h>
 
 AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType):
 playerType(playerType), speed(1.f),

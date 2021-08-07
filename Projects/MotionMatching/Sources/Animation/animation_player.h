@@ -1,9 +1,9 @@
 #pragma once
-#include "Engine/input.h"
+#include <Engine/input.h>
 #include "MotionMatching/motion_matching.h"
 #include "AnimationTree/animation_tree.h"
 #include "animation_goal.h"
-#include "Serialization/iserializable.h"
+#include <Serialization/iserializable.h>
 enum class AnimationPlayerType
 {
   MotionMatching, 

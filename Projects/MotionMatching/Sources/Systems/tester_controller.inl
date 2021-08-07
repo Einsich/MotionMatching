@@ -1,8 +1,8 @@
-#include "ecs/ecs.h"
+#include <ecs/ecs.h>
 #include "Animation/Test/animation_tester.h"
 #include "Animation/animation_player.h"
-#include "Engine/transform.h"
-#include "Engine/time.h"
+#include <Engine/transform.h>
+#include <Engine/time.h>
 #include "Animation/person_controller.h"
 #include "Animation/settings.h"
 

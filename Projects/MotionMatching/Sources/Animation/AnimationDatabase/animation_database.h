@@ -1,11 +1,11 @@
 #pragma once
-#include "common.h"
-#include "Serialization/reflection.h"
+#include <common.h>
+#include <Serialization/reflection.h>
 #include <assimp/scene.h>
 #include "animation_clip.h"
 #include "../Test/animation_test.h"
-#include "Engine/Resources/asset.h"
-#include "Engine/Resources/fbx_importer.h"
+#include <Engine/Resources/asset.h>
+#include <Engine/Resources/fbx_importer.h>
 
 class AnimationDataBase : IAsset
 {

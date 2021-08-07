@@ -1,7 +1,7 @@
-#include "ecs/ecs.h"
-#include "Engine/Profiler/profiler.h"
+#include <ecs/ecs.h>
+#include <Engine/Profiler/profiler.h>
 #include <stack>
-#include "3dmath.h"
+#include <3dmath.h>
 
 void profiler()
 {

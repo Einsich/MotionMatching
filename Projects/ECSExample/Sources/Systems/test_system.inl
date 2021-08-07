@@ -1,4 +1,4 @@
-#include "ecs/ecs.h"
+#include <ecs/ecs.h>
 #include "test_header.h"
 
 SYSTEM(ecs::SystemOrder::LATE_RENDER) test_system ( int a, float  &b)

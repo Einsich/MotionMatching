@@ -1,10 +1,10 @@
 
-#include "ecs/ecs.h"
-#include "Engine/imgui/imgui.h"
+#include <ecs/ecs.h>
+#include <Engine/imgui/imgui.h>
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
-#include "ecs/manager/type_info.h"
+#include <ecs/manager/type_info.h>
 
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
 {

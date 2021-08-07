@@ -1,11 +1,11 @@
-#include "ecs/ecs.h"
+#include <ecs/ecs.h>
 #include "Animation/AnimationRender/animation_render.h"
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/animation_player.h"
-#include "Engine/Render/mesh_render.h"
-#include "Engine/camera.h"
-#include "Engine/Render/debug_arrow.h"
-#include "Engine/Render/skybox.h"
+#include <Engine/Render/mesh_render.h>
+#include <Engine/camera.h>
+#include <Engine/Render/debug_arrow.h>
+#include <Engine/Render/skybox.h>
 #include "Animation/settings.h"
 template<typename Callable>
 void render_animation(Callable);

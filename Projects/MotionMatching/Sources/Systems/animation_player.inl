@@ -1,12 +1,11 @@
-#include "ecs/ecs.h"
+#include <ecs/ecs.h>
 #include "Animation/animation_player.h"
 #include "Animation/AnimationRender/animation_render.h"
 #include "Animation/animation_ik.h"
-#include "Engine/Render/debug_arrow.h"
-#include "Engine/Physics/physics.h"
-#include "config.h"
-#include "Engine/Profiler/profiler.h"
-#include "Engine/camera.h"
+#include <Engine/Render/debug_arrow.h>
+#include <Engine/Physics/physics.h>
+#include <Engine/Profiler/profiler.h>
+#include <Engine/camera.h>
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
 
@@ -79,7 +78,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   animationPlayer.rootDeltaTranslation = animationPlayer.currentCadr.rootTranslationDelta * ticks;
   animationPlayer.rootDeltaRotation = animationPlayer.currentCadr.rootRotationDelta * ticks;
   
-  if (get_bool_config("UseIK"))
+  if (false)//get_bool_config("UseIK"))
   {
     mat4 t = transform.get_transform();
     vec3 hips = animationPlayer.index.current_index().get_feature().nodes[(int)AnimationFeaturesNode::Hips];

@@ -1,7 +1,7 @@
 #include "animation_database.h"
-#include "Engine/Resources/resources.h"
-#include "Engine/imgui/imgui.h"
-#include "ecs/component_editor.h"
+#include <Engine/Resources/resources.h>
+#include <Engine/imgui/imgui.h>
+#include <ecs/component_editor.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include "animation_preprocess.h"
