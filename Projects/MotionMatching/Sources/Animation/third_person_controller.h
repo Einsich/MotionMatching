@@ -8,21 +8,12 @@ public:
   (float) (minZoom),
   (float) (maxZoom),
   (float) (zoomStrength),
-  (float) (lerpStrength)
+  (float) (lerpStrength),
+  (vec2) (currentCameraRotation),
+  (vec2) (wantedCameraRotation)
   )
   vec3 wantedCameraOrientation, currentCameraOrientation;
-  vec2 wantedCameraRotation, currentCameraRotation;
   float currentZoom, wantedZoom;
-  float view_offset;
   ThirdPersonController() = default;
-  ThirdPersonController(vec2 rotation, float zoom):
-    wantedCameraOrientation(0),
-    currentCameraOrientation(0), 
-    wantedCameraRotation(rotation),
-    currentCameraRotation(rotation), 
-    currentZoom(zoom),
-    wantedZoom(zoom),
-    view_offset(0)
-    {}
 
 };

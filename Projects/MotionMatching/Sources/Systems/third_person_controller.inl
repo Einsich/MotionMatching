@@ -37,17 +37,18 @@ SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
   float dt = Time::delta_time() * thirdPersonController.lerpStrength;
   thirdPersonController.currentCameraRotation =
   lerp(thirdPersonController.currentCameraRotation,
-    thirdPersonController.wantedCameraRotation + vec2(PI * 0.5f * thirdPersonController.view_offset, 0),
+    thirdPersonController.wantedCameraRotation,
     dt);
   thirdPersonController.currentZoom = lerp(thirdPersonController.currentZoom, thirdPersonController.wantedZoom, dt);
-  thirdPersonController.currentCameraOrientation = rotation_to_orientation(thirdPersonController.currentCameraRotation);
+  thirdPersonController.currentCameraOrientation = rotation_to_orientation(thirdPersonController.currentCameraRotation * DegToRad);
 
   QUERY() update_attached_camera(attachedCamera, [&](Transform &transform)
   {
     vec3 hipsPoint = vec3(0, 0.97f, 0);
 
     transform.get_position() = personController.realPosition + hipsPoint - thirdPersonController.currentCameraOrientation * thirdPersonController.currentZoom;
-    transform.set_rotation(PI * 0.5f - thirdPersonController.currentCameraRotation.x, -thirdPersonController.currentCameraRotation.y);
+    vec2 curRot = thirdPersonController.currentCameraRotation * DegToRad;
+    transform.set_rotation(PI * 0.5f - curRot.x, -curRot.y);
   });
 }
 
@@ -65,10 +66,10 @@ EVENT() mouse_move_handler(
   if (personController.disableEvents )
     return;
   float dx = (Settings::mouseInvertXaxis ? 1 : -1) * e.dx;
-  thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * DegToRad * Settings::mouseSensitivity;
+  thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * Settings::mouseSensitivity;
 
-  thirdPersonController.wantedCameraRotation.y = glm::clamp(thirdPersonController.wantedCameraRotation.y, -PI * 0.45f, PI * 0.1f);
-  thirdPersonController.wantedCameraOrientation = rotation_to_orientation(thirdPersonController.wantedCameraRotation);
+  thirdPersonController.wantedCameraRotation.y = glm::clamp(thirdPersonController.wantedCameraRotation.y, -180 * 0.45f, 180 * 0.1f);
+  thirdPersonController.wantedCameraOrientation = rotation_to_orientation(thirdPersonController.wantedCameraRotation * DegToRad);
   ecs::send_event_immediate(eid, ControllerMouseMoveEvent(e));
 }
 
@@ -81,19 +82,6 @@ EVENT() mouse_wheel_handler(
     thirdPersonController.minZoom, thirdPersonController.maxZoom);
 }
 
-EVENT() view_offset_handler(
-  const KeyEventAnyActionKey &e,
-  ThirdPersonController &thirdPersonController)
-{
-  switch (e.keycode)
-  {
-    case SDLK_LEFT:thirdPersonController.view_offset = 3; break;
-    case SDLK_UP:thirdPersonController.view_offset = 2; break;
-    case SDLK_RIGHT:thirdPersonController.view_offset = 1; break;
-    case SDLK_DOWN:thirdPersonController.view_offset = 0; break;
-  
-  }
-}
 
 EVENT(ThirdPersonController thirdPersonController) crouch_event_handler(
   const KeyEventAnyActionKey &e,
