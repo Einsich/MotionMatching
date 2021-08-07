@@ -92,19 +92,20 @@ namespace ecs
   {
     constexpr string_hash eidTypeHash = HashedString(nameOf<EntityId>::value);
     //constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
-    size_t size = write(os, archetypes.size());
+    size_t archetypeToSave = 0;
     vector<int> archetypeRemap(archetypes.size());
-    for (uint i = 0, j = 0; i < archetypes.size(); ++i)
+    for (uint i = 0; i < archetypes.size(); ++i)
     {
-      if (archetypes[i] && !archetypes[i]->dontSave)
-        archetypeRemap[i] = j++;
+      if (archetypes[i] && !archetypes[i]->dontSave && archetypes[i]->count > 0)
+        archetypeRemap[i] = archetypeToSave++;
       else
         archetypeRemap[i] = -1;
-    }
+    }    
+    size_t size = write(os, archetypeToSave);
     int archetypeIndex = 0;
     for (const Archetype* archetype : archetypes)
     {
-      if (!archetype || archetype->dontSave)
+      if (!archetype || archetype->dontSave || archetype->count <= 0)
         continue;
       assert(archetype->fullTypeDescriptions.size() == archetype->components.size());
 
