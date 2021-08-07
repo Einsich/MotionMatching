@@ -182,9 +182,20 @@ namespace ecs
             EntityId *eid = container.get_component<EntityId>(j);
             int archetypeIndex, arrayIndex;
             size += read(is, archetypeIndex, arrayIndex);
-            *eid = archetypeIndex > 0 ? entityPull.create_entity(archetypeIndex, arrayIndex) : EntityId();
-            if (archetypeIndex == (int)k && arrayIndex == j)
-              send_event(*eid, OnEntityCreated());
+            if (archetypeIndex > 0)
+            {
+              if (archetypeIndex == (int)k && arrayIndex == j)
+              {
+                *eid = entityPull.create_entity(archetypeIndex, arrayIndex);
+                send_event(*eid, OnEntityCreated());
+              }
+              else
+              {
+                *eid = entityPull.find_entity(archetypeIndex, arrayIndex);
+              }
+            }
+            else
+              *eid = EntityId();
 
           }
             
