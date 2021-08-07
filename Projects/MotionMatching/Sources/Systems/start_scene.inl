@@ -84,11 +84,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     list.add<SkyBox>("skyBox") = SkyBox(common_resources_path("Textures/Skyboxes/CloudSky"));
     ecs::create_entity(list);
   }
-  {
-    ecs::ComponentInitializerList list;
-    list.add<float>("fps") = float(0);
-    ecs::create_entity(list);
-  }
+
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
