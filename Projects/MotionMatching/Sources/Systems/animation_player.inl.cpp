@@ -50,6 +50,24 @@ void init_animation_character_handler(const ecs::OnEntityCreated &event)
 }
 
 
+void init_animation_material_handler(const ecs::OnEntityCreated &event);
+
+ecs::EventDescription<ecs::OnEntityCreated> init_animation_material_descr("init_animation_material", {
+  {ecs::get_type_description<AnimationRender>("animationRender"), false}
+}, init_animation_material_handler, (uint)(ecs::SystemTag::Game));
+
+void init_animation_material_handler(const ecs::OnEntityCreated &event)
+{
+  for (ecs::QueryIterator begin = init_animation_material_descr.begin(), end = init_animation_material_descr.end(); begin != end; ++begin)
+  {
+    init_animation_material(
+      event,
+      *begin.get_component<AnimationRender>(0)
+    );
+  }
+}
+
+
 void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> init_animation_character_singl_descr("init_animation_character", {
@@ -61,6 +79,21 @@ void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, e
   init_animation_character(
     event,
       *begin.get_component<AnimationPlayer>(0)
+  );
+}
+
+
+void init_animation_material_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityCreated> init_animation_material_singl_descr("init_animation_material", {
+  {ecs::get_type_description<AnimationRender>("animationRender"), false}
+}, init_animation_material_singl_handler, (uint)(ecs::SystemTag::Game));
+
+void init_animation_material_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
+{
+  init_animation_material(
+    event,
+      *begin.get_component<AnimationRender>(0)
   );
 }
 

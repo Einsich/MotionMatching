@@ -33,7 +33,11 @@ void AnimationRender::render(const Transform &transform, const mat4 view_project
     material->unbind_to_shader();
   light.unbind_to_shader(shader);
 }
-Asset<Material> AnimationRender::get_material() const
+const Asset<Material>& AnimationRender::get_material() const
+{
+  return material;
+}
+Asset<Material>& AnimationRender::get_material()
 {
   return material;
 }

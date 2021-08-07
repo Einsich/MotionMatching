@@ -148,3 +148,9 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
   animationPlayer.tree.set_cadr(animationPlayer.currentCadr);
   animationPlayer.tree.calculate_bone_transforms();
 }
+EVENT(ecs::SystemTag::Game) init_animation_material(
+  const ecs::OnEntityCreated &,
+  AnimationRender &animationRender)
+{
+  animationRender.get_material() = animationRender.get_material().copy();
+}

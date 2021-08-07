@@ -18,5 +18,6 @@ public:
   AnimationRender() = default;
   AnimationRender(Asset<Mesh> mesh, Asset<Material> material);
   void render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position,  const DirectionLight& light, const AnimationTree &tree, bool wire_frame = false) const ;
-  Asset<Material> get_material() const;
+  const Asset<Material>& get_material() const;
+  Asset<Material>& get_material();
 };
