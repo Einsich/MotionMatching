@@ -20,7 +20,7 @@ void init_anim_settings_handler(const ecs::OnSceneCreated &event)
 void scene_destroy_handler(const ecs::OnEntityDestroyed &event);
 
 ecs::EventDescription<ecs::OnEntityDestroyed> scene_destroy_descr("scene_destroy", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false}
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false}
 }, scene_destroy_handler, (uint)(ecs::SystemTag::Game));
 
 void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
@@ -29,7 +29,7 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
   {
     scene_destroy(
       event,
-      *begin.get_component<MotionMatchingScene>(0)
+      *begin.get_component<AnimationDataBasePtr>(0)
     );
   }
 }
@@ -51,14 +51,14 @@ void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::Que
 void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityDestroyed> scene_destroy_singl_descr("scene_destroy", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false}
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false}
 }, scene_destroy_singl_handler, (uint)(ecs::SystemTag::Game));
 
 void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin)
 {
   scene_destroy(
     event,
-      *begin.get_component<MotionMatchingScene>(0)
+      *begin.get_component<AnimationDataBasePtr>(0)
   );
 }
 

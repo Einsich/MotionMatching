@@ -42,7 +42,7 @@ public:
   virtual bool edit() override{return false;}
 };
 template<typename T>
-class Asset : public ISerializable
+class Asset final: public ISerializable
 {
   static_assert(std::is_base_of<IAsset, T>::value);
   struct ResourceInfo
@@ -92,7 +92,7 @@ public:
   //create asset and init them from .meta file or only default value
   Asset():asset(nullptr){}
   Asset(nullptr_t ):asset(nullptr){}
-
+  ~Asset() = default;
   Asset(const filesystem::path &resource_path) :
   asset(new ResourceInfo{resource_path, false, false, false, false, T()})
   {  

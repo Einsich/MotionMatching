@@ -4,7 +4,7 @@
 void recorder_ui_func();
 
 ecs::SystemDescription recorder_ui_descr("recorder_ui", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -15,7 +15,7 @@ void recorder_ui_func()
   for (ecs::QueryIterator begin = recorder_ui_descr.begin(), end = recorder_ui_descr.end(); begin != end; ++begin)
   {
     recorder_ui(
-      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<AnimationDataBasePtr>(0),
       *begin.get_component<int>(1),
       *begin.get_component<int>(2),
       *begin.get_component<float>(3)
@@ -27,7 +27,7 @@ void recorder_ui_func()
 void listener_keybord_handler(const KeyEventAnyActionKey &event);
 
 ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_keybord", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -39,7 +39,7 @@ void listener_keybord_handler(const KeyEventAnyActionKey &event)
   {
     listener_keybord(
       event,
-      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<AnimationDataBasePtr>(0),
       *begin.get_component<int>(1),
       *begin.get_component<int>(2),
       *begin.get_component<float>(3)
@@ -51,7 +51,7 @@ void listener_keybord_handler(const KeyEventAnyActionKey &event)
 void listener_mousemove_handler(const MouseMoveEvent &event);
 
 ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemove", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -63,7 +63,7 @@ void listener_mousemove_handler(const MouseMoveEvent &event)
   {
     listener_mousemove(
       event,
-      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<AnimationDataBasePtr>(0),
       *begin.get_component<int>(1),
       *begin.get_component<int>(2),
       *begin.get_component<float>(3)
@@ -75,7 +75,7 @@ void listener_mousemove_handler(const MouseMoveEvent &event)
 void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyEventAnyActionKey> listener_keybord_singl_descr("listener_keybord", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -85,7 +85,7 @@ void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::Quer
 {
   listener_keybord(
     event,
-      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<AnimationDataBasePtr>(0),
       *begin.get_component<int>(1),
       *begin.get_component<int>(2),
       *begin.get_component<float>(3)
@@ -96,7 +96,7 @@ void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::Quer
 void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<MouseMoveEvent> listener_mousemove_singl_descr("listener_mousemove", {
-  {ecs::get_type_description<MotionMatchingScene>("motionMatchingScene"), false},
+  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -106,7 +106,7 @@ void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 {
   listener_mousemove(
     event,
-      *begin.get_component<MotionMatchingScene>(0),
+      *begin.get_component<AnimationDataBasePtr>(0),
       *begin.get_component<int>(1),
       *begin.get_component<int>(2),
       *begin.get_component<float>(3)

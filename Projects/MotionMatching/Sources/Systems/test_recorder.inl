@@ -1,19 +1,18 @@
 #include "ecs/ecs.h"
 #include "Engine/imgui/imgui.h"
 #include "Animation/Test/animation_tester.h"
-#include "motion_matching_scene.h"
 #include "Engine/time.h"
-
+#include "Animation/AnimationDatabase/animation_database.h"
 
 SYSTEM(ecs::SystemOrder::UI) recorder_ui(
-  MotionMatchingScene &motionMatchingScene,
+  AnimationDataBasePtr dataBase,
   int &recordedTest,
   int &recordedState,
   float &recorderStartTime)
 {
   ImGui::Begin("Test list");
 
-  auto &tests = motionMatchingScene.dataBase->tests;
+  auto &tests = dataBase->tests;
   constexpr int BUF_SIZE = 100;
   char buf[BUF_SIZE];
   static std::string lastName;
@@ -81,7 +80,7 @@ SYSTEM(ecs::SystemOrder::UI) recorder_ui(
 
 EVENT() listener_keybord(
   const KeyEventAnyActionKey &e,
-  MotionMatchingScene &motionMatchingScene,
+  AnimationDataBasePtr dataBase,
   int recordedTest,
   int recordedState,
   float recorderStartTime)
@@ -90,13 +89,13 @@ EVENT() listener_keybord(
   {
     KeyEventAnyActionKey event = e;
     event.time -= recorderStartTime;
-    motionMatchingScene.dataBase->tests[recordedTest].keyboardEvents.push_back(event);
+    dataBase->tests[recordedTest].keyboardEvents.push_back(event);
   }
 }
 
 EVENT() listener_mousemove(
   const MouseMoveEvent &e,
-  MotionMatchingScene &motionMatchingScene,
+  AnimationDataBasePtr dataBase,
   int recordedTest,
   int recordedState,
   float recorderStartTime)
@@ -105,6 +104,6 @@ EVENT() listener_mousemove(
   {
     MouseMoveEvent event = e;
     event.time -= recorderStartTime;
-    motionMatchingScene.dataBase->tests[recordedTest].mouseMoveEvents.push_back(event);
+    dataBase->tests[recordedTest].mouseMoveEvents.push_back(event);
   }
 }

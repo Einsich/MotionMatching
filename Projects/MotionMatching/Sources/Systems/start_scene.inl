@@ -27,8 +27,7 @@
 #define CUSTOM_TYPE \
 MACRO(PersonController)\
 MACRO(DebugArrow)\
-MACRO(BoneRender)\
-MACRO(MotionMatchingScene)
+MACRO(BoneRender)
 
 #define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
 
@@ -38,6 +37,7 @@ REG_TYPE(AnimationRender)
 REG_TYPE(AnimationPlayer)
 REG_TYPE(AnimationTester)
 REG_TYPE(ThirdPersonController)
+REG_TYPE(AnimationDataBasePtr)
 
 void write_tree(aiNode* root, int d = 1)
 {
@@ -225,9 +225,9 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
 
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,
-  const MotionMatchingScene &motionMatchingScene)
+  const AnimationDataBasePtr dataBase)
 {
-  motionMatchingScene.dataBase->save_runtime_parameters();
+  dataBase->save_runtime_parameters();
   
   save_object(*Settings::instance, "man_property.bin");
   
