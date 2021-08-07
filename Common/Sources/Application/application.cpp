@@ -91,19 +91,28 @@ void Application::main_loop()
     sdl_events.stop();
     if (running)
     {
-      PROFILER(ecs_scene);
+      PROFILER(ecs_events);
       scene->process_events();
+      ecs_events.stop();
+      PROFILER(ecs_logic);
       scene->update_logic();
+      ecs_logic.stop();
+      PROFILER(ecs_render);
       scene->update_render();
-      ecs_scene.stop();
+      ecs_render.stop();
       
-      PROFILER(ui_scene);
+      PROFILER(ui)
       context.start_imgui();
+      PROFILER(ecs_ui);
       scene->update_ui();
+      ecs_ui.stop();
+      PROFILER(imgui_render);
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+      imgui_render.stop();
+      ui.stop();
+      PROFILER(swapchain);
       context.swap_buffer();
-      ui_scene.stop();
     }
     main_loop.stop();
     get_profiler().end_frame();

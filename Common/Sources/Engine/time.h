@@ -1,18 +1,22 @@
 #pragma once
-#include <SDL2/SDL_timer.h>
+#include <chrono>
 #include <assert.h>
 #include "common.h"
+
+using time_point = std::chrono::steady_clock::time_point;
+using time_delta = std::chrono::duration<float, std::milli>;
 
 struct Time
 {
 private:
-  Uint32 milliseconds;
-  Uint32 millisecondDelta;
+  time_point startTime, milliseconds;
+  time_delta millisecondDelta;
   float seconds;
   float secondDelta;
 public:
   inline static Time* timer;
-  Time():milliseconds(SDL_GetTicks()), millisecondDelta(0), seconds(milliseconds * 0.001f), secondDelta(0)
+  Time():startTime(std::chrono::high_resolution_clock::now()), milliseconds(startTime),
+  millisecondDelta(0), seconds(0), secondDelta(0)
   {
     assert(timer == nullptr);
     timer = this;
@@ -24,11 +28,11 @@ public:
   }
   void update()
   {
-    Uint32 millisecondsNew = SDL_GetTicks();
+    auto millisecondsNew = std::chrono::high_resolution_clock::now();
     millisecondDelta = millisecondsNew - milliseconds;
     milliseconds = millisecondsNew;
-    seconds = milliseconds * 0.001f;
-    secondDelta = millisecondDelta * 0.001f;
+    seconds = std::chrono::duration<float, std::milli>(milliseconds - startTime).count() * 0.001f;
+    secondDelta = millisecondDelta.count() * 0.001f;
   }
   static float time()
   {
@@ -40,15 +44,15 @@ public:
   }
   static float udelta_time()
   {
-    return timer->millisecondDelta;
+    return timer->millisecondDelta.count();
   }
   static float fps()
   {
     const int N  = 60;
-    static Uint32 s[N] = {};
-    static Uint32 sum = 0;
+    static float s[N] = {};
+    static float sum = 0;
     static int k = 0;
-    int t = timer->millisecondDelta;
+    float t = timer->millisecondDelta.count();
 
     sum -= s[k];
     s[k] = t;
@@ -60,16 +64,17 @@ public:
 class TimeScope
 {
 private:
-  Uint32 start;
+  time_point start;
   const string message;
   bool stopped;
 public:
   TimeScope(const string &message):
-    start(SDL_GetTicks()), message(message), stopped(false)
+    start(std::chrono::high_resolution_clock::now()), message(message), stopped(false)
   { }
   void stop()
   {
-    Uint32 delta = SDL_GetTicks() - start;
+    time_point end = std::chrono::high_resolution_clock::now();
+    time_delta delta = end - start;
     debug_log("%s\nspend %f seconds", message.c_str(), delta * 0.001f);
     stopped = true;
   }

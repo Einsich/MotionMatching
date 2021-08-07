@@ -5,7 +5,7 @@
 class ProfilerLabel
 {
 private:
-  Uint32 start; 
+  time_point start; 
   const string label;
   bool stopped;
 public:
@@ -14,7 +14,7 @@ public:
   void stop();
 };
 
-struct TimeLabel {Uint32 time; string label; bool open;};
+struct TimeLabel {time_point time; string label; bool open;};
 class Profiler
 {
 private:
@@ -33,8 +33,8 @@ private:
 public:
   void start_frame();
   void end_frame();
-  void open_label(Uint32 start, const string &label);
-  void close_label(Uint32 start, Uint32 end, const string &label);
+  void open_label(time_point start, const string &label);
+  void close_label(time_point start, time_point end, const string &label);
   float get_averange(const string &label);
   const vector<TimeLabel> &get_frame_history();
 };
