@@ -5,7 +5,6 @@
 #include "ecs/singleton.h"
 struct Settings : ecs::Singleton
 {
-  int testCount = 0;
   int earlyTestMMCount = 0;
   int MMCount = 0;
 
@@ -19,7 +18,9 @@ REFLECT(
   (bool) (debugNodes),
   (bool) (debugTrajectory),
   (bool) (debugBones),
-  (bool) (MatchingStatistic))
+  (bool) (MatchingStatistic),
+  (int) (testCount),
+  (float) (testDensity))
 
 };
 struct ControllerSettings

@@ -3,9 +3,8 @@
 #include "Animation/animation_player.h"
 #include "Engine/transform.h"
 #include "Engine/time.h"
-#include "Engine/Render/debug_arrow.h"
 #include "Animation/person_controller.h"
-#include "motion_matching_scene.h"
+#include "Animation/settings.h"
 
 
 SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
@@ -55,10 +54,11 @@ EVENT(ecs::SystemTag::GameEditor) start_test(
   const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
   const AnimationPlayer &animationPlayer,
-  const vec3 &testOffset,
   Transform &transform,
-  PersonController &personController)
+  PersonController &personController,
+  const Settings &settings)
 {
+  float edge = sqrt((float)settings.testCount) * settings.testDensity;
   int maxTest = animationPlayer.dataBase->tests.size();
   animationTester.testInd = rand() % maxTest;
   animationTester.curTime = 0;
@@ -66,5 +66,33 @@ EVENT(ecs::SystemTag::GameEditor) start_test(
   animationTester.keyboardInd = 0;
   animationTester.mouseMoveInd = 0;
   animationTester.testInput = Input(false);
-  personController.set_pos_rotation(transform, testOffset, 0);
+  float x = edge * rand() / RAND_MAX;
+  float y = edge * rand() / RAND_MAX;
+  personController.set_pos_rotation(transform, vec3(x, 0, y), 0);
+}
+
+SYSTEM(ecs::SystemTag::Game) test_count(
+  vector<ecs::EntityId> &testers,
+  Settings &settings)
+{
+  settings.testCount = glm::clamp(settings.testCount, 0, 10000);
+  int d = settings.testCount - testers.size();
+  if (d > 0)
+  {
+    testers.reserve(settings.testCount);
+    for (int i = 0; i < d; ++i)
+    {
+      testers.emplace_back(ecs::create_entity("anim_tester"));
+    }
+  }
+  if (d < 0)
+  {
+    auto from = testers.begin() + settings.testCount;
+    auto to = testers.end();
+    for (auto it = from; it != to; ++it)
+    {
+      ecs::destroy_entity(*it);
+    }
+    testers.erase(from, to);
+  }
 }
