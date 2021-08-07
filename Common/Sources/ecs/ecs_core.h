@@ -76,6 +76,7 @@ namespace ecs
   EntityId create_entity(const char *template_name);
   struct Template;
   EntityId create_entity(const Template *temp);
+  EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
 
 

@@ -302,6 +302,10 @@ namespace ecs
       core().toDestroy.push(eid);
     }
   }
+  EntityId find_entity(uint archetype, uint index)
+  {
+    return core().entityContainer->entityPull.find_entity(archetype, index);
+  }
 
   bool get_iterator(const QueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
   {

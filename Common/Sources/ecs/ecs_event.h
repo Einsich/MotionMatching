@@ -9,6 +9,10 @@ namespace ecs
   struct OnEntityCreated
   {
 
+  }; 
+  struct OnEntityEdited
+  {
+
   };
   struct OnEntityDestroyed
   {

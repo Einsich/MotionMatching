@@ -12,12 +12,14 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
   }
   const int N = 100;
   char buf[N];
+  int archetypeIndex = 0;
   for (ecs::Archetype *archetype : ecs::core().entityContainer->archetypes)
   {
     if (ImGui::TreeNode(archetype->synonim.c_str()))
     {
       for (int j = 0; j < archetype->count; ++j)
       {
+        ecs::EntityId eid = ecs::find_entity(archetypeIndex, j);
         snprintf(buf, N, "entity[%d]", j);
         if (ImGui::TreeNode(buf))
         {
@@ -33,7 +35,9 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
             snprintf(buf, N, "%s %s",  full_descr->name.c_str(), typeInfo.name.c_str());
             if (ImGui::TreeNode(buf))
             {
-              typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), false);
+              bool edited = typeInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), false);
+              if (edited)
+                ecs::send_event(eid, ecs::OnEntityEdited());
               ImGui::TreePop();
             }
           }
@@ -42,6 +46,7 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
       }
       ImGui::TreePop();
     }
+    ++archetypeIndex;
   }
   ImGui::End();
 }

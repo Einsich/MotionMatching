@@ -3,7 +3,7 @@
 #include "../camera.h"
 SkyBox::SkyBox(string path_to_folder):path(path_to_folder)
 {
-	skybox = CubeMap(path_to_folder);
+	skybox = CubeMap(project_resources_path(path));
 	skyboxShader = get_shader("sky_box");
 	vector<unsigned int> indices;
 	vector<vec3> vertecs;
