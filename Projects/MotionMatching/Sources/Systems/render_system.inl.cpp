@@ -147,4 +147,37 @@ void main_render_func()
 }
 
 
+void debug_goal_copy_mat_handler(const ecs::OnEntityCreated &event);
+
+ecs::EventDescription<ecs::OnEntityCreated> debug_goal_copy_mat_descr("debug_goal_copy_mat", {
+  {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
+}, debug_goal_copy_mat_handler, (uint)(ecs::SystemTag::Game));
+
+void debug_goal_copy_mat_handler(const ecs::OnEntityCreated &event)
+{
+  for (ecs::QueryIterator begin = debug_goal_copy_mat_descr.begin(), end = debug_goal_copy_mat_descr.end(); begin != end; ++begin)
+  {
+    debug_goal_copy_mat(
+      event,
+      *begin.get_component<MeshRender>(0)
+    );
+  }
+}
+
+
+void debug_goal_copy_mat_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityCreated> debug_goal_copy_mat_singl_descr("debug_goal_copy_mat", {
+  {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
+}, debug_goal_copy_mat_singl_handler, (uint)(ecs::SystemTag::Game));
+
+void debug_goal_copy_mat_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
+{
+  debug_goal_copy_mat(
+    event,
+      *begin.get_component<MeshRender>(0)
+  );
+}
+
+
 

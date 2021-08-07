@@ -26,7 +26,11 @@ void MeshRender::render(const Transform &transform, const mat4 view_projection, 
   material->unbind_to_shader();
   light.unbind_to_shader(shader);
 }
-Asset<Material> MeshRender::get_material() const
+const Asset<Material>& MeshRender::get_material() const
+{
+  return material;
+}
+Asset<Material>& MeshRender::get_material()
 {
   return material;
 }

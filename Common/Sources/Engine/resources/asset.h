@@ -93,6 +93,11 @@ public:
   Asset():asset(nullptr){}
   Asset(nullptr_t ):asset(nullptr){}
   ~Asset() = default;
+  Asset<T>& operator=(const Asset<T>& other)
+  {
+    asset = other.asset;
+    return *this;
+  }
   Asset(const filesystem::path &resource_path) :
   asset(new ResourceInfo{resource_path, false, false, false, false, T()})
   {  
@@ -212,7 +217,7 @@ public:
     if (asset)
     {
       Asset<T> a;
-      a.asset = new ResourceInfo{asset->path, false, false, false, true, asset->asset};
+      a.asset = new ResourceInfo{asset->path, true, true, false, true, asset->asset};
       return a;
     }
     else

@@ -38,7 +38,7 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 }
 DebugArrow::DebugArrow()
 {
-  arrowMaterial = get_resource<Material>("standart");
+  arrowMaterial = get_resource<Material>("bones");
   vector<uint> indices;
   vector<vec3> vert;
   vector<vec3> normal;

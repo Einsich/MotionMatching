@@ -112,7 +112,7 @@ main_render(DebugArrow &debugArrows)
         }
 
         material->set_property(Property("Ambient", vec3(1,1,1)));
-        debugTransform.set_scale(vec3(0.1f));
+        //debugTransform.set_scale(vec3(0.1f));
         DEBUG_NODE(AnimationFeaturesNode::LeftToeBase)
         DEBUG_NODE(AnimationFeaturesNode::LeftHand)
         DEBUG_NODE(AnimationFeaturesNode::RightToeBase)
@@ -171,4 +171,8 @@ main_render(DebugArrow &debugArrows)
   {
     skyBox.render(viewProjectionSkybox, cameraPosition, wire_frame);
   });
+}
+EVENT() debug_goal_copy_mat(const ecs::OnEntityCreated &, MeshRender &debugGoalSphere)
+{
+  debugGoalSphere.get_material() = debugGoalSphere.get_material().copy();
 }
