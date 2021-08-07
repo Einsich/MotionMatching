@@ -342,16 +342,22 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer()
       names.resize(templates.size());
       for (uint i = 0; i < templates.size(); ++i)
         names[i] = templates[i]->name.c_str();
-      bool selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
-      const char *cur_name = selectedSorrectTemplate ? templates[selectedTemplate]->name.c_str() : "";
+      bool selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
+      const char *cur_name = selectedCorrectTemplate ? templates[selectedTemplate]->name.c_str() : "";
       ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
       
-      selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
-      if (selectedSorrectTemplate)
+      selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
+      if (selectedCorrectTemplate)
       { 
         ImGui::SameLine();
         if (ImGui::Button("Edit"))
           editTemplate = true;
+        ImGui::SameLine();
+        if (ImGui::Button("Delete"))
+        {
+          editTemplate = false;
+          templates.erase(templates.begin() + selectedTemplate);
+        }
       }
       if (ImGui::Button("add template"))
       {
@@ -428,12 +434,12 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater()
   }
     
   static int selectedTemplate = -1;
-  bool selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
-  const char *cur_name = selectedSorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
+  bool selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
+  const char *cur_name = selectedCorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
   ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
   
-  selectedSorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
-  if (selectedSorrectTemplate)
+  selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
+  if (selectedCorrectTemplate)
   {
     ImGui::SameLine();
     if (ImGui::Button("Create"))
