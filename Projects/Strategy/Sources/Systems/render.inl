@@ -1,7 +1,8 @@
 #include "ecs/ecs.h" 
-#include "Engine/Render/render.h" 
 #include "Engine/camera.h" 
 #include "Engine/time.h" 
+#include "Engine/Render/mesh_render.h"
+
 template<typename Callable> 
 void render_meshes(Callable); 
 template<typename Callable> 
@@ -9,9 +10,12 @@ void render_flags(Callable);
  
 template<typename Callable> 
 void render_skybox(Callable); 
+
+template<typename Callable> 
+void find_light(Callable); 
  
  
-SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRender) 
+SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render() 
 { 
   mat4 camTransform, camProjection; 
   if(!main_camera(camTransform, camProjection)) 
@@ -26,7 +30,8 @@ SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render(const SceneRender &sceneRend
   mat4 viewProjection = camProjection *  viewTrasform; 
   mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform)); 
  
-  const DirectionLight &light = sceneRender.sun; 
+  DirectionLight light; 
+  find_light([&](const DirectionLight &directional_light){light = directional_light;});
   bool wire_frame = false;  
  
  

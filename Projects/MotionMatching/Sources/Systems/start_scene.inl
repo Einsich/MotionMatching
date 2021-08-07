@@ -28,7 +28,6 @@
 MACRO(PersonController)\
 MACRO(DebugArrow)\
 MACRO(BoneRender)\
-MACRO(SceneRender)\
 MACRO(MotionMatchingScene)
 
 #define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
@@ -72,12 +71,7 @@ EVEN(ecs::SystemTag::Editor) start_scene(const ecs::OnSceneCreated &)
     create_arcball_camera(10.f, radians(vec2(-270,0)), vec3(0, 5, -5));
     ecs::send_event_immediate(OnSetMainCamera(attachedCamera));
   }
-  {
-    ecs::ComponentInitializerList list;
-    list.add<SceneRender>("sceneRender") = SceneRender();
-    list.get<SceneRender>("sceneRender").sun = vec3(0.1f, -0.5f, 0.1f);
-    ecs::create_entity(list);
-  }
+
 
   {
     ecs::ComponentInitializerList list;

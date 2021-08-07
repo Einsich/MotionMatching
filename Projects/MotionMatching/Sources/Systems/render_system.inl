@@ -28,9 +28,11 @@ void render_debug_goal(Callable);
 template<typename Callable>
 void render_debug_goal_on_animplayer(Callable);
 
+template<typename Callable> 
+void find_light(Callable);
 
 SYSTEM(ecs::SystemOrder::MIDDLE_RENDER,ecs::SystemTag::GameEditor)
-main_render(const SceneRender &sceneRender, DebugArrow &debugArrows)
+main_render(DebugArrow &debugArrows)
 {
   mat4 camTransform, camProjection;
   if(!main_camera(camTransform, camProjection))
@@ -45,7 +47,9 @@ main_render(const SceneRender &sceneRender, DebugArrow &debugArrows)
   mat4 viewProjection = camProjection *  viewTrasform;
   mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
 
-  const DirectionLight &light = sceneRender.sun;
+  DirectionLight light; 
+  QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
+  
   bool wire_frame = false; 
   QUERY() render_animation([&](
     ecs::EntityId eid,

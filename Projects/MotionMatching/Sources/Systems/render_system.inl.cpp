@@ -1,6 +1,22 @@
 #include "render_system.inl"
 //Code-generator production
 
+ecs::QueryDescription find_light_descr("find_light", {
+  {ecs::get_type_description<DirectionLight>("directionalLight"), false}
+});
+
+template<typename Callable>
+void find_light(Callable lambda)
+{
+  for (ecs::QueryIterator begin = find_light_descr.begin(), end = find_light_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<DirectionLight>(0)
+    );
+  }
+}
+
+
 ecs::QueryDescription render_animation_descr("render_animation", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationRender>("animationRender"), false},
@@ -113,7 +129,6 @@ void bone_render_animation(const ecs::EntityId &eid, Callable lambda)
 void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
-  {ecs::get_type_description<SceneRender>("sceneRender"), false},
   {ecs::get_type_description<DebugArrow>("debugArrows"), false}
 }, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::GameEditor));
 
@@ -122,8 +137,7 @@ void main_render_func()
   for (ecs::QueryIterator begin = main_render_descr.begin(), end = main_render_descr.end(); begin != end; ++begin)
   {
     main_render(
-      *begin.get_component<SceneRender>(0),
-      *begin.get_component<DebugArrow>(1)
+      *begin.get_component<DebugArrow>(0)
     );
   }
 }

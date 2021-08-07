@@ -1,14 +1,15 @@
 #pragma once
-#include "common.h"
 #include "3dmath.h"
-#include "Shader/shader.h"
+#include "Serialization/reflection.h"
+class Shader;
 class DirectionLight
 {
-private:
-  vec3 lightDirection;
 public:
-  DirectionLight();
-  DirectionLight(vec3 lightDirection);
+  REFLECT(DirectionLight,
+  (vec3) (lightDirection))
+  vec3 normalizedLightDirection;
+
+  DirectionLight() = default;
   void bind_to_shader(const Shader & shader) const;
   void unbind_to_shader(const Shader & shader) const;
 };
