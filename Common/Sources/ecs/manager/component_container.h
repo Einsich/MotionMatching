@@ -58,7 +58,7 @@ namespace ecs
       return *((T*)(add<T>(name).data));
     }
   };
-  constexpr int binSize = 500;
+  constexpr int binSize = 8;
   class ComponentContainer
   {
     std::vector<void*> data;
