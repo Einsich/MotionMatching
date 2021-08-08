@@ -35,6 +35,7 @@ namespace ecs
     vector<Template*> parentTemplates;
     bool opened;
     bool processed;
+    bool edited;
     Template() = default;
     Template(const char *name);
     virtual size_t serialize(std::ostream& os) const override;

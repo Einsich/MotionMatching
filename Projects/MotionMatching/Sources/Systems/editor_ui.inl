@@ -124,6 +124,7 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
           else
           {
             type.change_name(buf);
+            templ.edited = true;
           }
         }
       }
@@ -153,12 +154,13 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
         types.erase(types.begin() + i);
         editComponents.erase(editComponents.begin() + i);
         --i;
+        templ.edited = true;
         continue;
       }
     }
     if (editComponents[i])
     {
-      typeInfo.componentEdition(type.data, view_only);
+      templ.edited |= typeInfo.componentEdition(type.data, view_only);
     }
   }
   
@@ -191,6 +193,7 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
             subTemplates[i]->parentTemplates.end());
         subTemplates.erase(subTemplates.begin() + i);
         --i;
+        templ.edited = true;
         continue;
       }
     }
@@ -251,6 +254,7 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
       {
         types.emplace_back(hashes[item_current], ecs::TypeInfo::types()[hashes[item_current]], fieldName.c_str());
         tryAddField = false;
+        templ.edited = true;
       }
     }
     else
@@ -305,6 +309,7 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
         templ.subTemplates.push_back(subTempl);
         subTempl->parentTemplates.push_back(&templ);
         tryAddSubTempl = false;
+        templ.edited = true;
       }
     }
     else

@@ -137,6 +137,7 @@ namespace ecs
     if (exists_template_with_name(new_name))
       return false;
     t.name = string(new_name);
+    t.edited = true;
     return true;
   }
 }

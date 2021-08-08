@@ -45,6 +45,7 @@ namespace ecs
   }
   size_t Template::deserialize(std::istream& is)
   {
+    opened = processed = edited = false;
     vector<Template*> &templates = TemplateManager::instance().templates;
     size_t s = 0;
     s += read(is, types);
@@ -94,9 +95,13 @@ namespace ecs
     if (!fs::exists(path))
       fs::create_directory(path);
     vector<Template*> &templates = TemplateManager::instance().templates;
-    for (const Template* t: templates)
+    for (Template* t: templates)
     {
-      save_object(*t, "Templates/" + t->name + ".tmpl");
+      if (t->edited)
+      {
+        save_object(*t, "Templates/" + t->name + ".tmpl");
+        t->edited = false;
+      }
     }
   }
 }
