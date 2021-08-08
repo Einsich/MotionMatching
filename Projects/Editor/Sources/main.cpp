@@ -1,15 +1,25 @@
-#include "Application/application.h"
-#include "config.h"
-#include "ecs/ecs_scene.h"
-
-int main(int argc, char** argv)
+#include <iomanip>
+#include <ostream>
+#include <istream>
+#include <sstream>
+#include <iostream>
+#include <map>
+#include <set>
+#include <type_traits>
+#include <vector>
+#include <fstream>
+#include <sstream>
+int main()
 {
-  add_configs(argc, (const char**)argv);
-  ecs::Scene ecsScene;
-  Application application((IScene*)&ecsScene, get_config("project"), 1848, 1016, true);
-  application.start();
-  application.main_loop();
-  application.exit();
-  
+  std::stringstream file("lol 11", std::ios::in);
+  int x;
+  std::string s;
+  bool b;
+  b = !(file >> s).fail();
+  std::cout << s << " " << b << std::endl;
+  b = !(file >> x).fail();
+  std::cout << x << " " << b << std::endl;
+  b = !(file >> x).fail();
+  std::cout << x << " " << b << std::endl;
   return 0;
 }

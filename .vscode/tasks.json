@@ -106,6 +106,22 @@
         },
         {
             "type": "shell",
+            "label": "Build ConsoleApp",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "build_console_app_script.sh ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}",
+
+            "windows": {
+                "command": "build_console_app_script.bat ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
             "label": "Build RT compiler",
             "options": {
                 "cwd": "${workspaceFolder}"

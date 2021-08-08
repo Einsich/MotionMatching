@@ -91,7 +91,12 @@
     "resumable": "cpp",
     "future": "cpp",
     "mutex": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "charconv": "cpp",
+    "forward_list": "cpp",
+    "unordered_set": "cpp",
+    "format": "cpp",
+    "stop_token": "cpp"
   },
   "launchOption.options": {
     "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "Editor"],
@@ -103,8 +108,8 @@
     "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
-  "BuildType": "rel",
+  "Project": "Editor",
+  "BuildType": "dev",
   "loadDataBaseFromFBX": "no"
 },
 }

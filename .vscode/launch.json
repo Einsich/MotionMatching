@@ -22,6 +22,25 @@
             "linux": {
                 "type": "cppdbg",
             }
+        },        
+        {
+            "name": "Run console app",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+            "args": [
+                "-project -${config:launchOption.currentConfig.Project}",
+                "-loadDataBaseFromFBX -${config:launchOption.currentConfig.loadDataBaseFromFBX}",
+            ],
+            "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
+            "preLaunchTask": "Build ConsoleApp",
+            "windows": {
+                "program": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+            },
+            "linux": {
+                "type": "cppdbg",
+            }
         },
         {
             "name": "Test codeGen",
