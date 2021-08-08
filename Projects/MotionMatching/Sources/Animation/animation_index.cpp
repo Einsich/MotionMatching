@@ -101,11 +101,11 @@ const AnimationTrajectory &AnimationIndex::get_trajectory() const
 {
   return dataBase->clips[clip].trajectories[cadr];
 }
-bool AnimationIndex::operator==(const AnimationIndex &i2)
+bool AnimationIndex::operator==(const AnimationIndex &i2) const
 {
   return cadr == i2.cadr && clip == i2.clip;
 }
-bool AnimationIndex::operator!=(const AnimationIndex &i2)
+bool AnimationIndex::operator!=(const AnimationIndex &i2) const
 {
   return !(*this == i2);
 }

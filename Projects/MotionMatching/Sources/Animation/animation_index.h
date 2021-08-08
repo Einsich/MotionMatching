@@ -22,8 +22,8 @@ public:
   const AnimationFeatures &get_feature() const;
   const AnimationTrajectory &get_trajectory() const;
   static bool can_jump(const AnimationIndex &from, const AnimationIndex &to);
-  bool operator==(const AnimationIndex &i2);
-  bool operator!=(const AnimationIndex &i2);
+  bool operator==(const AnimationIndex &i2) const;
+  bool operator!=(const AnimationIndex &i2) const;
   AnimationDataBasePtr get_data_base() const;
 };
 class AnimationLerpedIndex

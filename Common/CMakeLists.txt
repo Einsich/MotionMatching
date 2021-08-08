@@ -6,7 +6,7 @@ project(Engine-${BUILD_TYPE})
 
 message("path-${CMAKE_SOURCE_DIR}")
 set(LIB_FOLDER "${CMAKE_SOURCE_DIR}/../Common/Sources")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations")
 if(BUILD_TYPE STREQUAL "dbg")
     set(CMAKE_BUILD_TYPE  "Debug")

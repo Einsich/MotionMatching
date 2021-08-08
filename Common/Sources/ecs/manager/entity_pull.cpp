@@ -67,7 +67,7 @@ namespace ecs
     for (auto it = begin(), e = end(); it != e; ++it)
     {
       const EntityId &eid = it.eid();
-      if (eid.archetype_index() == archetype && eid.array_index() == index)
+      if (eid.archetype_index() == (int)archetype && eid.array_index() == index)
         return eid;
     }
     return EntityId();

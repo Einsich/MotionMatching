@@ -27,7 +27,7 @@ void reload_tree(AnimationTreeData &tree, const filesystem::path &path)
   if (scene && scene->mRootNode && scene->mRootNode->mChildren[0])
     tree = AnimationTreeData(scene->mRootNode->mChildren[0]);
 }
-void AnimationDataBase::load(const filesystem::path &path, bool reload)
+void AnimationDataBase::load(const filesystem::path &, bool reload)
 {
   if (!reload)
   {
