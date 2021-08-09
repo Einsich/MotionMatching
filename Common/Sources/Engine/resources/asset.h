@@ -217,7 +217,8 @@ public:
     if (asset)
     {
       Asset<T> a;
-      a.asset = new ResourceInfo{asset->path, true, true, false, true, asset->asset};
+      // loading, loaded, edited, isCopy;
+      a.asset = new ResourceInfo{asset->path, asset->loading, asset->loaded, false, true, asset->asset};
       return a;
     }
     else
