@@ -15,5 +15,5 @@ public:
   )
   SkyBox(string path);
   SkyBox() = default;
-  void render(const mat4 view_projection, const vec3 &camera_position, bool wire_frame = false);
+  void render(const mat4 &view_projection, bool wire_frame = false);
 };

@@ -6,7 +6,7 @@ AnimationRender::AnimationRender(Asset<Mesh> mesh, Asset<Material> material):
     mesh(mesh), material(material)
   {}
 
-void AnimationRender::render(const Transform &transform, const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, const AnimationTree &tree, bool wire_frame) const
+void AnimationRender::render(const Transform &transform, const AnimationTree &tree, bool wire_frame) const
 {
   if (!mesh)
     return;
@@ -22,8 +22,6 @@ void AnimationRender::render(const Transform &transform, const mat4 view_project
   const Shader &shader = material ? material->get_shader() : Shader();
   shader.use();
   shader.set_mat4x4("Bones", curTransform, false);
-  light.bind_to_shader(shader);
-  set_camera_to_shader(shader, view_projection, camera_position);
   if (material)
     material->bind_to_shader();
   transform.set_to_shader(shader);
@@ -31,7 +29,6 @@ void AnimationRender::render(const Transform &transform, const mat4 view_project
   mesh->render(wire_frame);
   if (material)
     material->unbind_to_shader();
-  light.unbind_to_shader(shader);
 }
 const Asset<Material>& AnimationRender::get_material() const
 {

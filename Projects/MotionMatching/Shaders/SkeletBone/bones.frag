@@ -4,9 +4,12 @@ in vec3 WorldPosition;
 in vec3 Color;
 out vec4 FragColor;
 
-uniform vec3 CameraPosition;
-
-uniform vec3 LightDirection;
+layout(std140, binding = 0) uniform Commondata 
+{
+    mat4 ViewProjection;
+    vec3 CameraPosition;
+    vec3 LightDirection;
+};
 
 uniform vec3 Specular;
 uniform float Shininess;

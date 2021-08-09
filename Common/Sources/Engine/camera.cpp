@@ -101,9 +101,3 @@ void FreeCamera::calculate_transform(Transform &transform)
 {
   transform.set_rotation(curRotation.x, curRotation.y, 0);
 }
-
-void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition)
-{
-  shader.set_mat4x4("ViewProjection", viewProjection);
-  shader.set_vec3("CameraPosition", cameraPosition);
-}

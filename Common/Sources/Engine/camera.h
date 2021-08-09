@@ -1,6 +1,5 @@
 #pragma once
 #include "3dmath.h"
-#include "Render/Shader/shader.h"
 #include "transform.h"
 #include "ecs/ecs.h"
 #include "Serialization/reflection.h"
@@ -66,7 +65,6 @@ struct OnSetMainCamera
     mainCamera(camera){}
 };
 
-void set_camera_to_shader(const Shader& shader, const mat4 &viewProjection, const vec3 &cameraPosition);
 bool main_camera(mat4 &cam_transform, mat4 &cam_projection);
 vec3 main_camera_position();
 

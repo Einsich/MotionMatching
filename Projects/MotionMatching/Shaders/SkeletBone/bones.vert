@@ -3,7 +3,13 @@ layout(location = 0)in vec3 Position;
 layout(location = 1)in vec3 Normal;
 
 #define ARROW_DRAWCALL_LIMIT 150
-uniform mat4 ViewProjection;
+
+layout(std140, binding = 0) uniform Commondata 
+{
+    mat4 ViewProjection;
+    vec3 CameraPosition;
+    vec3 LightDirection;
+};
 uniform mat4 BoneTransforms[ARROW_DRAWCALL_LIMIT];
 uniform vec3 Colors[ARROW_DRAWCALL_LIMIT];
 

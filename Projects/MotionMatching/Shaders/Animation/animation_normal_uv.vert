@@ -5,15 +5,18 @@ layout(location = 2)in vec2 TexCoord  ;
 layout(location = 3)in vec4 BoneWeights  ;
 layout(location = 4)in uvec4 BoneIndex  ;
 
-uniform mat4 ViewProjection;
 uniform mat4 Model;
 
 uniform mat4 Bones[100];
-
+layout(std140, binding = 0) uniform Commondata 
+{
+    mat4 ViewProjection;
+    vec3 CameraPosition;
+    vec3 LightDirection;
+};
 out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
-out mat4 M;
 void main()
 {
     mat4 BoneTransform = mat4(0);
@@ -24,5 +27,4 @@ void main()
     gl_Position = ViewProjection * VertexPosition;
     WorldPosition = VertexPosition.xyz;
     UV = TexCoord;
-    M = BoneTransform;
 }

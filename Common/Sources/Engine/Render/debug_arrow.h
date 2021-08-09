@@ -1,7 +1,6 @@
 #pragma once
 #include "3dmath.h"
 #include "material.h"
-#include "direction_light.h"
 #include "vertex_array_object.h"
 #include "../transform.h"
 #include "ecs/singleton.h"
@@ -23,7 +22,7 @@ public:
   DebugArrow();
   void add_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore);
 
-  void render(const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame = false) ;
+  void render(bool wire_frame = false) ;
 };
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore = true);
 void draw_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore = true);

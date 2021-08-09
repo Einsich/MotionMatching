@@ -105,12 +105,10 @@ void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &mat
   matrices.clear();
   colors.clear();
 }
-void DebugArrow::render(const mat4 view_projection, const vec3 &camera_position, const DirectionLight& light, bool wire_frame)
+void DebugArrow::render(bool wire_frame)
 {
   const Shader &arrowShader = arrowMaterial->get_shader();
   arrowShader.use();
-  light.bind_to_shader(arrowShader);
-  set_camera_to_shader(arrowShader, view_projection, camera_position);
   arrowMaterial->bind_to_shader();
   glDisable(GL_CULL_FACE);
 
@@ -118,6 +116,5 @@ void DebugArrow::render(const mat4 view_projection, const vec3 &camera_position,
   render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow, wire_frame);
 
   arrowMaterial->unbind_to_shader();
-  light.unbind_to_shader(arrowShader);
   glEnable(GL_CULL_FACE);
 }

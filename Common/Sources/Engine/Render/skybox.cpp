@@ -1,6 +1,5 @@
 #include <vector>
 #include "skybox.h"
-#include "../camera.h"
 SkyBox::SkyBox(string path_to_folder):path(path_to_folder)
 {
 	skybox = CubeMap(project_resources_path(path));
@@ -33,12 +32,12 @@ SkyBox::SkyBox(string path_to_folder):path(path_to_folder)
 	skyboxVAO = VertexArrayObject(indices, vertecs);
 }
 
-void SkyBox::render(const mat4 view_projection, const vec3 &camera_position, bool wire_frame) 
+void SkyBox::render(const mat4 &view_projection, bool wire_frame) 
 {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.use();
-	set_camera_to_shader(skyboxShader, view_projection, camera_position);
+	skyboxShader.set_mat4x4("ViewProjection", view_projection);
 
 	skybox.bind(skyboxShader, "skybox");
 	skyboxVAO.render(wire_frame);

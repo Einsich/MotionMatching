@@ -3,9 +3,12 @@
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/animation_player.h"
 #include <Engine/Render/mesh_render.h>
+#include <Engine/Render/render.h>
+#include <Engine/Render/global_uniform.h>
 #include <Engine/camera.h>
 #include <Engine/Render/debug_arrow.h>
 #include <Engine/Render/skybox.h>
+#include <Engine/Render/direction_light.h>
 #include "Animation/settings.h"
 template<typename Callable>
 void render_animation(Callable);
@@ -44,10 +47,15 @@ main_render(DebugArrow &debugArrows)
   mat4 viewTrasform = inverse(camTransform);
 
   mat4 viewProjection = camProjection *  viewTrasform;
-  mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
 
   DirectionLight light; 
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
+
+  update_global_uniform<GlobalRenderData>("GlobalRenderData", 
+  {viewProjection, cameraPosition, light.normalizedLightDirection});
+
+  mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
+
   
   bool wire_frame = false; 
   QUERY() render_animation([&](
@@ -57,7 +65,7 @@ main_render(DebugArrow &debugArrows)
     const Transform &transform,
     const Settings &settings)
   {
-    animationRender.render(transform, viewProjection, cameraPosition, light, animationPlayer.get_tree(), wire_frame);
+    animationRender.render(transform, animationPlayer.get_tree(), wire_frame);
 
     if (settings.debugBones)
     {
@@ -74,7 +82,7 @@ main_render(DebugArrow &debugArrows)
     const MeshRender &meshRender,
     const Transform &transform)
   {
-    meshRender.render(transform, viewProjection, cameraPosition, light, wire_frame);
+    meshRender.render(transform, wire_frame);
   });
 
 
@@ -106,7 +114,7 @@ main_render(DebugArrow &debugArrows)
           vec3 p = vec3(transformation * vec4(feature.nodes[(int)node], 1.f));\
           vec3 v = vec3(transformation * vec4(feature.nodesVelocity[(int)node], 0.f));\
           debugTransform.get_position() = p;\
-          debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);\
+          debugGoalSphere.render(debugTransform, true);\
           draw_arrow(p, p + v * 0.5f, vec3(1,0,0), 0.02f, false);\
         }
 
@@ -129,7 +137,7 @@ main_render(DebugArrow &debugArrows)
           debugTransform.set_scale(vec3(0.11f));
           
           debugTransform.get_position() = transformation * vec4(feature.nodes[(int)AnimationFeaturesNode::LeftToeBase], 1.f);
-          debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
+          debugGoalSphere.render(debugTransform, true);
         }
         if (onGround & 2)
         {
@@ -137,7 +145,7 @@ main_render(DebugArrow &debugArrows)
           debugTransform.set_scale(vec3(0.11f));
           
           debugTransform.get_position() = transformation * vec4(feature.nodes[(int)AnimationFeaturesNode::RightToeBase], 1.f);
-          debugGoalSphere.render(debugTransform, viewProjection, cameraPosition, light, true);
+          debugGoalSphere.render(debugTransform, true);
         }
       }
       if (settings.debugTrajectory)
@@ -161,14 +169,14 @@ main_render(DebugArrow &debugArrows)
     });
   });
 
-  debugArrows.render(viewProjection, cameraPosition, light, wire_frame);
+  debugArrows.render(wire_frame);
 
 
 
   QUERY() render_skybox([&](
     SkyBox &skyBox)
   {
-    skyBox.render(viewProjectionSkybox, cameraPosition, wire_frame);
+    skyBox.render(viewProjectionSkybox, wire_frame);
   });
 }
 EVENT() debug_goal_copy_mat(const ecs::OnEntityCreated &, MeshRender &debugGoalSphere)
