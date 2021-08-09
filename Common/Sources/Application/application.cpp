@@ -32,6 +32,7 @@ void Application::start()
   editor = true;
   #endif
   ApplicationMetaInfo &metaInfo = get_meta_info();
+  editor &= !metaInfo.startGame;
   scene->start(editor);
   get_profiler();
   string sceneName;

@@ -5,7 +5,8 @@
 struct ApplicationMetaInfo
 {
   REFLECT(ApplicationMetaInfo,
-    (string) (firstScene)
+    (string) (firstScene),
+    (bool) (startGame)
   )
 };
 
