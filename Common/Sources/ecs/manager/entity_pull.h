@@ -31,7 +31,7 @@ namespace ecs
     ~EntityPull();
     void clear();
     EntityId create_entity(uint archetype, uint index);
-    EntityId find_entity(uint archetype, uint index);
+    EntityId find_entity(int archetype, uint index);
     void destroy_entity(const EntityId &eid);
     EntityPullIterator begin() const;
     EntityPullIterator end() const;

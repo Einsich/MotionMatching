@@ -19,8 +19,9 @@ namespace ecs
     create_all_resources_from_metadata();
     if (editor)
     {
-      scenes.emplace_back(new Scene{"default", "", {}, {}, true, true, false});
+      scenes.emplace_back(new Scene{"default", "", {}, {}, true, false});
       scenes.back()->editorScene.dontAddable = scenes.back()->gameScene.dontAddable = true;
+      scenes.back()->editorScene.loaded = scenes.back()->gameScene.loaded = true;
     }
 
     auto &systems = core().systems;
@@ -45,6 +46,12 @@ namespace ecs
   void save(std::ostream& os, const std::vector<Archetype*> &archetypes);
   void load(std::istream& is, std::vector<Archetype*> &archetypes, EntityPull &entityPull);
 
+  static void load_scene(const Scene &scene, ecs::EntityContainer &scene_container)
+  {
+    std::ifstream file(scene.path, ios::binary);
+    load(file, core().entityContainer->archetypes, core().entityContainer->entityPull);
+    scene_container.loaded = true;
+  }
   bool SceneManager::try_start_scene(const string &name, uint tags)
   {
     for (Scene *scene : scenes)
@@ -54,13 +61,10 @@ namespace ecs
         currentSceneTags = tags;
         bool editor = tags == (uint)ecs::SystemTag::Editor;
         core().currentSceneTags = tags;
-        core().entityContainer = editor ? &scene->editorScene : &scene->gameScene;
-        if (!currentScene->loaded)
-        {
-          std::ifstream file(currentScene->path, ios::binary);
-          load(file, core().entityContainer->archetypes, core().entityContainer->entityPull);
-          currentScene->loaded = true;
-        }
+        ecs::EntityContainer &curContainer = editor ? scene->editorScene : scene->gameScene;
+        core().entityContainer = &curContainer;
+        if (!curContainer.loaded)
+          load_scene(*currentScene, curContainer);
         send_event(OnSceneCreated());
         return true;
       }
@@ -74,14 +78,13 @@ namespace ecs
     uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
     if (currentScene)
     {
-      currentSceneTags = newTags;
-      core().currentSceneTags = newTags;
       for (auto &p : ecs::SingletonTypeInfo::types())
       {
         auto &singleton = p.second;
         singleton.constructor(singleton.getSingleton());        
       }
       currentScene->inEditor = newTags == (uint)ecs::SystemTag::Editor;
+      ecs::EntityContainer &curContainer = currentScene->inEditor ? currentScene->editorScene : currentScene->gameScene;
       if (currentScene->inEditor)
       {
         currentScene->gamePaused = pause;
@@ -91,12 +94,24 @@ namespace ecs
           process_only_events();
           destroy_entities(false);
         }
-        core().replace_entity_container(&currentScene->editorScene);
-        
+        currentSceneTags = newTags;
+        core().currentSceneTags = newTags;
+        if (curContainer.loaded)
+        {
+          core().replace_entity_container(&curContainer);
+        }
+        else
+        {
+          core().entityContainer = &curContainer;
+          load_scene(*currentScene, curContainer);
+          send_event(OnSceneCreated());
+        }
       }
       else
       {
-        core().replace_entity_container(&currentScene->gameScene);
+        currentSceneTags = newTags;
+        core().currentSceneTags = newTags;
+        core().replace_entity_container(&curContainer);
         if (!currentScene->gamePaused) 
         {       
           create_entities_from_archetypes(currentScene->editorScene.archetypes);
@@ -169,7 +184,7 @@ namespace ecs
   void SceneManager::save_current_scene()
   {
     #ifndef RELEASE
-    if (currentScene && filesystem::exists(currentScene->path))
+    if (currentScene && filesystem::exists(currentScene->path) && currentScene->editorScene.loaded)
     {
       ofstream file (currentScene->path, ios::binary);
       save(file, currentScene->editorScene.archetypes);
@@ -197,7 +212,7 @@ namespace ecs
   {
     if (need_to_add)
     {
-      scenes.emplace_back(new Scene{path.stem().string(), path.string(), {}, {}, false, false, false});
+      scenes.emplace_back(new Scene{path.stem().string(), path.string(), {}, {}, false, false});
     }
     if (need_to_open)
     {

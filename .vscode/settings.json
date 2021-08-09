@@ -108,7 +108,7 @@
     "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
-  "Project": "Editor",
+  "Project": "MotionMatching",
   "BuildType": "dev",
   "loadDataBaseFromFBX": "no"
 },

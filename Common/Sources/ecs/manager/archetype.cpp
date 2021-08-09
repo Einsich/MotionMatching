@@ -141,7 +141,7 @@ namespace ecs
   {
     entityPull.clear();
     constexpr string_hash eidTypeHash = HashedString(nameOf<EntityId>::value);
-    //constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
+    constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
     size_t n = 0;
     size_t size = read(is, n);
     archetypes.resize(n);
@@ -182,20 +182,15 @@ namespace ecs
             EntityId *eid = container.get_component<EntityId>(j);
             int archetypeIndex, arrayIndex;
             size += read(is, archetypeIndex, arrayIndex);
-            if (archetypeIndex > 0)
+            if (typeNameHash == eidTypeNameHash)
             {
-              if (archetypeIndex == (int)k && arrayIndex == j)
-              {
-                *eid = entityPull.create_entity(archetypeIndex, arrayIndex);
-                send_event(*eid, OnEntityCreated());
-              }
-              else
-              {
-                *eid = entityPull.find_entity(archetypeIndex, arrayIndex);
-              }
+              *eid = entityPull.create_entity(k, j);
+              send_event(*eid, OnEntityCreated());
             }
             else
-              *eid = EntityId();
+            {
+              *eid = entityPull.find_entity(archetypeIndex, arrayIndex);
+            }
 
           }
             

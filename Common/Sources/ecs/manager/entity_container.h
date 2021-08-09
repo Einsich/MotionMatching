@@ -8,6 +8,6 @@ namespace ecs
   {
     std::vector<Archetype*> archetypes;
     EntityPull entityPull;
-    bool dontAddable;
+    bool dontAddable, loaded;
   };
 }

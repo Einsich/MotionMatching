@@ -62,13 +62,16 @@ namespace ecs
     totalCount++;
     return EntityId(entity, archetype, index);
   }
-  EntityId EntityPull::find_entity(uint archetype, uint index)
+  EntityId EntityPull::find_entity(int archetype, uint index)
   {
-    for (auto it = begin(), e = end(); it != e; ++it)
+    if (archetype > 0)
     {
-      const EntityId &eid = it.eid();
-      if (eid.archetype_index() == (int)archetype && eid.array_index() == index)
-        return eid;
+      for (auto it = begin(), e = end(); it != e; ++it)
+      {
+        const EntityId &eid = it.eid();
+        if (eid.archetype_index() == (int)archetype && eid.array_index() == index)
+          return eid;
+      }
     }
     return EntityId();
   }

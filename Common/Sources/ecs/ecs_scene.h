@@ -12,7 +12,6 @@ namespace ecs
     string name;
     filesystem::path path;
     EntityContainer editorScene, gameScene;
-    bool loaded;
     bool inEditor;
     bool gamePaused;
   };
