@@ -1,16 +1,35 @@
 #pragma once
-
-void add_global_uniform(const char *name, size_t size, int binding);
-
-template<typename T>
-void add_global_uniform(const char *name, int binding)
+#include <vector>
+struct UniformBuffer
 {
-  add_global_uniform(name, sizeof(T), binding);
-}
-
-void update_global_uniform(const char *name, const void *data, size_t size);
+private:
+  uint arrayID;
+  uint BUF_TYPE;
+  int bindID;
+  std::vector<char> buffer;
+  std::string name;
+public:
+  UniformBuffer(uint arrayID, uint BUF_TYPE, int bindID, std::vector<char> &&buffer, std::string && name):
+    arrayID(arrayID), BUF_TYPE(BUF_TYPE), bindID(bindID), buffer(buffer), name(name){}
+  size_t size() const;
+  //don't use temporary buffer
+  void update_buffer_and_flush(const void *data, size_t size) const;
+  //don't use temporary buffer
+  template<typename T>
+  void update_buffer_and_flush(const T &data) const
+  {
+    update_buffer_and_flush(&data, sizeof(T));
+  }
+  //uses temporary buffer
+  void update_buffer(const void *data, size_t offset, size_t size) const;
+  void flush_buffer() const;
+  char *get_buffer();
+};
+void add_uniform_buffer(const char *name, size_t size, int binding);
+void add_storage_buffer(const char *name, size_t size, int binding);
 template<typename T>
-void update_global_uniform(const char *name, const T &data)
+void add_uniform_buffer(const char *name, int binding)
 {
-  update_global_uniform(name, &data, sizeof(T));
+  add_uniform_buffer(name, sizeof(T), binding);
 }
+UniformBuffer &get_buffer(const char *name);

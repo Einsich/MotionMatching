@@ -112,6 +112,16 @@ bool edit_component(mat3 &component, const char *name, bool view_only)
   return edited;
 }
 template<>
+bool edit_component(mat2 &component, const char *name, bool view_only)
+{
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+
+  bool edited = ImGui::InputFloat2(name, &component[0].x, 2, flags)
+              | ImGui::InputFloat2(name, &component[1].x, 2, flags);
+  ImGui::Spacing();
+  return edited;
+}
+template<>
 bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
 {
   ImGui::Text("%s [%s] archetype %d, index %d", name, component.valid() ? "valid":"not valid",

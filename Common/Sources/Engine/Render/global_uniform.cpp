@@ -1,38 +1,68 @@
 #include <map>
 #include "common.h"
+#include "global_uniform.h"
 #include "glad/glad.h"
-struct UniformBuffer
-{
-  uint arrayID;
-  int bindID;
-};
+
 static map<string, UniformBuffer> nameToArray;
 
-void add_global_uniform(const char *name, size_t size, int binding)
+template<uint BUF_TYPE>
+void add_buffer(const char *name, size_t size, int binding)
 {
   auto it = nameToArray.find(name);
   if (it == nameToArray.end())
   {
     uint uniformBuffer;
     glGenBuffers(1, &uniformBuffer);
-    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
-    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    nameToArray.emplace(name, UniformBuffer{uniformBuffer, binding});
+    glBindBuffer(BUF_TYPE, uniformBuffer);
+    glBufferData(BUF_TYPE, size, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(BUF_TYPE, 0);
+    nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, vector<char>(size), string(name));
   }
 }
-
-void update_global_uniform(const char *name, const void *data, size_t size)
+void add_uniform_buffer(const char *name, size_t size, int binding)
 {
+  add_buffer<GL_UNIFORM_BUFFER>(name, size, binding);
+}
+void add_storage_buffer(const char *name, size_t size, int binding)
+{
+  add_buffer<GL_SHADER_STORAGE_BUFFER>(name, size, binding);
+}
+size_t UniformBuffer::size() const
+{
+  return buffer.size();
+}
+void UniformBuffer::update_buffer_and_flush(const void *data, size_t size) const
+{
+  if (this->size() < size)
+    debug_error("try pass in %s buffer %d byte, it can storage %d byte", name.c_str(), size, this->size());
+  glBindBuffer(BUF_TYPE, arrayID);
+  glBindBufferBase(BUF_TYPE, bindID, arrayID); 
+  glBufferSubData(BUF_TYPE, 0, size, data); 
+  glBindBuffer(BUF_TYPE, 0);
+}
+
+//uses temporary buffer
+void UniformBuffer::update_buffer(const void *data, size_t offset, size_t size) const
+{
+  if (this->size() < offset + size)
+    debug_error("try pass in %s buffer %d byte with offset %d (end in %d), it can storage %d byte", name.c_str(), size, offset, size + offset, this->size());
+  memcpy((char*)buffer.data() + offset, data, size);
+}
+void UniformBuffer::flush_buffer() const
+{
+  glBindBuffer(BUF_TYPE, arrayID);
+  glBindBufferBase(BUF_TYPE, bindID, arrayID); 
+  glBufferSubData(BUF_TYPE, 0, size(), buffer.data()); 
+  glBindBuffer(BUF_TYPE, 0);
+}
+char *UniformBuffer::get_buffer()
+{
+  return buffer.data();
+}
+
+UniformBuffer &get_buffer(const char *name)
+{
+  static UniformBuffer invalidBuffer(0, 0, 0, {}, "");
   auto it = nameToArray.find(name);
-  if (it != nameToArray.end())
-  {
-    UniformBuffer ub = it->second;
-    glBindBuffer(GL_UNIFORM_BUFFER, ub.arrayID);
-    glBindBufferBase(GL_UNIFORM_BUFFER, ub.bindID, ub.arrayID); 
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-  }
-  else
-    debug_error("Can't find %s uniform buffer", name);
+  return it != nameToArray.end() ? it->second : invalidBuffer;
 }

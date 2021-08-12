@@ -14,12 +14,25 @@ layout(std140, binding = 0) uniform Commondata
     vec3 CameraPosition;
     vec3 LightDirection;
 };
+struct TexturedMaterial
+{
+    vec3 Ambient;
+    vec3 Diffuse;
+    vec3 Specular;
+    float Shininess;
+};
+layout(std140, binding = 1) uniform InstanceData 
+{
+    mat4 bones[60];
+    TexturedMaterial material;
+    mat4 transformik;
+} instanceArray[];
 out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
 void main()
 {
-    mat4 BoneTransform = mat4(0);
+    mat4 BoneTransform = instanceArray[0].bones[0];//mat4(0);
 	for (int i = 0; i < 4; i++)
 		BoneTransform += Bones[BoneIndex[i]] * BoneWeights[i];
     vec4 VertexPosition = Model * BoneTransform * vec4(Position, 1);

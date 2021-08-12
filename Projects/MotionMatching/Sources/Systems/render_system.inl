@@ -51,7 +51,8 @@ main_render(DebugArrow &debugArrows)
   DirectionLight light; 
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
 
-  update_global_uniform<GlobalRenderData>("GlobalRenderData", 
+  get_buffer("GlobalRenderData").
+  update_buffer_and_flush<GlobalRenderData>( 
   {viewProjection, cameraPosition, light.normalizedLightDirection});
 
   mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));

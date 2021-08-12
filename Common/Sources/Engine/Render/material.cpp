@@ -3,6 +3,7 @@
 #include "Engine/Resources/resources.h"
 #include "Engine/Resources/editor.h"
 #include "ecs/component_editor.h"
+#include "global_uniform.h"
 void Property::bind_to_shader(const Shader &shader) const
 {
   switch (vecType)
@@ -91,7 +92,31 @@ void Material::set_property(const Property &property)
 void Material::load(const filesystem::path &, bool reload)
 {
   if (!reload)
+  {
     shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
+    GLuint program = shader.get_shader_program();
+    int count;
+    GLint size; // size of the variable
+    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+    const GLsizei bufSize = 128; // maximum name length
+    GLchar name[bufSize]; // variable name in GLSL
+    GLsizei length; // name length
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+
+    for (int i = 0; i < count; i++)
+    {
+      glGetActiveUniform(program, (GLuint)i, bufSize, &length, &size, &type, name);
+      char instanceData[] = "InstanceData";
+      char *subStr = strstr(name, instanceData);
+      if (subStr)
+      {
+        subStr += sizeof(instanceData);
+        materialProperties.add_uniform(size, type, subStr);
+        debug_log("Uniform #%d Type: %u Size: %u Name: %s\n", i, type, size, subStr);
+      }
+    }
+  }
 }
 void Material::free()
 {
@@ -175,6 +200,21 @@ bool Material::edit()
 
   std::function<bool(Property&)> f = Property::edit_property;
   edited |= edit_vector(properties, "properties", f);
+  for (const auto &uniformP : materialProperties.uniformMap)
+  {
+    const char * name = uniformP.first.c_str();
+    uint offset = materialProperties.uniforms[uniformP.second].offset;
+    uint size = materialProperties.uniforms[uniformP.second].size;
+    switch (materialProperties.uniforms[uniformP.second].type)
+    {
+      #define TYPE(T, gl_type) case gl_type: if (size == 1) edit_component(materialProperties.T##s[offset], name, false); break;
+      TYPES
+    
+    default:
+      break;
+    }
+  }
+  
   return edited;
 }
 ResourceRegister<Material> materialRegister;
