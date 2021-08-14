@@ -165,6 +165,8 @@ public:
   }
   void save() const
   {
+    if (asset)
+      asset->asset.free();
     ofstream file(asset->path, ios::binary);
     if (!file.fail())
     {

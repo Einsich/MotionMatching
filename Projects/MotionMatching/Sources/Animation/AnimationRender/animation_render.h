@@ -16,7 +16,10 @@ private:
 public:
   AnimationRender() = default;
   AnimationRender(Asset<Mesh> mesh, Asset<Material> material);
-  void render(const Transform &transform, const AnimationTree &tree, bool wire_frame = false) const ;
+  void process(const Transform &transform, const AnimationTree &tree) ;
+  void render(bool wire_frame = false) const ;
   const Asset<Material>& get_material() const;
   Asset<Material>& get_material();
+  const Asset<Mesh>& get_mesh() const;
+  Asset<Mesh>& get_mesh();
 };

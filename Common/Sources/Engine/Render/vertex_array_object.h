@@ -34,6 +34,10 @@ public:
   VertexArrayObject():
   vertexArrayBufferObject(0), numIndices(0)
   {}
+  uint vao() const
+  {
+    return vertexArrayBufferObject;
+  }
   template<typename... Channel>
   VertexArrayObject(const std::vector<unsigned int> &indices, const Channel... channels)
   {

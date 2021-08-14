@@ -89,38 +89,107 @@ void Material::set_property(const Property &property)
     *it = property;
   }  
 }
+
+pair<int, int> Material::get_uniform_index(const char *name, int gl_type) const
+{
+  auto it = uniformMap.find(name);
+  if (it != uniformMap.end())
+  {
+    int i =  it->second;
+    const StorageBuffer *instanceData = shader.get_instance_data();
+    if (instanceData)
+    {
+      if (gl_type != instanceData->fields[i].type)
+      {
+        debug_error("bad formats for %s %d in shader %d try set", name, instanceData->fields[i].type, gl_type);
+        return {-1, -1};
+      }
+      return {instanceData->fields[i].vectorOffset, instanceData->fields[i].size};
+    }
+    debug_error("there is field %s, but didn't instanceData", name);
+    return{-1, -1};
+  } 
+  debug_error("there is no field %s", name);
+  return {-1, -1};
+}
+
+uint Material::buffer_size() const
+{
+  const StorageBuffer *instanceData = shader.get_instance_data();
+  return instanceData ? instanceData->size : 0;
+}
+void Material::set_data_to_buf(char *data) const
+{
+  const StorageBuffer *instanceData = shader.get_instance_data();
+  if (instanceData)
+  {
+    for (const BufferField &field : instanceData->fields)
+    {
+      switch (field.type)
+      {
+        #define TYPE(T, gl_name) case gl_name : for (int i = 0; i < field.size; ++i)\
+        {memcpy(data + field.offset + i * field.stride, &T##s[field.vectorOffset + i], sizeof(T##s[0]));} break;
+        TYPES
+        #undef TYPE
+      default:
+        break;
+      }
+    }
+  }
+}
 void Material::load(const filesystem::path &, bool reload)
 {
   if (!reload)
   {
     shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
-    GLuint program = shader.get_shader_program();
-    int count;
-    GLint size; // size of the variable
-    GLenum type; // type of the variable (float, vec3 or mat4, etc)
-
-    const GLsizei bufSize = 128; // maximum name length
-    GLchar name[bufSize]; // variable name in GLSL
-    GLsizei length; // name length
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
-
-    for (int i = 0; i < count; i++)
+      
+//uniformMap
+//read from T##savable
+    uniformMap.clear();
+    const StorageBuffer *instanceData = shader.get_instance_data();
+    if (instanceData)
     {
-      glGetActiveUniform(program, (GLuint)i, bufSize, &length, &size, &type, name);
-      char instanceData[] = "InstanceData";
-      char *subStr = strstr(name, instanceData);
-      if (subStr)
+      for (uint i = 0; i < instanceData->fields.size(); ++i)
       {
-        subStr += sizeof(instanceData);
-        materialProperties.add_uniform(size, type, subStr);
-        debug_log("Uniform #%d Type: %u Size: %u Name: %s\n", i, type, size, subStr);
+        const BufferField &field = instanceData->fields[i];
+        uniformMap[field.name] = i;
+        switch (field.type)
+        {
+          #define TYPE(T, gl_type) case gl_type: if (field.vectorOffset + field.size > (int)T##s.size()) \
+            T##s.resize(field.vectorOffset + field.size); break;
+          TYPES
+          #undef TYPE
+        }
       }
     }
+    #define TYPE(T, _) for (const auto &p : T##savable) set_property(p.first.c_str(), p.second);
+    TYPES
+    #undef TYPE
   }
 }
 void Material::free()
 {
-
+  
+  #define TYPE(T, _) T##savable.clear();
+  TYPES
+  #undef TYPE
+  const StorageBuffer *instanceData = shader.get_instance_data();
+  if (instanceData)
+  {
+    for (const BufferField &field : instanceData->fields)
+    {
+      if (field.name.substr(0, 10) == "material.")
+      {
+        switch(field.type)
+        {
+          #define TYPE(T, gl_type) case gl_type: T##savable.emplace_back(field.name, \
+            vector<T>(T##s.begin() + field.vectorOffset, T##s.begin() + field.vectorOffset + field.size)); break;
+          TYPES
+          #undef TYPE
+        }
+      }
+    }
+  }
 }
 
 bool Property::edit_property(Property& property)
@@ -200,18 +269,19 @@ bool Material::edit()
 
   std::function<bool(Property&)> f = Property::edit_property;
   edited |= edit_vector(properties, "properties", f);
-  for (const auto &uniformP : materialProperties.uniformMap)
+  const StorageBuffer *instanceData = shader.get_instance_data();
+  if (instanceData)
   {
-    const char * name = uniformP.first.c_str();
-    uint offset = materialProperties.uniforms[uniformP.second].offset;
-    uint size = materialProperties.uniforms[uniformP.second].size;
-    switch (materialProperties.uniforms[uniformP.second].type)
+    for (const BufferField &field : instanceData->fields)
     {
-      #define TYPE(T, gl_type) case gl_type: if (size == 1) edit_component(materialProperties.T##s[offset], name, false); break;
-      TYPES
-    
-    default:
-      break;
+      switch (field.type)
+      {
+        #define TYPE(T, gl_type) case gl_type: if (field.size == 1) edit_component(T##s[field.vectorOffset], field.name.c_str(), false); break;
+        TYPES
+      
+      default:
+        break;
+      }
     }
   }
   

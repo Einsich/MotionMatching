@@ -1,4 +1,5 @@
 #include <ecs/ecs.h>
+#include <algorithm>
 #include "Animation/AnimationRender/animation_render.h"
 #include "Animation/AnimationRender/bone_render.h"
 #include "Animation/animation_player.h"
@@ -57,16 +58,20 @@ main_render(DebugArrow &debugArrows)
 
   mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
 
-  
+  UniformBuffer &instanceData = get_buffer("InstanceData");
   bool wire_frame = false; 
+  using renderStuff = pair<Asset<Material>, Asset<Mesh>>;
+  static vector<renderStuff> renderQueue;
+  renderQueue.clear();
   QUERY() render_animation([&](
     ecs::EntityId eid,
-    const AnimationRender &animationRender,
+    AnimationRender &animationRender,
     const AnimationPlayer &animationPlayer,
     const Transform &transform,
     const Settings &settings)
   {
-    animationRender.render(transform, animationPlayer.get_tree(), wire_frame);
+    renderQueue.emplace_back(animationRender.get_material(), animationRender.get_mesh());
+    animationRender.process(transform, animationPlayer.get_tree());
 
     if (settings.debugBones)
     {
@@ -78,7 +83,44 @@ main_render(DebugArrow &debugArrows)
       });
     }
   });
+  auto matComparer = [](const renderStuff &a, const renderStuff &b)->bool{
+    int as = a.first ? a.first->get_shader().get_shader_program() : -1;
+    int bs = b.first ? b.first->get_shader().get_shader_program() : -1;
+    if (as < bs)
+      return true;
+    int av = a.second ? a.second->get_vao().vao() : -1;
+    int bv = b.second ? b.second->get_vao().vao() : -1;
+    return av < bv;
+  };
+  std::sort(renderQueue.begin(), renderQueue.end(), matComparer);
 
+  
+    //animationRender.get_material()->get_properties().set_data_to_buf(instanceData.get_buffer());
+  if (renderQueue.size() > 0)
+  {
+    uint instanceCount = 0, instanceSize = renderQueue[0].first->buffer_size();
+    renderStuff prevStuff = renderQueue[0];
+    for (const auto &[material, mesh] : renderQueue)
+    {
+      if (matComparer(prevStuff, {material, mesh})) // prevStuff < p
+      {
+        material->get_shader().use();
+        instanceData.flush_buffer();
+        mesh->get_vao().render_instances(instanceCount, wire_frame);
+        instanceCount = 0;
+        instanceSize = material->buffer_size(); // new size of instance
+      }
+      if (instanceData.size() < (instanceCount + 1) * instanceSize)
+        debug_error("Need more buffer mem");
+      material->set_data_to_buf(instanceData.get_buffer() + instanceCount * instanceSize);
+      instanceCount++;
+      prevStuff = {material, mesh};
+    }
+    prevStuff.first->get_shader().use();
+    instanceData.flush_buffer();
+    prevStuff.second->get_vao().render_instances(instanceCount, wire_frame);
+    prevStuff.second->get_vao().render(wire_frame);
+  }
   QUERY() render_meshes([&](
     const MeshRender &meshRender,
     const Transform &transform)

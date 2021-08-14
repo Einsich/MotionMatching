@@ -5,9 +5,6 @@ layout(location = 2)in vec2 TexCoord  ;
 layout(location = 3)in vec4 BoneWeights  ;
 layout(location = 4)in uvec4 BoneIndex  ;
 
-uniform mat4 Model;
-
-uniform mat4 Bones[100];
 layout(std140, binding = 0) uniform Commondata 
 {
     mat4 ViewProjection;
@@ -21,22 +18,26 @@ struct TexturedMaterial
     vec3 Specular;
     float Shininess;
 };
-layout(std140, binding = 1) uniform InstanceData 
+struct Instance
 {
-    mat4 bones[60];
     TexturedMaterial material;
-    mat4 transformik;
-} instanceArray[];
+    mat4 Model;
+    mat4 Bones[60];
+};
+layout(packed, binding = 1) buffer InstanceData 
+{
+    Instance instance[];
+};
 out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
 void main()
 {
-    mat4 BoneTransform = instanceArray[0].bones[0];//mat4(0);
+    mat4 BoneTransform = mat4(0);
 	for (int i = 0; i < 4; i++)
-		BoneTransform += Bones[BoneIndex[i]] * BoneWeights[i];
-    vec4 VertexPosition = Model * BoneTransform * vec4(Position, 1);
-    EyespaceNormal = mat3(Model) * mat3(BoneTransform) * Normal;
+		BoneTransform += instance[gl_InstanceID].Bones[BoneIndex[i]] * BoneWeights[i];
+    vec4 VertexPosition = instance[gl_InstanceID].Model * BoneTransform * vec4(Position, 1);
+    EyespaceNormal = mat3(instance[gl_InstanceID].Model) * mat3(BoneTransform) * Normal;
     gl_Position = ViewProjection * VertexPosition;
     WorldPosition = VertexPosition.xyz;
     UV = TexCoord;

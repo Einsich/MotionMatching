@@ -27,6 +27,7 @@ public:
   virtual void load(const filesystem::path &path, bool reload) override;
   virtual void free() override;
   virtual bool edit() override;
+  VertexArrayObject get_vao() const;
 };
 
 

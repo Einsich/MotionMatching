@@ -6,7 +6,7 @@ AnimationRender::AnimationRender(Asset<Mesh> mesh, Asset<Material> material):
     mesh(mesh), material(material)
   {}
 
-void AnimationRender::render(const Transform &transform, const AnimationTree &tree, bool wire_frame) const
+void AnimationRender::process(const Transform &transform, const AnimationTree &tree)
 {
   if (!mesh)
     return;
@@ -19,16 +19,12 @@ void AnimationRender::render(const Transform &transform, const AnimationTree &tr
       curTransform[it2->second] = tree.get_bone_transform(i);
     }
   }
-  const Shader &shader = material ? material->get_shader() : Shader();
-  shader.use();
-  shader.set_mat4x4("Bones", curTransform, false);
-  if (material)
-    material->bind_to_shader();
-  transform.set_to_shader(shader);
-
+  material->set_property("Bones[0]", curTransform);
+  material->set_property("Model", transform.get_transform());
+}
+void AnimationRender::render(bool wire_frame) const
+{
   mesh->render(wire_frame);
-  if (material)
-    material->unbind_to_shader();
 }
 const Asset<Material>& AnimationRender::get_material() const
 {
@@ -37,4 +33,12 @@ const Asset<Material>& AnimationRender::get_material() const
 Asset<Material>& AnimationRender::get_material()
 {
   return material;
+}
+const Asset<Mesh>& AnimationRender::get_mesh() const
+{
+  return mesh;
+}
+Asset<Mesh>& AnimationRender::get_mesh()
+{
+  return mesh;
 }

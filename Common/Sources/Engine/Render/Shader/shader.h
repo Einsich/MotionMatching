@@ -4,6 +4,7 @@
 #include <vector>
 #include "glad/glad.h"
 #define BAD_PROGRAM 0
+struct StorageBuffer;
 class Shader
 {
 private:
@@ -17,7 +18,8 @@ public:
   }
 	void use() const;
 	GLuint get_shader_program() const;
-	
+	const StorageBuffer *get_instance_data() const;
+
 	void set_mat3x3(const char*name, const mat3x3 &matrix, bool transpose = false) const
 	{
 		glUniformMatrix3fv(glGetUniformLocation(get_shader_program(), name), 1, transpose, glm::value_ptr(matrix));

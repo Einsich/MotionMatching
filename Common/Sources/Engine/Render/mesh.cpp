@@ -13,6 +13,10 @@ Mesh::Mesh(const aiMesh *mesh)
 {
   load_assimp(mesh);
 }
+VertexArrayObject Mesh::get_vao() const
+{
+  return vertexArrayObject;
+}
 void Mesh::load_assimp(const aiMesh *mesh)
 {
   numVert = mesh->mNumVertices;

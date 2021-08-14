@@ -1,7 +1,17 @@
 #include "shader.h"
 #include <iostream>
+#include <map>
+#include "storage_buffer.h"
 
-static std::vector<std::pair<std::string, GLuint>> shaderList;
+struct ShaderInfo
+{
+  GLuint program;
+  int instanceDataBuffer;
+  vector<StorageBuffer> buffers; 
+};
+void read_buffers_info(ShaderInfo &shader);
+
+static std::vector<std::pair<std::string, ShaderInfo>> shaderList;
 static Shader badShader("invalid shader", BAD_PROGRAM);
 
 
@@ -11,23 +21,25 @@ Shader::Shader(const std::string &shader_name, GLuint shader_program, bool updat
 
   if (shaderIdx >= (int)shaderList.size())
   {
-    shaderList.emplace_back(shader_name, shader_program);
+    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, -1, {}});
+    read_buffers_info(shaderList.back().second);
   }
   if (update_list)
   {
-    shaderList[shaderIdx] = make_pair(shader_name, shader_program);
+    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, -1, {}});
+    read_buffers_info(shaderList[shaderIdx].second);
   }
 }
 GLuint Shader::get_shader_program() const
 {
-  return shaderList[shaderIdx].second;
+  return shaderList[shaderIdx].second.program;
 }
 Shader get_shader(std::string shader_name, bool with_log)
 {
   auto shader_iter = std::find_if(shaderList.begin(), shaderList.end(), [&](const auto &p){return p.first == shader_name;});
 	if (shader_iter != shaderList.end())
   {
-    return Shader(shader_iter->first, shader_iter->second);
+    return Shader(shader_iter->first, shader_iter->second.program);
   }
   else
   {
@@ -46,4 +58,69 @@ const vector<const char*>get_shaders_names()
   for (uint i = 0; i < shaderList.size(); ++i)
     shadersNames[i] = shaderList[i].first.c_str();
   return shadersNames;
+}
+
+void read_buffers_info(ShaderInfo &shader)
+{
+  GLuint program = shader.program;
+  if (!program)
+    return;
+  shader.instanceDataBuffer = -1;
+  vector<StorageBuffer> &buffers = shader.buffers;
+  buffers.clear();
+  int count;
+  const GLsizei bufSize = 128;
+  GLchar name[bufSize];
+  GLsizei length;
+  GLenum property;
+  map<uint, int> typeToOffset;
+  glGetProgramInterfaceiv(program, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &count);
+  for (int i = 0; i < count; i++)
+  {
+    glGetProgramResourceName(program, GL_SHADER_STORAGE_BLOCK, i, bufSize, &length, name);
+    GLint resInx = glGetProgramResourceIndex(program, GL_SHADER_STORAGE_BLOCK, name);
+
+    property = GL_NUM_ACTIVE_VARIABLES;
+    GLint numVar;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &numVar);
+    property = GL_BUFFER_BINDING;
+    GLint binding;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &binding);
+    property = GL_BUFFER_DATA_SIZE;
+    GLint size;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &size);
+
+    debug_log("buffer %s (binding = %d), size %d", name, binding, size);
+    buffers.emplace_back(StorageBuffer{string(name), binding, size, vector<BufferField>(numVar)});
+    vector<BufferField> &fields = buffers.back().fields;
+    property = GL_ACTIVE_VARIABLES;
+    vector<GLint> varId(numVar);
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, varId.size(), nullptr, varId.data());
+    bool isInstance = !strcmp(name, "InstanceData");
+    int bufferNameLen = isInstance ? sizeof("instance[0]") : 0;
+    if (isInstance)
+      shader.instanceDataBuffer = i;
+    for (GLint i = 0; i < numVar; i++) 
+    {
+      constexpr int N = 4;
+      GLenum properties[N] = {GL_TYPE, GL_OFFSET, GL_ARRAY_SIZE, GL_ARRAY_STRIDE};
+      GLint params[N];
+      glGetProgramResourceiv(
+          program, GL_BUFFER_VARIABLE, varId[i],
+          N, properties, N, nullptr, params);
+        GLsizei strLength;
+        glGetProgramResourceName(
+            program, GL_BUFFER_VARIABLE, varId[i], 
+            bufSize, &strLength, name);
+      char *matterPart = name + bufferNameLen;
+      fields[i] = BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]};
+      typeToOffset[params[0]] += params[2];
+      debug_log("Field %s, type %d offset %d, size %d, array stride %d", matterPart, params[0], params[1], params[2], params[3]);
+    }
+  }
+}
+const StorageBuffer *Shader::get_instance_data() const
+{
+  int index = shaderList[shaderIdx].second.instanceDataBuffer;
+  return index >=0 ? &shaderList[shaderIdx].second.buffers[index] : nullptr;
 }
