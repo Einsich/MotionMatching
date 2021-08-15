@@ -98,6 +98,10 @@ void Application::main_loop()
       PROFILER(ecs_logic);
       scene->update_logic();
       ecs_logic.stop();
+      
+      PROFILER(swapchain);
+      context.swap_buffer();
+      swapchain.stop();
       PROFILER(ecs_render);
       scene->update_render();
       ecs_render.stop();
@@ -112,8 +116,6 @@ void Application::main_loop()
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       imgui_render.stop();
       ui.stop();
-      PROFILER(swapchain);
-      context.swap_buffer();
     }
     main_loop.stop();
     get_profiler().end_frame();
