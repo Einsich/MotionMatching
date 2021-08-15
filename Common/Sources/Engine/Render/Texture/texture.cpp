@@ -1,4 +1,6 @@
 #include "texture.h"
+#include "Engine/imgui/imgui.h"
+
 static const int maxActiveTexturesCount = 10;
 static bool activeTextures[maxActiveTexturesCount] = {false};
 
@@ -50,6 +52,16 @@ int Texture::depth() const
 {
   return textureDepth;
 }
+uint Texture::get_texture_object() const
+{
+  return textureObject;
+}
+
+uint Texture::get_texture_type() const
+{
+  return textureType;
+}
+
 GLenum Texture::get_internal_format(TextureColorFormat colorFormat, TextureFormat textureFormat)
 {
  switch (colorFormat)
@@ -101,4 +113,53 @@ GLenum Texture::get_internal_format(TextureColorFormat colorFormat, TextureForma
   default:return colorFormat; break;
  }
  return colorFormat; 
+}
+
+template<int N, typename E>
+bool list_box(const array<const char *, N> &str, const array<E, N> &e, const char* label, E &curE)
+{
+  static int curStr = -1;
+  static bool buttonPressed = false;
+  int curI = 0;
+  bool edited = false;
+  for (; curI < N && curE != e[curI]; curI++);
+
+  if (ImGui::Button(str[curI]))
+    buttonPressed = !buttonPressed;
+
+  if (buttonPressed)
+  {
+    if (ImGui::ListBox(label, &curStr, str.data(), N, N))
+    {
+      edited = true;
+      curE = e[curStr];
+      curStr = -1;
+      buttonPressed = false;
+    }
+  }
+  return edited;
+}
+bool Texture::texture_edit()
+{
+  bool edited = false;
+  ImGui::Text("%s [%d x %d]", textureName.c_str(), textureWidth, textureHeight);
+
+  edited |= list_box<6, TextureColorFormat>({"R", "RG", "RGB", "RGBA", "Depth", "DepthStensil"}, 
+  {TextureColorFormat::R,TextureColorFormat::RG,TextureColorFormat::RGB,
+    TextureColorFormat::RGBA,TextureColorFormat::Depth, TextureColorFormat::DepthStencil},
+    "Color format", colorFormat);
+  
+  edited |= list_box<8, TextureFormat>({"Byte", "UnsignedByte", "Short", "UnsignedShort", "HalfFloat", "Int", "UnsignedInt", "Float"}, 
+  {TextureFormat::Byte, TextureFormat::UnsignedByte, TextureFormat::Short, 
+  TextureFormat::UnsignedShort, TextureFormat::HalfFloat, TextureFormat::Int, TextureFormat::UnsignedInt, TextureFormat::Float},
+    "Texture format", textureFormat);
+
+  edited |= list_box<3, TextureWrappFormat>({"Repeat", "ClampToBorder", "ClampToEdge"}, 
+  {TextureWrappFormat::Repeat, TextureWrappFormat::ClampToBorder, TextureWrappFormat::ClampToEdge},
+    "Wrapping", wrapping);
+
+  edited |= list_box<2, TexturePixelFormat>({"Point", "Linear"}, 
+  {TexturePixelFormat::Pixel, TexturePixelFormat::Linear},
+    "Pixel format", pixelFormat);
+  return edited;
 }

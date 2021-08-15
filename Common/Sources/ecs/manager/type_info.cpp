@@ -1,5 +1,6 @@
 #include "type_info.h"
 #include "3dmath.h"
+#include "Engine/Resources/resources.h"
 #include "Engine/camera.h"
 #include "Engine/transform.h"
 #include "Engine/Render/skybox.h"

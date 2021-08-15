@@ -1,18 +1,41 @@
 #include "cube_map_texture.h"
 #include "stb_image.h"
-
+#include "Engine/Resources/resources.h"
+#include "ecs/component_editor.h"
+CubeMap::CubeMap()
+{
+  textureName = "empty cubemap";
+  textureType = TextureType::CubeMapType;
+  colorFormat = TextureColorFormat::RGB;
+  textureFormat = TextureFormat::UnsignedByte;
+  pixelFormat = TexturePixelFormat::Linear;
+  wrapping = TextureWrappFormat::Repeat;
+  glGenTextures(1, &textureObject);
+}
 CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   TextureColorFormat color_format, 
   TextureFormat texture_format, 
-  TexturePixelFormat pixelFormat)
+  TexturePixelFormat pixel_format)
 {
-  
-  string folderPath = cubemap_path_from_textures_folder;
+  textureName = cubemap_path_from_textures_folder;
+  textureType = TextureType::CubeMapType;
+  colorFormat = color_format;
+  textureFormat = texture_format;
+  pixelFormat = pixel_format;  
+  wrapping = TextureWrappFormat::Repeat;
+  glGenTextures(1, &textureObject);
+  load("", false);
+}
+
+void CubeMap::load(const filesystem::path &, bool reload)
+{
+
   stbi_uc * images[6];
   int size = -1;
+  string path = project_resources_path(textureName);
   for (int i = 0; i < 6; i++)
   {
-    string fullpath =  folderPath + "/" + to_string(i) + ".jpg";
+    string fullpath = path + "/" + to_string(i) + ".jpg";
     int w, h, ch;
     stbi_set_flip_vertically_on_load(false);
     images[i] = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
@@ -23,7 +46,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
     }
     if (h != w)
     {
-      debug_error("Cubmap face[%d] %s must have similar width and height (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), w, h);
+      debug_error("Cubmap face[%d] %s must have similar width and height (%d != %d) !", i, textureName.c_str(), w, h);
       return;
     }
     if (size < 0)
@@ -33,18 +56,13 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
     {
       if (size != h)
       {
-        debug_error("Cubmap face[%d] %s must have similar sizes (%d != %d) !", i, cubemap_path_from_textures_folder.c_str(), size, h);
+        debug_error("Cubmap face[%d] %s must have similar sizes (%d != %d) !", i, textureName.c_str(), size, h);
         return;
       }
     }    
   }
-  textureType = TextureType::CubeMapType;
-  colorFormat = color_format;
-  textureFormat = texture_format;
-  textureName = cubemap_path_from_textures_folder;
 
   textureWidth = textureHeight = size;
-  glGenTextures(1, &textureObject);
   glBindTexture(textureType, textureObject);
   for (int i = 0; i < 6; i++)
   {
@@ -60,5 +78,26 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
   
   glBindTexture(textureType, 0); 
-  
 }
+void CubeMap::free()
+{
+
+}
+bool CubeMap::edit()
+{
+  bool edited = texture_edit();
+  edited |= edit_component(textureName, "", false);
+  return edited;
+}
+
+size_t CubeMap::serialize(std::ostream& os) const 
+{
+  return write(os, textureName, textureType, colorFormat, textureFormat, wrapping, 
+              pixelFormat, textureWidth, textureHeight);
+}
+size_t CubeMap::deserialize(std::istream& is) 
+{
+  return read(is, textureName, textureType, colorFormat, textureFormat, wrapping, 
+              pixelFormat, textureWidth, textureHeight);
+}
+ResourceRegister<CubeMap> cubeMapRegister;

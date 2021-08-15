@@ -1,19 +1,16 @@
 #pragma once
 #include "Shader/shader.h"
-#include "Texture/textures.h"
+#include "material.h"
 #include "vertex_array_object.h"
 #include "Serialization/reflection.h"
 class SkyBox
 {
 public:
-  Shader skyboxShader;
   VertexArrayObject skyboxVAO;
-  CubeMap skybox;
   REFLECT(
     SkyBox,
-    (string) (path)
+    (Asset<Material>) (material)
   )
-  SkyBox(string path);
-  SkyBox() = default;
+  SkyBox();
   void render(const mat4 &view_projection, bool wire_frame = false);
 };

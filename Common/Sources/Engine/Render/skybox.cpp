@@ -1,9 +1,8 @@
 #include <vector>
 #include "skybox.h"
-SkyBox::SkyBox(string path_to_folder):path(path_to_folder)
+
+SkyBox::SkyBox()
 {
-	skybox = CubeMap(project_resources_path(path));
-	skyboxShader = get_shader("sky_box");
 	vector<unsigned int> indices;
 	vector<vec3> vertecs;
   for (int face = 0; face < 3; face++)
@@ -36,12 +35,15 @@ void SkyBox::render(const mat4 &view_projection, bool wire_frame)
 {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	skyboxShader.use();
-	skyboxShader.set_mat4x4("ViewProjection", view_projection);
+	if (material)
+	{
+		Shader skyboxShader = material->get_shader();
+		skyboxShader.use();
+		skyboxShader.set_mat4x4("ViewProjection", view_projection);
+		material->bind_textures_to_shader();
+	}
 
-	skybox.bind(skyboxShader, "skybox");
 	skyboxVAO.render(wire_frame);
-	skybox.unbind();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 

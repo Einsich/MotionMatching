@@ -3,7 +3,7 @@
 #include "texture.h"
 #include "Serialization/serialization.h"
 
-class Texture2D : public Texture, public std::enable_shared_from_this<Texture2D>, public IAsset, public ISerializable
+class Texture2D : public Texture, public IAsset, public ISerializable
 {
   bool generateMips;
   void load_from_path(const filesystem::path &path);
