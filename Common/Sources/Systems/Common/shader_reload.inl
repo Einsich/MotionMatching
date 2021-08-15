@@ -1,8 +1,11 @@
 #include <ecs/ecs.h>
+#include <Engine/Resources/resources.h>
 #include <Engine/input.h>
 #include <Engine/Render/Shader/shader_factory.h>
 #include <Engine/Render/skybox.h>
 #include <Engine/Render/direction_light.h>
+
+REGISTER_TYPE(SkyBox)
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) reload_shaders(const KeyDownEvent<SDLK_F5> &)
 {

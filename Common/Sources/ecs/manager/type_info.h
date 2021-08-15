@@ -102,9 +102,16 @@ namespace ecs
   }
   #define REG_TYPE_BASE(T, NAME) \
   static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type<T>();
+  #define REG_TYPE_BASE(T, NAME) \
+  static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type<T>();
   
   #define REG_TYPE(T) REG_TYPE_BASE(T, type_##T)
   #define REG_VEC_TYPE(T) REG_TYPE_BASE(std::vector<T>, vec_##T)
 
   #define REGISTER_TYPE(T) REG_TYPE(T) REG_VEC_TYPE(T) 
+
+  #define REG_TYPE_NAMED(T, name) REG_TYPE_BASE(T, name)
+  #define REG_VEC_TYPE_NAMED(T, name) REG_TYPE_BASE(std::vector<T>, name)
+
+  #define REGISTER_TYPE_NAMED(T, name) REG_TYPE_NAMED(T, name) REG_VEC_TYPE_NAMED(T, vec##name) 
 }

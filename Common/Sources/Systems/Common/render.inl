@@ -2,6 +2,9 @@
 #include "Engine/Render/global_uniform.h"
 #include "Engine/Render/render.h"
 
+REGISTER_TYPE_NAMED(Asset<Mesh>, mesh)
+REGISTER_TYPE_NAMED(Asset<Texture2D>, Texture2D)
+
 EVENT(ecs::SystemTag::GameEditor) add_global_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<GlobalRenderData>("GlobalRenderData", 0);

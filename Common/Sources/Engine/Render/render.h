@@ -1,5 +1,8 @@
 #pragma once
 #include "3dmath.h"
+#include "mesh.h"
+#include "Texture/textures.h"
+#include "Engine/Resources/resources.h"
 
 struct GlobalRenderData
 {
