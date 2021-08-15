@@ -81,15 +81,15 @@ edit_component(T &v, const char *name, bool view_only)
 
 template<typename T>
 std::enable_if_t<is_base_of<IAsset, T>::value, bool>
- edit_component(Asset<T> &component, const char *name, bool view_only)
+ edit_component(Asset<T> &component, const char *, bool view_only)
 {
   constexpr const string_view &tName = nameOf<T>::value;
   constexpr int BUFN = 255;
   char buf[BUFN];
   if (component)
-    ImGui::Text("%s %s %s %s", tName.data(), name, component.asset_name().c_str(), component.is_copy() ? "(copy)" : "");
+    ImGui::Text("%s %s %s", tName.data(), component.asset_name().c_str(), component.is_copy() ? "(copy)" : "");
   else
-    ImGui::Text("%s %s null", tName.data(), name);
+    ImGui::Text("%s null", tName.data());
 
   bool edited = false;
   if (!view_only)

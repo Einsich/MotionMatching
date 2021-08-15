@@ -86,7 +86,7 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
   if (!view_only)
   {
     snprintf(buf, BUFN, "%s", templ.name.c_str());
-    if (ImGui::InputText(bufIndex, buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue) && strcmp(templ.name.c_str(), buf))
+    if (ImGui::InputText("##templ_name", buf, BUFN, ImGuiInputTextFlags_EnterReturnsTrue) && strcmp(templ.name.c_str(), buf))
     {
       if (!ecs::try_change_template_name(templ, buf))
         imgui_error("Enter unique template name");
