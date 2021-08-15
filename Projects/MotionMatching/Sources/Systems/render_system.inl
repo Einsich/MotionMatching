@@ -105,6 +105,7 @@ main_render(DebugArrow &debugArrows)
       if (matComparer(prevStuff, {material, mesh})) // prevStuff < p
       {
         material->get_shader().use();
+        material->bind_textures_to_shader();
         instanceData.flush_buffer();
         mesh->get_vao().render_instances(instanceCount, wire_frame);
         instanceCount = 0;
@@ -117,9 +118,9 @@ main_render(DebugArrow &debugArrows)
       prevStuff = {material, mesh};
     }
     prevStuff.first->get_shader().use();
+    prevStuff.first->bind_textures_to_shader();
     instanceData.flush_buffer();
     prevStuff.second->get_vao().render_instances(instanceCount, wire_frame);
-    prevStuff.second->get_vao().render(wire_frame);
   }
   QUERY() render_meshes([&](
     const MeshRender &meshRender,

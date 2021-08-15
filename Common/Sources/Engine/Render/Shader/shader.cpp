@@ -2,14 +2,16 @@
 #include <iostream>
 #include <map>
 #include "storage_buffer.h"
+#include "sampler_uniforms.h"
 
 struct ShaderInfo
 {
   GLuint program;
   int instanceDataBuffer;
   vector<StorageBuffer> buffers; 
+  vector<SamplerUniform> samplers;
 };
-void read_buffers_info(ShaderInfo &shader);
+void read_shader_info(ShaderInfo &shader);
 
 static std::vector<std::pair<std::string, ShaderInfo>> shaderList;
 static Shader badShader("invalid shader", BAD_PROGRAM);
@@ -21,13 +23,13 @@ Shader::Shader(const std::string &shader_name, GLuint shader_program, bool updat
 
   if (shaderIdx >= (int)shaderList.size())
   {
-    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, -1, {}});
-    read_buffers_info(shaderList.back().second);
+    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, -1, {}, {}});
+    read_shader_info(shaderList.back().second);
   }
   if (update_list)
   {
-    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, -1, {}});
-    read_buffers_info(shaderList[shaderIdx].second);
+    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, -1, {}, {}});
+    read_shader_info(shaderList[shaderIdx].second);
   }
 }
 GLuint Shader::get_shader_program() const
@@ -60,7 +62,7 @@ const vector<const char*>get_shaders_names()
   return shadersNames;
 }
 
-void read_buffers_info(ShaderInfo &shader)
+void read_shader_info(ShaderInfo &shader)
 {
   GLuint program = shader.program;
   if (!program)
@@ -68,12 +70,40 @@ void read_buffers_info(ShaderInfo &shader)
   shader.instanceDataBuffer = -1;
   vector<StorageBuffer> &buffers = shader.buffers;
   buffers.clear();
+  vector<SamplerUniform> &samplers = shader.samplers;
+  samplers.clear();
   int count;
   const GLsizei bufSize = 128;
   GLchar name[bufSize];
   GLsizei length;
   GLenum property;
+
   map<uint, int> typeToOffset;
+  glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+  for (int i = 0, texBinding = 0; i < count; i++)
+  {
+    GLenum type;
+    GLint size;
+    glGetActiveUniform(program, (GLuint)i, bufSize, &length, &size, &type, name);
+    switch (type)
+    {
+    //case GL_SAMPLER_1D:
+    case GL_SAMPLER_2D:
+    case GL_SAMPLER_3D:
+    case GL_SAMPLER_CUBE:
+    //case GL_SAMPLER_1D_SHADOW:
+    //case GL_SAMPLER_2D_SHADOW:
+
+      GLint texLocation = glGetUniformLocation(program, name);
+      samplers.emplace_back(SamplerUniform{string(name), type, texLocation, texBinding, typeToOffset[type]});
+      debug_log("Sampler #%d Type: %u Name: %s, Location %d", i, type, name, texLocation);
+      texBinding++;
+      typeToOffset[type]++;
+      break;
+    }
+  }
+
+  typeToOffset.clear();
   glGetProgramInterfaceiv(program, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &count);
   for (int i = 0; i < count; i++)
   {
@@ -97,7 +127,7 @@ void read_buffers_info(ShaderInfo &shader)
     vector<GLint> varId(numVar);
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, varId.size(), nullptr, varId.data());
     bool isInstance = !strcmp(name, "InstanceData");
-    int bufferNameLen = isInstance ? sizeof("instance[0]") : 0;
+    int bufferNameLen = isInstance ? sizeof("instances[0]") : 0;
     if (isInstance)
       shader.instanceDataBuffer = i;
     for (GLint i = 0; i < numVar; i++) 
@@ -123,4 +153,9 @@ const StorageBuffer *Shader::get_instance_data() const
 {
   int index = shaderList[shaderIdx].second.instanceDataBuffer;
   return index >=0 ? &shaderList[shaderIdx].second.buffers[index] : nullptr;
+}
+
+const vector<SamplerUniform> &Shader::get_samplers() const
+{
+  return shaderList[shaderIdx].second.samplers;
 }

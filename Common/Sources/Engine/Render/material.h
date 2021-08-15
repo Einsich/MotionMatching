@@ -33,12 +33,13 @@ public:
 };
 
 
-  #define TYPES \
+#define TYPES \
   TYPE(float, GL_FLOAT) TYPE(vec2, GL_FLOAT_VEC2) TYPE(vec3, GL_FLOAT_VEC3) TYPE(vec4, GL_FLOAT_VEC4) \
   TYPE(int, GL_INT) TYPE(ivec2, GL_INT_VEC2) TYPE(ivec3, GL_INT_VEC3) TYPE(ivec4, GL_INT_VEC4)\
   TYPE(mat2, GL_FLOAT_MAT2) TYPE(mat3, GL_FLOAT_MAT3) TYPE(mat4, GL_FLOAT_MAT4) 
-//TYPE(uint, GL_UNSIGNED_INT) TYPE(uvec2, GL_UNSIGNED_INT_VEC2) TYPE(uvec3, GL_UNSIGNED_INT_VEC3) TYPE(uvec4, GL_UNSIGNED_INT_VEC4)
-
+  //TYPE(uint, GL_UNSIGNED_INT) TYPE(uvec2, GL_UNSIGNED_INT_VEC2) TYPE(uvec3, GL_UNSIGNED_INT_VEC3) TYPE(uvec4, GL_UNSIGNED_INT_VEC4)
+#define SAMPLERS \
+  SAMPLER(Asset<Texture2D>, GL_SAMPLER_2D) SAMPLER(Asset<CubeMap>, GL_SAMPLER_CUBE)
 
 class Material : IAsset
 {
@@ -46,15 +47,23 @@ private:
   Shader shader;
   map<string, int> uniformMap;
   #define TYPE(T, _) vector<T> T##s;
+  #define SAMPLER(T, gl_type) vector<T> gl_type##s;
   TYPES
+  SAMPLERS
   #undef TYPE
+  #undef SAMPLER
+  
+  #define SAMPLER(T, gl_type) (vector<pair<string, T>>) (gl_type##savable),
   #define TYPE(T, _) (vector<pair<string, vector<T>>>) (T##savable),
   REFLECT(Material,
   TYPES
+  SAMPLERS
   (vector<Property>) (properties),
   (string) (shaderName))
+  #undef SAMPLER
   #undef TYPE
   pair<int, int> get_uniform_index(const char *name, int gl_type) const;
+  int get_texture_index(const char *name, int gl_type) const;
 public:
   Material() = default;
   Material(const vector<Property> & properties):
@@ -63,6 +72,7 @@ public:
   const Shader &get_shader() const;
   void set_property(const Property &property);
   void bind_to_shader() const;
+  void bind_textures_to_shader() const;
   void unbind_to_shader() const;
   virtual void load(const filesystem::path &path, bool reload) override;
   virtual void free() override;
@@ -87,9 +97,22 @@ public:
         T##s[offset + i] = value[i];\
     return offset >= 0;\
   }
-  
+
+  #define SAMPLER(T, gl_type)\
+  bool set_texture(const char *name, const T &value)\
+  {\
+    int offset = get_texture_index(name, gl_type);\
+    if (offset >= 0)\
+      gl_type##s[offset] = value;\
+    return offset >= 0;\
+  }
+
   TYPES
+  SAMPLERS
   #undef TYPE
+  #undef SAMPLER
+
+  
 };
 template<typename T>
 class Asset;

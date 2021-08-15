@@ -58,6 +58,26 @@ size_t Property::deserialize(std::istream& is)
   }
   return size;  
 }
+void Material::bind_textures_to_shader() const
+{
+  for (const SamplerUniform &sampler : shader.get_samplers())
+  {
+    uint textureObject = 0;
+    uint textureType = 0;
+    switch (sampler.type)
+    {
+      #define SAMPLER(T, gl_type) case gl_type: \
+        textureObject = gl_type##s[sampler.arrayOffset]->get_texture_object(); \
+        textureType = gl_type##s[sampler.arrayOffset]->get_texture_type(); break;
+      SAMPLERS
+      #undef SAMPLER
+    }
+    
+    glActiveTexture(GL_TEXTURE0 + sampler.binding);
+    glBindTexture(textureType, textureObject);
+    glUniform1i(sampler.shaderLocation, sampler.binding);
+  }
+}
 void Material::bind_to_shader() const
 {
   for (const Property & property : properties)
@@ -113,6 +133,24 @@ pair<int, int> Material::get_uniform_index(const char *name, int gl_type) const
   return {-1, -1};
 }
 
+int Material::get_texture_index(const char *name, int gl_type) const
+{
+  auto it = uniformMap.find(name);
+  if (it != uniformMap.end())
+  {
+    int i =  it->second;
+    const vector<SamplerUniform> &samplers = shader.get_samplers();
+    if (gl_type != samplers[i].type)
+    {
+      debug_error("bad formats for sampler %s %d in shader %d try set", name, samplers[i].type, gl_type);
+      return -1;
+    }
+    return samplers[i].arrayOffset;
+  } 
+  debug_error("there is no texture %s", name);
+  return -1;
+}
+
 uint Material::buffer_size() const
 {
   const StorageBuffer *instanceData = shader.get_instance_data();
@@ -142,9 +180,6 @@ void Material::load(const filesystem::path &, bool reload)
   if (!reload)
   {
     shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
-      
-//uniformMap
-//read from T##savable
     uniformMap.clear();
     const StorageBuffer *instanceData = shader.get_instance_data();
     if (instanceData)
@@ -162,9 +197,26 @@ void Material::load(const filesystem::path &, bool reload)
         }
       }
     }
+    
+    const vector<SamplerUniform> &samplers = shader.get_samplers();
+    for (uint i = 0; i < samplers.size(); ++i)
+    {
+      const SamplerUniform &sampler = samplers[i];
+      uniformMap[sampler.name] = i;
+      switch (sampler.type)
+      {
+        #define SAMPLER(T, gl_type) case gl_type: if (sampler.arrayOffset + 1 > (int)gl_type##s.size()) \
+          gl_type##s.resize(sampler.arrayOffset + 1); break;
+        SAMPLERS
+        #undef SAMPLER
+      }
+    }
     #define TYPE(T, _) for (const auto &p : T##savable) set_property(p.first.c_str(), p.second);
+    #define SAMPLER(T, smp) for (const auto &p : smp##savable) set_texture(p.first.c_str(), p.second);
     TYPES
+    SAMPLERS
     #undef TYPE
+    #undef SAMPLER
   }
 }
 void Material::free()
@@ -178,7 +230,7 @@ void Material::free()
   {
     for (const BufferField &field : instanceData->fields)
     {
-      if (field.name.substr(0, 10) == "material.")
+      if (field.name.substr(0, 9) == "material.")
       {
         switch(field.type)
         {
@@ -188,6 +240,21 @@ void Material::free()
           #undef TYPE
         }
       }
+    }
+  }
+  
+  #define SAMPLER(T, smp) smp##savable.clear();
+  SAMPLERS
+  #undef SAMPLER
+  const vector<SamplerUniform> &samplers = shader.get_samplers();
+  for (uint i = 0; i < samplers.size(); ++i)
+  {
+    const SamplerUniform &sampler = samplers[i];
+    switch (sampler.type)
+    {
+      #define SAMPLER(T, smp) case smp: smp##savable.emplace_back(sampler.name, smp##s[sampler.arrayOffset]); break;
+      SAMPLERS
+      #undef SAMPLER
     }
   }
 }
@@ -265,10 +332,29 @@ bool Material::edit()
     ImGui::TextColored(ImVec4(1, 0, 0, 1), "Bad shader name");
   }
   else
-    shader = tempShader;
+  {
+    if (shader.get_shader_program() != tempShader.get_shader_program())
+    {
+      shader = tempShader;
+      load("", false);
+    }
+  }
 
   std::function<bool(Property&)> f = Property::edit_property;
   edited |= edit_vector(properties, "properties", f);
+  
+  const vector<SamplerUniform> &samplers = shader.get_samplers();
+  for (uint i = 0; i < samplers.size(); ++i)
+  {
+    const SamplerUniform &sampler = samplers[i];
+    switch (sampler.type)
+    {
+      #define SAMPLER(T, gl_type) case gl_type: edited |= edit_component(gl_type##s[sampler.arrayOffset], sampler.name.c_str(), false); break;
+      SAMPLERS
+      #undef SAMPLER
+    }
+  }
+
   const StorageBuffer *instanceData = shader.get_instance_data();
   if (instanceData)
   {
@@ -276,15 +362,12 @@ bool Material::edit()
     {
       switch (field.type)
       {
-        #define TYPE(T, gl_type) case gl_type: if (field.size == 1) edit_component(T##s[field.vectorOffset], field.name.c_str(), false); break;
+        #define TYPE(T, gl_type) case gl_type: if (field.size == 1) edited |= edit_component(T##s[field.vectorOffset], field.name.c_str(), false); break;
         TYPES
-      
-      default:
-        break;
+        #undef TYPE
       }
     }
   }
-  
   return edited;
 }
 ResourceRegister<Material> materialRegister;

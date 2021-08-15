@@ -3,6 +3,7 @@
 #include "3dmath.h"
 #include <vector>
 #include "glad/glad.h"
+#include "sampler_uniforms.h"
 #define BAD_PROGRAM 0
 struct StorageBuffer;
 class Shader
@@ -19,6 +20,7 @@ public:
 	void use() const;
 	GLuint get_shader_program() const;
 	const StorageBuffer *get_instance_data() const;
+	const vector<SamplerUniform> &get_samplers() const;
 
 	void set_mat3x3(const char*name, const mat3x3 &matrix, bool transpose = false) const
 	{

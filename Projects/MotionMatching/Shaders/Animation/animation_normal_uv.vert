@@ -17,6 +17,8 @@ struct TexturedMaterial
     vec3 Diffuse;
     vec3 Specular;
     float Shininess;
+    vec2 uvScale;
+    vec2 uvOffset;
 };
 struct Instance
 {
@@ -26,19 +28,22 @@ struct Instance
 };
 layout(packed, binding = 1) buffer InstanceData 
 {
-    Instance instance[];
+    Instance instances[];
 };
 out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
+flat out int instanceID;
 void main()
 {
+    Instance instance = instances[gl_InstanceID];
     mat4 BoneTransform = mat4(0);
 	for (int i = 0; i < 4; i++)
-		BoneTransform += instance[gl_InstanceID].Bones[BoneIndex[i]] * BoneWeights[i];
-    vec4 VertexPosition = instance[gl_InstanceID].Model * BoneTransform * vec4(Position, 1);
-    EyespaceNormal = mat3(instance[gl_InstanceID].Model) * mat3(BoneTransform) * Normal;
+		BoneTransform += instance.Bones[BoneIndex[i]] * BoneWeights[i];
+    vec4 VertexPosition = instance.Model * BoneTransform * vec4(Position, 1);
+    EyespaceNormal = mat3(instance.Model) * mat3(BoneTransform) * Normal;
     gl_Position = ViewProjection * VertexPosition;
     WorldPosition = VertexPosition.xyz;
-    UV = TexCoord;
+    UV = TexCoord * instance.material.uvScale + instance.material.uvOffset;
+    instanceID = gl_InstanceID;
 }
