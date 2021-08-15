@@ -27,7 +27,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   load("", false);
 }
 
-void CubeMap::load(const filesystem::path &, bool reload)
+void CubeMap::load(const filesystem::path &, bool )
 {
 
   stbi_uc * images[6];

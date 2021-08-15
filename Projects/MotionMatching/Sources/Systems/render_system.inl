@@ -34,8 +34,11 @@ void render_debug_goal_on_animplayer(Callable);
 template<typename Callable> 
 void find_light(Callable);
 
+template<typename Callable> 
+void lod_selector(Callable);
+
 SYSTEM(ecs::SystemOrder::MIDDLE_RENDER,ecs::SystemTag::GameEditor)
-main_render(DebugArrow &debugArrows)
+main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
 {
   mat4 camTransform, camProjection;
   if(!main_camera(camTransform, camProjection))
@@ -58,20 +61,48 @@ main_render(DebugArrow &debugArrows)
 
   mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
 
+  QUERY() lod_selector([&](
+    const Transform &transform,
+    const vector<Asset<Mesh>> &lods_meshes,
+    const vector<float> &lods_distances,
+    Asset<Mesh> &mesh)
+  {
+    float distToCamera = length(transform.get_position() - cameraPosition);
+    uint lod = lods_meshes.size();
+    for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
+    {
+      if (distToCamera < lods_distances[i])
+      {
+        lod = i;
+        break;
+      }
+    }
+    if (lod < lods_meshes.size())
+      mesh = lods_meshes[lod];
+    else
+      mesh = Asset<Mesh>();//culled by dist
+
+  });
+
+
   UniformBuffer &instanceData = get_buffer("InstanceData");
-  bool wire_frame = false; 
+  bool wire_frame = editorSettings.wire_frame; 
   using renderStuff = pair<Asset<Material>, Asset<Mesh>>;
   static vector<renderStuff> renderQueue;
   renderQueue.clear();
   QUERY() render_animation([&](
     ecs::EntityId eid,
     AnimationRender &animationRender,
+    const Asset<Mesh> &mesh,
     const AnimationPlayer &animationPlayer,
     const Transform &transform,
     const Settings &settings)
   {
-    renderQueue.emplace_back(animationRender.get_material(), animationRender.get_mesh());
-    animationRender.process(transform, animationPlayer.get_tree());
+    if (mesh)
+    {
+      renderQueue.emplace_back(animationRender.get_material(), mesh);
+      animationRender.process(transform, animationPlayer.get_tree());
+    }
 
     if (settings.debugBones)
     {

@@ -17,9 +17,32 @@ void find_light(Callable lambda)
 }
 
 
+ecs::QueryDescription lod_selector_descr("lod_selector", {
+  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
+  {ecs::get_type_description<vector<float>>("lods_distances"), false},
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+});
+
+template<typename Callable>
+void lod_selector(Callable lambda)
+{
+  for (ecs::QueryIterator begin = lod_selector_descr.begin(), end = lod_selector_descr.end(); begin != end; ++begin)
+  {
+    lambda(
+      *begin.get_component<Transform>(0),
+      *begin.get_component<vector<Asset<Mesh>>>(1),
+      *begin.get_component<vector<float>>(2),
+      *begin.get_component<Asset<Mesh>>(3)
+    );
+  }
+}
+
+
 ecs::QueryDescription render_animation_descr("render_animation", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationRender>("animationRender"), false},
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Settings>("settings"), false}
@@ -33,9 +56,10 @@ void render_animation(Callable lambda)
     lambda(
       *begin.get_component<ecs::EntityId>(0),
       *begin.get_component<AnimationRender>(1),
-      *begin.get_component<AnimationPlayer>(2),
-      *begin.get_component<Transform>(3),
-      *begin.get_component<Settings>(4)
+      *begin.get_component<Asset<Mesh>>(2),
+      *begin.get_component<AnimationPlayer>(3),
+      *begin.get_component<Transform>(4),
+      *begin.get_component<Settings>(5)
     );
   }
 }
@@ -133,7 +157,8 @@ void bone_render_animation(const ecs::EntityId &eid, Callable lambda)
 void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
-  {ecs::get_type_description<DebugArrow>("debugArrows"), false}
+  {ecs::get_type_description<DebugArrow>("debugArrows"), false},
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
 }, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::GameEditor));
 
 void main_render_func()
@@ -141,7 +166,8 @@ void main_render_func()
   for (ecs::QueryIterator begin = main_render_descr.begin(), end = main_render_descr.end(); begin != end; ++begin)
   {
     main_render(
-      *begin.get_component<DebugArrow>(0)
+      *begin.get_component<DebugArrow>(0),
+      *begin.get_component<EditorRenderSettings>(1)
     );
   }
 }
