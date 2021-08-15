@@ -140,7 +140,7 @@ int Material::get_texture_index(const char *name, int gl_type) const
   {
     int i =  it->second;
     const vector<SamplerUniform> &samplers = shader.get_samplers();
-    if (gl_type != samplers[i].type)
+    if ((uint)gl_type != samplers[i].type)
     {
       debug_error("bad formats for sampler %s %d in shader %d try set", name, samplers[i].type, gl_type);
       return -1;

@@ -4,13 +4,15 @@ struct UniformBuffer
 {
 private:
   uint arrayID;
-  uint BUF_TYPE;
+  uint bufType;
   int bindID;
-  std::vector<char> buffer;
+  mutable uint bufSize;
+  mutable std::vector<char> buffer;
   std::string name;
+  void resize(uint new_size) const;
 public:
-  UniformBuffer(uint arrayID, uint BUF_TYPE, int bindID, std::vector<char> &&buffer, std::string && name):
-    arrayID(arrayID), BUF_TYPE(BUF_TYPE), bindID(bindID), buffer(buffer), name(name){}
+  UniformBuffer(uint arrayID, uint bufType, int bindID, uint bufSize, std::vector<char> &&buffer, std::string && name):
+    arrayID(arrayID), bufType(bufType), bindID(bindID), bufSize(bufSize), buffer(buffer), name(name){}
   size_t size() const;
   //don't use temporary buffer
   void update_buffer_and_flush(const void *data, size_t size) const;
@@ -22,8 +24,8 @@ public:
   }
   //uses temporary buffer
   void update_buffer(const void *data, size_t offset, size_t size) const;
-  void flush_buffer() const;
-  char *get_buffer();
+  void flush_buffer(size_t flush_size) const;
+  char *get_buffer(uint offset, uint size);
 };
 void add_uniform_buffer(const char *name, size_t size, int binding);
 void add_storage_buffer(const char *name, size_t size, int binding);

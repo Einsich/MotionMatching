@@ -5,7 +5,7 @@ in vec3 WorldPosition;
 flat in int instanceID;
 out vec4 FragColor;
 
-layout(std140, binding = 0) uniform Commondata 
+layout(std140, binding = 0) readonly uniform Commondata 
 {
     mat4 ViewProjection;
     vec3 CameraPosition;
@@ -26,7 +26,7 @@ struct Instance
     mat4 Model;
     mat4 Bones[60];
 };
-layout(packed, binding = 1) buffer InstanceData 
+layout(packed, binding = 1) readonly buffer InstanceData 
 {
     Instance instances[];
 };

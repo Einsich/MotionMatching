@@ -16,7 +16,7 @@ void add_buffer(const char *name, size_t size, int binding)
     glBindBuffer(BUF_TYPE, uniformBuffer);
     glBufferData(BUF_TYPE, size, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(BUF_TYPE, 0);
-    nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, vector<char>(size), string(name));
+    nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, size, vector<char>(size), string(name));
   }
 }
 void add_uniform_buffer(const char *name, size_t size, int binding)
@@ -33,36 +33,48 @@ size_t UniformBuffer::size() const
 }
 void UniformBuffer::update_buffer_and_flush(const void *data, size_t size) const
 {
-  if (this->size() < size)
-    debug_error("try pass in %s buffer %d byte, it can storage %d byte", name.c_str(), size, this->size());
-  glBindBuffer(BUF_TYPE, arrayID);
-  glBindBufferBase(BUF_TYPE, bindID, arrayID); 
-  glBufferSubData(BUF_TYPE, 0, size, data); 
-  glBindBuffer(BUF_TYPE, 0);
+  glBindBuffer(bufType, arrayID);
+  glBindBufferBase(bufType, bindID, arrayID); 
+  if (bufSize < size)
+  {
+    glBufferData(bufType, size, NULL, GL_DYNAMIC_DRAW);
+    bufSize = size;
+  }
+  glBufferSubData(bufType, 0, size, data); 
+  glBindBuffer(bufType, 0);
 }
 
 //uses temporary buffer
 void UniformBuffer::update_buffer(const void *data, size_t offset, size_t size) const
 {
-  if (this->size() < offset + size)
-    debug_error("try pass in %s buffer %d byte with offset %d (end in %d), it can storage %d byte", name.c_str(), size, offset, size + offset, this->size());
+  if (this->size() < size)
+    buffer.resize(size);
   memcpy((char*)buffer.data() + offset, data, size);
 }
-void UniformBuffer::flush_buffer() const
+void UniformBuffer::flush_buffer(size_t flush_size) const
 {
-  glBindBuffer(BUF_TYPE, arrayID);
-  glBindBufferBase(BUF_TYPE, bindID, arrayID); 
-  glBufferSubData(BUF_TYPE, 0, size(), buffer.data()); 
-  glBindBuffer(BUF_TYPE, 0);
+  glBindBuffer(bufType, arrayID);
+  glBindBufferBase(bufType, bindID, arrayID); 
+  if (bufSize < size()) 
+  {
+    glBufferData(bufType, size(), NULL, GL_DYNAMIC_DRAW);
+    bufSize = size();
+  }
+
+  glBufferSubData(bufType, 0, min(size(), flush_size), buffer.data()); 
+  glBindBuffer(bufType, 0);
 }
-char *UniformBuffer::get_buffer()
+char *UniformBuffer::get_buffer(uint offset, uint size)
 {
-  return buffer.data();
+  if (buffer.size() < offset + size)
+    buffer.resize(offset + size);
+
+  return buffer.data() + offset;
 }
 
 UniformBuffer &get_buffer(const char *name)
 {
-  static UniformBuffer invalidBuffer(0, 0, 0, {}, "");
+  static UniformBuffer invalidBuffer(0, 0, 0, 0, {}, "");
   auto it = nameToArray.find(name);
   return it != nameToArray.end() ? it->second : invalidBuffer;
 }

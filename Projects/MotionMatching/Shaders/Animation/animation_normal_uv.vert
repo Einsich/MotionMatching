@@ -5,7 +5,7 @@ layout(location = 2)in vec2 TexCoord  ;
 layout(location = 3)in vec4 BoneWeights  ;
 layout(location = 4)in uvec4 BoneIndex  ;
 
-layout(std140, binding = 0) uniform Commondata 
+layout(std140, binding = 0) readonly uniform Commondata 
 {
     mat4 ViewProjection;
     vec3 CameraPosition;
@@ -26,7 +26,7 @@ struct Instance
     mat4 Model;
     mat4 Bones[60];
 };
-layout(packed, binding = 1) buffer InstanceData 
+layout(packed, binding = 1) readonly buffer InstanceData 
 {
     Instance instances[];
 };
@@ -34,9 +34,11 @@ out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
 flat out int instanceID;
+
 void main()
 {
-    Instance instance = instances[gl_InstanceID];
+    #define instance instances[gl_InstanceID]
+    
     mat4 BoneTransform = mat4(0);
 	for (int i = 0; i < 4; i++)
 		BoneTransform += instance.Bones[BoneIndex[i]] * BoneWeights[i];

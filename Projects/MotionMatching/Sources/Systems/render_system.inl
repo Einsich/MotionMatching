@@ -106,20 +106,20 @@ main_render(DebugArrow &debugArrows)
       {
         material->get_shader().use();
         material->bind_textures_to_shader();
-        instanceData.flush_buffer();
+        instanceData.flush_buffer(instanceCount * instanceSize);
         mesh->get_vao().render_instances(instanceCount, wire_frame);
         instanceCount = 0;
         instanceSize = material->buffer_size(); // new size of instance
       }
       if (instanceData.size() < (instanceCount + 1) * instanceSize)
-        debug_error("Need more buffer mem");
-      material->set_data_to_buf(instanceData.get_buffer() + instanceCount * instanceSize);
+        debug_log("reallocate buffer space");
+      material->set_data_to_buf(instanceData.get_buffer(instanceCount * instanceSize, instanceSize));
       instanceCount++;
       prevStuff = {material, mesh};
     }
     prevStuff.first->get_shader().use();
     prevStuff.first->bind_textures_to_shader();
-    instanceData.flush_buffer();
+    instanceData.flush_buffer(instanceCount * instanceSize);
     prevStuff.second->get_vao().render_instances(instanceCount, wire_frame);
   }
   QUERY() render_meshes([&](
