@@ -109,12 +109,10 @@ void DebugArrow::render(bool wire_frame)
 {
   const Shader &arrowShader = arrowMaterial->get_shader();
   arrowShader.use();
-  arrowMaterial->bind_to_shader();
   glDisable(GL_CULL_FACE);
 
   render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow, wire_frame);
   render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow, wire_frame);
 
-  arrowMaterial->unbind_to_shader();
   glEnable(GL_CULL_FACE);
 }

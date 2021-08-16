@@ -61,7 +61,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
       lodColor = vec3(10);
     animationPlayer.motionMatching.lod = j;
     
-    material->set_property(Property("Diffuse", lodColor));
+    material->set_property("material.Diffuse", lodColor);
     //static int i = 0;
     //ProfilerLabel motion_matching("motion_matching" + to_string(i));
     //i = (i + 1) % (settings.testCount + 1);
