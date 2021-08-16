@@ -1,6 +1,8 @@
 #pragma once
 #include "3dmath.h"
 #include "ecs/singleton.h"
+#include "Engine/Render/mesh.h"
+#include "Engine/Render/material.h"
 
 struct GlobalRenderData
 {
@@ -11,4 +13,13 @@ struct GlobalRenderData
 struct EditorRenderSettings : ecs::Singleton
 {
   bool wire_frame;
+};
+struct RenderStuff
+{
+  Asset<Material> material;
+  Asset<Mesh> mesh;
+};
+struct RenderQueue : ecs::Singleton
+{
+  vector<RenderStuff> queue;
 };
