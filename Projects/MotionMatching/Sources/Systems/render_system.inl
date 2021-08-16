@@ -37,29 +37,25 @@ void find_light(Callable);
 template<typename Callable> 
 void lod_selector(Callable);
 
-SYSTEM(ecs::SystemOrder::MIDDLE_RENDER,ecs::SystemTag::GameEditor)
-main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
+SYSTEM(ecs::SystemOrder::MIDDLE_RENDER + 2,ecs::SystemTag::GameEditor)
+main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings, const MainCamera &mainCamera)
 {
-  mat4 camTransform, camProjection;
-  if(!main_camera(camTransform, camProjection))
+  if(!mainCamera.eid)
   {
     debug_error("Need main camera");
     return;
   }
 
-  vec3 cameraPosition = camTransform[3];
-  mat4 viewTrasform = inverse(camTransform);
-
-  mat4 viewProjection = camProjection *  viewTrasform;
+  mat4 viewProjection = mainCamera.projection * mainCamera.view;
 
   DirectionLight light; 
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
 
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
-  {viewProjection, cameraPosition, light.normalizedLightDirection});
+  {viewProjection, mainCamera.position, light.normalizedLightDirection});
 
-  mat4 viewProjectionSkybox = camProjection *  mat4(mat3(viewTrasform));
+  mat4 viewProjectionSkybox = mainCamera.projection *  mat4(mat3(mainCamera.view));
 
   QUERY() lod_selector([&](
     const Transform &transform,
@@ -67,7 +63,7 @@ main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
     const vector<float> &lods_distances,
     Asset<Mesh> &mesh)
   {
-    float distToCamera = length(transform.get_position() - cameraPosition);
+    float distToCamera = length(transform.get_position() - mainCamera.position);
     uint lod = lods_meshes.size();
     for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
     {

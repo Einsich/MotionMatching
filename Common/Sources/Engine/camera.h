@@ -65,12 +65,16 @@ struct OnSetMainCamera
     mainCamera(camera){}
 };
 
-bool main_camera(mat4 &cam_transform, mat4 &cam_projection);
-vec3 main_camera_position();
-
 
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target);
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target);
 
 ecs::EntityId create_free_camera(vec3 position, vec2 rotation);
 ecs::EntityId create_camera(vec3 position = vec3(0.f), vec2 rotation = vec2(0.f));
+
+struct MainCamera : ecs::Singleton
+{
+  mat4 projection, transform, view;
+  vec3 position;
+  ecs::EntityId eid;
+};

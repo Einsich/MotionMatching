@@ -36,7 +36,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   int *mmIndex,
   int *mmOptimisationIndex,
   Settings &settings,
-  SettingsContainer &settingsContainer)
+  SettingsContainer &settingsContainer,
+  const MainCamera &mainCamera)
 {
   float dt = Time::delta_time();
   
@@ -45,7 +46,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     const MotionMatchingSettings &mmsettings = settingsContainer.motionMatchingSettings[mmIndex ? *mmIndex : 0].second;
     const MotionMatchingOptimisationSettings &OptimisationSettings = 
       settingsContainer.motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
-    float dist = length(main_camera_position() - transform.get_position());
+    float dist = length(mainCamera.position - transform.get_position());
 
     int j = 0;
     vec3 lodColor(0.f);

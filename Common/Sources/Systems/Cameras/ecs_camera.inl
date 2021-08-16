@@ -14,69 +14,56 @@ static void find_all_created_camera(Callable);
 template<typename Callable>
 static void check_camera_manager(Callable);
 
-EVENT(ecs::SystemTag::GameEditor) create_camera_manager(const ecs::OnSceneCreated &)
+struct CameraManager : ecs::Singleton
 {
+  std::vector<ecs::EntityId> sceneCameras;
+};
 
-  std::vector<ecs::EntityId> cameras;
-  ecs::EntityId foundMainCamera;
+EVENT(ecs::SystemTag::GameEditor) create_camera_manager(
+  const ecs::OnSceneCreated &,
+  CameraManager &manager,
+  MainCamera &mainCamera)
+{
+  manager.sceneCameras.clear();
+  mainCamera.eid = ecs::EntityId();
   QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
-    cameras.push_back(eid);
+    manager.sceneCameras.push_back(eid);
     if (isMainCamera)
-      foundMainCamera = eid;
+      mainCamera.eid = eid;
   });
-  bool camera_manager_exists = false;
-  QUERY() check_camera_manager([&](
-      std::vector<ecs::EntityId> &sceneCameras,
-      ecs::EntityId &mainCamera) {
-        sceneCameras = cameras;
-        mainCamera = foundMainCamera;
-      camera_manager_exists = true;
-  });
-  if (!camera_manager_exists)
-  {
-    ecs::ComponentInitializerList list;
-    list.add<std::vector<ecs::EntityId>>("sceneCameras") = cameras;
-    list.add<ecs::EntityId>("mainCamera") = foundMainCamera;
-    ecs::create_entity(list);
-  }
 }
 
 template<typename Callable>
 static void set_main_cam_query(const ecs::EntityId&, Callable);
 
-static void set_main_camera_status(const ecs::EntityId &mainCamera, bool status)
+static void set_main_camera_status(const ecs::EntityId &camera, bool status)
 {
-  QUERY()set_main_cam_query(mainCamera, [status](bool &isMainCamera){
+  QUERY()set_main_cam_query(camera, [&](bool &isMainCamera, MainCamera &mainCamera){
     isMainCamera = status;
+    if (status)
+      mainCamera.eid = camera;
   });
 }
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_main_camera(
   const OnSetMainCamera &event,
-  std::vector<ecs::EntityId> &sceneCameras,
-  ecs::EntityId &mainCamera)
+  MainCamera &mainCamera)
 {
-  set_main_camera_status(mainCamera, false);
-  mainCamera = event.mainCamera;
-  set_main_camera_status(mainCamera, true);
-  if (std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera) == sceneCameras.end())
-  {
-    sceneCameras.push_back(mainCamera);
-  }
+  set_main_camera_status(mainCamera.eid, false);
+  set_main_camera_status(event.mainCamera, true);
 }
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_next_camera(
   const KeyDownEvent<SDLK_F1> &,
-  std::vector<ecs::EntityId> &sceneCameras,
-  ecs::EntityId &mainCamera)
+  CameraManager &manager,
+  MainCamera &mainCamera)
 {
-  auto it = std::find(sceneCameras.begin(), sceneCameras.end(), mainCamera);
-  if (it != sceneCameras.end())
+  auto it = std::find(manager.sceneCameras.begin(), manager.sceneCameras.end(), mainCamera.eid);
+  set_main_camera_status(mainCamera.eid, false);
+  if (it != manager.sceneCameras.end())
   {
-    int i = it - sceneCameras.begin();
-    i = (i + 1) % sceneCameras.size();
-    set_main_camera_status(mainCamera, false);
-    mainCamera = sceneCameras[i];
-    set_main_camera_status(mainCamera, true);
+    int i = it - manager.sceneCameras.begin();
+    i = (i + 1) % manager.sceneCameras.size();
+    set_main_camera_status(manager.sceneCameras[i], true);
   }
   else
     debug_error("Can't set next camera to main Camera");
@@ -88,10 +75,10 @@ static void register_cam_query(Callable);
 
 void register_camera(ecs::EntityId camera)
 {
-  QUERY()register_cam_query([camera](std::vector<ecs::EntityId> &sceneCameras){
-    auto it = std::find(sceneCameras.begin(), sceneCameras.end(), camera);
-    if (it == sceneCameras.end())
-      sceneCameras.push_back(camera);
+  QUERY()register_cam_query([camera](CameraManager &manager){
+    auto it = std::find(manager.sceneCameras.begin(), manager.sceneCameras.end(), camera);
+    if (it == manager.sceneCameras.end())
+      manager.sceneCameras.push_back(camera);
   });
 }
 //ArcballCamera
@@ -253,39 +240,19 @@ SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
 
 
 template<typename Callable>
-static void get_main_cam_query(Callable);
-template<typename Callable>
-static void get_main_cam_property_query(const ecs::EntityId&, Callable);
+static void get_main_cam_query(const ecs::EntityId&, Callable);
 
-bool main_camera(mat4 &cam_transform, mat4 &cam_projection)
+SYSTEM(ecs::SystemOrder::EARLY_RENDER - 1,ecs::SystemTag::GameEditor)
+update_main_camera_transformations(MainCamera &mainCamera)
 {
-  bool result = false;
-  QUERY() get_main_cam_query([&](const ecs::EntityId &mainCamera)
+  ecs::EntityId eid = mainCamera.eid;
+  QUERY() get_main_cam_query(eid, [&](Camera &camera, Transform &transform)
   {
-    QUERY() get_main_cam_property_query(mainCamera, [&](Camera &camera, Transform &transform)
-    {
-      cam_transform = transform.get_transform();
-      cam_projection = camera.get_projection();
-      result = true;
-    });
+    mainCamera.position = transform.get_position();
+    mainCamera.transform = transform.get_transform();
+    mainCamera.projection = camera.get_projection();
+    mainCamera.view = inverse(mainCamera.transform);
   });
-  return result;
-}
-template<typename Callable>
-static void get_main_cam_query2(Callable);
-template<typename Callable>
-static void get_main_cam_property_query2(const ecs::EntityId&, Callable);
-vec3 main_camera_position()
-{
-  vec3 result;
-  QUERY() get_main_cam_query2([&](const ecs::EntityId &mainCamera)
-  {
-    QUERY() get_main_cam_property_query2(mainCamera, [&](const Transform &transform)
-    {
-      result = transform.get_position();
-    });
-  });
-  return result;
 }
 
 

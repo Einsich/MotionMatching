@@ -158,8 +158,9 @@ void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
   {ecs::get_type_description<DebugArrow>("debugArrows"), false},
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
-}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER, (uint)(ecs::SystemTag::GameEditor));
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
+  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
 
 void main_render_func()
 {
@@ -167,7 +168,8 @@ void main_render_func()
   {
     main_render(
       *begin.get_component<DebugArrow>(0),
-      *begin.get_component<EditorRenderSettings>(1)
+      *begin.get_component<EditorRenderSettings>(1),
+      *begin.get_component<MainCamera>(2)
     );
   }
 }
