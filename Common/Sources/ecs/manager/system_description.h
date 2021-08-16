@@ -46,7 +46,7 @@ namespace ecs
     void (*function)();
     int order;
     uint tags;
-    SystemDescription(const char *name, const std::vector<FunctionArgument> &args, void (*function_pointer)(), SystemOrder order, uint tags);
+    SystemDescription(const char *name, const std::vector<FunctionArgument> &args, void (*function_pointer)(), int order, uint tags);
     void execute();
   };
 

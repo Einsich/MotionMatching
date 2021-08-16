@@ -2,8 +2,9 @@
 
 namespace ecs
 {
-  enum class SystemOrder
+  namespace SystemOrder
   {
+    constexpr int
     SPECIAL = -200,
     NO_ORDER = -100,
     INPUT_DEPEND = 0,
@@ -12,6 +13,6 @@ namespace ecs
     MIDDLE_RENDER = 300,
     LATE_RENDER = 400,
     UI = 500,
-    UIMENU = 600
-  };
+    UIMENU = 600;
+  }
 }

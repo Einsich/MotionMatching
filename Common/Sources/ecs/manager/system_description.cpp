@@ -6,10 +6,10 @@ namespace ecs
     archetype(archetype), containers(containers){}
 
   SystemDescription::SystemDescription(const char *name, const std::vector<FunctionArgument> &args, 
-    void (*function_pointer)(), SystemOrder order, uint tags):
+    void (*function_pointer)(), int order, uint tags):
     QueryDescription(name, args, false),
     function(function_pointer),
-    order((int)order),
+    order(order),
     tags(tags)
   {
     add_system(this);

@@ -32,7 +32,7 @@ struct ParserSystemDescription
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
-#define ARGS "[" NAME_SYM "&*,:<>" SPACE_SYM "]*"
+#define ARGS "[" NAME_SYM "&*,:<>\\+\\-" SPACE_SYM "]*"
 #define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
@@ -50,6 +50,7 @@ static const std::regex event_full_regex(EVENT SPACE NAME SPACE ARGS_L);
 static const std::regex event_regex(EVENT);
 static const std::regex args_regex(ARGS_L);
 static const std::regex arg_regex("[" NAME_SYM "&*:<>" SPACE_SYM "]+");
+static const std::regex sys_definition_regex("[" NAME_SYM "&*:<>\\+\\-" SPACE_SYM "]+");
 
 namespace fs = std::filesystem;
 
@@ -151,7 +152,7 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
   args_range.begin++;
   args_range.end--;
   std::string row_args = args_range.str();
-  auto matched_args = get_matches(row_args, arg_regex);
+  auto matched_args = get_matches(row_args, sys_definition_regex);
   std::vector<std::string> tags;
   for (const std::string &arg : matched_args)
   {
