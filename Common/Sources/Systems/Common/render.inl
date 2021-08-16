@@ -80,11 +80,12 @@ render_sky_box(SkyBox &skyBox, const MainCamera &mainCamera, const EditorRenderS
   mat4 viewProjectionSkybox = mainCamera.projection *  mat4(mat3(mainCamera.view));
   skyBox.render(viewProjectionSkybox, editorSettings.wire_frame);
 }
-
-SYSTEM(ecs::SystemOrder::RENDER + 101,ecs::SystemTag::GameEditor) // after skybox
+// after skybox
+SYSTEM(ecs::SystemOrder::RENDER+101,ecs::SystemTag::GameEditor) 
 render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
 {
-  debugArrows.render(editorSettings.wire_frame);
+  UniformBuffer &instanceData = get_buffer("InstanceData");
+  debugArrows.render(instanceData, editorSettings.wire_frame);
 
 }
 
@@ -104,7 +105,7 @@ bool emptyRenderStuff(const RenderStuff &a)
 };
 
 SYSTEM(ecs::SystemOrder::RENDER + 2,ecs::SystemTag::GameEditor)
-main__instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
+main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 {
   UniformBuffer &instanceData = get_buffer("InstanceData");
   bool wire_frame = editorSettings.wire_frame; 

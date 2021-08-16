@@ -47,7 +47,7 @@ public:
 
   uint buffer_size() const;
   void set_data_to_buf(char *data) const;
-
+  BufferField get_buffer_field(const char *name) const;
   #define TYPE(T, gl_type)\
   bool set_property(const char *name, const T &value)\
   {\

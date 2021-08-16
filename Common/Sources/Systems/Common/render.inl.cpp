@@ -120,18 +120,37 @@ void render_sky_box_func()
 }
 
 
-void main__instanced_render_func();
+void render_debug_arrows_func();
 
-ecs::SystemDescription main__instanced_render_descr("main__instanced_render", {
+ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
+  {ecs::get_type_description<DebugArrow>("debugArrows"), false},
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+}, render_debug_arrows_func, ecs::SystemOrder::RENDER+101, (uint)(ecs::SystemTag::GameEditor));
+
+void render_debug_arrows_func()
+{
+  for (ecs::QueryIterator begin = render_debug_arrows_descr.begin(), end = render_debug_arrows_descr.end(); begin != end; ++begin)
+  {
+    render_debug_arrows(
+      *begin.get_component<DebugArrow>(0),
+      *begin.get_component<EditorRenderSettings>(1)
+    );
+  }
+}
+
+
+void main_instanced_render_func();
+
+ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
   {ecs::get_type_description<RenderQueue>("render"), false}
-}, main__instanced_render_func, ecs::SystemOrder::RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
+}, main_instanced_render_func, ecs::SystemOrder::RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
 
-void main__instanced_render_func()
+void main_instanced_render_func()
 {
-  for (ecs::QueryIterator begin = main__instanced_render_descr.begin(), end = main__instanced_render_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = main_instanced_render_descr.begin(), end = main_instanced_render_descr.end(); begin != end; ++begin)
   {
-    main__instanced_render(
+    main_instanced_render(
       *begin.get_component<EditorRenderSettings>(0),
       *begin.get_component<RenderQueue>(1)
     );

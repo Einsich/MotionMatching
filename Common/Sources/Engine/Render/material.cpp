@@ -100,6 +100,24 @@ void Material::set_data_to_buf(char *data) const
     }
   }
 }
+
+BufferField Material::get_buffer_field(const char *name) const
+{
+  auto it = uniformMap.find(name);
+  if (it != uniformMap.end())
+  {
+    int i = it->second;
+    const StorageBuffer *instanceData = shader.get_instance_data();
+    if (instanceData)
+    {
+      return instanceData->fields[i];
+    }
+    debug_error("there is field %s, but didn't instanceData", name);
+    return BufferField();
+  } 
+  return BufferField();
+}
+
 void Material::load(const filesystem::path &, bool reload)
 {
   if (!reload)

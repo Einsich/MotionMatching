@@ -75,44 +75,35 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
 
   mat4 r = directionMatrix(vec3(0, 1, 0), d);
   if (depth_ignore)
-  {
-    depthIgnore.arrowTransforms.push_back(t * r * s);
-    depthIgnore.arrowColors.push_back(color);
-  }
+    depthIgnore.emplace_back(Arrow{t * r * s, color});
   else
-  {
-    depthNotIgnore.arrowTransforms.push_back(t * r * s);
-    depthNotIgnore.arrowColors.push_back(color);
-  }  
+    depthNotIgnore.emplace_back(Arrow{t * r * s, color});
 }
-void render_instancing(bool ignoreDepth, const Shader &shader, vector<mat4> &matrices, vector<vec3> &colors, const VertexArrayObject &arrow, bool wire_frame)
+void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &arrows, bool ignoreDepth, bool wire_frame)
 {
-  assert(matrices.size() == colors.size());
+  uint instanceCount = arrows.size(), instanceSize = arrowMaterial->buffer_size();
+  char *data = instanceData.get_buffer(0, instanceCount * instanceSize);
+  BufferField t = arrowMaterial->get_buffer_field("BoneTransform");
+  BufferField c = arrowMaterial->get_buffer_field("Color");
+  for (uint i = 0; i < instanceCount; ++i)
+  {
+    memcpy(data + t.offset + i * instanceSize, &arrows[i].transform, sizeof(mat4));
+    memcpy(data + c.offset + i * instanceSize, &arrows[i].color, sizeof(vec3));
+  }
+  instanceData.flush_buffer(instanceCount * instanceSize);
+  arrows.clear();
+  
   glDepthFunc(ignoreDepth ? GL_ALWAYS : GL_LESS);
   glDepthMask(ignoreDepth ? GL_FALSE : GL_TRUE);
-  constexpr int ARROW_DRAWCALL_LIMIT = 150;
-  for (int i = 0; i < (int)matrices.size(); i += ARROW_DRAWCALL_LIMIT)
-  {
-    int k = glm::min(ARROW_DRAWCALL_LIMIT, (int)matrices.size() - i);
-    auto beginT = matrices.begin() + i;
-    auto endT = matrices.begin() + i + k;
-    shader.set_mat4x4("BoneTransforms", beginT, endT);
-    auto beginC = colors.begin() + i;
-    auto endC = colors.begin() + i + k;
-    shader.set_vec3("Colors", beginC, endC);
-    arrow.render_instances(k, wire_frame);
-  }
-  matrices.clear();
-  colors.clear();
+  arrow.render_instances(instanceCount, wire_frame);
 }
-void DebugArrow::render(bool wire_frame)
+void DebugArrow::render(UniformBuffer &instanceData, bool wire_frame)
 {
   const Shader &arrowShader = arrowMaterial->get_shader();
   arrowShader.use();
   glDisable(GL_CULL_FACE);
-
-  render_instancing(true, arrowShader, depthIgnore.arrowTransforms, depthIgnore.arrowColors, arrow, wire_frame);
-  render_instancing(false, arrowShader, depthNotIgnore.arrowTransforms, depthNotIgnore.arrowColors, arrow, wire_frame);
+  render_depth_case(instanceData, depthIgnore, true, wire_frame);
+  render_depth_case(instanceData, depthNotIgnore, false, wire_frame);
 
   glEnable(GL_CULL_FACE);
 }
