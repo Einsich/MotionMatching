@@ -28,7 +28,7 @@ namespace ecs
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
     logic.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->order >= (int)SystemOrder::EARLY_RENDER;});
+      [](const SystemDescription *a){return a->order >= (int)SystemOrder::RENDER;});
     render.begin = logic.end;
     render.end = std::find_if(systems.begin(), systems.end(),
       [](const SystemDescription *a){return a->order >= (int)SystemOrder::UI;});

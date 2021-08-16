@@ -30,8 +30,11 @@ namespace ecs
     s += read(is, typeName);
     typeHash = HashedString(typeName);
     ecs::TypeInfo &typeInfo = ecs::TypeInfo::types()[typeHash];
-    data = typeInfo.constructor(malloc(typeInfo.sizeOf));
-    s += typeInfo.deserialiser(is, data);
+    if (typeInfo.hashId)
+    {
+      data = typeInfo.constructor(malloc(typeInfo.sizeOf));
+      s += typeInfo.deserialiser(is, data);
+    }
     return s;
   }
   size_t Template::serialize(std::ostream& os) const

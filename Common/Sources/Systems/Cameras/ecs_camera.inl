@@ -242,17 +242,28 @@ SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
 template<typename Callable>
 static void get_main_cam_query(const ecs::EntityId&, Callable);
 
-SYSTEM(ecs::SystemOrder::EARLY_RENDER - 1,ecs::SystemTag::GameEditor)
+SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::GameEditor)
 update_main_camera_transformations(MainCamera &mainCamera)
 {
   ecs::EntityId eid = mainCamera.eid;
+  bool mainCameraExists = false;
   QUERY() get_main_cam_query(eid, [&](Camera &camera, Transform &transform)
   {
     mainCamera.position = transform.get_position();
     mainCamera.transform = transform.get_transform();
     mainCamera.projection = camera.get_projection();
     mainCamera.view = inverse(mainCamera.transform);
+    mainCameraExists = true;
   });
+  if (!mainCameraExists)
+  {
+    mainCamera.position = vec3();
+    mainCamera.transform = mat4(1.f);
+    mainCamera.view = mat4(1.f);
+    const float aspectRatio = (float)Application::get_context().get_width() / Application::get_context().get_height();
+    mainCamera.projection = perspective(90 * DegToRad, aspectRatio, 0.1f, 1000.f);
+
+  }
 }
 
 

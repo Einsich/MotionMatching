@@ -15,7 +15,7 @@ template<typename Callable>
 void find_light(Callable); 
  
  
-SYSTEM(ecs::SystemOrder::MIDDLE_RENDER) main_render() 
+SYSTEM(ecs::SystemOrder::RENDER) main_render() 
 { 
   mat4 camTransform, camProjection; 
   if(!main_camera(camTransform, camProjection)) 

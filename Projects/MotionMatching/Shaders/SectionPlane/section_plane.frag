@@ -2,6 +2,7 @@
 in vec2 UV;
 in vec3 EyespaceNormal;
 in vec3 WorldPosition;
+flat in int instanceID;
 out vec4 FragColor;
 
 layout(std140, binding = 0) uniform Commondata 
@@ -11,17 +12,31 @@ layout(std140, binding = 0) uniform Commondata
     vec3 LightDirection;
 };
 
-uniform vec3 Ambient;
-uniform vec3 Diffuse;
-uniform vec3 Specular;
-uniform float Shininess;
+struct TexturedMaterial
+{
+    vec3 Ambient;
+    vec3 Diffuse;
+    vec3 Specular;
+    float Shininess;
+    float sectionScale;
+    vec2 uvScale;
+    vec2 uvOffset;
+};
+struct Instance
+{
+    TexturedMaterial material;
+    mat4 Model;
+};
+layout(packed, binding = 1) readonly buffer InstanceData 
+{
+    Instance instances[];
+};
 
-uniform vec2 uvScale;
-uniform float sectionScale;
-uniform vec2 uvOffset;
 uniform sampler2D mainTex;
 void main()
 {
+    #define material instances[instanceID].material
+
     vec3 N = normalize(EyespaceNormal);
     vec3 L = LightDirection;
     vec3 toCamera = CameraPosition - WorldPosition;
@@ -31,16 +46,15 @@ void main()
     
     float df = max(0.0, dot(N, -L));
     float sf = max(0.0, dot(E, W));
-    sf = pow(sf, Shininess);
+    sf = pow(sf, material.Shininess);
 
-    vec2 uv = (UV + uvOffset) * uvScale;
-    vec2 section = WorldPosition.xz / sectionScale;
+    vec2 section = WorldPosition.xz / material.sectionScale;
     section = fract(section);
     section = min(section, abs(section - vec2(1,1)));
     float t = min(section.x, section.y);
-    bool addSection = toCameraDist < 45 && t * sectionScale < 0.05;
-    vec3 texColor = addSection ? vec3(1,1,1) : texture(mainTex, uv).rgb;
-    vec3 color = texColor * (Ambient + df * Diffuse) + sf * Specular;
+    bool addSection = toCameraDist < 45 && t * material.sectionScale < 0.05;
+    vec3 texColor = addSection ? vec3(1,1,1) : texture(mainTex, UV).rgb;
+    vec3 color = texColor * (material.Ambient + df * material.Diffuse) + sf * material.Specular;
 
     FragColor = vec4(color, 1.0);
 }

@@ -139,7 +139,7 @@ void update_main_camera_transformations_func();
 
 ecs::SystemDescription update_main_camera_transformations_descr("update_main_camera_transformations", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, update_main_camera_transformations_func, ecs::SystemOrder::EARLY_RENDER - 1, (uint)(ecs::SystemTag::GameEditor));
+}, update_main_camera_transformations_func, ecs::SystemOrder::RENDER - 5, (uint)(ecs::SystemTag::GameEditor));
 
 void update_main_camera_transformations_func()
 {

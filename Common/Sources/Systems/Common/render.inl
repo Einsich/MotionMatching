@@ -2,12 +2,14 @@
 #include "Engine/Render/global_uniform.h"
 #include "Engine/Render/render.h"
 #include "Engine/Render/mesh.h"
+#include "Engine/Render/material.h"
 #include "Engine/Render/Texture/textures.h"
 #include "Engine/Resources/resources.h"
 #include <Engine/imgui/imgui.h>
 
 REGISTER_TYPE_NAMED(Asset<Mesh>, mesh)
 REGISTER_TYPE_NAMED(Asset<Texture2D>, Texture2D)
+REGISTER_TYPE_NAMED(Asset<Material>, material)
 
 EVENT(ecs::SystemTag::GameEditor) add_global_uniform(const ecs::OnSceneCreated &)
 {

@@ -18,7 +18,7 @@ SYSTEM() system_with_query(float f, std::string &s)
 		//printf("[system_with_query] query works, s = %s, b = %f\n\n", s.c_str(), b);
   });
 }
-SYSTEM(ecs::SystemOrder::EARLY_RENDER) nullable_system(A &v, B *w)
+SYSTEM(ecs::SystemOrder::RENDER) nullable_system(A &v, B *w)
 {
 	//printf("[nullable_system] %s, %s\n\n", v.x.c_str(), w ? w->x.c_str() : "(null)");
 }

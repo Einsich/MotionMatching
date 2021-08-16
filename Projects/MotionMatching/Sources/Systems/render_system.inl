@@ -1,9 +1,7 @@
 #include <ecs/ecs.h>
 #include <algorithm>
-#include "Animation/AnimationRender/animation_render.h"
-#include "Animation/AnimationRender/bone_render.h"
 #include "Animation/animation_player.h"
-#include <Engine/Render/mesh_render.h>
+#include <Engine/Render/mesh.h>
 #include <Engine/Render/render.h>
 #include <Engine/Render/global_uniform.h>
 #include <Engine/camera.h>
@@ -37,130 +35,166 @@ void find_light(Callable);
 template<typename Callable> 
 void lod_selector(Callable);
 
-SYSTEM(ecs::SystemOrder::MIDDLE_RENDER + 2,ecs::SystemTag::GameEditor)
-main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings, const MainCamera &mainCamera)
+SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor)
+set_global_render_data(const MainCamera &mainCamera)
 {
-  if(!mainCamera.eid)
-  {
-    debug_error("Need main camera");
-    return;
-  }
-
-  mat4 viewProjection = mainCamera.projection * mainCamera.view;
-
   DirectionLight light; 
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
-
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
-  {viewProjection, mainCamera.position, light.normalizedLightDirection});
+  {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection});
+}
 
+SYSTEM(ecs::SystemOrder::RENDER+100,ecs::SystemTag::GameEditor)
+render_sky_box(SkyBox &skyBox, const MainCamera &mainCamera, const EditorRenderSettings &editorSettings)
+{
   mat4 viewProjectionSkybox = mainCamera.projection *  mat4(mat3(mainCamera.view));
+  skyBox.render(viewProjectionSkybox, editorSettings.wire_frame);
+}
 
-  QUERY() lod_selector([&](
-    const Transform &transform,
-    const vector<Asset<Mesh>> &lods_meshes,
-    const vector<float> &lods_distances,
-    Asset<Mesh> &mesh)
+SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
+  const MainCamera &mainCamera,
+  const Transform &transform,
+  const vector<Asset<Mesh>> &lods_meshes,
+  const vector<float> &lods_distances,
+  Asset<Mesh> &mesh)
+{
+  float distToCamera = length(transform.get_position() - mainCamera.position);
+  uint lod = lods_meshes.size();
+  for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
   {
-    float distToCamera = length(transform.get_position() - mainCamera.position);
-    uint lod = lods_meshes.size();
-    for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
+    if (distToCamera < lods_distances[i])
     {
-      if (distToCamera < lods_distances[i])
-      {
-        lod = i;
-        break;
-      }
+      lod = i;
+      break;
     }
-    if (lod < lods_meshes.size())
-      mesh = lods_meshes[lod];
-    else
-      mesh = Asset<Mesh>();//culled by dist
-
-  });
-
-
-  UniformBuffer &instanceData = get_buffer("InstanceData");
-  bool wire_frame = editorSettings.wire_frame; 
-  using renderStuff = pair<Asset<Material>, Asset<Mesh>>;
-  static vector<renderStuff> renderQueue;
-  renderQueue.clear();
-  QUERY() render_animation([&](
-    ecs::EntityId eid,
-    AnimationRender &animationRender,
-    const Asset<Mesh> &mesh,
-    const AnimationPlayer &animationPlayer,
-    const Transform &transform,
-    const Settings &settings)
-  {
-    if (mesh)
-    {
-      renderQueue.emplace_back(animationRender.get_material(), mesh);
-      animationRender.process(transform, animationPlayer.get_tree());
-    }
-
-    if (settings.debugBones)
-    {
-      QUERY() bone_render_animation(eid, [&](
-        const BoneRender &boneRender)
-      {
-        boneRender.render(transform.get_transform(), animationPlayer.get_tree());
-
-      });
-    }
-  });
-  auto matComparer = [](const renderStuff &a, const renderStuff &b)->bool{
-    int as = a.first ? a.first->get_shader().get_shader_program() : -1;
-    int bs = b.first ? b.first->get_shader().get_shader_program() : -1;
-    if (as < bs)
-      return true;
-    int av = a.second ? a.second->get_vao().vao() : -1;
-    int bv = b.second ? b.second->get_vao().vao() : -1;
-    return av < bv;
-  };
-  std::sort(renderQueue.begin(), renderQueue.end(), matComparer);
+  }
+  if (lod < lods_meshes.size())
+    mesh = lods_meshes[lod];
+  else
+    mesh = Asset<Mesh>();//culled by dist
+}
+struct RenderStuff
+{
+  Asset<Material> material;
+  Asset<Mesh> mesh;
+};
+static vector<RenderStuff> renderQueue;
 
   
-    //animationRender.get_material()->get_properties().set_data_to_buf(instanceData.get_buffer());
+SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
+  const Asset<Mesh> &mesh,
+  Asset<Material> &material,
+  const AnimationPlayer &animationPlayer)
+{
+  if (mesh)
+  {
+    static vector<mat4> curTransform;
+    const AnimationTree &tree = animationPlayer.get_tree();
+  
+    curTransform.resize(mesh->bonesMap.size());
+    for (uint i = 0; i < tree.nodes.size(); i++)
+    {
+      auto it2 = mesh->bonesMap.find(tree.nodes[i].get_name());
+      if (it2 != mesh->bonesMap.end())
+      {
+        curTransform[it2->second] = tree.get_bone_transform(i);
+      }
+    }
+    material->set_property("Bones[0]", curTransform);
+  }
+}
+
+SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_position(
+  const Asset<Mesh> &mesh,
+  Asset<Material> &material,
+  const Transform &transform)
+{
+  renderQueue.emplace_back(RenderStuff{material, mesh});
+  material->set_property("Model", transform.get_transform());
+}
+
+SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) render_skeleton_bones(
+  const AnimationPlayer &animationPlayer,
+  const Transform &transform,
+  const Settings &settings)
+{
+  if (settings.debugBones)
+  {
+    mat4 t = transform.get_transform();
+    const AnimationTree &tree = animationPlayer.get_tree();
+    static vector<vec3> boneOffsets;
+    if (boneOffsets.size() != tree.nodes.size())
+      boneOffsets.resize(tree.nodes.size());
+
+    for (uint i = 0; i < tree.nodes.size(); i++)
+    {
+      boneOffsets[i] = vec3(tree.get_transform(i)[3]);
+    }
+    for (uint i = 0; i < tree.nodes.size(); i++)
+    {
+      vec3 p = tree.nodes[i].parent() >= 0 ? boneOffsets[tree.nodes[i].parent()] : vec3(0.f);
+      float width = std::min(0.5f, length(boneOffsets[i] - p) * 0.05f);
+      draw_arrow(t, p, boneOffsets[i], vec3(0,0.8f,0), width);
+    }
+  }
+}
+bool matComparer (const RenderStuff &a, const RenderStuff &b)
+{
+    int as = a.material->get_shader().get_shader_program();
+    int bs = b.material->get_shader().get_shader_program();
+    if (as != bs)
+      return as < bs;
+    int av = a.mesh->get_vao().vao();
+    int bv = b.mesh->get_vao().vao();
+    return av < bv;
+};
+bool emptyRenderStuff(const RenderStuff &a)
+{
+  return !(a.material && a.mesh);
+};
+SYSTEM(ecs::SystemOrder::RENDER + 2,ecs::SystemTag::GameEditor)
+main_render(EditorRenderSettings &editorSettings)
+{
+  UniformBuffer &instanceData = get_buffer("InstanceData");
+  bool wire_frame = editorSettings.wire_frame; 
+
+  renderQueue.erase(std::remove_if(renderQueue.begin(), renderQueue.end(), emptyRenderStuff), renderQueue.end());
+  std::sort(renderQueue.begin(), renderQueue.end(), matComparer);
+
   if (renderQueue.size() > 0)
   {
-    uint instanceCount = 0, instanceSize = renderQueue[0].first->buffer_size();
-    renderStuff prevStuff = renderQueue[0];
-    for (const auto &[material, mesh] : renderQueue)
+    uint instanceCount = 0, instanceSize = renderQueue[0].material->buffer_size();
+    RenderStuff prevStuff = renderQueue[0];
+    for (const RenderStuff &stuff : renderQueue)
     {
-      if (matComparer(prevStuff, {material, mesh})) // prevStuff < p
+      if (matComparer(prevStuff, stuff)) // prevStuff < p
       {
-        material->get_shader().use();
-        material->bind_textures_to_shader();
+        prevStuff.material->get_shader().use();
+        prevStuff.material->bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
-        mesh->get_vao().render_instances(instanceCount, wire_frame);
+        prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
         instanceCount = 0;
-        instanceSize = material->buffer_size(); // new size of instance
+        instanceSize = prevStuff.material->buffer_size(); // new size of instance
       }
       if (instanceData.size() < (instanceCount + 1) * instanceSize)
         debug_log("reallocate buffer space");
-      material->set_data_to_buf(instanceData.get_buffer(instanceCount * instanceSize, instanceSize));
+      stuff.material->set_data_to_buf(instanceData.get_buffer(instanceCount * instanceSize, instanceSize));
       instanceCount++;
-      prevStuff = {material, mesh};
+      prevStuff = stuff;
     }
-    prevStuff.first->get_shader().use();
-    prevStuff.first->bind_textures_to_shader();
+    prevStuff.material->get_shader().use();
+    prevStuff.material->bind_textures_to_shader();
     instanceData.flush_buffer(instanceCount * instanceSize);
-    prevStuff.second->get_vao().render_instances(instanceCount, wire_frame);
+    prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
   }
-  QUERY() render_meshes([&](
-    const MeshRender &meshRender,
-    const Transform &transform)
+  renderQueue.clear();
+
+/* 
+
+  QUER() render_debug_goal([&](Transform &debugTransform, const MeshRender &debugGoalSphere)
   {
-    meshRender.render(transform, wire_frame);
-  });
-
-
-
-  QUERY() render_debug_goal([&](Transform &debugTransform, const MeshRender &debugGoalSphere)
-  {
-    QUERY() render_debug_goal_on_animplayer([&](
+    QUER() render_debug_goal_on_animplayer([&](
       const AnimationPlayer &animationPlayer,
       const Transform &transform,
       const Settings &settings)
@@ -173,10 +207,10 @@ main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings, const
       Asset<Material> material = debugGoalSphere.get_material();
       const auto& feature = index.current_index().get_feature();
       
-      /*vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
+      vec3 man = transformation * vec4(feature.features[(int)AnimationFeaturesNode::Hips], 1.f);
       Ray ray(man, vec3(0,-1,0), 100);
       Collision collision = ray_cast(ray);
-      draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);*/
+      draw_arrow(ray.from, collision.collisionPoint, vec3(10,0,0), 0.04f, false);
 
       if (settings.debugNodes)
       {
@@ -239,18 +273,17 @@ main_render(DebugArrow &debugArrows, EditorRenderSettings &editorSettings, const
       }
     });
   });
+ */
 
-  debugArrows.render(wire_frame);
-
-
-
-  QUERY() render_skybox([&](
-    SkyBox &skyBox)
-  {
-    skyBox.render(viewProjectionSkybox, wire_frame);
-  });
 }
-EVENT() debug_goal_copy_mat(const ecs::OnEntityCreated &, MeshRender &debugGoalSphere)
+
+SYSTEM(ecs::SystemOrder::RENDER + 101,ecs::SystemTag::GameEditor)
+render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
+{
+  debugArrows.render(editorSettings.wire_frame);
+
+}
+/* EVEN() debug_goal_copy_mat(const ecs::OnEntityCreated &, Asset<Mesh> &debugGoalSphere)
 {
   debugGoalSphere.get_material() = debugGoalSphere.get_material().copy();
-}
+} */

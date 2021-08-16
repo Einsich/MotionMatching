@@ -1,6 +1,5 @@
 #include <ecs/ecs.h>
 #include "Animation/animation_player.h"
-#include "Animation/AnimationRender/animation_render.h"
 #include "Animation/animation_ik.h"
 #include <Engine/Render/debug_arrow.h>
 #include <Engine/Physics/physics.h>
@@ -31,7 +30,7 @@ void detect_motion_matching_lod(C);
 SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
-  AnimationRender &animationRender,
+  Asset<Material> &material,
   ThirdPersonController *thirdPersonController,
   int *mmIndex,
   int *mmOptimisationIndex,
@@ -62,7 +61,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
       lodColor = vec3(10);
     animationPlayer.motionMatching.lod = j;
     
-    animationRender.get_material()->set_property(Property("Diffuse", lodColor));
+    material->set_property(Property("Diffuse", lodColor));
     //static int i = 0;
     //ProfilerLabel motion_matching("motion_matching" + to_string(i));
     //i = (i + 1) % (settings.testCount + 1);
@@ -150,7 +149,7 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
 }
 EVENT(ecs::SystemTag::Game) init_animation_material(
   const ecs::OnEntityCreated &,
-  AnimationRender &animationRender)
+  Asset<Material> &material)
 {
-  animationRender.get_material() = animationRender.get_material().copy();
+  material = material.copy();
 }

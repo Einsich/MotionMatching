@@ -67,6 +67,7 @@ namespace ecs
   }
   void Archetype::destroy_entity(int index, bool with_swap)
   {
+    if (count > 0)
     for (auto &container : components)
     {
       container.second.destroy_component(index, with_swap);

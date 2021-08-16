@@ -17,102 +17,124 @@ void find_light(Callable lambda)
 }
 
 
-ecs::QueryDescription lod_selector_descr("lod_selector", {
+void set_global_render_data_func();
+
+ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+}, set_global_render_data_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
+
+void set_global_render_data_func()
+{
+  for (ecs::QueryIterator begin = set_global_render_data_descr.begin(), end = set_global_render_data_descr.end(); begin != end; ++begin)
+  {
+    set_global_render_data(
+      *begin.get_component<MainCamera>(0)
+    );
+  }
+}
+
+
+void render_sky_box_func();
+
+ecs::SystemDescription render_sky_box_descr("render_sky_box", {
+  {ecs::get_type_description<SkyBox>("skyBox"), false},
+  {ecs::get_type_description<MainCamera>("mainCamera"), false},
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+}, render_sky_box_func, ecs::SystemOrder::RENDER+100, (uint)(ecs::SystemTag::GameEditor));
+
+void render_sky_box_func()
+{
+  for (ecs::QueryIterator begin = render_sky_box_descr.begin(), end = render_sky_box_descr.end(); begin != end; ++begin)
+  {
+    render_sky_box(
+      *begin.get_component<SkyBox>(0),
+      *begin.get_component<MainCamera>(1),
+      *begin.get_component<EditorRenderSettings>(2)
+    );
+  }
+}
+
+
+void lod_selector_func();
+
+ecs::SystemDescription lod_selector_descr("lod_selector", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-});
+}, lod_selector_func, ecs::SystemOrder::RENDER-1, (uint)(ecs::SystemTag::GameEditor));
 
-template<typename Callable>
-void lod_selector(Callable lambda)
+void lod_selector_func()
 {
   for (ecs::QueryIterator begin = lod_selector_descr.begin(), end = lod_selector_descr.end(); begin != end; ++begin)
   {
-    lambda(
-      *begin.get_component<Transform>(0),
-      *begin.get_component<vector<Asset<Mesh>>>(1),
-      *begin.get_component<vector<float>>(2),
-      *begin.get_component<Asset<Mesh>>(3)
+    lod_selector(
+      *begin.get_component<MainCamera>(0),
+      *begin.get_component<Transform>(1),
+      *begin.get_component<vector<Asset<Mesh>>>(2),
+      *begin.get_component<vector<float>>(3),
+      *begin.get_component<Asset<Mesh>>(4)
     );
   }
 }
 
 
-ecs::QueryDescription render_animation_descr("render_animation", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<AnimationRender>("animationRender"), false},
+void process_animation_func();
+
+ecs::SystemDescription process_animation_descr("process_animation", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
-});
+  {ecs::get_type_description<Asset<Material>>("material"), false},
+  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+}, process_animation_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
 
-template<typename Callable>
-void render_animation(Callable lambda)
+void process_animation_func()
 {
-  for (ecs::QueryIterator begin = render_animation_descr.begin(), end = render_animation_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = process_animation_descr.begin(), end = process_animation_descr.end(); begin != end; ++begin)
   {
-    lambda(
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<AnimationRender>(1),
-      *begin.get_component<Asset<Mesh>>(2),
-      *begin.get_component<AnimationPlayer>(3),
-      *begin.get_component<Transform>(4),
-      *begin.get_component<Settings>(5)
+    process_animation(
+      *begin.get_component<Asset<Mesh>>(0),
+      *begin.get_component<Asset<Material>>(1),
+      *begin.get_component<AnimationPlayer>(2)
     );
   }
 }
 
 
-ecs::QueryDescription render_meshes_descr("render_meshes", {
-  {ecs::get_type_description<MeshRender>("meshRender"), false},
+void process_mesh_position_func();
+
+ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
+  {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<Transform>("transform"), false}
-});
+}, process_mesh_position_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
 
-template<typename Callable>
-void render_meshes(Callable lambda)
+void process_mesh_position_func()
 {
-  for (ecs::QueryIterator begin = render_meshes_descr.begin(), end = render_meshes_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = process_mesh_position_descr.begin(), end = process_mesh_position_descr.end(); begin != end; ++begin)
   {
-    lambda(
-      *begin.get_component<MeshRender>(0),
-      *begin.get_component<Transform>(1)
+    process_mesh_position(
+      *begin.get_component<Asset<Mesh>>(0),
+      *begin.get_component<Asset<Material>>(1),
+      *begin.get_component<Transform>(2)
     );
   }
 }
 
 
-ecs::QueryDescription render_debug_goal_descr("render_debug_goal", {
-  {ecs::get_type_description<Transform>("debugTransform"), false},
-  {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
-});
+void render_skeleton_bones_func();
 
-template<typename Callable>
-void render_debug_goal(Callable lambda)
-{
-  for (ecs::QueryIterator begin = render_debug_goal_descr.begin(), end = render_debug_goal_descr.end(); begin != end; ++begin)
-  {
-    lambda(
-      *begin.get_component<Transform>(0),
-      *begin.get_component<MeshRender>(1)
-    );
-  }
-}
-
-
-ecs::QueryDescription render_debug_goal_on_animplayer_descr("render_debug_goal_on_animplayer", {
+ecs::SystemDescription render_skeleton_bones_descr("render_skeleton_bones", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-});
+}, render_skeleton_bones_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
 
-template<typename Callable>
-void render_debug_goal_on_animplayer(Callable lambda)
+void render_skeleton_bones_func()
 {
-  for (ecs::QueryIterator begin = render_debug_goal_on_animplayer_descr.begin(), end = render_debug_goal_on_animplayer_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = render_skeleton_bones_descr.begin(), end = render_skeleton_bones_descr.end(); begin != end; ++begin)
   {
-    lambda(
+    render_skeleton_bones(
       *begin.get_component<AnimationPlayer>(0),
       *begin.get_component<Transform>(1),
       *begin.get_component<Settings>(2)
@@ -121,90 +143,39 @@ void render_debug_goal_on_animplayer(Callable lambda)
 }
 
 
-ecs::QueryDescription render_skybox_descr("render_skybox", {
-  {ecs::get_type_description<SkyBox>("skyBox"), false}
-});
-
-template<typename Callable>
-void render_skybox(Callable lambda)
-{
-  for (ecs::QueryIterator begin = render_skybox_descr.begin(), end = render_skybox_descr.end(); begin != end; ++begin)
-  {
-    lambda(
-      *begin.get_component<SkyBox>(0)
-    );
-  }
-}
-
-
-ecs::SingleQueryDescription bone_render_animation_descr("bone_render_animation", {
-  {ecs::get_type_description<BoneRender>("boneRender"), false}
-});
-
-template<typename Callable>
-void bone_render_animation(const ecs::EntityId &eid, Callable lambda)
-{
-  ecs::QueryIterator begin;
-  if (ecs::get_iterator(bone_render_animation_descr, eid, begin))
-  {
-    lambda(
-      *begin.get_component<BoneRender>(0)
-    );
-  }
-}
-
-
 void main_render_func();
 
 ecs::SystemDescription main_render_descr("main_render", {
-  {ecs::get_type_description<DebugArrow>("debugArrows"), false},
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, main_render_func, ecs::SystemOrder::MIDDLE_RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+}, main_render_func, ecs::SystemOrder::RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
 
 void main_render_func()
 {
   for (ecs::QueryIterator begin = main_render_descr.begin(), end = main_render_descr.end(); begin != end; ++begin)
   {
     main_render(
-      *begin.get_component<DebugArrow>(0),
-      *begin.get_component<EditorRenderSettings>(1),
-      *begin.get_component<MainCamera>(2)
+      *begin.get_component<EditorRenderSettings>(0)
     );
   }
 }
 
 
-void debug_goal_copy_mat_handler(const ecs::OnEntityCreated &event);
+void render_debug_arrows_func();
 
-ecs::EventDescription<ecs::OnEntityCreated> debug_goal_copy_mat_descr("debug_goal_copy_mat", {
-  {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
-}, debug_goal_copy_mat_handler, (uint)(ecs::SystemTag::Game));
+ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
+  {ecs::get_type_description<DebugArrow>("debugArrows"), false},
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+}, render_debug_arrows_func, ecs::SystemOrder::RENDER + 101, (uint)(ecs::SystemTag::GameEditor));
 
-void debug_goal_copy_mat_handler(const ecs::OnEntityCreated &event)
+void render_debug_arrows_func()
 {
-  for (ecs::QueryIterator begin = debug_goal_copy_mat_descr.begin(), end = debug_goal_copy_mat_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = render_debug_arrows_descr.begin(), end = render_debug_arrows_descr.end(); begin != end; ++begin)
   {
-    debug_goal_copy_mat(
-      event,
-      *begin.get_component<MeshRender>(0)
+    render_debug_arrows(
+      *begin.get_component<DebugArrow>(0),
+      *begin.get_component<EditorRenderSettings>(1)
     );
   }
-}
-
-
-void debug_goal_copy_mat_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<ecs::OnEntityCreated> debug_goal_copy_mat_singl_descr("debug_goal_copy_mat", {
-  {ecs::get_type_description<MeshRender>("debugGoalSphere"), false}
-}, debug_goal_copy_mat_singl_handler, (uint)(ecs::SystemTag::Game));
-
-void debug_goal_copy_mat_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
-{
-  debug_goal_copy_mat(
-    event,
-      *begin.get_component<MeshRender>(0)
-  );
 }
 
 

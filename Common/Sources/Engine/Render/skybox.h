@@ -12,5 +12,5 @@ public:
     (Asset<Material>) (material)
   )
   SkyBox();
-  void render(const mat4 &view_projection, bool wire_frame = false);
+  void render(const mat4 &view_projection, bool wire_frame = false) const;
 };

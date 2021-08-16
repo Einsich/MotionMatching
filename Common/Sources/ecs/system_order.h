@@ -5,14 +5,12 @@ namespace ecs
   namespace SystemOrder
   {
     constexpr int
-    SPECIAL = -200,
-    NO_ORDER = -100,
+    SPECIAL = -2000,
+    NO_ORDER = -1000,
     INPUT_DEPEND = 0,
-    LOGIC = 100,
-    EARLY_RENDER = 200,
-    MIDDLE_RENDER = 300,
-    LATE_RENDER = 400,
-    UI = 500,
-    UIMENU = 600;
+    LOGIC = 1000,
+    RENDER = 2000,
+    UI = 3000,
+    UIMENU = 4000;
   }
 }

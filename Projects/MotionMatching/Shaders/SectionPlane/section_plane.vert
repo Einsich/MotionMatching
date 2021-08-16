@@ -9,15 +9,37 @@ layout(std140, binding = 0) uniform Commondata
     vec3 CameraPosition;
     vec3 LightDirection;
 };
-uniform mat4 Model;
+struct TexturedMaterial
+{
+    vec3 Ambient;
+    vec3 Diffuse;
+    vec3 Specular;
+    float Shininess;
+    float sectionScale;
+    vec2 uvScale;
+    vec2 uvOffset;
+};
+struct Instance
+{
+    TexturedMaterial material;
+    mat4 Model;
+};
+layout(packed, binding = 1) readonly buffer InstanceData 
+{
+    Instance instances[];
+};
 
 out vec3 EyespaceNormal;
 out vec2 UV;
 out vec3 WorldPosition;
+flat out int instanceID;
 void main()
 {
-    EyespaceNormal = mat3(Model) * Normal;
-    gl_Position = ViewProjection * Model * vec4(Position, 1);
-    WorldPosition = (Model * vec4(Position, 1)).xyz;
-    UV = TexCoord;
+    #define instance instances[gl_InstanceID]
+    EyespaceNormal = mat3(instance.Model) * Normal;
+    vec4 position = instance.Model * vec4(Position, 1);
+    gl_Position = ViewProjection * position;
+    WorldPosition = position.xyz;
+    UV = TexCoord * instance.material.uvScale + instance.material.uvOffset;
+    instanceID = gl_InstanceID;
 }

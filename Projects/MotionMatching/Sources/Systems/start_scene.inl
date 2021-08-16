@@ -11,28 +11,24 @@
 #include "Animation/AnimationDatabase/animation_database.h"
 #include <Engine/Render/mesh_render.h>
 #include "Animation/AnimationDatabase/animation_preprocess.h"
-#include "Animation/AnimationRender/animation_render.h"
 #include "Animation/animation_player.h"
 #include "Animation/third_person_controller.h"
 #include "Animation/person_controller.h"
 
 #include "Animation/Test/animation_tester.h"
 #include <Engine/input.h>
-#include "Animation/AnimationRender/bone_render.h"
 #include "Animation/settings.h"
 #include <Engine/Resources/resources.h>
 #include <Engine/imgui/imgui.h>
 
 #define CUSTOM_TYPE \
 MACRO(PersonController)\
-MACRO(DebugArrow)\
-MACRO(BoneRender)
+MACRO(DebugArrow)
 
 #define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
 
 CUSTOM_TYPE
-REG_TYPE(MeshRender)
-REG_TYPE(AnimationRender)
+
 REG_TYPE(AnimationPlayer)
 REG_TYPE(AnimationTester)
 REG_TYPE(ThirdPersonController)

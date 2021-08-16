@@ -33,7 +33,7 @@ layout(packed, binding = 1) readonly buffer InstanceData
 uniform sampler2D mainTex;
 void main()
 {
-    TexturedMaterial material = instances[instanceID].material;
+    #define material instances[instanceID].material
     vec3 N = EyespaceNormal;
     vec3 L = LightDirection;
     vec3 W = normalize(CameraPosition - WorldPosition);
