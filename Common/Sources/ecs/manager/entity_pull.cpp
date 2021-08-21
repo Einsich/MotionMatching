@@ -64,7 +64,7 @@ namespace ecs
   }
   EntityId EntityPull::find_entity(int archetype, uint index)
   {
-    if (archetype > 0)
+    if (archetype >= 0)
     {
       for (auto it = begin(), e = end(); it != e; ++it)
       {
