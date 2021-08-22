@@ -19,8 +19,8 @@ enum SHADER_TYPE
   TESSELATION_CONTROL_SHADER,
   TESSELATION_EVALUATION_SHADER
 };
-map<string, SHADER_TYPE> shaderTypeMap = {{"vert", VERTEX_SHADER}, {"frag", FRAGMENT_SHADER}, {"comp", COMPUTE_SHADER}, 
-{"geom", GEOMETRY_SHADER}, {"tesc", TESSELATION_CONTROL_SHADER}, {"tese", TESSELATION_EVALUATION_SHADER}};
+map<fs::path, SHADER_TYPE> shaderTypeMap = {{".vert", VERTEX_SHADER}, {".frag", FRAGMENT_SHADER}, {".comp", COMPUTE_SHADER}, 
+{".geom", GEOMETRY_SHADER}, {".tesc", TESSELATION_CONTROL_SHADER}, {".tese", TESSELATION_EVALUATION_SHADER}};
 
 map<string, vector<pair<SHADER_TYPE, string>>> shaderMap;
 void read_directories(string path)
@@ -32,40 +32,40 @@ void read_directories(string path)
   }
   for (const auto & entry : fs::directory_iterator(path))
   {
-    string nextPath = entry.path().string();
-    
+    const fs::path &path = entry.path();
     
     if (entry.is_directory())
     {
-      read_directories(nextPath);
+      read_directories(entry.path().string());
     } 
     else
     if (entry.is_regular_file())
     {
-      int pointPos = nextPath.find_last_of('.');
-      string extension = nextPath.substr(pointPos + 1);
-      auto shaderTypeIter = shaderTypeMap.find(extension);
+      
+      if (path.extension() == ".shader")
+      {
+
+        continue;
+      }
+
+      auto shaderTypeIter = shaderTypeMap.find(path.extension());
       if (shaderTypeIter != shaderTypeMap.end())
       {
-      std::replace(nextPath.begin(), nextPath.end(), '\\', '/');
-        int slash = nextPath.find_last_of('/') + 1;
-        string shaderName = nextPath.substr(slash, pointPos - slash);
-        string shaderCode;
+        string shaderName = path.stem().string();
         ifstream shaderFile;
         shaderFile.exceptions(ifstream::badbit);
         try 
         {
-          shaderFile.open(nextPath);
+          shaderFile.open(path);
           stringstream shaderStream;
           shaderStream << shaderFile.rdbuf();  
           shaderFile.close();
-          shaderCode = shaderStream.str();
 
-          shaderMap[shaderName].push_back({shaderTypeIter->second, shaderCode});
+          shaderMap[shaderName].emplace_back(shaderTypeIter->second, shaderStream.str());
         }
         catch(ifstream::failure &e)
         {
-          debug_error("Shader in %s not successfuly read!", nextPath.c_str());
+          debug_error("Shader in %s not successfuly read!", path.string().c_str());
         }
       }
     }
@@ -92,12 +92,12 @@ void compile_shaders(const map<string, vector<pair<SHADER_TYPE, string>>> &shade
       if(!success)
       {
           glGetShaderInfoLog(shaderProg, 512, NULL, infoLog);
-          string extension;
+          fs::path extension;
           for (auto p: shaderTypeMap)
             if (p.second == codes.first)
               extension = p.first;
 
-        debug_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.c_str(), infoLog);
+        debug_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.string().c_str(), infoLog);
       };
       shaders.push_back(shaderProg);
     }
