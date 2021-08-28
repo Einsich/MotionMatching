@@ -8,21 +8,26 @@
 #include <map>
 #include <vector>
 
-
 namespace fs = filesystem;
-enum SHADER_TYPE
-{
-  VERTEX_SHADER = GL_VERTEX_SHADER,
-  FRAGMENT_SHADER = GL_FRAGMENT_SHADER,
-  COMPUTE_SHADER = GL_COMPUTE_SHADER,
-  GEOMETRY_SHADER,
-  TESSELATION_CONTROL_SHADER,
-  TESSELATION_EVALUATION_SHADER
-};
-map<fs::path, SHADER_TYPE> shaderTypeMap = {{".vert", VERTEX_SHADER}, {".frag", FRAGMENT_SHADER}, {".comp", COMPUTE_SHADER}, 
-{".geom", GEOMETRY_SHADER}, {".tesc", TESSELATION_CONTROL_SHADER}, {".tese", TESSELATION_EVALUATION_SHADER}};
 
-map<string, vector<pair<SHADER_TYPE, string>>> shaderMap;
+void add_shader_path(const fs::path &path, bool shader_file);
+bool compile_shader(const string &shaderName, const vector<pair<GLuint, string>> &shaders, GLuint &program);
+void process_codegen_shaders();
+
+static map<fs::path, GLuint> shaderTypeMap = 
+{{".vert", GL_VERTEX_SHADER}, {".frag", GL_FRAGMENT_SHADER}, {".comp", GL_COMPUTE_SHADER}, 
+{".geom", 0}, {".tesc", 0}, {".tese", 0}};
+
+fs::path shader_extension(GLuint shader)
+{
+  fs::path extension;
+  for (auto p: shaderTypeMap)
+    if (p.second == shader)
+      extension = p.first;
+  return extension;
+}
+static map<string, vector<pair<GLuint, string>>> shaderMap;
+
 void read_directories(string path)
 {
   if (!fs::exists(path))
@@ -41,10 +46,10 @@ void read_directories(string path)
     else
     if (entry.is_regular_file())
     {
-      
-      if (path.extension() == ".shader")
+      bool shader_file = path.extension() == ".shader";
+      if (shader_file || path.extension() == ".inc")
       {
-
+        add_shader_path(path, shader_file);
         continue;
       }
 
@@ -73,54 +78,15 @@ void read_directories(string path)
   }
 }
 
-void compile_shaders(const map<string, vector<pair<SHADER_TYPE, string>>> &shaderMap, bool createShaders)
+void compile_shaders(const map<string, vector<pair<GLuint, string>>> &shaderMap, bool createShaders)
 {
-
+  process_codegen_shaders();
   for (auto &shader:shaderMap)
   {
-    string shaderName = shader.first;
-    vector<GLuint> shaders;
-    GLchar infoLog[512];
-    GLint success;
-    for (auto & codes : shader.second)
+    GLuint program;
+    if (compile_shader(shader.first, shader.second, program) && createShaders)
     {
-      GLuint shaderProg = glCreateShader(codes.first);
-      const GLchar * shaderCode = codes.second.c_str();
-      glShaderSource(shaderProg, 1, &shaderCode, NULL);
-      glCompileShader(shaderProg);
-      glGetShaderiv(shaderProg, GL_COMPILE_STATUS, &success);
-      if(!success)
-      {
-          glGetShaderInfoLog(shaderProg, 512, NULL, infoLog);
-          fs::path extension;
-          for (auto p: shaderTypeMap)
-            if (p.second == codes.first)
-              extension = p.first;
-
-        debug_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.string().c_str(), infoLog);
-      };
-      shaders.push_back(shaderProg);
-    }
-
-
-    GLuint program = glCreateProgram();
-    for (GLuint shaderProg: shaders)
-      glAttachShader(program, shaderProg);
-    
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if(!success)
-    {
-        glGetProgramInfoLog(program, 512, NULL, infoLog);
-        debug_error("Shader programm (%s) linking failed!\n Log: %s", shaderName.c_str(), infoLog);
-    }
-
-    for (GLuint shaderProg: shaders)
-      glDeleteShader(shaderProg);
-    debug_log("Shader %s was compiled.", shaderName.c_str());
-    if (createShaders)
-    {
-      Shader(shaderName, program);
+      Shader(shader.first, program);
     }
   }
 }
