@@ -22,10 +22,10 @@ bool compile_shader(const string &shaderName, const vector<pair<GLuint, const ch
       glGetShaderiv(shaderProg, GL_COMPILE_STATUS, &success);
       if(!success)
       {
-          glGetShaderInfoLog(shaderProg, 512, NULL, infoLog);
-          fs::path extension = shader_extension(codes.first);
+        glGetShaderInfoLog(shaderProg, 512, NULL, infoLog);
+        fs::path extension = shader_extension(codes.first);
 
-        debug_error("Shader (%s.%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.string().c_str(), infoLog);
+        debug_error("Shader (%s%s) compilation failed!\n Log: %s", shaderName.c_str(), extension.string().c_str(), infoLog);
         return false;
       };
       compiled_shaders.push_back(shaderProg);

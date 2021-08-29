@@ -1,6 +1,5 @@
-
 struct Material
 {
   #define LAMBERT
-#include material
+  #include material
 };

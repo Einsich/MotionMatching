@@ -1,5 +1,3 @@
-
-
 struct Instance
 {
     Material material;

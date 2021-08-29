@@ -1,4 +1,3 @@
-
 layout(std140, binding = 0) uniform Commondata 
 {
     mat4 ViewProjection;

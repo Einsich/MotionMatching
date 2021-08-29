@@ -136,7 +136,11 @@ void insert_includes(string &text, const string &source_text, const std::vector<
     if (curLexema + 1 < (int)lexems.size())
       text.insert(text.end(), lexems[curLexema].end, lexems[curLexema + 1].begin);
     else
+    {
       text.insert(text.end(), source_text.begin() + lexems[curLexema].endIndex, source_text.end());
+      ++curLexema;
+      return;
+    }
     ++curLexema;
   }
   else
