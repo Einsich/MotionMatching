@@ -124,6 +124,8 @@ void Material::load(const filesystem::path &, bool reload)
   {
     shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
     uniformMap.clear();
+    if (!shader)
+      return;
     const StorageBuffer *instanceData = shader.get_instance_data();
     if (instanceData)
     {

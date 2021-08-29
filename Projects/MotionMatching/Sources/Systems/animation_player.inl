@@ -49,19 +49,14 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
 
     int j = 0;
     vec3 lodColor(0.f);
+    vec3 lodColors[] = {vec3(0), vec3(0,1,0), vec3(0,0,1), vec3(1,0,0)};
     for (; j < 3; j++)
       if (dist < OptimisationSettings.lodDistances[j])
-      { 
-        lodColor[j] = 10;
         break;
-      }
-    if (j == 0)
-      lodColor = vec3(1);
-    if (j == 3)
-      lodColor = vec3(10);
+    lodColor = lodColors[j];
     animationPlayer.motionMatching.lod = j;
     
-    material->set_property("material.Diffuse", lodColor);
+    material->set_property("material.AdditionalColor", lodColor);
     //static int i = 0;
     //ProfilerLabel motion_matching("motion_matching" + to_string(i));
     //i = (i + 1) % (settings.testCount + 1);

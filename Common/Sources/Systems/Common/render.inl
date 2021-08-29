@@ -127,7 +127,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
         instanceData.flush_buffer(instanceCount * instanceSize);
         prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
         instanceCount = 0;
-        instanceSize = prevStuff.material->buffer_size(); // new size of instance
+        instanceSize = stuff.material->buffer_size(); // new size of instance
       }
       if (instanceData.size() < (instanceCount + 1) * instanceSize)
         debug_log("reallocate buffer space");

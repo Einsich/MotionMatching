@@ -2,7 +2,12 @@
 
 #define USE_UV
 
-#include standart_material
+struct Material
+{
+  vec3 AdditionalColor;
+  #define LAMBERT
+  #include material
+};
 #include vs_output
 
 #define BONES 60
@@ -29,7 +34,7 @@ uniform sampler2D mainTex;
 #include lambert_lighting
 void main()
 {
-  vec3 texColor = texture(mainTex, vsOutput.UV).rgb;
-  vec3 color = LightedColor(texColor, material_inst, vsOutput, LightDirection, CameraPosition);
+  vec3 color = texture(mainTex, vsOutput.UV).rgb + material_inst.AdditionalColor;
+  color = LightedColor(color, material_inst, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
