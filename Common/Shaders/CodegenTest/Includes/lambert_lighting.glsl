@@ -5,5 +5,5 @@ vec3 LightedColor(in vec3 color, in Material material, in VsOutput vsOutput, in 
     float df = max(0.0, dot(vsOutput.EyespaceNormal, -light_dir));
     float sf = max(0.0, dot(E, W));
     sf = pow(sf, material.Shininess);
-    return color * (material.Ambient + df * material.Diffuse) + sf * material.Specular;
+    return color * (AmbientLight + df * SunLight) + sf * material.Metallness;
 }

@@ -1,6 +1,12 @@
 #version 440
-in vec3 EyespaceNormal;
-in vec3 WorldPosition;
+
+struct VsOutput
+{
+    vec3 EyespaceNormal;
+    vec3 WorldPosition;
+};
+in VsOutput vsOutput;
+
 out vec4 FragColor;
 
 layout(std140, binding = 0) uniform Commondata 
@@ -17,9 +23,9 @@ uniform float Shininess;
 
 void main()
 {
-    vec3 N = normalize(EyespaceNormal);
+    vec3 N = normalize(vsOutput.EyespaceNormal);
     vec3 L = LightDirection;
-    vec3 W = normalize(CameraPosition - WorldPosition);
+    vec3 W = normalize(CameraPosition - vsOutput.WorldPosition);
     vec3 E = reflect(L, N);
     
     float df = max(0.0, dot(N, -L));

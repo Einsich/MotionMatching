@@ -9,12 +9,15 @@ layout(std140, binding = 0) uniform Commondata
     vec3 LightDirection;
 };
 uniform mat4 Model;
-
-out vec3 EyespaceNormal;
-out vec3 WorldPosition;
+struct VsOutput
+{
+    vec3 EyespaceNormal;
+    vec3 WorldPosition;
+};
+out VsOutput vsOutput;
 void main()
 {
-    EyespaceNormal = mat3(Model) * Normal;
+    vsOutput.EyespaceNormal = mat3(Model) * Normal;
     gl_Position = ViewProjection * Model * vec4(Position, 1);
-    WorldPosition = (Model * vec4(Position, 1)).xyz;
+    vsOutput.WorldPosition = (Model * vec4(Position, 1)).xyz;
 }

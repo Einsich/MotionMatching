@@ -1,8 +1,6 @@
 
 #ifdef LAMBERT
-vec3 Ambient;
-vec3 Diffuse;
-vec3 Specular;
+float Metallness;
 float Shininess;
 #endif
 

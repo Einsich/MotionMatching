@@ -38,7 +38,8 @@ set_global_render_data(const MainCamera &mainCamera)
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
-  {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection});
+    {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection, 
+    light.ambient, light.lightColor});
 }
 
 SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(

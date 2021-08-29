@@ -63,7 +63,7 @@ std::vector<MatchRange> get_matches(std::string& str, const std::regex &reg, Sha
 }
 struct CodeGenShader
 {
-  bool loaded, shaderFile;
+  bool loaded, isShaderFile;
   fs::path path;
   string content;
   vector<MatchRange> lexems;
@@ -81,12 +81,10 @@ void try_load_shader_code(CodeGenShader &shader)
   shader.loaded = true;
 
   shader.lexems.clear();
-  if (shader.shaderFile)
-  {
-    get_matches(shader.lexems, shader.content, shader_regex, ShaderLexema::SHADER_NAME);
-    get_matches(shader.lexems, shader.content, vs_regex, ShaderLexema::VS_SHADER);
-    get_matches(shader.lexems, shader.content, ps_regex, ShaderLexema::PS_SHADER);
-  }
+  get_matches(shader.lexems, shader.content, shader_regex, ShaderLexema::SHADER_NAME);
+  get_matches(shader.lexems, shader.content, vs_regex, ShaderLexema::VS_SHADER);
+  get_matches(shader.lexems, shader.content, ps_regex, ShaderLexema::PS_SHADER);
+  shader.isShaderFile = !shader.lexems.empty();
   get_matches(shader.lexems, shader.content, include_regex, ShaderLexema::INCLUDE);
   std::sort(shader.lexems.begin(), shader.lexems.end(), 
     [](const MatchRange &a, const MatchRange &b)->bool{ return a.beginIndex < b.beginIndex;});
@@ -103,7 +101,7 @@ void try_load_shader_code(CodeGenShader &shader)
   }
 }
 static map<string, CodeGenShader> shaders;
-void add_shader_path(const fs::path &path, bool shader_file)
+void add_shader_path(const fs::path &path)
 {
   string fileName = path.stem().string();
   if (shaders.contains(fileName))
@@ -111,7 +109,7 @@ void add_shader_path(const fs::path &path, bool shader_file)
     debug_error("Already exists shader %s", fileName.c_str());
     return;
   }
-  shaders.try_emplace(fileName, CodeGenShader{false, shader_file, path, "", {}});
+  shaders.try_emplace(fileName, CodeGenShader{false, false, path, "", {}});
 }
 CodeGenShader *get_codegen_shader(const string &name)
 {
@@ -221,10 +219,10 @@ void process_codegen_shaders()
   ParseState state;
   for (auto &[shaderName, shader] : shaders)
   {
-    if (shader.shaderFile)
+    try_load_shader_code(shader);
+    if (shader.isShaderFile)
     {
       state.clear();
-      try_load_shader_code(shader);
 
       for (int i = 0; i < (int)shader.lexems.size();)
       {

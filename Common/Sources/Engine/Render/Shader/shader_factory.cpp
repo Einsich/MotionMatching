@@ -10,7 +10,7 @@
 
 namespace fs = filesystem;
 
-void add_shader_path(const fs::path &path, bool shader_file);
+void add_shader_path(const fs::path &path);
 bool compile_shader(const string &shaderName, const vector<pair<GLuint, string>> &shaders, GLuint &program);
 void process_codegen_shaders();
 
@@ -46,10 +46,9 @@ void read_directories(string path)
     else
     if (entry.is_regular_file())
     {
-      bool shader_file = path.extension() == ".shader";
-      if (shader_file || path.extension() == ".inc")
+      if (path.extension() == ".glsl")
       {
-        add_shader_path(path, shader_file);
+        add_shader_path(path);
         continue;
       }
 

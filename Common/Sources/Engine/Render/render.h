@@ -4,11 +4,13 @@
 #include "Engine/Render/mesh.h"
 #include "Engine/Render/material.h"
 
-struct GlobalRenderData
+struct alignas(16) GlobalRenderData
 {
   mat4 ViewProjection;
-  alignas(16) vec3 CameraPosition;
-  alignas(16) vec3 LightDirection;
+  vec3 CameraPosition;
+  vec3 LightDirection;
+  vec3 AmbientLight;
+  vec3 SunLight;
 };
 struct EditorRenderSettings : ecs::Singleton
 {
