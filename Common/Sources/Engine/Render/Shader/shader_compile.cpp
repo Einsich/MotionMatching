@@ -6,7 +6,19 @@
 
 namespace fs = filesystem;
 
-fs::path shader_extension(GLuint shader);
+static map<fs::path, GLuint> shaderTypeMap = 
+{{".vert", GL_VERTEX_SHADER}, {".frag", GL_FRAGMENT_SHADER}, {".comp", GL_COMPUTE_SHADER}, 
+{".geom", 0}, {".tesc", 0}, {".tese", 0}};
+
+fs::path shader_extension(GLuint shader)
+{
+  fs::path extension;
+  for (auto p: shaderTypeMap)
+    if (p.second == shader)
+      extension = p.first;
+  return extension;
+}
+
 bool compile_shader(const string &shaderName, const vector<pair<GLuint, const char*>> &shaders, GLuint &program)
 {
     vector<GLuint> compiled_shaders;

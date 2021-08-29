@@ -104,9 +104,11 @@ static map<string, CodeGenShader> shaders;
 void add_shader_path(const fs::path &path)
 {
   string fileName = path.stem().string();
-  if (shaders.contains(fileName))
+  auto it = shaders.find(fileName);
+  if (it != shaders.end())
   {
-    debug_error("Already exists shader %s", fileName.c_str());
+    debug_log("Already exists shader %s", fileName.c_str());
+    it->second.loaded = false;
     return;
   }
   shaders.try_emplace(fileName, CodeGenShader{false, false, path, "", {}});
@@ -203,7 +205,7 @@ void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
   uint program;
   if (compile_shader(state.currentShader, shaderCode, program))
   {
-    Shader(state.currentShader, program);
+    Shader(state.currentShader, program, true);
     debug_log("shader %s compiled", state.currentShader.c_str());
   }
   else
