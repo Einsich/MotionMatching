@@ -50,7 +50,7 @@ namespace ecs
     {
       core().events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);
-      printf("EventDescription %s\n", name);
+      //printf("EventDescription %s\n", name);
     }
   };
   template<typename E>

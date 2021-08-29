@@ -23,5 +23,5 @@ void print_file_size(const std::string &path, size_t fileSize)
     s = fileSize / 1e9;
     b = "Gb";
   }
-  debug_log("file %s size = %.1f %s", path.c_str(), s, b.c_str());  
+  //debug_log("file %s size = %.1f %s", path.c_str(), s, b.c_str());  
 }

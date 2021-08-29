@@ -154,7 +154,7 @@ void insert_includes(string &text, const string &source_text, const std::vector<
     if (shader)
     {
       int tmpLexemCounter = 0;
-      debug_log("include %s file", lexems[i].typeContent.c_str());
+      //debug_log("include %s file", lexems[i].typeContent.c_str());
       insert_includes(text, shader->content, shader->lexems, tmpLexemCounter);
       if (tmpLexemCounter != (int)shader->lexems.size())
         debug_error("in include file %s there is not only include read %d / %d lexems", 
@@ -265,18 +265,3 @@ void process_codegen_shaders()
     }
   }
 }
-/*
-#shader shader_name
-***
-Common code
-***
-#vertex_shader
-***
-VS code
-***
-#pixel_shader
-***
-VS code
-***
-
-*/

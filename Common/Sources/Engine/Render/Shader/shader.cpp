@@ -96,7 +96,7 @@ void read_shader_info(ShaderInfo &shader)
 
       GLint texLocation = glGetUniformLocation(program, name);
       samplers.emplace_back(SamplerUniform{string(name), type, texLocation, texBinding, typeToOffset[type]});
-      debug_log("Sampler #%d Type: %u Name: %s, Location %d", i, type, name, texLocation);
+      //debug_log("Sampler #%d Type: %u Name: %s, Location %d", i, type, name, texLocation);
       texBinding++;
       typeToOffset[type]++;
       break;
@@ -120,7 +120,7 @@ void read_shader_info(ShaderInfo &shader)
     GLint size;
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &size);
 
-    debug_log("buffer %s (binding = %d), size %d", name, binding, size);
+    //debug_log("buffer %s (binding = %d), size %d", name, binding, size);
     buffers.emplace_back(StorageBuffer{string(name), binding, size, vector<BufferField>(numVar)});
     vector<BufferField> &fields = buffers.back().fields;
     property = GL_ACTIVE_VARIABLES;
@@ -145,7 +145,7 @@ void read_shader_info(ShaderInfo &shader)
       char *matterPart = name + bufferNameLen;
       fields[i] = BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]};
       typeToOffset[params[0]] += params[2];
-      debug_log("Field %s, type %d offset %d, size %d, array stride %d", matterPart, params[0], params[1], params[2], params[3]);
+      //debug_log("Field %s, type %d offset %d, size %d, array stride %d", matterPart, params[0], params[1], params[2], params[3]);
     }
   }
 }
