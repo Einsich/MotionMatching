@@ -4,6 +4,7 @@
 ecs::QueryDescription find_all_created_camera_descr("find_all_created_camera", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false},
+  {ecs::get_type_description<bool>("isEditorCamera"), true},
   {ecs::get_type_description<Camera>("camera"), false}
 });
 
@@ -14,23 +15,26 @@ void find_all_created_camera(Callable lambda)
   {
     lambda(
       *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<bool>(1),
+       begin.get_component<bool>(2)
     );
   }
 }
 
 
-ecs::QueryDescription register_cam_query_descr("register_cam_query", {
-  {ecs::get_type_description<CameraManager>("manager"), false}
+ecs::QueryDescription find_editor_camera_descr("find_editor_camera", {
+  {ecs::get_type_description<bool>("isEditorCamera"), false},
+  {ecs::get_type_description<ecs::EntityId>("eid"), false}
 });
 
 template<typename Callable>
-void register_cam_query(Callable lambda)
+void find_editor_camera(Callable lambda)
 {
-  for (ecs::QueryIterator begin = register_cam_query_descr.begin(), end = register_cam_query_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = find_editor_camera_descr.begin(), end = find_editor_camera_descr.end(); begin != end; ++begin)
   {
     lambda(
-      *begin.get_component<CameraManager>(0)
+      *begin.get_component<bool>(0),
+      *begin.get_component<ecs::EntityId>(1)
     );
   }
 }
@@ -135,38 +139,73 @@ void freecamera_update_func()
 }
 
 
-void update_main_camera_transformations_func();
+void update_main_camera_game_transformations_func();
 
-ecs::SystemDescription update_main_camera_transformations_descr("update_main_camera_transformations", {
+ecs::SystemDescription update_main_camera_game_transformations_descr("update_main_camera_game_transformations", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, update_main_camera_transformations_func, ecs::SystemOrder::RENDER - 5, (uint)(ecs::SystemTag::GameEditor));
+}, update_main_camera_game_transformations_func, ecs::SystemOrder::RENDER - 5, (uint)(ecs::SystemTag::Game));
 
-void update_main_camera_transformations_func()
+void update_main_camera_game_transformations_func()
 {
-  for (ecs::QueryIterator begin = update_main_camera_transformations_descr.begin(), end = update_main_camera_transformations_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = update_main_camera_game_transformations_descr.begin(), end = update_main_camera_game_transformations_descr.end(); begin != end; ++begin)
   {
-    update_main_camera_transformations(
+    update_main_camera_game_transformations(
       *begin.get_component<MainCamera>(0)
     );
   }
 }
 
 
-void create_camera_manager_handler(const ecs::OnSceneCreated &event);
+void update_main_camera_editor_transformations_func();
 
-ecs::EventDescription<ecs::OnSceneCreated> create_camera_manager_descr("create_camera_manager", {
-  {ecs::get_type_description<CameraManager>("manager"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, create_camera_manager_handler, (uint)(ecs::SystemTag::GameEditor));
+ecs::SystemDescription update_main_camera_editor_transformations_descr("update_main_camera_editor_transformations", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false},
+  {ecs::get_type_description<EditorCamera>("editorCamera"), false}
+}, update_main_camera_editor_transformations_func, ecs::SystemOrder::RENDER - 5, (uint)(ecs::SystemTag::Editor));
 
-void create_camera_manager_handler(const ecs::OnSceneCreated &event)
+void update_main_camera_editor_transformations_func()
 {
-  for (ecs::QueryIterator begin = create_camera_manager_descr.begin(), end = create_camera_manager_descr.end(); begin != end; ++begin)
+  for (ecs::QueryIterator begin = update_main_camera_editor_transformations_descr.begin(), end = update_main_camera_editor_transformations_descr.end(); begin != end; ++begin)
   {
-    create_camera_manager(
+    update_main_camera_editor_transformations(
+      *begin.get_component<MainCamera>(0),
+      *begin.get_component<EditorCamera>(1)
+    );
+  }
+}
+
+
+void find_main_camera_game_handler(const ecs::OnSceneCreated &event);
+
+ecs::EventDescription<ecs::OnSceneCreated> find_main_camera_game_descr("find_main_camera_game", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+}, find_main_camera_game_handler, (uint)(ecs::SystemTag::Game));
+
+void find_main_camera_game_handler(const ecs::OnSceneCreated &event)
+{
+  for (ecs::QueryIterator begin = find_main_camera_game_descr.begin(), end = find_main_camera_game_descr.end(); begin != end; ++begin)
+  {
+    find_main_camera_game(
       event,
-      *begin.get_component<CameraManager>(0),
-      *begin.get_component<MainCamera>(1)
+      *begin.get_component<MainCamera>(0)
+    );
+  }
+}
+
+
+void find_main_camera_editor_handler(const ecs::OnSceneCreated &event);
+
+ecs::EventDescription<ecs::OnSceneCreated> find_main_camera_editor_descr("find_main_camera_editor", {
+  {ecs::get_type_description<EditorCamera>("editorCameraManager"), false}
+}, find_main_camera_editor_handler, (uint)(ecs::SystemTag::Editor));
+
+void find_main_camera_editor_handler(const ecs::OnSceneCreated &event)
+{
+  for (ecs::QueryIterator begin = find_main_camera_editor_descr.begin(), end = find_main_camera_editor_descr.end(); begin != end; ++begin)
+  {
+    find_main_camera_editor(
+      event,
+      *begin.get_component<EditorCamera>(0)
     );
   }
 }
@@ -190,30 +229,9 @@ void set_main_camera_handler(const OnSetMainCamera &event)
 }
 
 
-void set_next_camera_handler(const KeyDownEvent<SDLK_F1> &event);
-
-ecs::EventDescription<KeyDownEvent<SDLK_F1>> set_next_camera_descr("set_next_camera", {
-  {ecs::get_type_description<CameraManager>("manager"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, set_next_camera_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
-
-void set_next_camera_handler(const KeyDownEvent<SDLK_F1> &event)
-{
-  for (ecs::QueryIterator begin = set_next_camera_descr.begin(), end = set_next_camera_descr.end(); begin != end; ++begin)
-  {
-    set_next_camera(
-      event,
-      *begin.get_component<CameraManager>(0),
-      *begin.get_component<MainCamera>(1)
-    );
-  }
-}
-
-
 void arcball_created_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> arcball_created_descr("arcball_created", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_handler, (uint)(ecs::SystemTag::Game));
@@ -224,9 +242,8 @@ void arcball_created_handler(const ecs::OnEntityCreated &event)
   {
     arcball_created(
       event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ArcballCamera>(1),
-      *begin.get_component<Transform>(2)
+      *begin.get_component<ArcballCamera>(0),
+      *begin.get_component<Transform>(1)
     );
   }
 }
@@ -295,7 +312,6 @@ void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event)
 void freecam_created_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> freecam_created_descr("freecam_created", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
@@ -306,9 +322,8 @@ void freecam_created_handler(const ecs::OnEntityCreated &event)
   {
     freecam_created(
       event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<FreeCamera>(1),
-      *begin.get_component<Transform>(2)
+      *begin.get_component<FreeCamera>(0),
+      *begin.get_component<Transform>(1)
     );
   }
 }
@@ -356,19 +371,32 @@ void freecam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event)
 }
 
 
-void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
+void find_main_camera_game_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<ecs::OnSceneCreated> create_camera_manager_singl_descr("create_camera_manager", {
-  {ecs::get_type_description<CameraManager>("manager"), false},
+ecs::SingleEventDescription<ecs::OnSceneCreated> find_main_camera_game_singl_descr("find_main_camera_game", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, create_camera_manager_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+}, find_main_camera_game_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void create_camera_manager_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
+void find_main_camera_game_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
 {
-  create_camera_manager(
+  find_main_camera_game(
     event,
-      *begin.get_component<CameraManager>(0),
-      *begin.get_component<MainCamera>(1)
+      *begin.get_component<MainCamera>(0)
+  );
+}
+
+
+void find_main_camera_editor_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnSceneCreated> find_main_camera_editor_singl_descr("find_main_camera_editor", {
+  {ecs::get_type_description<EditorCamera>("editorCameraManager"), false}
+}, find_main_camera_editor_singl_handler, (uint)(ecs::SystemTag::Editor));
+
+void find_main_camera_editor_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
+{
+  find_main_camera_editor(
+    event,
+      *begin.get_component<EditorCamera>(0)
   );
 }
 
@@ -388,27 +416,9 @@ void set_main_camera_singl_handler(const OnSetMainCamera &event, ecs::QueryItera
 }
 
 
-void set_next_camera_singl_handler(const KeyDownEvent<SDLK_F1> &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<KeyDownEvent<SDLK_F1>> set_next_camera_singl_descr("set_next_camera", {
-  {ecs::get_type_description<CameraManager>("manager"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, set_next_camera_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
-
-void set_next_camera_singl_handler(const KeyDownEvent<SDLK_F1> &event, ecs::QueryIterator &begin)
-{
-  set_next_camera(
-    event,
-      *begin.get_component<CameraManager>(0),
-      *begin.get_component<MainCamera>(1)
-  );
-}
-
-
 void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> arcball_created_singl_descr("arcball_created", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, arcball_created_singl_handler, (uint)(ecs::SystemTag::Game));
@@ -417,9 +427,8 @@ void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   arcball_created(
     event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ArcballCamera>(1),
-      *begin.get_component<Transform>(2)
+      *begin.get_component<ArcballCamera>(0),
+      *begin.get_component<Transform>(1)
   );
 }
 
@@ -478,7 +487,6 @@ void arccam_mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs:
 void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> freecam_created_singl_descr("freecam_created", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, freecam_created_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
@@ -487,9 +495,8 @@ void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   freecam_created(
     event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<FreeCamera>(1),
-      *begin.get_component<Transform>(2)
+      *begin.get_component<FreeCamera>(0),
+      *begin.get_component<Transform>(1)
   );
 }
 

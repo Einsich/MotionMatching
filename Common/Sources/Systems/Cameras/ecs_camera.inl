@@ -14,25 +14,47 @@ static void find_all_created_camera(Callable);
 template<typename Callable>
 static void check_camera_manager(Callable);
 
-struct CameraManager : ecs::Singleton
+struct EditorCamera : ecs::Singleton
 {
-  std::vector<ecs::EntityId> sceneCameras;
+  ecs::EntityId camera;
 };
-
-EVENT(ecs::SystemTag::GameEditor) create_camera_manager(
+EVENT(ecs::SystemTag::Game) find_main_camera_game(
   const ecs::OnSceneCreated &,
-  CameraManager &manager,
   MainCamera &mainCamera)
 {
-  manager.sceneCameras.clear();
   mainCamera.eid = ecs::EntityId();
-  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
-    manager.sceneCameras.push_back(eid);
-    if (isMainCamera)
+  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera,bool *isEditorCamera){
+    if (isMainCamera && !isEditorCamera)
       mainCamera.eid = eid;
   });
 }
+template<typename Callable>
+void find_editor_camera(Callable);
 
+EVENT(ecs::SystemTag::Editor) find_main_camera_editor(
+  const ecs::OnSceneCreated &,
+  EditorCamera &editorCameraManager)
+{
+  ecs::EntityId editorCamera;
+  QUERY() find_editor_camera([&](bool isEditorCamera, ecs::EntityId eid)
+  {
+    if (isEditorCamera)
+      editorCamera = eid;
+  });
+  if (!editorCamera)
+  {
+    Camera camera;
+    camera.set_perspective(90.f, 0.01f, 5000.f);
+    ecs::ComponentInitializerList list;
+    list.add<Camera>("camera") = camera;
+    list.add<FreeCamera>("freeCamera") = FreeCamera();
+    list.add<Transform>("transform") = Transform();
+    list.add<bool>("isMainCamera") = true;
+    list.add<bool>("isEditorCamera") = true;
+    editorCamera = ecs::create_entity(list);
+  }
+  editorCameraManager.camera = editorCamera;
+}
 template<typename Callable>
 static void set_main_cam_query(const ecs::EntityId&, Callable);
 
@@ -52,45 +74,14 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_main_camera(
   set_main_camera_status(event.mainCamera, true);
 }
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_next_camera(
-  const KeyDownEvent<SDLK_F1> &,
-  CameraManager &manager,
-  MainCamera &mainCamera)
-{
-  auto it = std::find(manager.sceneCameras.begin(), manager.sceneCameras.end(), mainCamera.eid);
-  set_main_camera_status(mainCamera.eid, false);
-  if (it != manager.sceneCameras.end())
-  {
-    int i = it - manager.sceneCameras.begin();
-    i = (i + 1) % manager.sceneCameras.size();
-    set_main_camera_status(manager.sceneCameras[i], true);
-  }
-  else
-    debug_error("Can't set next camera to main Camera");
-}
-
-
-template<typename Callable>
-static void register_cam_query(Callable);
-
-void register_camera(ecs::EntityId camera)
-{
-  QUERY()register_cam_query([camera](CameraManager &manager){
-    auto it = std::find(manager.sceneCameras.begin(), manager.sceneCameras.end(), camera);
-    if (it == manager.sceneCameras.end())
-      manager.sceneCameras.push_back(camera);
-  });
-}
 //ArcballCamera
 
 EVENT() arcball_created(
   const ecs::OnEntityCreated &,
-  ecs::EntityId eid,
   ArcballCamera &arcballCamera,
   Transform &transform)
 {
   arcballCamera.calculate_transform(transform);
-  register_camera(eid);
 }
 
 EVENT() arccam_mouse_move_handler(
@@ -171,13 +162,11 @@ void update_free_cam_from_transform(FreeCamera &freeCamera, const Transform &tra
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_created(
   const ecs::OnEntityCreated &,
-  ecs::EntityId eid,
   FreeCamera &freeCamera,
   Transform &transform)
 { 
   update_free_cam_from_transform(freeCamera, transform);
   freeCamera.screenSpaceMovable = freeCamera.rotationable = false;
-  register_camera(eid);
 }
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
@@ -242,10 +231,8 @@ SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
 template<typename Callable>
 static void get_main_cam_query(const ecs::EntityId&, Callable);
 
-SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::GameEditor)
-update_main_camera_transformations(MainCamera &mainCamera)
+void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
 {
-  ecs::EntityId eid = mainCamera.eid;
   bool mainCameraExists = false;
   QUERY() get_main_cam_query(eid, [&](Camera &camera, Transform &transform)
   {
@@ -262,8 +249,19 @@ update_main_camera_transformations(MainCamera &mainCamera)
     mainCamera.view = mat4(1.f);
     const float aspectRatio = (float)Application::get_context().get_width() / Application::get_context().get_height();
     mainCamera.projection = perspective(90 * DegToRad, aspectRatio, 0.1f, 1000.f);
-
   }
+}
+
+SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::Game)
+update_main_camera_game_transformations(MainCamera &mainCamera)
+{
+  update_camera_transformation(mainCamera, mainCamera.eid);
+}
+
+SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::Editor)
+update_main_camera_editor_transformations(MainCamera &mainCamera, EditorCamera &editorCamera)
+{
+  update_camera_transformation(mainCamera, editorCamera.camera);
 }
 
 

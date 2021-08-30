@@ -8,7 +8,7 @@ Transform::Transform(vec3 position, vec3 rotation, vec3 scale):
 {}
 
 Transform::Transform():
-position(vec3()), rotation(mat4x4(1.f)), scale(vec3(1.f))
+position(vec3(0.f)), rotation(mat4x4(1.f)), scale(vec3(1.f))
 {}
 vec3& Transform::get_position()
 {
