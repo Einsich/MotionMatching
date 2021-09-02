@@ -155,6 +155,7 @@ void insert_includes(string &text, const string &source_text, const std::vector<
   for (int i = curLexema; i < (int)lexems.size() && lexems[i].type == ShaderLexema::INCLUDE; ++i)
   {
     CodeGenShader *shader = get_codegen_shader(lexems[i].typeContent);
+    //dst_shader depends on shader
     if (shader)
     {
       int tmpLexemCounter = 0;

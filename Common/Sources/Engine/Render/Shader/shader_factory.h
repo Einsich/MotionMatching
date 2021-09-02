@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-void precompile_shaders();
-
 void compile_shaders();
 
+void save_shader_info();

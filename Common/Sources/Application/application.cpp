@@ -124,6 +124,7 @@ void Application::main_loop()
 void Application::exit()
 {
   ecs::save_templates();
+  save_shader_info();
   save_meta_info(projectPath + "/project.config");
   scene->destroy_scene();
   delete scene;
