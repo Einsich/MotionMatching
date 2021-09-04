@@ -19,7 +19,7 @@ endif()
 
 project(${PROJECT_NAME})
 
-if(BUILD_TYPE STREQUAL "dev")
+if(BUILD_TYPE STREQUAL "dbg")
     set(CMAKE_BUILD_TYPE  "Debug")
 elseif(BUILD_TYPE STREQUAL "rel")
     set(CMAKE_BUILD_TYPE  "Release")

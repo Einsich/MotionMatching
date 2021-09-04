@@ -51,16 +51,6 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations
 
 
 if(BUILD_TYPE STREQUAL "dbg")
-    if (WIN32)
-        set(SANITIZER, "-fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=undefined")
-    else()
-        set(SANITIZER, "-fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fsanitize=bounds-strict")
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -g -O0 -DDEBUG ${SANITIZER}")
-    set(CMAKE_BUILD_TYPE "Debug")
-elseif(BUILD_TYPE STREQUAL "dev")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -DDEBUG")
     set(CMAKE_BUILD_TYPE "Debug")
 elseif(BUILD_TYPE STREQUAL "rel")
     if (WIN32)
@@ -69,7 +59,6 @@ elseif(BUILD_TYPE STREQUAL "rel")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -O3")
     endif()
     set(CMAKE_BUILD_TYPE  "Release")
-    message("Release Build ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(RELEASE STREQUAL "yes")

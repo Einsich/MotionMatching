@@ -99,17 +99,16 @@
     "stop_token": "cpp"
   },
   "launchOption.options": {
-    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "Editor"],
+    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "ShaderCompiler"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
-        {"name": "Develop", "value": "dev"},
         {"name": "Release", "value": "rel"}
     ],
     "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
   "Project": "MotionMatching",
-  "BuildType": "dev",
+  "BuildType": "dbg",
   "loadDataBaseFromFBX": "no"
 },
 }
