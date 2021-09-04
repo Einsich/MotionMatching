@@ -14,6 +14,7 @@ void Material::bind_textures_to_shader() const
     switch (sampler.type)
     {
       #define SAMPLER(T, gl_type) case gl_type: \
+      if (!gl_type##s[sampler.arrayOffset]) continue;\
         textureObject = gl_type##s[sampler.arrayOffset]->get_texture_object(); \
         textureType = gl_type##s[sampler.arrayOffset]->get_texture_type(); break;
       SAMPLERS
