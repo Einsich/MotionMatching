@@ -13,7 +13,6 @@ private:
     mat4 transform;
     vec3 color;
   };
-  Shader arrowShader;
   Asset<Material> arrowMaterial;
   VertexArrayObject arrow;
   vector<Arrow> depthIgnore;
