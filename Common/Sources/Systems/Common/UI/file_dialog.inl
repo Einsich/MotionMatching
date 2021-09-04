@@ -4,12 +4,13 @@
 #include <Application/application.h>
 #include <ecs/ecs_scene.h>
 #include <ecs/editor/template.h>
+#include "editor_window.h"
 
 void open_scene(const filesystem::path &path, bool need_to_add);
 
-SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog()
+SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog(EditorUI &ui)
 {
-  if (ImGui::BeginMenu("File"))
+  if (ImGui::BeginMenu("Editor"))
   {
     if (ImGui::Button("open scene"))
     {
@@ -35,6 +36,12 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog()
     if (ImGui::Button("save templates"))
     {
       ecs::save_templates();
+    }
+    constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+    bool unlock = ui.windowFlags == 0;
+    if (ImGui::Checkbox("Unlock panels", &unlock))
+    {
+      ui.windowFlags = unlock ? 0 : lockFlag;
     }
 
     ImGui::EndMenu();

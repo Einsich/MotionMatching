@@ -3,13 +3,26 @@
 #include <ecs/editor/template.h>
 #include <ecs/manager/entity_container.h>
 #include <functional>
-SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer()
+#include "editor_window.h"
+
+constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+EVENT(ecs::SystemTag::GameEditor) init_imgui_style(const ecs::OnSceneCreated&, EditorUI &ui)
 {
-  if(!ImGui::Begin("Entity viewer"))
+  ImGuiStyle& style = ImGui::GetStyle();
+  style.IndentSpacing = 5;
+  //style.ItemSpacing = ImVec2(0, 0);
+  //style.ItemInnerSpacing = ImVec2(0, 0);
+  ui.windowFlags = lockFlag;
+
+}
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor) entity_viewer(const EditorUI &ui)
+{
+  if(!ImGui::Begin("Entity viewer", nullptr, ui.windowFlags))
   {
     ImGui::End();
     return;
   }
+  ImGui::PushItemWidth(170);
   const int N = 100;
   char buf[N];
   int archetypeIndex = 0;
@@ -328,10 +341,10 @@ void edit_template(ecs::Template &templ, bool view_only = false, int depth = 0)
 
 }
 
-SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer(const EditorUI &ui)
 {
-  ImGui::Begin("type viewer");
-  ImGui::PushItemWidth(300);
+  ImGui::Begin("type viewer", nullptr, ui.windowFlags);
+  ImGui::PushItemWidth(170);
   static vector<const char*> names;
   static int selectedTemplate = -1;
   static bool editTemplate = false;
@@ -413,19 +426,20 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer()
 }
 
 
-SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater()
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater(const EditorUI &ui)
 {
-  if(!ImGui::Begin("Create entity"))
+  if(!ImGui::Begin("Create entity", nullptr, ui.windowFlags))
   {
     ImGui::End();
     return;
   }
+  ImGui::PushItemWidth(170);
   const int BUFN = 255;
   char buf[BUFN];
   
   static std::string searchString = "";
   snprintf(buf, BUFN, "%s", searchString.c_str());
-  if (ImGui::InputText("Search: ", buf, BUFN))
+  if (ImGui::InputText("<-Search", buf, BUFN))
     searchString = std::string(buf);
 
   auto &templates = ecs::TemplateManager::instance().templates;
@@ -445,15 +459,16 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater()
     
   static int selectedTemplate = -1;
   bool selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
-  const char *cur_name = selectedCorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
-  ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
-  
-  selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templatePtrs.size();
   if (selectedCorrectTemplate)
   {
     ImGui::SameLine();
+    ImGui::NextColumn();
     if (ImGui::Button("Create"))
       ecs::create_entity(templatePtrs[selectedTemplate]);
   }
+  const char *cur_name = selectedCorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
+  ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
+  
+
   ImGui::End();
 }

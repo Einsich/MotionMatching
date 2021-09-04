@@ -2,6 +2,7 @@
 #include <Engine/imgui/imgui.h>
 #include <Engine/Resources/resources.h>
 #include <ecs/singleton.h>
+#include "editor_window.h"
 
 struct SelectedAsset : ecs::Singleton
 {
@@ -30,7 +31,7 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(Selected
   }
 }
 
-SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset &selectedAsset)
+SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];
@@ -38,8 +39,9 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
   selectedAsset.selectNewResourceType = false;
   if (selectedAsset.resourceType)
   {
-    if (ImGui::Begin("asset viewer"))
+    if (ImGui::Begin("asset viewer", nullptr, ui.windowFlags))
     {
+      ImGui::PushItemWidth(170);
       static bool adding = false;
       adding &= !selectNewResourceType;
       ImGui::Text("%s", selectedAsset.name.data());
