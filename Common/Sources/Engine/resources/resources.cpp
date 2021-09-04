@@ -66,11 +66,14 @@ void save_all_resources_to_metadata()
   auto & assets = Resources::instance().assets;
   for (const auto &p : assets)
   {
-    debug_log("saving assets with %s extension", p.first.data());
+    bool firstlog = true;
     for (const auto &asset : p.second.resources)
     {
       if (asset.second.edited())
       {
+        if (firstlog)
+          debug_log("saving assets with %s extension", p.first.data());
+        firstlog = false;
         debug_log("saving asset %s", asset.first.c_str());
         p.second.saveAsset(asset.second);
       }

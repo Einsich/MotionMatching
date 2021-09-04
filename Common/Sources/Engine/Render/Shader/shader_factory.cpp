@@ -66,6 +66,13 @@ void compile_shaders()
   process_codegen_shaders();
   debug_log("finish shader compilation");
 }
+void recompile_shaders()
+{
+  read_directories(Application::instance().commonShaderPath);
+  read_directories(Application::instance().projectShaderPath);
+  process_codegen_shaders();
+  debug_log("finish shader recompilation");
+}
 void save_shader_info()
 {
   save_precompiled_shaders(precompiledShaders);

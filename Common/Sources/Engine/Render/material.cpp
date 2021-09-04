@@ -247,6 +247,8 @@ bool Material::edit()
     if (selecting)
       ImGui::SameLine();
     ImGui::TextColored(ImVec4(1, 0, 0, 1), "Bad shader name");
+    if (!shader)
+      return false;
   }
   else
   {
