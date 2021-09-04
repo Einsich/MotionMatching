@@ -107,7 +107,7 @@
     "loadDataBaseFromFBX":["yes","no"]
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
+  "Project": "Strategy",
   "BuildType": "dbg",
   "loadDataBaseFromFBX": "no"
 },

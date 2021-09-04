@@ -5,4 +5,5 @@ layout(std140, binding = 0) uniform Commondata
     vec3 LightDirection;
     vec3 AmbientLight;
     vec3 SunLight;
+    float Time;
 };

@@ -39,7 +39,7 @@ set_global_render_data(const MainCamera &mainCamera)
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
     {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection, 
-    light.ambient, light.lightColor});
+    light.ambient, light.lightColor, Time::time()});
 }
 
 SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(

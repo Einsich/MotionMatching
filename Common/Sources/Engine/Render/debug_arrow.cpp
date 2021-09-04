@@ -99,11 +99,14 @@ void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &a
 }
 void DebugArrow::render(UniformBuffer &instanceData, bool wire_frame)
 {
-  const Shader &arrowShader = arrowMaterial->get_shader();
-  arrowShader.use();
-  glDisable(GL_CULL_FACE);
-  render_depth_case(instanceData, depthIgnore, true, wire_frame);
-  render_depth_case(instanceData, depthNotIgnore, false, wire_frame);
+  if (instanceData.size() && arrowMaterial)
+  {
+    const Shader &arrowShader = arrowMaterial->get_shader();
+    arrowShader.use();
+    glDisable(GL_CULL_FACE);
+    render_depth_case(instanceData, depthIgnore, true, wire_frame);
+    render_depth_case(instanceData, depthNotIgnore, false, wire_frame);
 
-  glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
+  }
 }

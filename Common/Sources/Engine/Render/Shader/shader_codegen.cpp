@@ -96,6 +96,7 @@ void update_file(const fs::path &file_path)
     ShaderFileDependency &dep = it->second;
     dep.exists = true;
     dep.valid = last_write <= dep.lastCompilationTime;
+    dep.loaded &= dep.valid;
     dep.lastCompilationTime = last_write;
   }
   else

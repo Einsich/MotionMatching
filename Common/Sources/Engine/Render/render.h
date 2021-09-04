@@ -11,6 +11,7 @@ struct GlobalRenderData
   alignas(16) vec3 LightDirection;
   alignas(16) vec3 AmbientLight;
   alignas(16) vec3 SunLight;
+  alignas(16) float Time;
 };
 struct EditorRenderSettings : ecs::Singleton
 {
