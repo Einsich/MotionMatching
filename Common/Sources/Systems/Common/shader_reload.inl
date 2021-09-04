@@ -21,9 +21,11 @@ void foreach_resources(std::function<void(Asset<T>)> && pred)
 }
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) reload_shaders(const KeyDownEvent<SDLK_F5> &)
 {
+#ifndef RELEASE
   recompile_shaders();
   foreach_resources<Material>([](Asset<Material> m){m->load("", false);});
   debug_log("shaders were recompiled");
+#endif
 }
 
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) 
