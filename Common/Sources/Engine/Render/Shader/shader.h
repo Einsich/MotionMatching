@@ -11,8 +11,9 @@ class Shader
 private:
 	int shaderIdx;
 public:
-	Shader(){}
-	Shader(const std::string &shader_name, GLuint shader_program, bool update_list = false);
+	Shader() = default;
+	Shader(int shaderIdx):shaderIdx(shaderIdx){}
+	Shader(const std::string &shader_name, GLuint shader_program, bool compiled, bool update_list = false);
 	explicit operator bool() const
 	{ 
 		return get_shader_program() != BAD_PROGRAM;
@@ -109,5 +110,5 @@ public:
 	}
 };
 
-Shader get_shader(std::string shader_name, bool with_log = true);
+Shader get_shader(const std::string &shader_name, bool with_log = true);
 const vector<const char*>get_shaders_names();

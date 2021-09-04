@@ -3,10 +3,12 @@
 #include <map>
 #include "storage_buffer.h"
 #include "sampler_uniforms.h"
+#include "shader_gen.h"
 
 struct ShaderInfo
 {
   GLuint program;
+  bool compiled;//or loaded
   int instanceDataBuffer;
   vector<StorageBuffer> buffers; 
   vector<SamplerUniform> samplers;
@@ -14,34 +16,42 @@ struct ShaderInfo
 void read_shader_info(ShaderInfo &shader);
 
 static std::vector<std::pair<std::string, ShaderInfo>> shaderList;
-static Shader badShader("invalid shader", BAD_PROGRAM);
+static Shader badShader(-1);
 
 
-Shader::Shader(const std::string &shader_name, GLuint shader_program, bool update_list)
+Shader::Shader(const std::string &shader_name, GLuint shader_program, bool compiled, bool update_list)
 {
+  if (shader_program == BAD_PROGRAM)
+    return;
   for (shaderIdx = 0; shaderIdx < (int)shaderList.size() && shaderList[shaderIdx].first != shader_name; ++shaderIdx);
 
   if (shaderIdx >= (int)shaderList.size())
   {
-    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, -1, {}, {}});
+    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
     read_shader_info(shaderList.back().second);
   }
   if (update_list)
   {
-    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, -1, {}, {}});
+    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
     read_shader_info(shaderList[shaderIdx].second);
   }
 }
 GLuint Shader::get_shader_program() const
 {
-  return shaderList[shaderIdx].second.program;
+  return shaderIdx < 0 ? BAD_PROGRAM : shaderList[shaderIdx].second.program;
 }
-Shader get_shader(std::string shader_name, bool with_log)
+
+int get_shader_index(const std::string &shader_name)
 {
   auto shader_iter = std::find_if(shaderList.begin(), shaderList.end(), [&](const auto &p){return p.first == shader_name;});
-	if (shader_iter != shaderList.end())
+  return shader_iter != shaderList.end() ? shader_iter - shaderList.begin() : -1;
+}
+Shader get_shader(const std::string &shader_name, bool with_log)
+{
+  int shaderIdx = get_shader_index(shader_name);
+	if (shaderIdx >= 0)
   {
-    return Shader(shader_iter->first, shader_iter->second.program);
+    return Shader(shaderIdx);
   }
   else
   {
@@ -151,11 +161,47 @@ void read_shader_info(ShaderInfo &shader)
 }
 const StorageBuffer *Shader::get_instance_data() const
 {
-  int index = shaderList[shaderIdx].second.instanceDataBuffer;
+  int index = shaderIdx >= 0 ? shaderList[shaderIdx].second.instanceDataBuffer : -1;
   return index >=0 ? &shaderList[shaderIdx].second.buffers[index] : nullptr;
 }
 
 const vector<SamplerUniform> &Shader::get_samplers() const
 {
   return shaderList[shaderIdx].second.samplers;
+}
+
+void load_precompiled_shaders(const vector<PrecompiledShader> &shaders)
+{
+  for (const PrecompiledShader &shader : shaders)
+  {
+    GLuint program = 0;
+    if (load_precompiled_shader(shader, program))
+    {
+      debug_log("loaded precompiled %s", shader.name.c_str());
+      shaderList.emplace_back(shader.name, ShaderInfo{program, false, -1, {}, {}});
+      read_shader_info(shaderList.back().second);
+    }
+  }
+}
+
+void save_precompiled_shaders(vector<PrecompiledShader> &shaders)
+{
+  for (const auto &info : shaderList)
+  {
+    if (info.second.compiled)//not loaded
+    {
+      GLuint program = info.second.program;
+      debug_log("saved precompiled %s", info.first.c_str());
+      auto shader_iter = std::find_if(shaders.begin(), shaders.end(), [&](const auto &p){return p.name == info.first;});
+      if (shader_iter != shaders.end())
+      {
+        save_precompiled_shader(*shader_iter, program);
+      }
+      else
+      {
+        PrecompiledShader &shader = shaders.emplace_back(PrecompiledShader{info.first, {}, 0});
+        save_precompiled_shader(shader, program);
+      }
+    }
+  }
 }

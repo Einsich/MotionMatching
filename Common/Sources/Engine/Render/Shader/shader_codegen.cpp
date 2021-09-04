@@ -4,9 +4,12 @@
 #include <filesystem>
 #include <map>
 #include <vector>
+#include <set>
 #include <fstream>
 #include <regex>
-bool compile_shader(const string &shaderName, const vector<pair<uint, const char*>> &shaders, uint &program);
+#include "shader_gen.h"
+#include "Application/application.h"
+
 
 namespace fs = filesystem;
 #define SPACE_SYM " \n\t\r\a\f\v"
@@ -20,28 +23,6 @@ static const regex ps_regex("#pixel_shader");
 static const regex include_regex("#include" SPACE_REGEX NAME_REGEX);
 static const regex include_with_defines_regex("#include" SPACE_REGEX NAME_REGEX SPACE_REGEX "(" ARGS_REGEX ")");//todo
 
-enum class ShaderLexema
-{
-  SHADER_NAME,
-  VS_SHADER,
-  PS_SHADER,
-  INCLUDE
-};
-struct MatchRange
-{
-  std::string::iterator begin, end;
-  int beginIndex, endIndex;
-  ShaderLexema type;
-  string typeContent;
-  bool empty() const
-  {
-    return begin == end;
-  }
-  std::string str() const
-  {
-    return std::string(begin, end);
-  }
-};
 
 void get_matches(std::vector<MatchRange> & v, std::string& str, const std::regex &reg, ShaderLexema type)
 {
@@ -61,18 +42,18 @@ std::vector<MatchRange> get_matches(std::string& str, const std::regex &reg, Sha
   get_matches(v, str, reg, type);
   return v;
 }
-struct CodeGenShader
-{
-  bool loaded, isShaderFile;
-  fs::path path;
-  string content;
-  vector<MatchRange> lexems;
-};
 
-void try_load_shader_code(CodeGenShader &shader)
+
+void try_load_shader_code(ShaderFileDependency &shader)
 {
   if (shader.loaded)
     return;
+  if (!shader.valid)
+  {
+    shader.dependencies.clear();
+  }
+  debug_log("loaded %s", shader.path.stem().string().c_str());
+
   ifstream shaderFile(shader.path);
   stringstream shaderStream;
   shaderStream << shaderFile.rdbuf();  
@@ -100,23 +81,57 @@ void try_load_shader_code(CodeGenShader &shader)
     }
   }
 }
-static map<string, CodeGenShader> shaders;
-void add_shader_path(const fs::path &path)
+static map<string, ShaderFileDependency> shaderFiles;
+map<string, ShaderFileDependency> &getShaderFiles()
 {
-  string fileName = path.stem().string();
-  auto it = shaders.find(fileName);
-  if (it != shaders.end())
-  {
-    debug_log("Already exists shader %s", fileName.c_str());
-    it->second.loaded = false;
-    return;
-  }
-  shaders.try_emplace(fileName, CodeGenShader{false, false, path, "", {}});
+  return shaderFiles;
 }
-CodeGenShader *get_codegen_shader(const string &name)
+void update_file(const fs::path &file_path)
 {
-  auto it = shaders.find(name);
-  if (it != shaders.end())
+  string fileName = file_path.stem().string();
+  auto it = shaderFiles.find(fileName);
+  fs::file_time_type last_write = fs::last_write_time(file_path);
+  if (it != shaderFiles.end())
+  {
+    ShaderFileDependency &dep = it->second;
+    dep.exists = true;
+    dep.valid = last_write <= dep.lastCompilationTime;
+    dep.lastCompilationTime = last_write;
+  }
+  else
+  {
+    shaderFiles.try_emplace(fileName, ShaderFileDependency{last_write, {}, file_path, false, false, true, false, "", {}});
+  }
+}
+static set<string> invalidation_list;
+void dependency_unvalidation_recursively(const string &name, ShaderFileDependency &file)
+{
+  invalidation_list.insert(name);
+  file.valid = false;
+  for (const string &dependency : file.dependencies)
+  {
+    if (!invalidation_list.contains(dependency))
+    {
+      auto it = shaderFiles.find(dependency);
+      if (it != shaderFiles.end())
+      {
+        dependency_unvalidation_recursively(it->first, it->second);
+      }
+    }
+  }
+}
+void dependency_unvalidation()
+{
+  invalidation_list.clear();
+
+  for (auto &[name, file] : shaderFiles)
+    if (!file.valid && !invalidation_list.contains(name))
+      dependency_unvalidation_recursively(name, file);
+}
+ShaderFileDependency *get_codegen_shader(const string &name)
+{
+  auto it = shaderFiles.find(name);
+  if (it != shaderFiles.end())
   {
     try_load_shader_code(it->second);
     return &it->second;
@@ -125,7 +140,7 @@ CodeGenShader *get_codegen_shader(const string &name)
     return nullptr;
 }
 
-void insert_includes(string &text, const string &source_text, const std::vector<MatchRange> &lexems, int &curLexema)
+void insert_includes(string &text, const string &file_name, const string &source_text, const std::vector<MatchRange> &lexems, int &curLexema)
 {
   if (lexems.empty())
   {
@@ -154,13 +169,13 @@ void insert_includes(string &text, const string &source_text, const std::vector<
   }
   for (int i = curLexema; i < (int)lexems.size() && lexems[i].type == ShaderLexema::INCLUDE; ++i)
   {
-    CodeGenShader *shader = get_codegen_shader(lexems[i].typeContent);
-    //dst_shader depends on shader
+    ShaderFileDependency *shader = get_codegen_shader(lexems[i].typeContent);
     if (shader)
     {
+      shader->dependencies.emplace_back(file_name);
       int tmpLexemCounter = 0;
       //debug_log("include %s file", lexems[i].typeContent.c_str());
-      insert_includes(text, shader->content, shader->lexems, tmpLexemCounter);
+      insert_includes(text, lexems[i].typeContent, shader->content, shader->lexems, tmpLexemCounter);
       if (tmpLexemCounter != (int)shader->lexems.size())
         debug_error("in include file %s there is not only include read %d / %d lexems", 
         shader->path.stem().string().c_str(), tmpLexemCounter, shader->lexems.size());
@@ -206,7 +221,7 @@ void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
   uint program;
   if (compile_shader(state.currentShader, shaderCode, program))
   {
-    Shader(state.currentShader, program, true);
+    Shader(state.currentShader, program, true, true);
     debug_log("shader %s compiled", state.currentShader.c_str());
   }
   else
@@ -223,9 +238,12 @@ void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
 }
 void process_codegen_shaders()
 {
+  dependency_unvalidation();
   ParseState state;
-  for (auto &[shaderName, shader] : shaders)
+  for (auto &[shaderName, shader] : shaderFiles)
   {
+    if (shader.valid)
+      continue;
     try_load_shader_code(shader);
     if (shader.isShaderFile)
     {
@@ -247,18 +265,18 @@ void process_codegen_shaders()
           state.currentShader = r.typeContent;
           
           //debug_log("shader %s file", r.typeContent.c_str());
-          insert_includes(state.commonPart, shader.content, shader.lexems, i);
+          insert_includes(state.commonPart, shaderName, shader.content, shader.lexems, i);
         break;
 
         case ShaderLexema::VS_SHADER:
           state.startVs = true;
           //debug_log("vs shader");
-          insert_includes(state.vsPart, shader.content, shader.lexems, i);
+          insert_includes(state.vsPart, shaderName, shader.content, shader.lexems, i);
         break;
         case ShaderLexema::PS_SHADER:
           state.startPs = true;
           //debug_log("ps shader");
-          insert_includes(state.psPart, shader.content, shader.lexems, i);
+          insert_includes(state.psPart, shaderName, shader.content, shader.lexems, i);
         break;
         default:
           break;

@@ -12,39 +12,24 @@
 
 namespace fs = filesystem;
 
-static map<fs::path, ShaderFileDependency> shaderFiles;
+static vector<PrecompiledShader> precompiledShaders;
 
-void load_file_dependencies(fs::path projectResources)
+template<typename T>
+void load_obj(const char *file_name, T & obj)
 {
-  projectResources.concat("/shaders_dependencies.bin");
-  ifstream file(projectResources, ios::binary);
-  shaderFiles.clear();
-  read(file, shaderFiles);
+  ifstream file(fs::path(Application::instance().projectResourcesPath).concat(file_name), ios::binary);
+  obj.clear();
+  read(file, obj);
 }
 
-void save_file_dependencies(fs::path projectResources)
+template<typename T>
+void save_obj(const char *file_name, T & obj)
 {
-  projectResources.concat("/shaders_dependencies.bin");
-  ofstream file(projectResources, ios::binary);
-  shaderFiles.clear();
-  write(file, shaderFiles);
+  ofstream file(fs::path(Application::instance().projectResourcesPath).concat(file_name), ios::binary);
+  write(file, obj);
 }
-void update_file(const fs::path &file_path)
-{
-  fs::path path = file_path.lexically_relative(fs::path(Application::instance().projectPath));
-  auto it = shaderFiles.find(path);
-  if (it != shaderFiles.end())
-  {
-    ShaderFileDependency &dep = it->second;
-    dep.exists = true;
-    fs::file_time_type last_write = fs::last_write_time(file_path);
-    dep.valid = last_write < dep.lastCompilationTime;
-  }
-  else
-  {
-    shaderFiles.try_emplace(path, ShaderFileDependency{{},{}, false, true});
-  }
-}
+
+
 void add_shader_path(const fs::path &path);
 bool compile_shader(const string &shaderName, const vector<pair<GLuint, string>> &shaders, GLuint &program);
 void process_codegen_shaders();
@@ -67,15 +52,15 @@ void read_directories(const fs::path &folder_path)
     else if (entry.is_regular_file() && path.extension() == ".glsl")
     {
       update_file(path);
-      add_shader_path(path);
     }
   }
 }
 
 void compile_shaders()
 {
-  fs::path projectResourcesPath = fs::path(Application::instance().projectResourcesPath);
-  load_file_dependencies(projectResourcesPath);
+  load_obj("/shaders_dependencies.bin", getShaderFiles());
+  load_obj("/precompiled_shaders.bin", precompiledShaders);
+  load_precompiled_shaders(precompiledShaders);
   read_directories(Application::instance().commonShaderPath);
   read_directories(Application::instance().projectShaderPath);
   process_codegen_shaders();
@@ -83,6 +68,7 @@ void compile_shaders()
 }
 void save_shader_info()
 {
-  fs::path projectResourcesPath = fs::path(Application::instance().projectResourcesPath);
-  save_file_dependencies(projectResourcesPath);
+  save_precompiled_shaders(precompiledShaders);
+  save_obj("/shaders_dependencies.bin", getShaderFiles());
+  save_obj("/precompiled_shaders.bin", precompiledShaders);
 }
