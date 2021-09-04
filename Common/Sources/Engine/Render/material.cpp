@@ -7,6 +7,8 @@
 
 void Material::bind_textures_to_shader() const
 {
+  if (!shader)
+    return;
   for (const SamplerUniform &sampler : shader.get_samplers())
   {
     uint textureObject = 0;

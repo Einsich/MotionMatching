@@ -42,16 +42,11 @@ void read_directories(const fs::path &folder_path)
     debug_error("Didn't exists %s", folder_path.string().c_str());
     return;
   }
-  for (const auto & entry : fs::directory_iterator(folder_path))
+  for (const auto &entry : fs::recursive_directory_iterator(folder_path, fs::directory_options::follow_directory_symlink))
   {
-    const fs::path &path = entry.path();
-    if (entry.is_directory())
+    if (entry.is_regular_file() && entry.path().extension() == ".glsl")
     {
-      read_directories(entry.path());
-    } 
-    else if (entry.is_regular_file() && path.extension() == ".glsl")
-    {
-      update_file(path);
+      update_file(entry.path());
     }
   }
 }
@@ -63,7 +58,7 @@ void compile_shaders()
   
 #ifndef RELEASE
   load_obj("/shaders_dependencies.bin", getShaderFiles());
-  read_directories(Application::instance().commonShaderPath);
+  //read_directories(Application::instance().commonShaderPath);
   read_directories(Application::instance().projectShaderPath);
   process_codegen_shaders();
 #endif
@@ -72,7 +67,7 @@ void compile_shaders()
 void recompile_shaders()
 {
 #ifndef RELEASE
-  read_directories(Application::instance().commonShaderPath);
+ // read_directories(Application::instance().commonShaderPath);
   read_directories(Application::instance().projectShaderPath);
   process_codegen_shaders();
   debug_log("finish shader recompilation");

@@ -6,8 +6,8 @@ namespace fs = filesystem;
 
 void create_all_resources_from_metadata(const string &path)
 {
-  const auto &assets = Resources::instance().assets;
-  for (const auto &entry : fs::recursive_directory_iterator(path))
+  auto &assets = Resources::instance().assets;
+  for (const auto &entry : fs::recursive_directory_iterator(path, fs::directory_options::follow_directory_symlink))
   {
     if (entry.is_regular_file())
     {
@@ -44,14 +44,20 @@ void create_all_resources_from_metadata(const string &path)
         }
       }
     }
+  }
 
+  for (auto &p : assets)
+  {
+    auto &res = p.second.resources;
+    for (auto it = res.begin(), end = res.end(); it != end;)
+    {
+      (it->second) ? ++it : res.erase(it++);
+    }
   }
 }
 
 void create_all_resources_from_metadata()
 {
-
-  create_all_resources_from_metadata(Application::instance().commonResourcesPath);
   create_all_resources_from_metadata(Application::instance().projectResourcesPath);
   
   sphere_mesh(1, true);
@@ -69,7 +75,7 @@ void save_all_resources_to_metadata()
     bool firstlog = true;
     for (const auto &asset : p.second.resources)
     {
-      if (asset.second.edited())
+      if (asset.second && asset.second.edited())
       {
         if (firstlog)
           debug_log("saving assets with %s extension", p.first.data());

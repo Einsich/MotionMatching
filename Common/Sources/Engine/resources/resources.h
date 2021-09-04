@@ -42,6 +42,10 @@ Asset<T> create_asset(const filesystem::path &path)
     resourcesMap.resources.try_emplace(assetName, asset);
     return asset;
   }
+  else if (!it->second)
+  {
+    it->second = Asset<T>(path);
+  }
   return it->second;
 }
 template<typename T>

@@ -98,14 +98,16 @@ public:
     asset = other.asset;
     return *this;
   }
-  Asset(const filesystem::path &resource_path) :
-  asset(new ResourceInfo{resource_path, false, false, false, false, T()})
+  Asset(const filesystem::path &resource_path)
   {  
     ifstream file(resource_path, ios::binary);
     if (!file.fail())
     {
+      asset = new ResourceInfo{resource_path, false, false, false, false, T()};
       read(file, asset->asset);
     }
+    else
+      asset = nullptr;
   }
   Asset(const filesystem::path &resource_path, const Asset<T> &other) :
   asset(new ResourceInfo{resource_path, other.asset->loading, other.asset->loaded, 

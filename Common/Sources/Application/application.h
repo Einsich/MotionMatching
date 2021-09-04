@@ -17,7 +17,7 @@ private:
   Time timer;
 public:
   ecs::SceneManager *scene;
-  const string projectPath, projectResourcesPath, projectShaderPath, commonResourcesPath, commonShaderPath;
+  const string projectPath, projectResourcesPath, projectShaderPath;
   Application(string window_name, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
   void start();

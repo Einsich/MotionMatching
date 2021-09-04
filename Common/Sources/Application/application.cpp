@@ -15,9 +15,7 @@ Application::Application(string window_name, int width, int height, bool full_sc
 context(window_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
 projectPath(string(get_config("projectPath"))),
 projectResourcesPath(string(get_config("projectPath")) + "\\Resources"),
-projectShaderPath(string(get_config("projectPath")) + "\\Shaders"),
-commonResourcesPath(string(get_config("commonPath")) + "\\Resources"),
-commonShaderPath(string(get_config("commonPath")) + "\\Shaders")
+projectShaderPath(string(get_config("projectPath")) + "\\Shaders")
 {
   assert(scene);
   application = this;
@@ -136,10 +134,6 @@ void Application::exit()
 string project_resources_path(const string &path)
 {
   return Application::instance().projectResourcesPath + "/" + path;
-}
-string common_resources_path(const string &path)
-{
-  return Application::instance().commonResourcesPath + "/" + path;
 }
 
 void load_scene(const string &name, bool editor)

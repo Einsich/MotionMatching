@@ -71,8 +71,11 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   const Transform &transform,
   RenderQueue &render)
 {
-  render.queue.emplace_back(RenderStuff{material, mesh});
-  material->set_property("Model", transform.get_transform());
+  if (material && mesh)
+  {
+    render.queue.emplace_back(RenderStuff{material, mesh});
+    material->set_property("Model", transform.get_transform());
+  }
 }
 
 SYSTEM(ecs::SystemOrder::RENDER+100,ecs::SystemTag::GameEditor)

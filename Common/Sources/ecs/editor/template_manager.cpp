@@ -75,21 +75,24 @@ namespace ecs
   }
   void load_templates()
   {
-    const string &path = project_resources_path("Templates");
+    const string &path = Application::instance().projectResourcesPath;
     vector<Template*> &templates = TemplateManager::instance().templates;
     templates.clear();
     if (!fs::exists(path))
       return;
-    for (const auto & entry : fs::directory_iterator(path))
+    vector<fs::path> templates_paths;
+    for (const auto & entry : fs::recursive_directory_iterator(path, fs::directory_options::follow_directory_symlink))
     {
+      debug_log("%s", entry.path().string().c_str());
       if (entry.is_regular_file() && entry.path().extension() == ".tmpl")
       {
+        templates_paths.emplace_back(entry.path().lexically_relative(path));
         templates.push_back(new ecs::Template(entry.path().stem().string().c_str()));
       }
     }
-    for (const Template* t: templates)
+    for (uint i = 0; i < templates.size(); ++i)
     {
-      load_object(*t, "Templates/" + t->name + ".tmpl");
+      load_object(*templates[i], templates_paths[i].string());
     }
   }
   void save_templates()
