@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 #include "Engine/time.h"
 #include "Application/application.h"
 #include "reflection.h"
@@ -34,6 +35,10 @@ inline size_t write(std::ostream& os, const std::string& value)
   if (len > 0)
       os.write(value.data(), len);
   return static_cast<std::size_t>(os.tellp() - pos);
+}
+inline size_t write(std::ostream& os, const filesystem::path& value) 
+{
+  return write(os, value.string());
 }
 template<typename T>
 inline size_t write(std::ostream& os, const std::vector<T>& value) 
@@ -135,6 +140,13 @@ inline size_t read(std::istream& is, std::string& value)
   if (len > 0)
     is.read(value.data(), len);
   return static_cast<size_t>(is.tellg() - pos);
+}
+inline size_t read(std::istream& is, filesystem::path& value) 
+{
+  std::string s;
+  size_t p = read(is, s);
+  value = filesystem::path(s);
+  return p;
 }
 template<typename T>
 inline size_t read(std::istream& is, std::vector<T>& value) 
