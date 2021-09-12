@@ -1,9 +1,9 @@
+#include "application_data.h"
 #include "application.h"
 #include "Engine/Render/Shader/shader_factory.h"
 #include "glad/glad.h"
 #include "Engine/imgui/imgui_impl_opengl3.h"
 #include "Engine/imgui/imgui_impl_sdl.h"
-#include "config.h"
 #include "Engine/Profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "ecs/editor/template.h"
@@ -11,11 +11,11 @@
 #include "ecs/ecs_scene.h"
 #include "application_metainfo.h"
 
-Application::Application(string window_name, int width, int height, bool full_screen):
+Application::Application(const string &window_name,const string &project_path, int width, int height, bool full_screen):
 context(window_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
-projectPath(string(get_config("projectPath"))),
-projectResourcesPath(string(get_config("projectPath")) + "\\Resources"),
-projectShaderPath(string(get_config("projectPath")) + "\\Shaders")
+projectPath(project_path),
+projectResourcesPath(project_path + "\\Resources"),
+projectShaderPath(project_path + "\\Shaders")
 {
   assert(scene);
   application = this;
@@ -24,7 +24,7 @@ projectShaderPath(string(get_config("projectPath")) + "\\Shaders")
 void Application::start()
 {
   ecs::load_templates();
-  load_meta_info(projectPath + "/project.config");
+  load_meta_info(projectPath.string() + "/project.config");
   bool editor = false;
   #ifndef RELEASE
   editor = true;
@@ -123,7 +123,7 @@ void Application::exit()
 {
   ecs::save_templates();
   save_shader_info();
-  save_meta_info(projectPath + "/project.config");
+  save_meta_info(projectPath.string() + "/project.config");
   scene->destroy_scene();
   delete scene;
   ImGui_ImplOpenGL3_Shutdown();
@@ -133,7 +133,7 @@ void Application::exit()
 }
 string project_resources_path(const string &path)
 {
-  return Application::instance().projectResourcesPath + "/" + path;
+  return Application::instance().projectResourcesPath.string() + "/" + path;
 }
 
 void load_scene(const string &name, bool editor)

@@ -2,7 +2,7 @@
 #include <ecs/ecs.h>
 #include <Engine/input.h>
 #include <Engine/time.h>
-
+#include <Application/application_data.h>
 REGISTER_TYPE(Camera)
 REGISTER_TYPE(FreeCamera)
 REGISTER_TYPE(ArcballCamera)

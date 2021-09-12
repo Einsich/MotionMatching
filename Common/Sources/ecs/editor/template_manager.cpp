@@ -1,5 +1,6 @@
 #include "template.h"
 #include "Serialization/serialization.h"
+#include "Application/application_data.h"
 #include <filesystem>
 namespace fs = filesystem;
 namespace ecs
@@ -75,7 +76,7 @@ namespace ecs
   }
   void load_templates()
   {
-    const string &path = Application::instance().projectResourcesPath;
+    const fs::path &path = Application::instance().projectResourcesPath;
     vector<Template*> &templates = TemplateManager::instance().templates;
     templates.clear();
     if (!fs::exists(path))

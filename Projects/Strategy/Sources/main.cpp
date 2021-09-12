@@ -1,12 +1,13 @@
-#include "Application/application.h"
-#include "config.h"
-#include "ecs/ecs_scene.h"
+#include "Application/application_data.h"
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
-  add_configs(argc, (const char**)(argv));
-  
-  Application application(get_config("project"), 2048, 1024, true);
+  std::filesystem::path currentPath = std::filesystem::current_path();
+  std::filesystem::path root(currentPath.parent_path().parent_path().parent_path());
+  string project = currentPath.stem().string();
+  root.concat("/Projects/" + project);
+
+  Application application(project, root.string(), 2048, 1024, true);
   application.start();
   application.main_loop();
   application.exit();

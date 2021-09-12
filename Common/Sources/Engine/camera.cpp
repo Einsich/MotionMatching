@@ -1,6 +1,6 @@
 #include "camera.h"
 #include <vector>
-#include "Application/application.h"
+#include "Application/application_data.h"
 #include "ecs/component_editor.h"
 #include "Engine/imgui/imgui.h"
 

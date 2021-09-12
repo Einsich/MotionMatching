@@ -1,7 +1,6 @@
 #include "ecs_scene.h"
 #include "ecs/ecs.h"
 #include "manager/entity_container.h"
-#include "config.h"
 #include "glad/glad.h"
 #include "Engine/Profiler/profiler.h"
 #include "Engine/imgui/imgui.h"

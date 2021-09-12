@@ -1,7 +1,7 @@
 #include <ecs/ecs.h>
 #include <Engine/input.h>
 #include <Engine/file_dialog.h>
-#include <Application/application.h>
+#include <Application/application_data.h>
 #include <ecs/ecs_scene.h>
 #include <ecs/editor/template.h>
 #include "editor_window.h"

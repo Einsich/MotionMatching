@@ -1,10 +1,10 @@
 #include "resources.h"
-#include "Application/application.h"
+#include "Application/application_data.h"
 #include "../Render/mesh.h"
 
 namespace fs = filesystem;
 
-void create_all_resources_from_metadata(const string &path)
+void create_all_resources_from_metadata(const fs::path &path)
 {
   auto &assets = Resources::instance().assets;
   for (const auto &entry : fs::recursive_directory_iterator(path, fs::directory_options::follow_directory_symlink))

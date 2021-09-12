@@ -2,7 +2,7 @@
 #include "shader_factory.h"
 #include "shader.h"
 #include "shader_gen.h"
-#include "Application/application.h"
+#include "Application/application_data.h"
 #include "Serialization/serialization.h"
 #include <fstream>
 #include <sstream>
