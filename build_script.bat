@@ -18,7 +18,7 @@ if "%REBUILD%"=="yes" (
 )
 if "%ECS_CODEGEN%"=="yes" (
     cd win/ECSCodeGen
-    ECSCodeGen-rel.exe %CWD%/Common/Sources/Systems %CWD%/Projects/%PROJECT%/Sources/Systems
+    ECSCodeGen-rel.exe %CWD%/Projects/Common/Sources/Systems %CWD%/Projects/%PROJECT%/Sources/Systems
     cd ../..
 )
 cd ..
