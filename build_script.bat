@@ -27,15 +27,15 @@ Rem call build_lib_script.bat Projects/%PROJECT%/Sources %PROJECT% %BUILD_TYPE% 
 cd Projects
 
 if "%CMAKE%"=="yes" (
-    cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -DRELEASE=%RELEASE% -B ../Builds/win/%PROJECT%/%BUILD_TYPE%
+    cmake -G Ninja -DPROJECT=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -DRELEASE=%RELEASE% -B ../Builds/win/%BUILD_TYPE%
     echo builded
 )
-cd ../Builds/win/%PROJECT%/%BUILD_TYPE% 
+cd ../Builds/win/%BUILD_TYPE% 
 
 ninja
-move %PROJECT%-%BUILD_TYPE%.exe ..
-cd ../..
+ren Application.exe %PROJECT%-%BUILD_TYPE%.exe
+move %PROJECT%-%BUILD_TYPE%.exe ../%PROJECT%
 if "%CMAKE%"=="yes" (
     copy assimp-vc142-mt.dll %PROJECT%
 )
-cd ../..
+cd ../../..

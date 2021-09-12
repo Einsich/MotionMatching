@@ -1,5 +1,4 @@
 #include "animation_tree_data.h"
-#include "config.h"
 
 AnimationNodeData::AnimationNodeData(string && name, const mat4 &transform,  const mat4 &meshToBone, int parent):
   name(name), avatarTransform(1.f), transform(transform), meshToBone(meshToBone), parent(parent), rotation(transform), translation(transform[3])

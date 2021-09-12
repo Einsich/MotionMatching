@@ -1,0 +1,31 @@
+#version 440
+#define PS 1
+
+
+#define USE_UV
+
+struct Material
+{
+  vec3 AdditionalColor;
+  #define LAMBERT
+  
+};
+
+
+#define BONES 60
+
+
+
+
+
+
+out vec4 FragColor;
+
+uniform sampler2D mainTex;
+
+void main()
+{
+  vec3 color = texture(mainTex, vsOutput.UV).rgb + material_inst.AdditionalColor;
+  color = LightedColor(color, material_inst, vsOutput, LightDirection, CameraPosition);
+  FragColor = vec4(color, 1.0);
+}

@@ -1,5 +1,4 @@
 #include "animation_clip.h"
-#include "config.h"
 #include "animation_nodes.h"
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
