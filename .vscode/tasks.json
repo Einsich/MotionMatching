@@ -15,7 +15,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "build_script.bat"
+                "command": "./build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -37,7 +37,7 @@
                 "no"
             ],
             "windows": {
-                "command": "build_script.bat"
+                "command": "./build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -59,7 +59,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "build_script.bat"
+                "command": "./build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -81,7 +81,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "build_dll_script.bat"
+                "command": "./build_dll_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -97,7 +97,7 @@
             "command": "build_console_app_script.sh ECSCodeGen ${config:launchOption.currentConfig.BuildType}",
 
             "windows": {
-                "command": "build_console_app_script.bat ECSCodeGen ${config:launchOption.currentConfig.BuildType}"
+                "command": "./build_console_app_script.bat ECSCodeGen ${config:launchOption.currentConfig.BuildType}"
             },
             "group": {
                 "kind": "build",
@@ -113,7 +113,7 @@
             "command": "build_console_app_script.sh ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}",
 
             "windows": {
-                "command": "build_console_app_script.bat ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}"
+                "command": "./build_console_app_script.bat ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}"
             },
             "group": {
                 "kind": "build",
@@ -129,7 +129,7 @@
             "command": "build_console_app_script.sh RTCompilation ${config:launchOption.currentConfig.BuildType}",
 
             "windows": {
-                "command": "build_console_app_script.bat RTCompilation ${config:launchOption.currentConfig.BuildType}"
+                "command": "./build_console_app_script.bat RTCompilation ${config:launchOption.currentConfig.BuildType}"
             },
             "group": {
                 "kind": "build",
