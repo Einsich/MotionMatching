@@ -4,6 +4,8 @@
 #include "component_function.h"
 #include <unordered_map>
 #include "../singleton.h"
+#include "../component_editor.h"
+
 namespace ecs
 {
 

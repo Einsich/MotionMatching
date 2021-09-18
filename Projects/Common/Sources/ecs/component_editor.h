@@ -3,6 +3,11 @@
 #include "Engine/imgui/imgui.h"
 #include "Serialization/reflection.h"
 #include "Engine/Resources/asset.h"
+#include "Engine/Resources/resources.h"
+template<typename T>
+std::enable_if_t<!HasReflection<T>::value && !is_vector<T>::value, bool>
+edit_component(T &component, const char *name, bool view_only);
+
 template<typename T>
 std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, const char *, bool view_only)
 {
@@ -11,9 +16,6 @@ std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, con
   return edited;
 }
 
-template<typename T>
-std::enable_if_t<!HasReflection<T>::value && !is_vector<T>::value, bool>
-edit_component(T &component, const char *name, bool view_only);
 
 template<typename T>
 std::enable_if_t<is_vector<T>::value, bool>

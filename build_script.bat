@@ -17,9 +17,9 @@ if "%REBUILD%"=="yes" (
     echo %PROJECT%/%BUILD_TYPE% was removed
 )
 if "%ECS_CODEGEN%"=="yes" (
-    cd win/ECSCodeGen
+    cd ECSCodeGen
     ECSCodeGen-rel.exe %CWD%/Projects/Common/Sources/Systems %CWD%/Projects/%PROJECT%/Sources/Systems
-    cd ../..
+    cd ..
 )
 cd ..
 Rem call build_lib_script.bat Common/Sources Engine %BUILD_TYPE% %CMAKE% 
@@ -32,10 +32,13 @@ if "%CMAKE%"=="yes" (
 )
 cd ../Builds/win/%BUILD_TYPE% 
 
-ninja
+"../../../BuildTools/Ninja/ninja.exe"
+set binPath=..\..\%PROJECT%
+IF not exist %binPath% (mkdir %binPath%)
+
 ren Application.exe %PROJECT%-%BUILD_TYPE%.exe
-move %PROJECT%-%BUILD_TYPE%.exe ../%PROJECT%
+move %PROJECT%-%BUILD_TYPE%.exe %binPath%
 if "%CMAKE%"=="yes" (
-    copy assimp-vc142-mt.dll %PROJECT%
+    IF not exist %binPath%\assimp-vc142-mt.dll (copy ..\assimp-vc142-mt.dll %binPath%)
 )
 cd ../../..

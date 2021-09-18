@@ -75,8 +75,8 @@ void try_load_shader_code(ShaderFileDependency &shader)
     char buf[255];
     switch (r.type)
     {
-    case ShaderLexema::SHADER_NAME: sscanf(r.begin._Ptr, "#shader %s", buf); r.typeContent.assign(buf); break;
-    case ShaderLexema::INCLUDE : sscanf(r.begin._Ptr, "#include %s", buf); r.typeContent.assign(buf); break;
+    case ShaderLexema::SHADER_NAME: sscanf(&(*r.begin), "#shader %s", buf); r.typeContent.assign(buf); break;
+    case ShaderLexema::INCLUDE : sscanf(&(*r.begin), "#include %s", buf); r.typeContent.assign(buf); break;
     default: break;
     }
   }

@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include "type_info.h"
 #include "core_interface.h"
-#include "../component_editor.h"
+
 namespace ecs
 {
   struct FullTypeDescription

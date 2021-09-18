@@ -1,7 +1,7 @@
-#include "direction_light.h"
+
 #include "Shader/shader.h"
 #include "ecs/ecs.h"
-
+#include "direction_light.h"
 void DirectionLight::bind_to_shader(const Shader & shader) const
 {
   shader.set_vec3("LightDirection", normalizedLightDirection);

@@ -79,8 +79,8 @@ class Asset final: public ISerializable
     }
     void save_async()
     {
-      if (loaded)
-        std::async(std::launch::async, &IAsset::save, iasset, path);
+      //if (loaded)
+      //  std::async(std::launch::async, &IAsset::save, iasset, path);
     }
   };
   ResourceInfo *asset;

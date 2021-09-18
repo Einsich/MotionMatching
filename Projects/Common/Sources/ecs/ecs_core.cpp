@@ -52,7 +52,7 @@ namespace ecs
 
 
   
-  template<typename T>
+ /*  template<typename T>
   T* get_component(const EntityId &entity, const char *name)
   {
     if (entity)
@@ -63,7 +63,7 @@ namespace ecs
       return container ? container->get_component<T>(entity.array_index()) : nullptr;
     }
     return nullptr;
-  }
+  } */
 
 
   static void register_archetype_to(QueryDescription *query, Archetype *archetype)

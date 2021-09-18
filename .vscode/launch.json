@@ -13,8 +13,8 @@
             "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
             "preLaunchTask": "Build project",
             "windows": {
-                "program": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+                "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+                "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}"
             },
             "linux": {
                 "type": "cppdbg",
@@ -29,8 +29,8 @@
             "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
             "preLaunchTask": "Build ConsoleApp",
             "windows": {
-                "program": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
+                "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+                "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}"
             },
             "linux": {
                 "type": "cppdbg",
