@@ -1,15 +1,15 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Windows",
             "includePath": [
-                "${workspaceFolder}/Projects/**"
+                "${workspaceFolder}/Projects/Common/**",
+                "${workspaceFolder}/Projects/Strategy/**",
+                "${workspaceFolder}/Projects/MotionMatching/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang-6.0",
             "cStandard": "c17",
-            "cppStandard": "c++20",
-            "intelliSenseMode": "clang-x64"
+            "cppStandard": "c++20"
         }
     ],
     "version": 4
