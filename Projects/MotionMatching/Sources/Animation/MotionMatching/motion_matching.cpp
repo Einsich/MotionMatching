@@ -2,7 +2,7 @@
 #include "../settings.h"
 #include <map>
 
-static std::map<AnimationDataBasePtr, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
+static std::map<intptr_t, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
 
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
 dataBase(dataBase), solver(nullptr), index(index), skip_time(0), lod(0)
@@ -10,7 +10,8 @@ dataBase(dataBase), solver(nullptr), index(index), skip_time(0), lod(0)
   if (!dataBase)
     return;
   auto &solverMap = solvers[(int)solverType];
-  auto it = solverMap.find(dataBase);
+  intptr_t x = reinterpret_cast<intptr_t>(&(*dataBase));
+  auto it = solverMap.find(x);
   if (it == solverMap.end())
   {
     switch (solverType)
@@ -18,7 +19,7 @@ dataBase(dataBase), solver(nullptr), index(index), skip_time(0), lod(0)
     case MotionMatchingSolverType::BruteForce: solver = make_shared<MotionMatchingBruteSolver>(dataBase); break;
     default:solver = nullptr; break;
     }
-    solverMap.emplace(dataBase, solver);
+    solverMap.emplace(x, solver);
   }
   else
   {

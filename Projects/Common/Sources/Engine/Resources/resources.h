@@ -29,7 +29,7 @@ public:
   }
 };
 
-template<typename T>
+template<typename T, bool meta_data_asset>
 Asset<T> create_asset(const filesystem::path &path)
 {
   constexpr const string_view &typeName = nameOf<T>::value;
@@ -38,13 +38,13 @@ Asset<T> create_asset(const filesystem::path &path)
   auto it = resourcesMap.resources.find(assetName);
   if (it == resourcesMap.resources.end())
   {
-    Asset<T> asset(path);
+    Asset<T> asset(path, meta_data_asset);
     resourcesMap.resources.try_emplace(assetName, asset);
     return asset;
   }
   else if (!it->second)
   {
-    it->second = Asset<T>(path);
+    it->second = Asset<T>(path, meta_data_asset);
   }
   return it->second;
 }
@@ -100,10 +100,11 @@ void reload_asset(Asset<AssetStub> &asset)
 template<typename T>
 struct ResourceRegister
 {
-  void add_asset(const string_view &assetName, bool metaDataAsset)
+  template<bool metaDataAsset>
+  void add_asset(const string_view &assetName)
   {
     Resources::instance().assets.try_emplace(assetName, 
-    ResourceMap{string(assetName), metaDataAsset, {}, create_asset<T>, create_copy_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
+    ResourceMap{string(assetName), metaDataAsset, {}, create_asset<T, metaDataAsset>, create_copy_asset<T>, save_asset<T>, edit_asset<T>, load_asset<T>, reload_asset<T>});
 
   }
   ResourceRegister(const std::vector<std::string> &extensions)
@@ -111,13 +112,13 @@ struct ResourceRegister
     constexpr const string_view &assetName = nameOf<T>::value;
     for (const std::string &extension : extensions)
       Resources::instance().extToAssetName.try_emplace(extension, assetName);
-    add_asset(assetName, true);
+    add_asset<true>(assetName);
   }
   ResourceRegister()
   {
     constexpr const string_view &assetName = nameOf<T>::value;
     Resources::instance().extToAssetName.try_emplace("."+string(assetName), assetName);
-    add_asset(assetName, false);
+    add_asset<false>(assetName);
   }
 };
 template<typename T>

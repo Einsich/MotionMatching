@@ -29,7 +29,7 @@ string get_asset_name(const filesystem::path &path);
 template<typename T>
 class Asset;
 
-template<typename T>
+template<typename T, bool meta_asset>
 Asset<T> create_asset(const filesystem::path &path);
 
 template<typename T>
@@ -90,7 +90,7 @@ public:
     return asset;
   }
   //create asset and init them from .meta file or only default value
-  Asset():asset(nullptr){}
+  explicit Asset():asset(nullptr){}
   Asset(nullptr_t ):asset(nullptr){}
   ~Asset() = default;
   Asset<T>& operator=(const Asset<T>& other)
@@ -98,18 +98,27 @@ public:
     asset = other.asset;
     return *this;
   }
-  Asset(const filesystem::path &resource_path)
+  explicit Asset(const filesystem::path &resource_path, bool meta_data_asset)
   {  
     ifstream file(resource_path, ios::binary);
-    if (!file.fail())
+    if (meta_data_asset)
     {
       asset = new ResourceInfo{resource_path, false, false, false, false, T()};
-      read(file, asset->asset);
+      if (!file.fail())
+        read(file, asset->asset);
     }
     else
-      asset = nullptr;
+    {
+      if (!file.fail())
+      {
+        asset = new ResourceInfo{resource_path, false, false, false, false, T()};
+        read(file, asset->asset);
+      }
+      else
+        asset = nullptr;
+    }
   }
-  Asset(const filesystem::path &resource_path, const Asset<T> &other) :
+  explicit Asset(const filesystem::path &resource_path, const Asset<T> &other) :
   asset(new ResourceInfo{resource_path, other.asset->loading, other.asset->loaded, 
         other.asset->edited, other.asset->isCopy, other.asset->asset})
   {
@@ -126,7 +135,7 @@ public:
   {
     return *((Asset<U>*)this);
   }
-  operator bool() const
+  explicit operator bool() const
   {
     return asset != nullptr;
   }
@@ -211,7 +220,7 @@ public:
     string path;
     size_t size = read(is, path);
     if (path != "null" && path != "")
-      *this = create_asset<T>(filesystem::path(path));
+      *this = create_asset<T, false>(filesystem::path(path));
     else 
       *this = Asset<T>();
     return size;

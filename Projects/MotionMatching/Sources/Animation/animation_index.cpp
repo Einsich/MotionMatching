@@ -64,10 +64,6 @@ bool AnimationIndex::operator()() const
 {
   return valid();
 }
-bool AnimationIndex::chack_data_base(AnimationDataBasePtr other_data_base) const
-{
-  return dataBase == other_data_base;
-}
 bool AnimationIndex::last_cadr() const
 {
   return valid() && (int)dataBase->clips[clip].duration == cadr + 1;
