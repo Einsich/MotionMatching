@@ -22,7 +22,7 @@ namespace ecs
     ComponentContainer *get_container(const TypeDescription &type);
     template<typename T>
     ComponentContainer *get_container(const char *name);
-    void add_entity(const ComponentInitializerList &list);
+    vector<void*> get_entity_data(const vector<string_hash> &type_hashes);
     void add_entity(const vector<const TemplateInfo*> &list);
     void destroy_entity(int index, bool with_swap);
     ~Archetype() = default;

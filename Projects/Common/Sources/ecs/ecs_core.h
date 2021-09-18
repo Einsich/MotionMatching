@@ -71,7 +71,45 @@ namespace ecs
   template<typename T>
   T* get_component(const EntityId &entity, const char *name);
 
-  EntityId create_entity(ComponentInitializerList &list);
+  template<typename T>
+  struct ComponentInitializer
+  {
+    const char *name;
+    const T & component;
+  };
+  template<typename T>
+  string_hash component_initializer_hash(const ComponentInitializer<T> &component)
+  {
+    return TypeDescription::typeDescriptionHash<T>(component.name);
+  }
+  template<typename T> 
+  void component_copy(void *data, const T & component)
+  {
+    new (data) T(std::move(component));
+  }
+  template<int N, typename T, typename ...Args>
+  void component_initializer_copy(vector<void*> &data, const ComponentInitializer<T> & arg, const Args &...args)
+  {
+    component_copy(data[N], arg.component);
+    if constexpr (sizeof...(args) > 0)
+      component_initializer_copy<N+1>(data, args...);
+  }
+  bool check_entity_container();
+  pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes);
+  template<typename ...Args>
+  EntityId create_entity(const ComponentInitializer<Args> &...args)
+  {
+    if (check_entity_container())
+      return EntityId();
+    vector<string_hash> typeHashes = 
+      {TypeDescription::typeDescriptionHash<EntityId>("eid"), component_initializer_hash(args)... };
+    auto [eid, archetype] = add_entity(typeHashes);
+    vector<void*> data = archetype.get_entity_data(typeHashes);
+    component_copy(data[0], eid);
+    component_initializer_copy<1>(data, args...);
+    send_event_immediate(eid, OnEntityCreated());
+    return eid;
+  }
   EntityId create_entity(const string &template_name);
   EntityId create_entity(const char *template_name);
   struct Template;

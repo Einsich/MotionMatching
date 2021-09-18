@@ -49,13 +49,12 @@ namespace ecs
     return it == components.end() ? dummyContainer : &it->second;
   }
 
-  void Archetype::add_entity(const ComponentInitializerList &list)
+  vector<void*> Archetype::get_entity_data(const vector<string_hash> &type_hashes)
   {
-    for (auto &component : list.components)
-    {
-      components[component.first].add_component(component.second.data);
-    }
-    count++;
+    vector<void*> data(type_hashes.size());
+    for (uint i = 0; i < type_hashes.size(); i++)
+      data[i] = components[type_hashes[i]].add_component();
+    return data;
   }
   void Archetype::add_entity(const vector<const TemplateInfo*> &list)
   {

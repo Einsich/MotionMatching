@@ -54,11 +54,8 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
   for (uint i = 0; i < N; i++) 
     for (uint j = 0; j < N; j++) 
     {
-      ecs::ComponentInitializerList list; 
-      list.add<Transform>("transform") = Transform(vec3(j,0,i)* 5.f); 
-      list.add<Asset<Mesh>>("mesh") = flag; 
-      list.add<Asset<Material>>("material") = flag_mat; 
-      ecs::create_entity(list); 
+      ecs::create_entity<Transform, Asset<Mesh>, Asset<Material>>
+       ({"transform", Transform(vec3(j,0,i)* 5.f)}, {"mesh", flag}, {"material", flag_mat}); 
     } 
  
 } 

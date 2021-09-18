@@ -34,19 +34,24 @@ namespace ecs
 
   void ComponentContainer::add_component(void *component_data)
   {
+    void *dst = add_component();
+    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
+    Constructor constructor = copy_constructor(typeHash);
+    constructor(dst);
+    copyConstructor(component_data, dst);
+  }
+  void* ComponentContainer::add_component()
+  {
     if (count == capacity)
     {
       data.push_back(malloc(binSize * type_sizeof(typeHash)));
       capacity += binSize;
     }
-    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
-    Constructor constructor = copy_constructor(typeHash);
     int j = count / binSize;
     int i = count % binSize;
     void *dst = (char*)data[j] + type_sizeof(typeHash) * i;
-    constructor(dst);
-    copyConstructor(component_data, dst);
     count++;
+    return dst;
   }
   void ComponentContainer::destroy_component(int i, bool with_swap)
   {

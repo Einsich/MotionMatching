@@ -128,19 +128,18 @@ namespace ecs
     return archetype;
   }
 
-  EntityId create_entity(ComponentInitializerList &list)
+  
+  bool check_entity_container()
   {
-    if (core().entityContainer->dontAddable)
-      return EntityId();
-    list.add<EntityId>("eid") = EntityId();
+    return core().entityContainer->dontAddable;
+  }
+  pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes)
+  {
     Archetype *found_archetype = nullptr;
     int archetype_ind = 0;
-    vector<string_hash> typeHashes(list.types.componentsTypes.size());
-    for (uint i = 0; i < typeHashes.size(); ++i)
-      typeHashes[i] = list.types.componentsTypes[i].type_name_hash();
     for (Archetype *archetype : core().entityContainer->archetypes)
     {
-      if (archetype->in_archetype(typeHashes))
+      if (archetype->in_archetype(type_hashes))
       {
         found_archetype = archetype;
         break;
@@ -149,24 +148,18 @@ namespace ecs
     }
     if (!found_archetype)
     {
-      found_archetype = add_archetype(typeHashes, 1, "template[" + to_string(core().entityContainer->archetypes.size()) + "]");
+      found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().entityContainer->archetypes.size()) + "]");
     }
     int index = found_archetype->count;
-    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
-    list.get<EntityId>("eid") = eid;
-    found_archetype->add_entity(list);
-    send_event_immediate(eid, OnEntityCreated());
-
-    return eid;
+    return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
   }
-  
   EntityId create_entity(const string &template_name)
   {
     return create_entity(template_name.c_str());
   }
   EntityId create_entity(const char *template_name)
   {
-    if (core().entityContainer->dontAddable)
+    if (check_entity_container())
       return EntityId();
     const Template *t = TemplateManager::get_template_by_name(template_name);
     if (!t)
@@ -178,7 +171,7 @@ namespace ecs
   }
   EntityId create_entity(const Template *t)
   {
-    if (core().entityContainer->dontAddable)
+    if (check_entity_container())
       return EntityId();
     constexpr string_hash eidHash  = HashedString(nameOf<EntityId>::value);
     static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
