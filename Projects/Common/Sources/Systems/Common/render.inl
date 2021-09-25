@@ -36,10 +36,11 @@ set_global_render_data(const MainCamera &mainCamera)
 {
   DirectionLight light; 
   QUERY() find_light([&](const DirectionLight &directionalLight){light = directionalLight;});
+  float t = Time::time(), dt = Time::delta_time();
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
     {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection, 
-    light.ambient, light.lightColor, Time::time()});
+    light.ambient, light.lightColor, vec4(t , t * 2.f, t * 4.f, dt)});
 }
 
 SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
@@ -121,11 +122,16 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
   {
     uint instanceCount = 0, instanceSize = render.queue[0].material->buffer_size();
     RenderStuff prevStuff = render.queue[0];
+    uint sp = 0;
     for (const RenderStuff &stuff : render.queue)
     {
       if (matComparer(prevStuff, stuff)) // prevStuff < p
       {
-        prevStuff.material->get_shader().use();
+        if (prevStuff.material->get_shader().get_shader_program() != sp)
+        {
+          prevStuff.material->get_shader().use();
+          sp = prevStuff.material->get_shader().get_shader_program();
+        }
         prevStuff.material->bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
         prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
