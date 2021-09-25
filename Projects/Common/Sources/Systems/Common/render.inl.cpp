@@ -17,6 +17,23 @@ void find_light(Callable lambda)
 }
 
 
+ecs::SingleQueryDescription find_matrices_descr("find_matrices", {
+  {ecs::get_type_description<Transform>("transform"), true}
+});
+
+template<typename Callable>
+void find_matrices(const ecs::EntityId &eid, Callable lambda)
+{
+  ecs::QueryIterator begin;
+  if (ecs::get_iterator(find_matrices_descr, eid, begin))
+  {
+    lambda(
+       begin.get_component<Transform>(0)
+    );
+  }
+}
+
+
 void render_submenu_func();
 
 ecs::SystemDescription render_submenu_descr("render_submenu", {
@@ -81,7 +98,7 @@ void process_mesh_position_func();
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<Asset<Material>>("material"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<RenderQueue>("render"), false}
 }, process_mesh_position_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
 
@@ -92,7 +109,7 @@ void process_mesh_position_func()
     process_mesh_position(
       *begin.get_component<Asset<Mesh>>(0),
       *begin.get_component<Asset<Material>>(1),
-      *begin.get_component<Transform>(2),
+      *begin.get_component<ecs::EntityId>(2),
       *begin.get_component<RenderQueue>(3)
     );
   }

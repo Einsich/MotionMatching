@@ -17,12 +17,3 @@ struct EditorRenderSettings : ecs::Singleton
 {
   bool wire_frame;
 };
-struct RenderStuff
-{
-  Asset<Material> material;
-  Asset<Mesh> mesh;
-};
-struct RenderQueue : ecs::Singleton
-{
-  vector<RenderStuff> queue;
-};

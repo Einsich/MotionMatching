@@ -1,5 +1,6 @@
 #include "ecs/ecs.h"
 #include "Engine/camera.h"
+#include "Engine/Render/Shader/copy_buffer_field.h"
 #include "Engine/Render/direction_light.h"
 #include "Engine/Render/global_uniform.h"
 #include "Engine/Render/render.h"
@@ -67,15 +68,26 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
     mesh = Asset<Mesh>();//culled by dist
 }
 
+struct RenderStuff
+{
+  ecs::EntityId eid;
+  Asset<Material> material;
+  Asset<Mesh> mesh;
+};
+struct RenderQueue : ecs::Singleton
+{
+  vector<RenderStuff> queue;
+};
+
 SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_position(
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
-  const Transform &transform,
+  const ecs::EntityId &eid,
   RenderQueue &render)
 {
   if (material && mesh)
   {
-    render.queue.emplace_back(RenderStuff{material, mesh});
+    render.queue.emplace_back(RenderStuff{eid, material, mesh});
     //material->set_property("Model", transform.get_transform());
   }
 }
@@ -109,6 +121,18 @@ bool emptyRenderStuff(const RenderStuff &a)
   return !(a.material && a.mesh);
 };
 
+template<typename Callable> 
+void find_matrices(const ecs::EntityId &eid, Callable);
+
+void set_matrices_to_buffer(ecs::EntityId eid, const ShaderBuffer &buffer, char *data)
+{
+  QUERY() find_matrices(eid, [&](const Transform *transform)
+  {
+    if (transform && buffer.Model.type)
+      copy_buffer_field(transform->get_transform(), data, buffer.Model);
+  });
+}
+
 SYSTEM(ecs::SystemOrder::RENDER + 2,ecs::SystemTag::GameEditor)
 main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 {
@@ -120,34 +144,31 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 
   if (render.queue.size() > 0)
   {
-    uint instanceCount = 0, instanceSize = render.queue[0].material->buffer_size();
-    RenderStuff prevStuff = render.queue[0];
+    uint instanceCount = 0;
     uint sp = 0;
-    for (const RenderStuff &stuff : render.queue)
+    for (uint i = 0; i < render.queue.size(); i++)
     {
-      if (matComparer(prevStuff, stuff)) // prevStuff < p
-      {
-        if (prevStuff.material->get_shader().get_shader_program() != sp)
-        {
-          prevStuff.material->get_shader().use();
-          sp = prevStuff.material->get_shader().get_shader_program();
-        }
-        prevStuff.material->bind_textures_to_shader();
-        instanceData.flush_buffer(instanceCount * instanceSize);
-        prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
-        instanceCount = 0;
-        instanceSize = stuff.material->buffer_size(); // new size of instance
-      }
-      if (instanceData.size() < (instanceCount + 1) * instanceSize)
-        debug_log("reallocate buffer space");
-      stuff.material->set_data_to_buf(instanceData.get_buffer(instanceCount * instanceSize, instanceSize));
+      const RenderStuff &stuff = render.queue[i];
+      uint instanceSize = stuff.material->buffer_size();
+      char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
+      memset(buffer, 0, instanceSize);
+      stuff.material->set_data_to_buf(buffer);
+      set_matrices_to_buffer(stuff.eid, stuff.material->get_shader().get_instance_data(), buffer);
       instanceCount++;
-      prevStuff = stuff;
+      bool needRender = i + 1 == render.queue.size() || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
+      if (needRender)
+      {
+        if (stuff.material->get_shader().get_shader_program() != sp)//need use new shader
+        {
+          stuff.material->get_shader().use();
+          sp = stuff.material->get_shader().get_shader_program();
+        }
+        stuff.material->bind_textures_to_shader();
+        instanceData.flush_buffer(instanceCount * instanceSize);
+        stuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
+        instanceCount = 0;
+      }
     }
-    prevStuff.material->get_shader().use();
-    prevStuff.material->bind_textures_to_shader();
-    instanceData.flush_buffer(instanceCount * instanceSize);
-    prevStuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
   }
   render.queue.clear();
 }

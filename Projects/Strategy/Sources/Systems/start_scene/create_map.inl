@@ -55,7 +55,7 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
     for (uint j = 0; j < N; j++) 
     {
       ecs::create_entity<Transform, Asset<Mesh>, Asset<Material>>
-       ({"transform", Transform(vec3(j,0,i)* 5.f)}, {"mesh", flag}, {"material", flag_mat.copy()}); 
+       ({"transform", Transform(vec3(j,0,i)* 5.f)}, {"mesh", flag}, {"material", flag_mat}); 
     } 
  
 } 
