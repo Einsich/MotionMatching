@@ -150,7 +150,7 @@ namespace ecs
     {
       found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().entityContainer->archetypes.size()) + "]");
     }
-    int index = found_archetype->count;
+    int index = found_archetype->count++;
     return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
   }
   EntityId create_entity(const string &template_name)
