@@ -6,7 +6,7 @@
 
 struct GlobalRenderData
 {
-  mat4 ViewProjection;
+  mat4 ViewProjection, ViewProjectionSkybox;
   alignas(16) vec3 CameraPosition;
   alignas(16) vec3 LightDirection;
   alignas(16) vec3 AmbientLight;

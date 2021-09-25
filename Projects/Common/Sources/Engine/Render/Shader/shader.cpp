@@ -134,7 +134,7 @@ void read_shader_info(ShaderInfo &shader)
     GLint size;
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &size);
 
-    //debug_log("buffer %s (binding = %d), size %d", name, binding, size);
+    debug_log("buffer %s (binding = %d), size %d", name, binding, size);
     buffers.emplace_back(StorageBuffer{string(name), binding, size, vector<BufferField>(numVar)});
     vector<BufferField> &fields = buffers.back().fields;
     property = GL_ACTIVE_VARIABLES;
@@ -152,14 +152,14 @@ void read_shader_info(ShaderInfo &shader)
       glGetProgramResourceiv(
           program, GL_BUFFER_VARIABLE, varId[i],
           N, properties, N, nullptr, params);
-        GLsizei strLength;
-        glGetProgramResourceName(
-            program, GL_BUFFER_VARIABLE, varId[i], 
-            bufSize, &strLength, name);
+      GLsizei strLength;
+      glGetProgramResourceName(
+          program, GL_BUFFER_VARIABLE, varId[i], 
+          bufSize, &strLength, name);
       char *matterPart = name + bufferNameLen;
       fields[i] = BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]};
       typeToOffset[params[0]] += params[2];
-      //debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
+      debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
   }
 }

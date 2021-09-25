@@ -31,19 +31,17 @@ SkyBox::SkyBox()
 	skyboxVAO = VertexArrayObject(indices, vertecs);
 }
 
-void SkyBox::render(const mat4 &view_projection, bool wire_frame) const
+void SkyBox::render() const
 {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	if (material)
 	{
-		Shader skyboxShader = material->get_shader();
-		skyboxShader.use();
-		skyboxShader.set_mat4x4("ViewProjection", view_projection);
+		material->get_shader().use();
 		material->bind_textures_to_shader();
 	}
 
-	skyboxVAO.render(wire_frame);
+	skyboxVAO.render();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 

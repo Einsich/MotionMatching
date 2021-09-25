@@ -2,7 +2,6 @@
 #include "Serialization/reflection.h"
 #include "common.h"
 #include "3dmath.h"
-#include "Render/Shader/shader.h"
 
 class Transform 
 {
@@ -30,5 +29,4 @@ public:
   void set_rotation(float yaw = 0, float pitch = 0, float roll = 0);
   void set_position(const vec3 position);
   void set_scale(const vec3 scale);
-  void set_to_shader(const Shader& shader) const;
 };

@@ -12,6 +12,4 @@ public:
   vec3 normalizedLightDirection;
 
   DirectionLight() = default;
-  void bind_to_shader(const Shader & shader) const;
-  void unbind_to_shader(const Shader & shader) const;
 };

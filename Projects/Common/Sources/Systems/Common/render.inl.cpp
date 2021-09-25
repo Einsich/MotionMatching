@@ -102,9 +102,7 @@ void process_mesh_position_func()
 void render_sky_box_func();
 
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
-  {ecs::get_type_description<SkyBox>("skyBox"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+  {ecs::get_type_description<SkyBox>("skyBox"), false}
 }, render_sky_box_func, ecs::SystemOrder::RENDER+100, (uint)(ecs::SystemTag::GameEditor));
 
 void render_sky_box_func()
@@ -112,9 +110,7 @@ void render_sky_box_func()
   for (ecs::QueryIterator begin = render_sky_box_descr.begin(), end = render_sky_box_descr.end(); begin != end; ++begin)
   {
     render_sky_box(
-      *begin.get_component<SkyBox>(0),
-      *begin.get_component<MainCamera>(1),
-      *begin.get_component<EditorRenderSettings>(2)
+      *begin.get_component<SkyBox>(0)
     );
   }
 }

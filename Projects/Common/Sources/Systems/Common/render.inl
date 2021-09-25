@@ -39,7 +39,8 @@ set_global_render_data(const MainCamera &mainCamera)
   float t = Time::time(), dt = Time::delta_time();
   get_buffer("GlobalRenderData").
   update_buffer_and_flush<GlobalRenderData>( 
-    {mainCamera.projection * mainCamera.view, mainCamera.position, light.normalizedLightDirection, 
+    {mainCamera.projection * mainCamera.view, mainCamera.projection * mat4(mat3(mainCamera.view)),
+    mainCamera.position, light.normalizedLightDirection, 
     light.ambient, light.lightColor, vec4(t , t * 2.f, t * 4.f, dt)});
 }
 
@@ -75,15 +76,14 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   if (material && mesh)
   {
     render.queue.emplace_back(RenderStuff{material, mesh});
-    material->set_property("Model", transform.get_transform());
+    //material->set_property("Model", transform.get_transform());
   }
 }
 
 SYSTEM(ecs::SystemOrder::RENDER+100,ecs::SystemTag::GameEditor)
-render_sky_box(SkyBox &skyBox, const MainCamera &mainCamera, const EditorRenderSettings &editorSettings)
+render_sky_box(SkyBox &skyBox)
 {
-  mat4 viewProjectionSkybox = mainCamera.projection *  mat4(mat3(mainCamera.view));
-  skyBox.render(viewProjectionSkybox, editorSettings.wire_frame);
+  skyBox.render();
 }
 // after skybox
 SYSTEM(ecs::SystemOrder::RENDER+101,ecs::SystemTag::GameEditor) 
