@@ -1,5 +1,3 @@
-#version 440
-
 #shader standart_shader
 
 #include standart_material
@@ -11,7 +9,7 @@
 
 #include vs_input
 
-void main()
+void main() 
 {
   #include common_vs
 }

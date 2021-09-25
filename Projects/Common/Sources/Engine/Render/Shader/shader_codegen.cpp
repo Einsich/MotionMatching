@@ -210,10 +210,10 @@ struct ParseState
 void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
 {
   state.vsPart.insert(state.vsPart.begin(), state.commonPart.begin(), state.commonPart.end());
-  state.vsPart.insert(0, "#version 440\n#define VS 1\n");
+  state.vsPart.insert(0, "#version 450\n#define VS 1\n");
 
   state.psPart.insert(state.psPart.begin(), state.commonPart.begin(), state.commonPart.end());
-  state.psPart.insert(0, "#version 440\n#define PS 1\n");
+  state.psPart.insert(0, "#version 450\n#define PS 1\n");
   
   vector<pair<uint, const char*>> shaderCode{
     {GL_VERTEX_SHADER, state.vsPart.c_str()},
