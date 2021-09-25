@@ -24,7 +24,7 @@ bool compile_shader(const string &shaderName, const vector<pair<GLuint, const ch
 {
     vector<GLuint> compiled_shaders;
     compiled_shaders.reserve(shaders.size());
-    GLchar infoLog[512];
+    GLchar infoLog[1024];
     GLint success;
     for (auto & codes : shaders)
     {
@@ -53,7 +53,7 @@ bool compile_shader(const string &shaderName, const vector<pair<GLuint, const ch
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if(!success)
     {
-        glGetProgramInfoLog(program, 512, NULL, infoLog);
+        glGetProgramInfoLog(program, 1024, NULL, infoLog);
         debug_error("Shader programm (%s) linking failed!\n Log: %s", shaderName.c_str(), infoLog);
         return false;
     }

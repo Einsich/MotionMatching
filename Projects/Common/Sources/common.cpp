@@ -12,7 +12,7 @@ struct Message
   bool status;
 };
 list<Message> q;
-constexpr int messageLen = 500, timeLen = 20;
+constexpr int messageLen = 1024, timeLen = 20;
 char messageBuf[messageLen], timeBuf[timeLen];
 
 void debug_common(const char *fmt, int status, va_list args)
