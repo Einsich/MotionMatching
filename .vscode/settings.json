@@ -106,8 +106,8 @@
     ]
 },
 "launchOption.currentConfig": {
-  "Project": "MotionMatching",
-  "BuildType": "rel"
+  "Project": "Strategy",
+  "BuildType": "dbg"
 },
 "cmake.configureOnOpen": false,
 }
