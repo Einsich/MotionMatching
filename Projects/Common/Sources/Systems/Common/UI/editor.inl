@@ -98,12 +98,16 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
               if (ImGui::Button(buf))
               {
                 string folder = project_resources_path(selectedAsset.resourceType->name);
+                string assetPath = folder + "\\" + bufString + "." + selectedAsset.resourceType->name;
                 if (!filesystem::exists(folder))
                   filesystem::create_directory(folder);
+                
+                ofstream file(assetPath, ios::binary);
+                file.close();
                 if (stub)
-                  selectedAsset.resourceType->createCopyAsset(folder + "\\" + bufString + "." + selectedAsset.resourceType->name, stub);
+                  selectedAsset.resourceType->createCopyAsset(assetPath, stub);
                 else
-                  selectedAsset.resourceType->createAsset(folder + "\\" + bufString + "." + selectedAsset.resourceType->name);
+                  selectedAsset.resourceType->createAsset(assetPath);
                 adding = false;
                 bufString = "";
               }
