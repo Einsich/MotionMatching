@@ -60,8 +60,7 @@ void UniformBuffer::flush_buffer(size_t flush_size) const
     glBufferData(bufType, size(), NULL, GL_DYNAMIC_DRAW);
     bufSize = size();
   }
-  glBufferSubData(bufType, 0, min(size(), flush_size), buffer.data()); 
-  glBindBuffer(bufType, 0);
+  glBufferSubData(bufType, 0, min(size(), flush_size), buffer.data());
 }
 char *UniformBuffer::get_buffer(uint offset, uint size)
 {

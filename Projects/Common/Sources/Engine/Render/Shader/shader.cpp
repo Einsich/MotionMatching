@@ -30,8 +30,10 @@ Shader::Shader(const std::string &shader_name, GLuint shader_program, bool compi
     shaderList.emplace_back(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
     read_shader_info(shaderList.back().second);
   }
+  else
   if (update_list)
   {
+    glDeleteProgram(shaderList[shaderIdx].second.program);
     shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
     read_shader_info(shaderList[shaderIdx].second);
   }
@@ -95,6 +97,8 @@ void read_shader_info(ShaderInfo &shader)
     GLenum type;
     GLint size;
     glGetActiveUniform(program, (GLuint)i, bufSize, &length, &size, &type, name);
+    //debug_log("uniform #%d Type: %u Name: %s", i, type, name);
+
     switch (type)
     {
     //case GL_SAMPLER_1D:
@@ -155,7 +159,7 @@ void read_shader_info(ShaderInfo &shader)
       char *matterPart = name + bufferNameLen;
       fields[i] = BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]};
       typeToOffset[params[0]] += params[2];
-      //debug_log("Field %s, type %d offset %d, size %d, array stride %d", matterPart, params[0], params[1], params[2], params[3]);
+      //debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
   }
 }

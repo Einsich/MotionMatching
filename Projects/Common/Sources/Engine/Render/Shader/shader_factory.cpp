@@ -53,11 +53,11 @@ void read_directories(const fs::path &folder_path)
 
 void compile_shaders()
 {
-  load_obj("/precompiled_shaders.bin", precompiledShaders);
-  load_precompiled_shaders(precompiledShaders);
+  //load_obj("/precompiled_shaders.bin", precompiledShaders);
+  //load_precompiled_shaders(precompiledShaders);
   
 #ifndef RELEASE
-  load_obj("/shaders_dependencies.bin", getShaderFiles());
+  //load_obj("/shaders_dependencies.bin", getShaderFiles());
   //read_directories(Application::instance().commonShaderPath);
   read_directories(Application::instance().projectShaderPath);
   process_codegen_shaders();
