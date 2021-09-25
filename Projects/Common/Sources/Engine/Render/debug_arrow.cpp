@@ -1,9 +1,6 @@
 #include <vector>
 #include "debug_arrow.h"
-#include "vertex_array_object.h"
-#include "direction_light.h"
 #include "Shader/shader.h"
-#include "../camera.h"
 #include "Engine/Resources/resources.h"
 
 

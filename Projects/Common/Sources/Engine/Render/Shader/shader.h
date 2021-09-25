@@ -3,9 +3,11 @@
 #include "3dmath.h"
 #include <vector>
 #include "glad/glad.h"
-#include "sampler_uniforms.h"
+#include "shader_buffer.h"
+
 #define BAD_PROGRAM 0
 struct StorageBuffer;
+
 class Shader
 {
 private:
@@ -20,7 +22,7 @@ public:
   }
 	void use() const;
 	GLuint get_shader_program() const;
-	const StorageBuffer *get_instance_data() const;
+	const ShaderBuffer &get_instance_data() const;
 	const vector<SamplerUniform> &get_samplers() const;
 };
 

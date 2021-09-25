@@ -1,6 +1,5 @@
 #pragma once
 #include "common.h"
-#include "Shader/storage_buffer.h"
 #include "Shader/shader.h"
 #include "Texture/textures.h"
 #include "Engine/Resources/asset.h"

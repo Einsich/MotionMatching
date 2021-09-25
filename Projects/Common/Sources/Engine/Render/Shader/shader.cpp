@@ -1,19 +1,15 @@
 #include "shader.h"
 #include <iostream>
 #include <map>
-#include "storage_buffer.h"
-#include "sampler_uniforms.h"
 #include "shader_gen.h"
 
 struct ShaderInfo
 {
   GLuint program;
   bool compiled;//or loaded
-  int instanceDataBuffer;
-  vector<StorageBuffer> buffers; 
-  vector<SamplerUniform> samplers;
+  ShaderBuffer buffer; 
 };
-void read_shader_info(ShaderInfo &shader);
+void read_shader_info(const std::string &, ShaderInfo &shader);
 
 static std::vector<std::pair<std::string, ShaderInfo>> shaderList;
 static Shader badShader(-1);
@@ -27,15 +23,15 @@ Shader::Shader(const std::string &shader_name, GLuint shader_program, bool compi
 
   if (shaderIdx >= (int)shaderList.size())
   {
-    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
-    read_shader_info(shaderList.back().second);
+    shaderList.emplace_back(shader_name, ShaderInfo{shader_program, compiled, {}});
+    read_shader_info(shaderList.back().first, shaderList.back().second);
   }
   else
   if (update_list)
   {
     glDeleteProgram(shaderList[shaderIdx].second.program);
-    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, compiled, -1, {}, {}});
-    read_shader_info(shaderList[shaderIdx].second);
+    shaderList[shaderIdx] = make_pair(shader_name, ShaderInfo{shader_program, compiled, {}});
+    read_shader_info(shaderList[shaderIdx].first, shaderList[shaderIdx].second);
   }
 }
 GLuint Shader::get_shader_program() const
@@ -74,15 +70,14 @@ const vector<const char*>get_shaders_names()
   return shadersNames;
 }
 
-void read_shader_info(ShaderInfo &shader)
+void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
 {
   GLuint program = shader.program;
   if (!program)
     return;
-  shader.instanceDataBuffer = -1;
-  vector<StorageBuffer> &buffers = shader.buffers;
-  buffers.clear();
-  vector<SamplerUniform> &samplers = shader.samplers;
+  ShaderBuffer &buffer = shader.buffer;
+  buffer.materialFields.clear();
+  vector<SamplerUniform> &samplers = buffer.samplers;
   samplers.clear();
   int count;
   const GLsizei bufSize = 128;
@@ -135,15 +130,24 @@ void read_shader_info(ShaderInfo &shader)
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &size);
 
     debug_log("buffer %s (binding = %d), size %d", name, binding, size);
-    buffers.emplace_back(StorageBuffer{string(name), binding, size, vector<BufferField>(numVar)});
-    vector<BufferField> &fields = buffers.back().fields;
+
     property = GL_ACTIVE_VARIABLES;
     vector<GLint> varId(numVar);
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, varId.size(), nullptr, varId.data());
     bool isInstance = !strcmp(name, "InstanceData");
     int bufferNameLen = isInstance ? sizeof("instances[0]") : 0;
     if (isInstance)
-      shader.instanceDataBuffer = i;
+    {
+      buffer.binding = binding;
+      buffer.size = size;
+      buffer.Model = buffer.Bones = BufferField();
+    }
+    else
+    {
+      debug_error("Shader %s contains %s uniform buffer. Allow only instance uniform buffer", shader_name.c_str(), name);
+      continue;
+    }
+    vector<BufferField> &fields = buffer.materialFields;
     for (GLint i = 0; i < numVar; i++) 
     {
       constexpr int N = 4;
@@ -157,21 +161,31 @@ void read_shader_info(ShaderInfo &shader)
           program, GL_BUFFER_VARIABLE, varId[i], 
           bufSize, &strLength, name);
       char *matterPart = name + bufferNameLen;
-      fields[i] = BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]};
-      typeToOffset[params[0]] += params[2];
+      char *materialPart = strstr(matterPart, "material.");
+      if (materialPart)
+      {
+        fields.emplace_back(BufferField{string(materialPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
+        typeToOffset[params[0]] += params[2];
+      }
+      else
+      {
+        if (!strcmp(matterPart, "Model"))
+          buffer.Model = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
+        else if (!strcmp(matterPart, "Bones[0]"))
+          buffer.Bones = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
+      }
       debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
   }
 }
-const StorageBuffer *Shader::get_instance_data() const
+const ShaderBuffer &Shader::get_instance_data() const
 {
-  int index = shaderIdx >= 0 ? shaderList[shaderIdx].second.instanceDataBuffer : -1;
-  return index >=0 ? &shaderList[shaderIdx].second.buffers[index] : nullptr;
+  return shaderList[shaderIdx].second.buffer;
 }
 
 const vector<SamplerUniform> &Shader::get_samplers() const
 {
-  return shaderList[shaderIdx].second.samplers;
+  return shaderList[shaderIdx].second.buffer.samplers;
 }
 
 void load_precompiled_shaders(const vector<PrecompiledShader> &shaders)
@@ -182,8 +196,8 @@ void load_precompiled_shaders(const vector<PrecompiledShader> &shaders)
     if (load_precompiled_shader(shader, program))
     {
       debug_log("loaded precompiled %s", shader.name.c_str());
-      shaderList.emplace_back(shader.name, ShaderInfo{program, false, -1, {}, {}});
-      read_shader_info(shaderList.back().second);
+      shaderList.emplace_back(shader.name, ShaderInfo{program, false, {}});
+      read_shader_info(shaderList.back().first, shaderList.back().second);
     }
   }
 }
