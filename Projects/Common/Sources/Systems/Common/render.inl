@@ -88,7 +88,6 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   if (material && mesh)
   {
     render.queue.emplace_back(RenderStuff{eid, material, mesh});
-    //material->set_property("Model", transform.get_transform());
   }
 }
 
@@ -128,8 +127,13 @@ void set_matrices_to_buffer(ecs::EntityId eid, const ShaderBuffer &buffer, char 
 {
   QUERY() find_matrices(eid, [&](const Transform *transform)
   {
-    if (transform && buffer.Model.type)
-      copy_buffer_field(transform->get_transform(), data, buffer.Model);
+    if (transform)
+    {
+      if (buffer.Model.type)
+        copy_buffer_field(transform->get_transform(), data, buffer.Model);
+      if (buffer.Bones.type && !transform->get_bones().empty())
+        copy_buffer_field(transform->get_bones(), data, buffer.Bones);
+    }
   });
 }
 

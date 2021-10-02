@@ -11,12 +11,12 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
   const AnimationPlayer &animationPlayer,
-  const Transform &transform,
+  Transform &transform,
   const Settings &settings)
 {
   if (mesh)
   {
-    static vector<mat4> curTransform;
+    vector<mat4> &curTransform = transform.get_bones();
     const AnimationTree &tree = animationPlayer.get_tree();
   
     curTransform.resize(mesh->bonesMap.size());
@@ -28,7 +28,6 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
         curTransform[it2->second] = tree.get_bone_transform(i);
       }
     }
-    material->set_property("Bones[0]", curTransform);
   }
   if (settings.debugBones)
   {

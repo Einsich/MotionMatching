@@ -9,8 +9,8 @@ std::enable_if_t<!is_vector<T>::value, void> copy_buffer_field(const T &scr, cha
 }
 
 template<typename T>
-void copy_buffer_field(const std::vector<T> &scr, char *data, const BufferField &field)
+void copy_buffer_field(const std::vector<T> &src, char *data, const BufferField &field)
 {
-  for (uint i = 0; i < scr.size(); i++)
+  for (uint i = 0; i < src.size(); i++)
     memcpy(data + field.offset + i * field.stride, &src[field.vectorOffset + i], sizeof(T));
 }

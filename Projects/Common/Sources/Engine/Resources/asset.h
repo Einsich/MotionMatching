@@ -101,7 +101,7 @@ public:
   explicit Asset(const filesystem::path &resource_path, bool meta_data_asset)
   {  
     ifstream file(resource_path, ios::binary);
-    if (meta_data_asset)
+    if (true||meta_data_asset)
     {
       asset = new ResourceInfo{resource_path, false, false, false, false, T()};
       if (!file.fail())
