@@ -9,7 +9,6 @@
   
 SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
   const Asset<Mesh> &mesh,
-  Asset<Material> &material,
   const AnimationPlayer &animationPlayer,
   Transform &transform,
   const Settings &settings)

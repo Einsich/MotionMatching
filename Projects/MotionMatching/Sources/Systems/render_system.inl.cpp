@@ -5,7 +5,6 @@ void process_animation_func();
 
 ecs::SystemDescription process_animation_descr("process_animation", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Settings>("settings"), false}
@@ -17,10 +16,9 @@ void process_animation_func()
   {
     process_animation(
       *begin.get_component<Asset<Mesh>>(0),
-      *begin.get_component<Asset<Material>>(1),
-      *begin.get_component<AnimationPlayer>(2),
-      *begin.get_component<Transform>(3),
-      *begin.get_component<Settings>(4)
+      *begin.get_component<AnimationPlayer>(1),
+      *begin.get_component<Transform>(2),
+      *begin.get_component<Settings>(3)
     );
   }
 }
