@@ -173,6 +173,11 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
           buffer.Model = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
         else if (!strcmp(matterPart, "Bones[0]"))
           buffer.Bones = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
+        else
+        {
+          fields.emplace_back(BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
+          typeToOffset[params[0]] += params[2];
+        }
       }
       debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }

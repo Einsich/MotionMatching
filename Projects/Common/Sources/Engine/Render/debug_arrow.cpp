@@ -28,7 +28,7 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 {
   uint k = vert.size();
   vec3 n = normalize(cross(b - a, c - a));
-  indices.push_back(k); indices.push_back(k + 1); indices.push_back(k + 2);
+  indices.push_back(k); indices.push_back(k + 2); indices.push_back(k + 1);
   vert.push_back(a); vert.push_back(b); vert.push_back(c);
   normal.push_back(n); normal.push_back(n); normal.push_back(n);
   
@@ -68,25 +68,24 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
   vec3 d = to - from;
   mat4 t = translate(mat4(1.f), from);
   float len = length(d);
+  if (len < 0.01f)
+    return;
   mat4 s = scale(mat4(1.f), vec3(size, len, size));
 
   mat4 r = directionMatrix(vec3(0, 1, 0), d);
   if (depth_ignore)
-    depthIgnore.emplace_back(Arrow{t * r * s, color});
+    depthIgnore.emplace_back(Arrow{t * r * s, vec4(color, 1.f)});
   else
-    depthNotIgnore.emplace_back(Arrow{t * r * s, color});
+    depthNotIgnore.emplace_back(Arrow{t * r * s, vec4(color, 1.f)});
 }
 void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &arrows, bool ignoreDepth, bool wire_frame)
 {
   uint instanceCount = arrows.size(), instanceSize = arrowMaterial->buffer_size();
-  char *data = instanceData.get_buffer(0, instanceCount * instanceSize);
-  BufferField t = arrowMaterial->get_buffer_field("BoneTransform");
-  BufferField c = arrowMaterial->get_buffer_field("Color");
-  for (uint i = 0; i < instanceCount; ++i)
-  {
-    memcpy(data + t.offset + i * instanceSize, &arrows[i].transform, sizeof(mat4));
-    memcpy(data + c.offset + i * instanceSize, &arrows[i].color, sizeof(vec3));
-  }
+  if (instanceCount == 0)
+    return;
+  char *data = instanceData.get_buffer(0, (instanceCount+1) * instanceSize);
+  //i don't know why need to +1, but it din't work without it
+  memcpy(data, arrows.data(), instanceCount * instanceSize);
   instanceData.flush_buffer(instanceCount * instanceSize);
   arrows.clear();
   
@@ -100,10 +99,7 @@ void DebugArrow::render(UniformBuffer &instanceData, bool wire_frame)
   {
     const Shader &arrowShader = arrowMaterial->get_shader();
     arrowShader.use();
-    glDisable(GL_CULL_FACE);
     render_depth_case(instanceData, depthIgnore, true, wire_frame);
     render_depth_case(instanceData, depthNotIgnore, false, wire_frame);
-
-    glEnable(GL_CULL_FACE);
   }
 }

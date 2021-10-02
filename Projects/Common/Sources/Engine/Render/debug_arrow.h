@@ -11,7 +11,7 @@ private:
   struct Arrow
   {
     mat4 transform;
-    vec3 color;
+    vec4 color;
   };
   Asset<Material> arrowMaterial;
   VertexArrayObject arrow;

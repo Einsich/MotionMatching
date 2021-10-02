@@ -7,9 +7,9 @@
 struct Instance
 {
     mat4 BoneTransform;
-    vec3 Color;
+    vec4 Color;
 };
-layout(packed, binding = 1) readonly buffer InstanceData 
+layout(std430, binding = 1) readonly buffer InstanceData 
 {
     Instance instances[];
 };
@@ -21,17 +21,15 @@ layout(packed, binding = 1) readonly buffer InstanceData
 
 void main()
 {
-  #define instance instances[gl_InstanceID]
-
-  vec4 worldPos = instance.BoneTransform * vec4(Position, 1);
+  instanceID = gl_InstanceID;
+  vec4 worldPos = instances[instanceID].BoneTransform * vec4(Position, 1);
   vsOutput.WorldPosition = worldPos.xyz;
   gl_Position = ViewProjection * worldPos;
-  mat3 ModelNorm = mat3(instance.BoneTransform);
+  mat3 ModelNorm = mat3(instances[instanceID].BoneTransform);
   ModelNorm[0] = normalize(ModelNorm[0]);
   ModelNorm[1] = normalize(ModelNorm[1]);
   ModelNorm[2] = normalize(ModelNorm[2]);
   vsOutput.EyespaceNormal = normalize(ModelNorm * Normal);
-  instanceID = gl_InstanceID;
 
 }
 
@@ -47,8 +45,7 @@ struct Material
 #include lambert_lighting
 void main()
 {
-  #define instance instances[instanceID]
   Material boneMat = {40, 0};
-  vec3 color = LightedColor(instance.Color, boneMat, vsOutput, LightDirection, CameraPosition);
+  vec3 color = LightedColor(instances[instanceID].Color.rgb, boneMat, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
