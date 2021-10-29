@@ -18,6 +18,7 @@ class AnimationPlayer final : ISerializable
   AnimationLerpedIndex index;
   MotionMatching motionMatching;
   AnimationTree tree;
+  vector<int> treeBoneToMesh;
   struct IKFoot
   {
     bool onGround = false;
@@ -40,7 +41,6 @@ class AnimationPlayer final : ISerializable
   MotionMatching *get_motion_matching();
   const MotionMatching *get_motion_matching() const;
   AnimationLerpedIndex get_index() const;
-  const AnimationTree &get_tree() const;
 
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override; 

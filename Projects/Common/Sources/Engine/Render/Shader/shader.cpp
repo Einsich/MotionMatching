@@ -39,6 +39,12 @@ GLuint Shader::get_shader_program() const
   return shaderIdx < 0 ? BAD_PROGRAM : shaderList[shaderIdx].second.program;
 }
 
+const string& Shader::get_name() const
+{
+  static string dummy = "";
+  return shaderIdx < 0 ? dummy : shaderList[shaderIdx].first;
+}
+
 int get_shader_index(const std::string &shader_name)
 {
   auto shader_iter = std::find_if(shaderList.begin(), shaderList.end(), [&](const auto &p){return p.first == shader_name;});
@@ -129,7 +135,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
     GLint size;
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, 1, nullptr, &size);
 
-    debug_log("buffer %s (binding = %d), size %d", name, binding, size);
+    //debug_log("buffer %s (binding = %d), size %d", name, binding, size);
 
     property = GL_ACTIVE_VARIABLES;
     vector<GLint> varId(numVar);
@@ -179,7 +185,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
           typeToOffset[params[0]] += params[2];
         }
       }
-      debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
+      //debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
   }
 }

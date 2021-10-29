@@ -51,23 +51,14 @@ EVENT(ecs::SystemTag::Editor) find_main_camera_editor(
   }
   editorCameraManager.camera = editorCamera;
 }
-template<typename Callable>
-static void set_main_cam_query(const ecs::EntityId&, Callable);
 
-static void set_main_camera_status(const ecs::EntityId &camera, bool status)
-{
-  QUERY()set_main_cam_query(camera, [&](bool &isMainCamera, MainCamera &mainCamera){
-    isMainCamera = status;
-    if (status)
-      mainCamera.eid = camera;
-  });
-}
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) set_main_camera(
-  const OnSetMainCamera &event,
+SYSTEM(ecs::SystemTag::GameEditor, Camera camera) set_main_camera(
+  ecs::EntityId eid,
+  const bool isMainCamera,
   MainCamera &mainCamera)
 {
-  set_main_camera_status(mainCamera.eid, false);
-  set_main_camera_status(event.mainCamera, true);
+  if (isMainCamera)
+    mainCamera.eid = eid;
 }
 
 //ArcballCamera
@@ -266,11 +257,9 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
-  ecs::EntityId cameraId = ecs::create_entity<Camera, ArcballCamera, Transform, bool, ecs::EntityId>
+  return ecs::create_entity<Camera, ArcballCamera, Transform, bool, ecs::EntityId>
      ({"camera", camera}, {"arcballCamera", ArcballCamera(dist, rotation, target)}, 
       {"transform", Transform()}, {"isMainCamera", false}, {"arcballCameraTarget", ecs::EntityId()});
-  set_main_camera_status(cameraId, true);
-  return cameraId;
 }
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target)
 {
@@ -288,10 +277,10 @@ ecs::EntityId create_free_camera(vec3 position, vec2 rotation)
   return ecs::create_entity<Camera, FreeCamera, Transform, bool>({"camera", camera}, {"freeCamera", FreeCamera()}, 
       {"transform", Transform(position, vec3(rotation, 0))}, {"isMainCamera", false});
 }
-ecs::EntityId create_camera(vec3 position, vec2 rotation)
+ecs::EntityId create_camera(vec3 position, vec2 rotation, bool main_camera)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
   return ecs::create_entity<Camera, Transform, bool>({"camera", camera},
-      {"transform", Transform(position, vec3(rotation, 0))}, {"isMainCamera", false});
+      {"transform", Transform(position, vec3(rotation, 0))}, {"isMainCamera", main_camera});
 }

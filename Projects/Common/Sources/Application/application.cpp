@@ -23,7 +23,6 @@ projectShaderPath(project_path + "\\Shaders")
 }
 void Application::start()
 {
-  ecs::load_templates();
   load_meta_info(projectPath.string() + "/project.config");
   bool editor = false;
   #ifndef RELEASE
@@ -32,6 +31,7 @@ void Application::start()
   ApplicationMetaInfo &metaInfo = get_meta_info();
   editor &= !metaInfo.startGame;
   scene->start(editor);
+  ecs::load_templates();
   get_profiler();
   string sceneName;
   uint tags = editor ? (uint)ecs::SystemTag::Editor : (uint)ecs::SystemTag::Game;
@@ -134,6 +134,10 @@ void Application::exit()
 string project_resources_path(const string &path)
 {
   return Application::instance().projectResourcesPath.string() + "/" + path;
+}
+string project_resources_path()
+{
+  return Application::instance().projectResourcesPath.string();
 }
 
 void load_scene(const string &name, bool editor)

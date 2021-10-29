@@ -10,125 +10,121 @@
 #include "Serialization/serialization.h"
 class IAsset
 {
+public:
+  virtual void after_load()
+  {
+
+  }
   //called when this resource really needed - load data from disk 
   virtual void load(const filesystem::path &path, bool reload) = 0;
   //dispose resource - called on application end, or when we can unload resource
-  virtual void free() = 0;
+  virtual void before_save()
+  {
+
+  }
   //this fuction need to edit resource and call reload if it changed
-  virtual bool edit() = 0;
+  virtual bool edit()
+  {
+    return false;
+  }
+  virtual string asset_name(const filesystem::path &path)
+  {
+    return path.stem().string();
+  }
 };
 
-/*
-  virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
-  virtual bool edit() override;
-*/
-
-string get_asset_name(const filesystem::path &path);
 
 template<typename T>
 class Asset;
 
-template<typename T, bool meta_asset>
-Asset<T> create_asset(const filesystem::path &path);
+template<typename T>
+Asset<T> create_asset_by_id(const string &uniqueId);
 
 template<typename T>
 bool register_asset(const string &assetName, const Asset<T> &asset);
-class AssetStub : IAsset
+
+class AssetStub : public  IAsset
 {
 public:
   virtual void load(const filesystem::path &, bool) override{}
-  virtual void free() override{}
+  virtual void before_save() override{}
   virtual bool edit() override{return false;}
+};
+
+
+template<typename T>
+struct AssetImplementation
+{
+  filesystem::path path;
+  string name, uniqueId;
+  bool loaded, edited, isCopy, userPathUsage;
+  T asset;
+  AssetImplementation() = default;
+  AssetImplementation(const filesystem::path &path, const string &name, const string &uniqueId,
+    bool loaded, bool edited, bool isCopy, bool userPathUsage, const T &asset):
+  path(path), name(name), uniqueId(uniqueId), 
+  loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
+  asset(asset)
+  {    }
+template<typename ...Args>
+  AssetImplementation(const filesystem::path &path, const string &name, const string &uniqueId,
+    bool loaded, bool edited, bool isCopy, bool userPathUsage,  Args &&...args):
+  path(path), name(name), uniqueId(uniqueId), 
+  loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
+  asset(args...)
+  {    }
+
+  void load()
+  {
+    if (!loaded)
+    {
+      asset.load(path, false);
+      loaded = true;
+    }
+  }
+  void reload()
+  {
+    if (loaded)
+      asset.load(path, true);
+  }
 };
 template<typename T>
 class Asset final: public ISerializable
 {
-  static_assert(std::is_base_of<IAsset, T>::value);
-  struct ResourceInfo
-  {
-    filesystem::path path;
-    bool loading, loaded, edited, isCopy;
-    T asset;
-    void load()
-    {
-      if (!loaded && !loading)
-      {
-        loading = true;
-        asset.load(path, false);
-        loaded = true;
-      }
-    }
-    void load_async()
-    {
-      if (!loaded && !loading)
-      {
-        loading = true;      
-        auto asyncState = std::async(std::launch::async, [&](){asset.load(path, false);});
-      }
-    }
-    void reload()
-    {
-      if (loaded)
-        asset.load(path, true);
-    }
-    void save()
-    {
-      if (loaded)
-        asset.save(path);
-    }
-    void save_async()
-    {
-      //if (loaded)
-      //  std::async(std::launch::async, &IAsset::save, iasset, path);
-    }
-  };
-  ResourceInfo *asset;
 public:
-  ResourceInfo *resource() const
-  {
-    return asset;
-  }
+  static_assert(std::is_base_of<IAsset, T>::value);
+
+  AssetImplementation<T> *asset;
   //create asset and init them from .meta file or only default value
   explicit Asset():asset(nullptr){}
-  Asset(nullptr_t ):asset(nullptr){}
+  Asset(nullptr_t):asset(nullptr){}
   ~Asset() = default;
   Asset<T>& operator=(const Asset<T>& other)
   {
     asset = other.asset;
     return *this;
   }
-  explicit Asset(const filesystem::path &resource_path, bool meta_data_asset)
-  {  
-    ifstream file(resource_path, ios::binary);
-    if (true||meta_data_asset)
-    {
-      asset = new ResourceInfo{resource_path, false, false, false, false, T()};
-      if (!file.fail())
-        read(file, asset->asset);
-    }
-    else
-    {
-      if (!file.fail())
-      {
-        asset = new ResourceInfo{resource_path, false, false, false, false, T()};
-        read(file, asset->asset);
-      }
-      else
-        asset = nullptr;
-    }
-  }
-  explicit Asset(const filesystem::path &resource_path, const Asset<T> &other) :
-  asset(new ResourceInfo{resource_path, other.asset->loading, other.asset->loaded, 
-        other.asset->edited, other.asset->isCopy, other.asset->asset})
-  {
-  }
+  explicit Asset(AssetImplementation<T> *asset):
+    asset(asset){}
   
-  template<typename ...Args>
-  Asset(const filesystem::path &path_or_name, bool need_save, Args &&...args) :
-  asset(new ResourceInfo{path_or_name, true, true, need_save, false, T(args...)})
+  Asset(const filesystem::path &path_or_name) :
+  asset(new AssetImplementation<T>(
+    path_or_name, "", "",
+    false, false, false, true, T()))
   {
-    register_asset(path_or_name.string(), *this);
+
+    asset->uniqueId = asset->name = asset->asset.asset_name(path_or_name);
+    register_asset(asset->uniqueId, *this);
+  }
+  template<typename ...Args>
+  Asset(const filesystem::path &path_or_name, Args &&...args) :
+  asset(new AssetImplementation<T>(
+    path_or_name, "", "",
+    true, false, false, true, args...))
+  {
+
+    asset->uniqueId = asset->name = asset->asset.asset_name(path_or_name);
+    register_asset(asset->uniqueId, *this);
   }
   template<typename U>
   operator Asset<U>() const
@@ -137,7 +133,7 @@ public:
   }
   explicit operator bool() const
   {
-    return asset != nullptr;
+    return asset != nullptr && asset->uniqueId != "";
   }
   T* operator->()
   {
@@ -163,25 +159,36 @@ public:
       asset->load();
     return asset->asset;
   }
-  void load(bool async = false)
+  void load()
   {
-    if (async)
-      asset->load_async();
-    else
-      asset->load();
+    asset->load();
   }
   void reload()
   {
     asset->reload();
   }
+  void save(ofstream &file)
+  {
+    if (asset)
+    {
+      write(file, asset->uniqueId);
+      write(file, asset->asset);
+    }
+  }
   void save() const
   {
     if (asset)
-      asset->asset.free();
-    ofstream file(asset->path, ios::binary);
-    if (!file.fail())
     {
-      write(file, asset->asset);
+      asset->asset.before_save();
+      if (!asset->userPathUsage)
+      { 
+        ofstream file(asset->path, ios::binary);
+        if (!file.fail())
+        {
+          write(file, asset->uniqueId);
+          write(file, asset->asset);
+        }
+      }
     }
   }
   bool edit()
@@ -202,25 +209,26 @@ public:
   {
     return asset->isCopy;
   }
-  string asset_name() const
+  const string& asset_name() const
   {
-    return get_asset_name(asset->path);
+    static string dummy = "null";
+    return asset ? asset->name : dummy;
   }
   const filesystem::path &asset_path() const
   {
-    static filesystem::path defPath = "";
+    static filesystem::path defPath = "null";
     return asset ? asset->path : defPath;
   }
   virtual size_t serialize(std::ostream& os) const override
   {
-    return write(os, asset ? asset->path.string() : "null");
+    return write(os, asset ? asset->uniqueId : "null");
   }
   virtual size_t deserialize(std::istream& is) override
   {
-    string path;
-    size_t size = read(is, path);
-    if (path != "null" && path != "")
-      *this = create_asset<T, false>(filesystem::path(path));
+    string uniqueId;
+    size_t size = read(is, uniqueId);
+    if (uniqueId != "null" && uniqueId != "")
+      *this = create_asset_by_id<T>(uniqueId);
     else 
       *this = Asset<T>();
     return size;
@@ -230,11 +238,19 @@ public:
     if (asset)
     {
       Asset<T> a;
-      // loading, loaded, edited, isCopy;
-      a.asset = new ResourceInfo{asset->path, asset->loading, asset->loaded, false, true, asset->asset};
+      a.asset = new AssetImplementation<T>();
+      *a.asset = *asset;
+      a.asset->isCopy = true;
       return a;
     }
     else
-    return Asset<T>();
+      return Asset<T>();
+  }
+  void copy(const Asset<T> &other)
+  {
+    if (asset && other.asset)
+    {
+      asset->asset = other.asset->asset;
+    }
   }
 };

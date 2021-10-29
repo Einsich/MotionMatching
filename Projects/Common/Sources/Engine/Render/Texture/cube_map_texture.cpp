@@ -1,6 +1,6 @@
 #include "cube_map_texture.h"
 #include "stb_image.h"
-#include "Engine/Resources/resources.h"
+#include "Engine/Resources/resource_registration.h"
 #include "ecs/component_editor.h"
 CubeMap::CubeMap()
 {
@@ -79,10 +79,7 @@ void CubeMap::load(const filesystem::path &, bool )
   
   glBindTexture(textureType, 0); 
 }
-void CubeMap::free()
-{
 
-}
 bool CubeMap::edit()
 {
   bool edited = texture_edit();

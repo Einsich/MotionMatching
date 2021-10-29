@@ -65,10 +65,6 @@ AnimationLerpedIndex AnimationPlayer::get_index() const
   return index;
 }
 
-const AnimationTree &AnimationPlayer::get_tree() const
-{
-  return tree;
-}
 
 template<>
 bool edit_component(AnimationPlayer &component, const char *, bool view_only)

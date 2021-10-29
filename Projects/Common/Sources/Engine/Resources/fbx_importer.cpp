@@ -1,22 +1,23 @@
 #include "fbx_importer.h"
-#include "resources.h"
+#include "resource_registration.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include "Engine/Render/mesh.h"
 
 void FBXMeta::create_assets()
 {
-  const auto &assets = Resources::instance().assets;
-  auto it = assets.find("Mesh");
-  if (it != assets.end())
-  {
-    for (const string &str : meshMetaData)
-    { 
-      debug_log("create mesh %s", str.c_str());
-      it->second.createAsset(str);
-    }
+
+  for (const string &str : meshMetaData)
+  { 
+    Asset<Mesh> mesh(str);
+    debug_log("find mesh %s | %s", mesh.asset->name.c_str(), mesh.asset->path.string().c_str());
   }
 }
 
+void FBXMeta::after_load()
+{
+  create_assets();
+}
 void FBXMeta::load(const filesystem::path &path, bool reload)
 {
   if (reload || loaded)
@@ -29,23 +30,14 @@ void FBXMeta::load(const filesystem::path &path, bool reload)
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
   const aiScene* scene = importer.GetScene();
-
+  filesystem::path resourceRoot = project_resources_path();
   for (uint i = 0; i < scene->mNumMeshes; ++i)
   {
-    meshMetaData.emplace_back(fbxPath + "\\" + to_string(i) + "\\" + scene->mMeshes[i]->mName.C_Str());
-    debug_log("find mesh %s", meshMetaData.back().c_str());
+    filesystem::path path_ = (fbxPath + "\\" + to_string(i) + "\\" + scene->mMeshes[i]->mName.C_Str());
+    meshMetaData.emplace_back(path_.lexically_relative(resourceRoot).string());
   }
   importer.FreeScene();
   create_assets();
   loaded = true;
 }
-void FBXMeta::free()
-{
-
-}
-bool FBXMeta::edit()
-{
-  return false;
-}
-
 ResourceRegister<FBXMeta> fbxImrorter({".fbx"});

@@ -27,9 +27,10 @@ int AnimationNode::parent() const
 AnimationTree::AnimationTree(const AnimationTreeData *tree_data):
   data(tree_data), transforms(tree_data->nodes.size(), mat4(1.f))
 {
+  nodes.reserve(tree_data->nodes.size());
   for (uint i = 0; i < tree_data->nodes.size(); i++)
   {    
-    nodes.push_back(AnimationNode(data->nodes[i]));
+    nodes.emplace_back(data->nodes[i]);
   }
 }
 int AnimationTree::get_child(const string& name) const

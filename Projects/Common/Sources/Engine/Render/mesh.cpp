@@ -1,5 +1,5 @@
 #include "mesh.h"
-#include "Engine/Resources/resources.h"
+#include "Engine/Resources/resource_registration.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include "Engine/imgui/imgui.h"
@@ -102,7 +102,7 @@ void Mesh::load(const filesystem::path &path, bool reload)
   else
   {
     int ind = std::stoi(path.parent_path().filename().string());
-    string strPath = path.parent_path().parent_path().string();
+    string strPath = project_resources_path(path.parent_path().parent_path().string());
     Assimp::Importer importer;
     importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
     importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
@@ -114,17 +114,22 @@ void Mesh::load(const filesystem::path &path, bool reload)
     load_assimp(scene->mMeshes[ind]);
   }
 }
-void Mesh::free()
-{
 
-}
 bool Mesh::edit()
 {
   ImGui::Text("vertex array object: %s", vertexArrayObject.is_valid() ? "is valid" : "not valid");
   return false;
 }
 
-ResourceRegister<Mesh> meshregister;
+string Mesh::asset_name(const filesystem::path &path)
+{
+  if (!path.parent_path().empty())
+    return path.filename().string();
+  else
+    return path.string();
+}
+
+ResourceRegister<Mesh, true> meshregister;
 
 Asset<Mesh> plane_mesh(bool create_uv)
 {
@@ -136,8 +141,8 @@ Asset<Mesh> plane_mesh(bool create_uv)
     vector<vec3> normals(4, vec3(0,1,0));
     vector<uint> indices = {0,1,2,0,2,3};
     vector<vec2> uv =  {vec2(0,0), vec2(1,0), vec2(1,1),vec2(0,1)};
-    uvMesh = Asset<Mesh>("plane", false, VertexArrayObject(indices, vertices, normals, uv));
-    notUvMesh = Asset<Mesh>("plane (without uv)", false, VertexArrayObject(indices, vertices, normals));
+    uvMesh = Asset<Mesh>("plane", VertexArrayObject(indices, vertices, normals, uv));
+    notUvMesh = Asset<Mesh>("plane (without uv)", VertexArrayObject(indices, vertices, normals));
   }
   return create_uv ? uvMesh : notUvMesh;  
 }
@@ -191,8 +196,8 @@ Asset<Mesh> cube_mesh(bool create_uv)
         indices.push_back(ind); indices.push_back(ind + 3); indices.push_back(ind + 2);
       }
     }
-    uvMesh = Asset<Mesh>("cube", false, VertexArrayObject(indices, vertices, normals, uv));
-    notUvMesh = Asset<Mesh>("cube (without uv)", false, VertexArrayObject(indices, vertices, normals));
+    uvMesh = Asset<Mesh>("cube", VertexArrayObject(indices, vertices, normals, uv));
+    notUvMesh = Asset<Mesh>("cube (without uv)", VertexArrayObject(indices, vertices, normals));
   }
   return create_uv ? uvMesh : notUvMesh;  
 }
@@ -241,12 +246,12 @@ Asset<Mesh> sphere_mesh(int detailed, bool create_uv)
     {
       int r = detailed * (1 + 1);
       string name = "sphere " + to_string(detailed);
-      spheres[r] = Asset<Mesh>(name, false, VertexArrayObject(indices, vertices, normals, uv));
+      spheres[r] = Asset<Mesh>(name, VertexArrayObject(indices, vertices, normals, uv));
     }
     {
       int r = detailed * (1 + 0);
       string name = "sphere " + to_string(detailed) + " (without uv)";
-      spheres[r] = Asset<Mesh>(name, false, VertexArrayObject(indices, vertices, normals));
+      spheres[r] = Asset<Mesh>(name, VertexArrayObject(indices, vertices, normals));
     }
   }
   return spheres[t];  

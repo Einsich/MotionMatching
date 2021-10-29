@@ -70,7 +70,7 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target);
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target);
 
 ecs::EntityId create_free_camera(vec3 position, vec2 rotation);
-ecs::EntityId create_camera(vec3 position = vec3(0.f), vec2 rotation = vec2(0.f));
+ecs::EntityId create_camera(vec3 position = vec3(0.f), vec2 rotation = vec2(0.f), bool main_camera = false);
 
 struct MainCamera : ecs::Singleton
 {

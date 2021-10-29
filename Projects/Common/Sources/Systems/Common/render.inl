@@ -44,7 +44,11 @@ set_global_render_data(const MainCamera &mainCamera)
     mainCamera.position, light.normalizedLightDirection, 
     light.ambient, light.lightColor, vec4(t , t * 2.f, t * 4.f, dt)});
 }
-
+EVENT(ecs::SystemTag::GameEditor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &mesh)
+{
+  if (mesh)
+    mesh.load();
+}
 SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
   const MainCamera &mainCamera,
   const Transform &transform,
@@ -66,6 +70,8 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
     mesh = lods_meshes[lod];
   else
     mesh = Asset<Mesh>();//culled by dist
+  if (mesh)
+    mesh.load();
 }
 
 struct RenderStuff

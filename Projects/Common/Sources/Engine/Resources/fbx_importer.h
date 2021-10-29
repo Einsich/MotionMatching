@@ -2,7 +2,7 @@
 #include "asset.h"
 #include <assimp/scene.h>
 #include "Serialization/reflection.h"
-class FBXMeta : IAsset
+class FBXMeta : public IAsset
 {
   REFLECT(FBXMeta,
   (bool) (loaded),
@@ -10,6 +10,6 @@ class FBXMeta : IAsset
   void create_assets();
 public:
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
-  virtual bool edit() override;
+  
+  virtual void after_load() override;
 };

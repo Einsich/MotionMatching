@@ -1,7 +1,7 @@
 #include "texture2d.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "Engine/Resources/resources.h"
+#include "Engine/Resources/resource_registration.h"
 #include "Engine/imgui/imgui.h"
 #include "ecs/component_editor.h"
 Texture2D::Texture2D()
@@ -113,10 +113,6 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
 		}
   }
 
-void Texture2D::free()
-{
-
-}
 bool Texture2D::edit()
 {
   bool edited = texture_edit();

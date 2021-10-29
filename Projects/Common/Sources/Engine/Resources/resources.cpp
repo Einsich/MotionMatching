@@ -31,9 +31,19 @@ void create_all_resources_from_metadata(const fs::path &path)
         auto it = assets.find(extView);
         if (it != assets.end())
         {
-          const fs::path &pathToAsset = it->second.metaDataAsset ? path.string() + ".meta" : path;
-          //debug_log("creating asset %s", pathToAsset.string().c_str());
-          it->second.createAsset(pathToAsset);
+          debug_log("creating asset %s", path.string().c_str());
+          if (it->second.metaDataAsset)
+          {
+            fs::path metaAssetPath =  path.string() + ".meta";
+            if (fs::exists(metaAssetPath))
+              it->second.createExistsAsset(path);
+            else
+              it->second.createNewAsset(path);
+          }
+          else
+          {
+            it->second.createExistsAsset(path);
+          }
         }
         else
         {
@@ -51,7 +61,7 @@ void create_all_resources_from_metadata(const fs::path &path)
     auto &res = p.second.resources;
     for (auto it = res.begin(), end = res.end(); it != end;)
     {
-      (it->second) ? ++it : res.erase(it++);
+      (it->second && it->second.asset->uniqueId != "") ? ++it : res.erase(it++);
     }
   }
 }

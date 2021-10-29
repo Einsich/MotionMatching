@@ -7,7 +7,7 @@
 #include <Engine/Resources/asset.h>
 #include <Engine/Resources/fbx_importer.h>
 
-class AnimationDataBase : IAsset
+class AnimationDataBase : public  IAsset
 {
 public:
   AnimationTreeData tree;
@@ -21,7 +21,6 @@ public:
   void save_runtime_parameters() const;
   void load_runtime_parameters();
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
   virtual bool edit() override; 
 };
 

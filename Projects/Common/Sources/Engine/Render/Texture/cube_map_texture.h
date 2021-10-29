@@ -2,7 +2,7 @@
 
 #include "texture.h"
 #include "Engine/Resources/asset.h"
-class CubeMap : public Texture, IAsset, public ISerializable
+class CubeMap : public Texture, public IAsset, public ISerializable
 {
 public:
 
@@ -13,7 +13,6 @@ public:
   TexturePixelFormat pixelFormat = TexturePixelFormat::Linear);
   
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
   virtual bool edit() override;
 
   virtual size_t serialize(std::ostream& os) const override;

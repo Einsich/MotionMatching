@@ -5,6 +5,7 @@
 #include "editor/template.h"
 #include "common.h"
 #include "manager/entity_container.h"
+#define ECS_DEBUG_INFO 0
 namespace ecs
 {
   Core::Core()
@@ -27,7 +28,9 @@ namespace ecs
       EntityId eid = it.eid();
       if (eid)
       {
+#if ECS_DEBUG_INFO
         debug_log("add %d %d entity to destroy queue", eid.archetype_index(), eid.array_index());
+#endif
         send_event(eid, OnEntityDestroyed());
         toDestroy.push(eid);
       }
@@ -94,13 +97,25 @@ namespace ecs
     if (!breaked)
     {
       sys_archetypes.emplace_back(archetype, std::move(containers));
-      //debug_log("processed by %s",query->name.c_str());
+#if ECS_DEBUG_INFO
+      debug_log("processed by %s",query->name.c_str());
+#endif
     }
   }
 
   
   void register_archetype(Archetype *archetype)
   {
+    
+#if ECS_DEBUG_INFO
+    debug_log("register archetype");
+    for (const auto &component : archetype->components)
+    {
+      auto &ecsType = core().types[component.first];
+      auto &cppType = TypeInfo::types()[ecsType.typeHash];
+      debug_log("  %s %s",cppType.name.c_str(), ecsType.name.c_str());
+    }
+#endif
     for (QueryDescription *query: core().queries)
       register_archetype_to(query, archetype);
     for (SystemDescription *system: core().systems)
@@ -114,15 +129,6 @@ namespace ecs
     Archetype *archetype = new Archetype(type_hashes, capacity, synonim);
     core().entityContainer->archetypes.push_back(archetype);
 
-#if 0  
-  printf("added\n");
-  for (const auto &component : archetype->components)
-  {
-    auto &ecsType = core().types[component.first];
-    auto &cppType = TypeInfo::types()[ecsType.typeHash];
-    printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
-  }
-#endif
     register_archetype(archetype);
     
     return archetype;

@@ -1,6 +1,6 @@
 #include "material.h"
 #include <algorithm>
-#include "Engine/Resources/resources.h"
+#include "Engine/Resources/resource_registration.h"
 #include "Engine/Resources/editor.h"
 #include "ecs/component_editor.h"
 #include "global_uniform.h"
@@ -148,9 +148,10 @@ void Material::load(const filesystem::path &, bool reload)
     #undef SAMPLER
   }
 }
-void Material::free()
+void Material::before_save()
 {
-  
+  if (!shader)
+    return;
   #define TYPE(T, _) T##savable.clear();
   TYPES
   #undef TYPE

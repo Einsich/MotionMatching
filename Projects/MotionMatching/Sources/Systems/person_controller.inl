@@ -86,8 +86,6 @@ vec3 apply_root_motion_to_speed(vec3 speed, vec3 root_motion)
     speed /= speedMagnitude;
   return root_motion * speed;
 }
-template<typename Callable>
-void update_attached_camera(const ecs::EntityId&, Callable);
 
 SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   AnimationPlayer &animationPlayer,

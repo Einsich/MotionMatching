@@ -7,6 +7,7 @@
 #include <Engine/camera.h>
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
+#include <Engine/Render/mesh.h>
 
 bool raycast_in_point(vec3 point, float &dh, vec3 &normal)
 {
@@ -137,14 +138,27 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
 
 EVENT(ecs::SystemTag::GameEditor) init_animation_character(
   const ecs::OnEntityCreated &,
+  Asset<Mesh> &mesh,
+  const vector<Asset<Mesh>> *lods_meshes,
   AnimationPlayer &animationPlayer)
 {
-  animationPlayer.tree.set_cadr(animationPlayer.currentCadr);
-  animationPlayer.tree.calculate_bone_transforms();
+  AnimationTree &tree = animationPlayer.tree;
+  tree.set_cadr(animationPlayer.currentCadr);
+  tree.calculate_bone_transforms();
+  if (lods_meshes && !lods_meshes->empty())
+    mesh = (*lods_meshes)[0];
+  animationPlayer.treeBoneToMesh.resize(tree.nodes.size());
+  for (uint i = 0, n = tree.nodes.size(); i < n && mesh; i++)
+  {
+    auto it2 = mesh->bonesMap.find(tree.nodes[i].get_name());
+    animationPlayer.treeBoneToMesh[i] = 
+      (it2 != mesh->bonesMap.end()) ? it2->second : -1;
+  }
 }
 EVENT(ecs::SystemTag::Game) init_animation_material(
   const ecs::OnEntityCreated &,
   Asset<Material> &material)
 {
-  material = material.copy();
+  if (material && !material.is_copy())
+    material = material.copy();
 }

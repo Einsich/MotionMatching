@@ -1,5 +1,6 @@
 #include <ecs/ecs.h>
 #include <Engine/imgui/imgui.h>
+#include <Engine/file_dialog.h>
 #include <Engine/Resources/resources.h>
 #include <ecs/singleton.h>
 #include "editor_window.h"
@@ -85,8 +86,11 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
                 vector<const char *> names;
                 
                 for (auto &asset : selectedAsset.resourceType->resources)
-                  if (strstr(asset.first.c_str(), searchString.c_str()))
-                    names.push_back(asset.first.c_str());
+                {
+                  const string &assetName = asset.second.asset_name();
+                  if (strstr(assetName.c_str(), searchString.c_str()))
+                    names.push_back(assetName.c_str());
+                }
                 if (ImGui::ListBox("", &curCopy, names.data(), names.size()))
                 {
                   stub = selectedAsset.resourceType->resources[string(names[curCopy])];
@@ -95,19 +99,13 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
               }
               ImGui::SameLine();
               snprintf(buf, BUFN, "%s%s", stub ? "Copy " : "Create", stub ?  copyName : "");
-              if (ImGui::Button(buf))
+              std::filesystem::path path;
+              if (ImGui::Button(buf) && get_save_file(path, "." + selectedAsset.resourceType->name))
               {
-                string folder = project_resources_path(selectedAsset.resourceType->name);
-                string assetPath = folder + "\\" + bufString + "." + selectedAsset.resourceType->name;
-                if (!filesystem::exists(folder))
-                  filesystem::create_directory(folder);
-                
-                ofstream file(assetPath, ios::binary);
-                file.close();
                 if (stub)
-                  selectedAsset.resourceType->createCopyAsset(assetPath, stub);
+                  selectedAsset.resourceType->createCopyAsset(path, stub);
                 else
-                  selectedAsset.resourceType->createAsset(assetPath);
+                  selectedAsset.resourceType->createNewAsset(path);
                 adding = false;
                 bufString = "";
               }
@@ -147,10 +145,11 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
         else
         for (auto &asset : selectedAsset.resourceType->resources)
         {
-          if (ImGui::Button(asset.first.c_str()))
+          const string &assetName = asset.second.asset_name();
+          if (ImGui::Button(assetName.c_str()))
           {
             selectedAsset.asset = &asset.second;
-            selectedAsset.resourceType->loadAsset(asset.second, false);
+            selectedAsset.resourceType->loadAsset(asset.second);
           }
         }
       }

@@ -109,17 +109,19 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
       if (select)
       {
         vector<const char *> names;
+        vector<const string *> keys;
         const auto &resMap = Resources::instance().assets[tName];
         for (const auto &asset : resMap.resources)
         {
-          names.push_back(asset.first.c_str());
+          names.emplace_back(asset.second.asset_name().c_str());
+          keys.emplace_back(&asset.first);
         }
         static int curTex = -1;
         snprintf(buf, BUFN, "##%p", (void*)&component);
         if (ImGui::ListBox(buf, &curTex, names.data(), names.size(), 10))
         {
           select = false;
-          auto it = resMap.resources.find(string(names[curTex]));
+          auto it = resMap.resources.find(*keys[curTex]);
           if (it != resMap.resources.end())
           {
             component = it->second;

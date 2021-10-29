@@ -12,7 +12,7 @@
 #define SAMPLERS \
   SAMPLER(Asset<Texture2D>, GL_SAMPLER_2D) SAMPLER(Asset<CubeMap>, GL_SAMPLER_CUBE)
 
-class Material : IAsset
+class Material : public IAsset
 {
 private:
   Shader shader;
@@ -40,7 +40,7 @@ public:
   const Shader &get_shader() const;
   void bind_textures_to_shader() const;
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
+  virtual void before_save() override;
   virtual bool edit() override;
 
   uint buffer_size() const;

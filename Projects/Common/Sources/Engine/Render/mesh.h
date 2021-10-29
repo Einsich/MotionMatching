@@ -5,7 +5,7 @@
 #include "vertex_array_object.h"
 #include "Engine/Resources/asset.h"
 #include "Serialization/iserializable.h"
-class Mesh : IAsset
+class Mesh : public  IAsset
 {
   
   VertexArrayObject vertexArrayObject;
@@ -25,8 +25,8 @@ public:
   Mesh(const aiMesh *mesh);
   void render(bool wire_frame = false) const;
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
   virtual bool edit() override;
+  virtual string asset_name(const filesystem::path &path) override;
   VertexArrayObject get_vao() const;
 };
 

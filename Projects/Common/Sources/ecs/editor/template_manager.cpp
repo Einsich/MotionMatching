@@ -84,7 +84,7 @@ namespace ecs
     vector<fs::path> templates_paths;
     for (const auto & entry : fs::recursive_directory_iterator(path, fs::directory_options::follow_directory_symlink))
     {
-      debug_log("%s", entry.path().string().c_str());
+      //debug_log("%s", entry.path().string().c_str());
       if (entry.is_regular_file() && entry.path().extension() == ".tmpl")
       {
         templates_paths.emplace_back(entry.path().lexically_relative(path));

@@ -145,8 +145,6 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
   }
 }
 
-string map_unity_name(const string &name);
-
 void animation_preprocess(AnimationDataBase *animDatabase)
 {
   Assimp::Importer importer;
@@ -156,30 +154,12 @@ void animation_preprocess(AnimationDataBase *animDatabase)
   auto tagMap = read_tag_map(project_resources_path("AnimationTags.txt"));
 
     TimeScope scope("Animation Reading from fbx file");
-    bool unityData = false;// !strcmp(get_config("AnimData"), "Unity");
-    string path = project_resources_path(unityData ? "retarget_clips" : "MocapOnline/Root_Motion");
+    string path = project_resources_path("MocapOnline/Root_Motion");
     uintmax_t animation_size = 0;
     
-    if (false)
-    {
-      importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-      importer.ReadFile(path + "/WalkMocapSet.fbx", aiProcess_GlobalScale);
-      const aiScene* scene = importer.GetScene();
-
-      AnimationTreeData avatar(scene->mRootNode->mChildren[0]);
-        //avatar.nodes[i].name = map_unity_name(avatar.nodes[i].name);
-      //animDatabase->tree.apply_other_tree(avatar);
-    }
     for (const auto & entry : fs::directory_iterator(path))
     {
-      
-      
-      if (entry.is_directory())
-      {
-        
-      } 
-      else
-      if (entry.is_regular_file())
+      if (entry.is_regular_file() && entry.path().extension() == ".fbx")
       {
         animation_size += entry.file_size();
         const string& nextPath = entry.path().string();
@@ -202,8 +182,6 @@ void animation_preprocess(AnimationDataBase *animDatabase)
             const aiNodeAnim * animNode = animation->mChannels[i];
             string name = normalName(string(animNode->mNodeName.C_Str()));
 
-            if (unityData)
-              name = map_unity_name(name);
             function<pair<float,vec3>(int)> posf = 
               [&](int i){auto p = animNode->mPositionKeys[i]; return make_pair((float)p.mTime / animation->mTicksPerSecond, to_vec3(p.mValue));};
             function<pair<float,quat>(int)> rotf = 
@@ -236,76 +214,4 @@ void animation_preprocess(AnimationDataBase *animDatabase)
 
    
   //print_tree(animDatabase->tree, 0, 0);
-}
-
-map<string, string> name_map
-{
-{ "AnimUprisingRig", "Root"},
-{ "Hips", "Hips"},
-{ "Spine", "Spine"},
-{ "Chest", "Spine1"},
-{ "UpperChest", "Spine2"},
-{ "Shoulder.L", "LeftShoulder"},
-{ "UpperArm.L", "LeftArm"},
-{ "LowerArm.L", "LeftForeArm"},
-{ "Hand.L", "LeftHand"},
-{ "", "LeftHandIndex1"},
-{ "", "LeftHandIndex2"},
-{ "", "LeftHandIndex3"},
-{ "", "LeftHandIndex4"},
-{ "", "LeftHandMiddle1"},
-{ "", "LeftHandMiddle2"},
-{ "", "LeftHandMiddle3"},
-{ "", "LeftHandMiddle4"},
-{ "", "LeftHandPinky1"},
-{ "", "LeftHandPinky2"},
-{ "", "LeftHandPinky3"},
-{ "", "LeftHandPinky4"},
-{ "", "LeftHandRing1"},
-{ "", "LeftHandRing2"},
-{ "", "LeftHandRing3"},
-{ "", "LeftHandRing4"},
-{ "", "LeftHandThumb1"},
-{ "", "LeftHandThumb2"},
-{ "", "LeftHandThumb3"},
-{ "", "LeftHandThumb4"},
-{ "Shoulder.R", "RightShoulder"},
-{ "UpperArm.R", "RightArm"},
-{ "LowerArm.R", "RightForeArm"},
-{ "Hand.R", "RightHand"},
-{ "", "RightHandIndex1"},
-{ "", "RightHandIndex2"},
-{ "", "RightHandIndex3"},
-{ "", "RightHandIndex4"},
-{ "", "RightHandMiddle1"},
-{ "", "RightHandMiddle2"},
-{ "", "RightHandMiddle3"},
-{ "", "RightHandMiddle4"},
-{ "", "RightHandPinky1"},
-{ "", "RightHandPinky2"},
-{ "", "RightHandPinky3"},
-{ "", "RightHandPinky4"},
-{ "", "RightHandRing1"},
-{ "", "RightHandRing2"},
-{ "", "RightHandRing3"},
-{ "", "RightHandRing4"},
-{ "", "RightHandThumb1"},
-{ "", "RightHandThumb2"},
-{ "", "RightHandThumb3"},
-{ "", "RightHandThumb4"},
-{ "Neck", "Neck"},
-{ "Head", "Head"},
-{ "UpperLeg.L", "LeftUpLeg"},
-{ "LowerLeg.L", "LeftLeg"},
-{ "Foot.L", "LeftFoot"},
-{ "Toe.L", "LeftToeBase"},
-{ "UpperLeg.R", "RightUpLeg"},
-{ "LowerLeg.R", "RightLeg"},
-{ "Foot.R", "RightFoot"},
-{ "Toe.R", "RightToeBase"},
-};
-string map_unity_name(const string &name)
-{
-  string s = name_map[name];
-  return s == "" ? name : s;
 }

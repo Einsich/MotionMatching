@@ -35,7 +35,7 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 }
 DebugArrow::DebugArrow()
 {
-  arrowMaterial = get_resource<Material>("bones");
+  arrowMaterial = get_resource<Material>("arrows");
   vector<uint> indices;
   vector<vec3> vert;
   vector<vec3> normal;
@@ -87,7 +87,6 @@ void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &a
   //i don't know why need to +1, but it din't work without it
   memcpy(data, arrows.data(), instanceCount * instanceSize);
   instanceData.flush_buffer(instanceCount * instanceSize);
-  arrows.clear();
   
   glDepthFunc(ignoreDepth ? GL_ALWAYS : GL_LESS);
   glDepthMask(ignoreDepth ? GL_FALSE : GL_TRUE);
@@ -102,4 +101,6 @@ void DebugArrow::render(UniformBuffer &instanceData, bool wire_frame)
     render_depth_case(instanceData, depthIgnore, true, wire_frame);
     render_depth_case(instanceData, depthNotIgnore, false, wire_frame);
   }
+  depthIgnore.clear();
+  depthNotIgnore.clear();
 }

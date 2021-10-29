@@ -42,6 +42,7 @@ void third_peson_controller_update_func()
 void third_controller_appear_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> third_controller_appear_descr("third_controller_appear", {
+  {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, third_controller_appear_handler, (uint)(ecs::SystemTag::Game));
 
@@ -51,7 +52,8 @@ void third_controller_appear_handler(const ecs::OnEntityCreated &event)
   {
     third_controller_appear(
       event,
-      *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<ThirdPersonController>(1)
     );
   }
 }
@@ -140,6 +142,7 @@ void animation_player_handler_handler(const KeyEventAnyActionKey &event)
 void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> third_controller_appear_singl_descr("third_controller_appear", {
+  {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, third_controller_appear_singl_handler, (uint)(ecs::SystemTag::Game));
 
@@ -147,7 +150,8 @@ void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ec
 {
   third_controller_appear(
     event,
-      *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ecs::EntityId>(0),
+      *begin.get_component<ThirdPersonController>(1)
   );
 }
 

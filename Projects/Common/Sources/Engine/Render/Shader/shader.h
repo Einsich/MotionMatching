@@ -13,7 +13,7 @@ class Shader
 private:
 	int shaderIdx;
 public:
-	Shader() = default;
+	Shader() :shaderIdx(-1){}
 	Shader(int shaderIdx):shaderIdx(shaderIdx){}
 	Shader(const std::string &shader_name, GLuint shader_program, bool compiled, bool update_list = false);
 	explicit operator bool() const
@@ -22,6 +22,7 @@ public:
   }
 	void use() const;
 	GLuint get_shader_program() const;
+	const string& get_name() const;
 	const ShaderBuffer &get_instance_data() const;
 	const vector<SamplerUniform> &get_samplers() const;
 };

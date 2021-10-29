@@ -187,6 +187,24 @@ void add_global_uniform_handler(const ecs::OnSceneCreated &event)
 }
 
 
+void mesh_loader_handler(const ecs::OnEntityCreated &event);
+
+ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+}, mesh_loader_handler, (uint)(ecs::SystemTag::GameEditor));
+
+void mesh_loader_handler(const ecs::OnEntityCreated &event)
+{
+  for (ecs::QueryIterator begin = mesh_loader_descr.begin(), end = mesh_loader_descr.end(); begin != end; ++begin)
+  {
+    mesh_loader(
+      event,
+      *begin.get_component<Asset<Mesh>>(0)
+    );
+  }
+}
+
+
 void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> add_global_uniform_singl_descr("add_global_uniform", {
@@ -196,6 +214,21 @@ void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::Que
 {
   add_global_uniform(
     event
+  );
+}
+
+
+void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
+
+ecs::SingleEventDescription<ecs::OnEntityCreated> mesh_loader_singl_descr("mesh_loader", {
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+}, mesh_loader_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+
+void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
+{
+  mesh_loader(
+    event,
+      *begin.get_component<Asset<Mesh>>(0)
   );
 }
 

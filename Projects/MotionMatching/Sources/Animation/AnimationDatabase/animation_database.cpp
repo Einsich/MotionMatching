@@ -1,5 +1,5 @@
 #include "animation_database.h"
-#include <Engine/Resources/resources.h>
+#include <Engine/Resources/resource_registration.h>
 #include <Engine/imgui/imgui.h>
 #include <ecs/component_editor.h>
 #include <assimp/Importer.hpp>
@@ -36,10 +36,6 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
   }
   if (needForceReload)
     animation_preprocess(this);
-
-}
-void AnimationDataBase::free()
-{
 
 }
 bool AnimationDataBase::edit()

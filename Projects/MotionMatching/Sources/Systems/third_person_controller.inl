@@ -1,6 +1,7 @@
 #include <ecs/ecs.h>
 #include "Animation/third_person_controller.h"
 #include <Engine/transform.h>
+#include <Engine/camera.h>
 #include "Animation/animation_player.h"
 #include <Engine/time.h>
 #include "Animation/settings.h"
@@ -16,13 +17,17 @@ vec3 rotation_to_orientation(vec2 rotation)
 
 EVENT() third_controller_appear(
   const ecs::OnEntityCreated &,
+  ecs::EntityId &attachedCamera,
   ThirdPersonController &thirdPersonController)
 {
   thirdPersonController.wantedCameraOrientation = thirdPersonController.currentCameraOrientation =
       rotation_to_orientation(thirdPersonController.currentCameraRotation);
 
   thirdPersonController.currentZoom  = thirdPersonController.wantedZoom = 
-    glm::clamp(thirdPersonController.currentZoom, thirdPersonController.minZoom, thirdPersonController.maxZoom);
+    (thirdPersonController.minZoom + thirdPersonController.maxZoom) * 0.5f;
+  if (!attachedCamera)
+    attachedCamera = create_camera(vec3(), vec2(0, 0), true);
+
 }
 
 template<typename Callable>

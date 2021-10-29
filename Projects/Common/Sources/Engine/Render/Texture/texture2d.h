@@ -17,7 +17,6 @@ public:
   bool generate_mips = false);
   
   virtual void load(const filesystem::path &path, bool reload) override;
-  virtual void free() override;
   virtual bool edit() override;
   
   virtual size_t serialize(std::ostream& os) const override;
