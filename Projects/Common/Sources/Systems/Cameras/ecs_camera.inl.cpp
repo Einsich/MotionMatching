@@ -254,14 +254,14 @@ void arccam_mouse_move_handler_handler(const MouseMoveEvent &event)
 }
 
 
-void arccam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event);
+void arccam_mouse_click_handler_handler(const MouseClickEvent &event);
 
-ecs::EventDescription<MouseClickEventAnyEvent> arccam_mouse_click_handler_descr("arccam_mouse_click_handler", {
+ecs::EventDescription<MouseClickEvent> arccam_mouse_click_handler_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_handler, (uint)(ecs::SystemTag::Game));
 
-void arccam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event)
+void arccam_mouse_click_handler_handler(const MouseClickEvent &event)
 {
   for (ecs::QueryIterator begin = arccam_mouse_click_handler_descr.begin(), end = arccam_mouse_click_handler_descr.end(); begin != end; ++begin)
   {
@@ -336,14 +336,14 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
 }
 
 
-void freecam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event);
+void freecam_mouse_click_handler_handler(const MouseClickEvent &event);
 
-ecs::EventDescription<MouseClickEventAnyEvent> freecam_mouse_click_handler_descr("freecam_mouse_click_handler", {
+ecs::EventDescription<MouseClickEvent> freecam_mouse_click_handler_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void freecam_mouse_click_handler_handler(const MouseClickEventAnyEvent &event)
+void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
 {
   for (ecs::QueryIterator begin = freecam_mouse_click_handler_descr.begin(), end = freecam_mouse_click_handler_descr.end(); begin != end; ++begin)
   {
@@ -420,14 +420,14 @@ void arccam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::Q
 }
 
 
-void arccam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin);
+void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEventAnyEvent> arccam_mouse_click_handler_singl_descr("arccam_mouse_click_handler", {
+ecs::SingleEventDescription<MouseClickEvent> arccam_mouse_click_handler_singl_descr("arccam_mouse_click_handler", {
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, arccam_mouse_click_handler_singl_handler, (uint)(ecs::SystemTag::Game));
 
-void arccam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin)
+void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin)
 {
   arccam_mouse_click_handler(
     event,
@@ -490,14 +490,14 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
 }
 
 
-void freecam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin);
+void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin);
 
-ecs::SingleEventDescription<MouseClickEventAnyEvent> freecam_mouse_click_handler_singl_descr("freecam_mouse_click_handler", {
+ecs::SingleEventDescription<MouseClickEvent> freecam_mouse_click_handler_singl_descr("freecam_mouse_click_handler", {
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, freecam_mouse_click_handler_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
 
-void freecam_mouse_click_handler_singl_handler(const MouseClickEventAnyEvent &event, ecs::QueryIterator &begin)
+void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs::QueryIterator &begin)
 {
   freecam_mouse_click_handler(
     event,

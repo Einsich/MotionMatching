@@ -85,7 +85,7 @@ EVENT() arccam_mouse_move_handler(
   }
 }
 EVENT() arccam_mouse_click_handler(
-  const MouseClickEventAnyEvent &e,
+  const MouseClickEvent &e,
   ArcballCamera &arcballCamera,
   bool isMainCamera)
 {
@@ -176,7 +176,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
   }
 }
 EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
-  const MouseClickEventAnyEvent &e,
+  const MouseClickEvent &e,
   FreeCamera &freeCamera,
   bool isMainCamera)
 {

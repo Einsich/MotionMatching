@@ -83,8 +83,6 @@ void Input::event_process(const SDL_KeyboardEvent& event, float time)
   #undef MACRO
 }
 
-#define BUTTON_SWITCH(Action) \
-MACRO(LeftButton, Action) MACRO(RightButton, Action) MACRO(MiddleButton, Action)
 
 void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 {
@@ -106,31 +104,17 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
   }
   if (!eventable)
     return;
-  ecs::send_event(MouseClickEventAnyEvent{button, action, x, y, time});
+  ecs::send_event(MouseClickEvent{button, action, x, y, time});
 
-  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseClickEvent<MouseButton::Button, MouseAction::Action>{x, y, time}); break;
-
-  #define MOUSE_ACTION_TYPE_CASE(Action) case MouseAction::Action: \
-  ecs::send_event(MouseClickEventAnyType<MouseAction::Action>{button, x, y, time}); \
-    switch (button) { \
-      BUTTON_SWITCH(Action) \
-      default: debug_error("ButtonAction::" #Action " unknown button %d", button); break;} break; 
-
-  switch (action)
-  {
-    MOUSE_ACTION_TYPE_CASE(Down)
-    MOUSE_ACTION_TYPE_CASE(Up)
+  #define BUTTON_SWITCH(Action) \
+    MACRO(LeftButton, Action) MACRO(RightButton, Action) MACRO(MiddleButton, Action)
   
-  default:debug_error("unknown MouseAction %d", (int)action);break;
-  }
-  #undef MACRO
-  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseClickEventAnyAction<MouseButton::Button>{action, x, y, time}); break;
+  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseButtonDownEvent<MouseButton::Button>{action, x, y, time}); break;
   switch (button)
   {
     BUTTON_SWITCH(_)
     default: debug_error("unknown mouse button  %d", button); break;
   }
-  
 }
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {

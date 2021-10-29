@@ -5,7 +5,7 @@
 #include "Engine/time.h"
 #include <list>
 #include <stdarg.h>
-const int MaxQueueSize = 10;
+const int MaxQueueSize = 32;
 struct Message
 {
   string message;
@@ -34,6 +34,7 @@ void debug_common(const char *fmt, int status, va_list args)
   else
     fprintf(stdout, "%s%s\n", timeBuf, messageBuf);
 }
+
 void debug_error(const char *fmt, ...)
 {
   va_list args;
@@ -41,6 +42,7 @@ void debug_error(const char *fmt, ...)
   debug_common(fmt, 0, args);
   va_end(args);
 }
+
 void debug_log(const char *fmt, ...)
 {
   va_list args;
@@ -48,9 +50,9 @@ void debug_log(const char *fmt, ...)
   debug_common(fmt, 1, args);
   va_end(args);
 }
+
 void debug_show()
 {
   for (const Message &m: q)
     ImGui::TextColored(m.status ? ImVec4(1,1,1,1) : ImVec4(1,0.1f,0.1f,1) , "%s", m.message.c_str());
-  
 }

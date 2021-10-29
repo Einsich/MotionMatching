@@ -2,6 +2,8 @@
 #include <Engine/time.h>
 #include <Engine/imgui/imgui.h>
 #include "editor_window.h"
+
+void debug_show();
 SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor,ecs::SystemTag::Game) fps_ui(const EditorUI &ui)
 {
   ImGui::Begin("fps", nullptr, ui.windowFlags | ImGuiWindowFlags_NoTitleBar);

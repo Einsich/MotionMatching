@@ -157,7 +157,6 @@ namespace ecs
     {
       EntityId &eid = toDestroy.front();
       debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
-      fflush(stdout);
       core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap);
       core().entityContainer->entityPull.destroy_entity(eid);
       toDestroy.pop();

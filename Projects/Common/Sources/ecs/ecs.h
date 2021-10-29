@@ -1,4 +1,6 @@
 #pragma once
+#include <stdint.h>
+typedef uint32_t uint;
 #include "ecs_core.h"
 #include "system_order.h"
 #include "system_tag.h"

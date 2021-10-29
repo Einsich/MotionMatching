@@ -15,28 +15,15 @@ enum class MouseAction
   Up
 };
 
-
-template<MouseButton buttonType, MouseAction action>
-struct MouseClickEvent
-{
-  int x, y;
-  float time;
-};
 template<MouseButton buttonType>
-struct MouseClickEventAnyAction
+struct MouseButtonDownEvent
 {
   MouseAction action;
   int x, y;
   float time;
 };
-template<MouseAction action>
-struct MouseClickEventAnyType
-{
-  MouseButton buttonType;
-  int x, y;
-  float time;
-};
-struct MouseClickEventAnyEvent
+
+struct MouseClickEvent
 {
   MouseButton buttonType;
   MouseAction action;

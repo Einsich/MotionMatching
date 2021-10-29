@@ -1,6 +1,5 @@
 #include "animation_player.h"
 #include "animation_ik.h"
-#include <Engine/Physics/physics.h>
 #include <ecs/component_editor.h>
 #include <Engine/Resources/resources.h>
 

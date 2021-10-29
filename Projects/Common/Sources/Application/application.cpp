@@ -14,8 +14,8 @@
 Application::Application(const string &window_name,const string &project_path, int width, int height, bool full_screen):
 context(window_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
 projectPath(project_path),
-projectResourcesPath(project_path + "\\Resources"),
-projectShaderPath(project_path + "\\Shaders")
+projectResourcesPath(project_path + "/Resources"),
+projectShaderPath(project_path + "/Shaders")
 {
   assert(scene);
   application = this;

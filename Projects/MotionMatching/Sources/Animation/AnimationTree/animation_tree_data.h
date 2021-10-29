@@ -24,12 +24,10 @@ class AnimationTreeData
 private:
   map<string, int> childMap;
   void build_tree(aiNode *node, mat4 m, int index, int parent);
-  void apply_sub_tree(int my_node, const AnimationTreeData &other_tree, int node, mat4 my_p=mat4(1.f), mat4 other_p=mat4(0.01f), mat4 real_p=mat4(1.f));
   void apply_transforms();
 public:
   vector<AnimationNodeData> nodes;
   AnimationTreeData(aiNode * node);
   AnimationTreeData() = default;
   int get_child(const string& name) const;
-  void apply_other_tree(const AnimationTreeData &other_tree);
 };

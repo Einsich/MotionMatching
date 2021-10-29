@@ -8,6 +8,9 @@ MACRO(float, float)\
 MACRO(vec2, glm::vec2)\
 MACRO(vec3, glm::vec3)\
 MACRO(vec4, glm::vec4)\
+MACRO(mat2, glm::mat2)\
+MACRO(mat3, glm::mat3)\
+MACRO(mat4, glm::mat4)\
 MACRO(double, double)\
 MACRO(string, std::string)\
 MACRO(EntityId, ecs::EntityId)

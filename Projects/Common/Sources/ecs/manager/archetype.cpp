@@ -72,6 +72,12 @@ namespace ecs
       container.second.destroy_component(index, with_swap);
     }
     count--;
+    if (with_swap && index != count)
+    {
+      EntityId &eid = *components[get_type_description<EntityId>("eid").type_name_hash()]
+      .get_component<EntityId>(index);
+      eid.migrate(eid.archetype_index(), index);
+    }
     if (count < 0)
       debug_error("count < 0 in %s", synonim.c_str());
   }

@@ -40,3 +40,29 @@ float mod_f(float x, float n);
 vec2 mod_f(vec2 v, float n);
 vec3 mod_f(vec3 v, float n);
 vec4 mod_f(vec4 v, float n);
+
+
+inline int rand_int(int max_val = RAND_MAX)
+{
+  return abs(rand()) % max_val;
+}
+
+inline float rand_float(float from = -1.f, float to = 1.f)
+{
+  return from + ((float)rand() / RAND_MAX) * (to - from);
+}
+
+inline vec2 rand_vec2(float from = -1.f, float to = 1.f)
+{
+  return vec2(rand_float(from, to), rand_float(from, to));
+}
+
+inline vec3 rand_vec3(float from = -1.f, float to = 1.f)
+{
+  return vec3(rand_float(from, to), rand_float(from, to), rand_float(from, to));
+}
+
+inline vec4 rand_vec4(float from = 0.f, float to = 1.f)
+{
+  return vec4(rand_float(from, to), rand_float(from, to), rand_float(from, to), rand_float(from, to));
+}

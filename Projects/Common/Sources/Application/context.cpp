@@ -4,19 +4,7 @@
 #include "Engine/imgui/imgui_impl_opengl3.h"
 #include "Engine/imgui/imgui_impl_sdl.h"
 #include <SDL2/SDL.h>
-void GLAPIENTRY
-MessageCallback( GLenum source,
-                 GLenum type,
-                 GLuint id,
-                 GLenum severity,
-                 GLsizei length,
-                 const GLchar* message,
-                 const void* userParam )
-{
-  debug_error( "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
-            type, severity, message );
-}
+
 
 // During init, enable debug output
 Context::Context(string window_name, int width, int height, bool full_screen):
@@ -62,7 +50,6 @@ Context::Context(string window_name, int width, int height, bool full_screen):
   ImGui_ImplOpenGL3_Init(glsl_version);
   
   glEnable              ( GL_DEBUG_OUTPUT );
-  glDebugMessageCallback( MessageCallback, 0 );
 }
 void Context::start_imgui()
 {
@@ -76,13 +63,10 @@ void Context::swap_buffer()
 }
 int Context::get_width() const
 {
-  int h, w;
-  SDL_GL_GetDrawableSize(window, &w, &h);
-  return w;
+  return width;
 }
 int Context::get_height() const
 {
-  int h, w;
-  SDL_GL_GetDrawableSize(window, &w, &h);
-  return h;
+  //SDL_GL_GetDrawableSize(window, &w, &h);
+  return height;
 }
