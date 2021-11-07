@@ -20,7 +20,7 @@ void update_material(Callable lambda)
 void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event);
 
 ecs::EventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_descr("reload_shaders", {
-}, reload_shaders_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, reload_shaders_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug));
 
 void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event)
 {
@@ -72,7 +72,7 @@ void reload_directional_light_handler(const ecs::OnEntityEdited &event)
 void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_singl_descr("reload_shaders", {
-}, reload_shaders_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, reload_shaders_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug));
 
 void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::QueryIterator &)
 {

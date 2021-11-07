@@ -30,15 +30,15 @@ static void copy_paths(const string &root, const vector<string> &src, vector<fil
 void Application::start()
 {
   load_meta_info(projectPath + "/project.config");
-  bool editor = false;
-  #ifndef RELEASE
-  editor = true;
-  #endif
   ApplicationMetaInfo &metaInfo = get_meta_info();
   copy_paths(root, metaInfo.shadersPaths, shadersPaths);
   copy_paths(root, metaInfo.resourcesPaths, resourcesPaths);
   compile_shaders();
-  editor &= !metaInfo.startGame;
+  bool editor = !metaInfo.startGame;
+  
+  #ifdef RELEASE
+  editor = false;
+  #endif
   scene->start(editor);
   ecs::load_templates();
   get_profiler();

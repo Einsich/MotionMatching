@@ -17,8 +17,12 @@ cd ../Builds/%BUILD_TYPE%
 set binPath=..\..\%PROJECT%
 IF not exist %binPath% (mkdir %binPath%)
 
-ren Application.exe %PROJECT%-%BUILD_TYPE%.exe
-move %PROJECT%-%BUILD_TYPE%.exe %binPath%
+set APP_NAME=%PROJECT%-%BUILD_TYPE%.exe
+IF "%BUILD_TYPE%"=="rel" (
+    set APP_NAME=%PROJECT%.exe
+)
+ren Application.exe %APP_NAME%
+move %APP_NAME% %binPath%
 if "%CMAKE%"=="yes" (
     IF not exist %binPath%\assimp-vc142-mt.dll (copy ..\assimp-vc142-mt.dll %binPath%)
 )

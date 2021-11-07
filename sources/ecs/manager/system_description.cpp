@@ -1,5 +1,6 @@
 #include "system_description.h"
 #include "core_interface.h"
+#include "../system_tag.h"
 namespace ecs
 {
   SystemCashedArchetype::SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers):

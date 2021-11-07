@@ -10,7 +10,7 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor,ecs::SystemTag::Game) fps_ui(
   ImGui::Text("%.1f fps", Time::fps());
   ImGui::End();
 }
-SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor,ecs::SystemTag::Game) debug_console_ui(const EditorUI &ui)
+SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::GameEditor,ecs::SystemTag::Debug) debug_console_ui(const EditorUI &ui)
 {
   ImGui::Begin("debug", nullptr, ui.windowFlags);
   debug_show();

@@ -36,6 +36,7 @@ namespace ecs
     }
     void destroy_entities();
     void replace_entity_container(EntityContainer *container);
+    static bool allow_system_execute(uint tags, uint require_tags);
   };
   Core &core();
 
@@ -122,12 +123,18 @@ namespace ecs
   template<typename E>
   void send_event(const E &event)
   {
-    uint currentSceneTags = core().currentSceneTags;
-    core().events.push([event, currentSceneTags](){
-    for (EventDescription<E> *descr : core().events_handler<E>())
-      if (descr->tags & currentSceneTags)
-        descr->eventHandler(event);
+    core().events.push([event](){
+      for (EventDescription<E> *descr : core().events_handler<E>())
+        if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
+          descr->eventHandler(event);
     });
+  }
+  template<typename E>
+  void send_event_immediate(const E &event)
+  {
+    for (EventDescription<E> *descr : core().events_handler<E>())
+      if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
+        descr->eventHandler(event);
   }
 
 
@@ -140,11 +147,10 @@ namespace ecs
   {
     if (eid)
     {
-      uint currentSceneTags = core().currentSceneTags;
-      core().events.push([eid, event, currentSceneTags](){
+      core().events.push([eid, event](){
         for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
         {
-          if (descr->tags & currentSceneTags)
+          if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
           {
             QueryIterator iterator;
             if (get_iterator(*((QueryDescription*)descr), eid, iterator))
@@ -161,10 +167,9 @@ namespace ecs
   {
     if (eid)
     {
-      uint currentSceneTags = core().currentSceneTags;
       for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
       {
-        if (descr->tags & currentSceneTags)
+        if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
         {
           QueryIterator iterator;
           if (get_iterator(*((QueryDescription*)descr), eid, iterator))
@@ -174,14 +179,6 @@ namespace ecs
         }
       } 
     }
-  }
-  template<typename E>
-  void send_event_immediate(const E &event)
-  {
-    uint currentSceneTags = core().currentSceneTags;
-    for (EventDescription<E> *descr : core().events_handler<E>())
-      if (descr->tags & currentSceneTags)
-        descr->eventHandler(event);
   }
 
   void system_statistic();

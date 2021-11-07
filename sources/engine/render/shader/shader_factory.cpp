@@ -56,13 +56,12 @@ void compile_shaders()
   //load_obj("/precompiled_shaders.bin", precompiledShaders);
   //load_precompiled_shaders(precompiledShaders);
   
-#ifndef RELEASE
   //load_obj("/shaders_dependencies.bin", getShaderFiles());
   for (const auto &path: Application::instance().shadersPaths)
     if (fs::exists(path))
       read_directories(path);
   process_codegen_shaders();
-#endif
+
   debug_log("finish shader compilation");
 }
 void recompile_shaders()
@@ -78,8 +77,8 @@ void recompile_shaders()
 void save_shader_info()
 {
 #ifndef RELEASE
-  save_precompiled_shaders(precompiledShaders);
-  save_obj("/shaders_dependencies.bin", getShaderFiles());
-  save_obj("/precompiled_shaders.bin", precompiledShaders);
+  //save_precompiled_shaders(precompiledShaders);
+  //save_obj("/shaders_dependencies.bin", getShaderFiles());
+  //save_obj("/precompiled_shaders.bin", precompiledShaders);
 #endif
 }

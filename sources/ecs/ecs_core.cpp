@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "ecs_core.h"
 #include "ecs_event.h"
+#include "system_tag.h"
 #include "manager/system_description.h"
 #include "editor/template.h"
 #include "common.h"
@@ -37,6 +38,16 @@ namespace ecs
     }
     entityContainer->entityPull.clear();
   }
+  
+  bool Core::allow_system_execute(uint tags, uint require_tags)
+  {
+#ifdef RELEASE
+    if (tags & SystemTag::Debug)
+      return false;
+#endif
+    return (tags & require_tags) == require_tags;
+  }
+
 
   void register_archetype(Archetype *archetype);
   void Core::replace_entity_container(EntityContainer *container)

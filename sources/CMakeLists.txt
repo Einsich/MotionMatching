@@ -21,14 +21,14 @@ set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declara
 
 if(BUILD_TYPE STREQUAL "dbg")
     set(CMAKE_BUILD_TYPE "Debug")
-elseif(BUILD_TYPE STREQUAL "rel")
+else()
     if (WIN32)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
     endif()
     set(CMAKE_BUILD_TYPE  "Release")
 endif()
 
-if(RELEASE STREQUAL "yes")
+if(BUILD_TYPE STREQUAL "rel")
     add_definitions(-DRELEASE)
 endif()
 

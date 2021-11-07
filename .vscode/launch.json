@@ -17,6 +17,18 @@
             }
         },
         {
+            "name": "Run release project",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}.exe",
+            "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
+            "args": [],
+           // "preLaunchTask": "Build project",
+            "linux": {
+                "type": "cppdbg",
+            }
+        },
+        {
             "name": "Run ecs codegen",
             "type": "cppvsdbg",
             "request": "launch",

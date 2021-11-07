@@ -101,6 +101,7 @@
   "launchOption.options": {
     "BuildType": [
         {"name": "Debug","value": "dbg"},
+        {"name": "Develop","value": "dev"},
         {"name": "Release", "value": "rel"}
     ],
     "Project": [

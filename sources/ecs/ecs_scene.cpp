@@ -58,7 +58,7 @@ namespace ecs
       {
         currentScene = scene;
         currentSceneTags = tags;
-        bool editor = tags == (uint)ecs::SystemTag::Editor;
+        bool editor = tags & ecs::SystemTag::Editor;
         core().currentSceneTags = tags;
         ecs::EntityContainer &curContainer = editor ? scene->editorScene : scene->gameScene;
         core().entityContainer = &curContainer;
@@ -122,9 +122,8 @@ namespace ecs
   void SceneManager::update_range(const SystemRange &range)
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
-      if ((*it)->tags & currentSceneTags)
+      if (Core::allow_system_execute((*it)->tags, currentSceneTags))
       {
-        //debug_log("execute %s system", (*it)->name.c_str());
         ProfilerLabel label((*it)->name.c_str());
         (*it)->execute();
       }

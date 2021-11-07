@@ -22,7 +22,7 @@ void debug_console_ui_func();
 
 ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, debug_console_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, debug_console_ui_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::GameEditor|ecs::SystemTag::Debug));
 
 void debug_console_ui_func()
 {
