@@ -2,25 +2,42 @@
     "tasks": [
         {
             "type": "shell",
+            "label": "ecs code generation",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./Tools/ecs_codegen.sh",
+            "args": ["${config:launchOption.currentConfig.Project.name}"],
+            "windows": {
+                "command": "Tools\\ecs_codegen.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
             "label": "Build and configure project",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./build_script.sh",
+            "command": "./Tools/build_script.sh",
             "args": [
-                "${config:launchOption.currentConfig.Project}",
+                "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "no",
+                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
                 "yes",
-                "yes"
+                "no"
             ],
             "windows": {
-                "command": "./build_script.bat"
+                "command": "Tools\\build_script.bat"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
+            "dependsOn":["ecs code generation"]
         },
         {
             "type": "shell",
@@ -28,113 +45,22 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./build_script.sh",
+            "command": "./Tools/build_script.sh",
             "args": [
-                "${config:launchOption.currentConfig.Project}",
+                "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
+                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
                 "no",
-                "yes",
                 "no"
             ],
             "windows": {
-                "command": "./build_script.bat"
+                "command": "Tools\\build_script.bat"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-        },
-        {
-            "type": "shell",
-            "label": "Rebuild project",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "./build_script.sh",
-            "args": [
-                "${config:launchOption.currentConfig.Project}",
-                "${config:launchOption.currentConfig.BuildType}",
-                "yes",
-                "yes",
-                "yes"
-            ],
-            "windows": {
-                "command": "./build_script.bat"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Build and configure project as dll",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "./build_dll_script.sh",
-            "args": [
-                "${config:launchOption.currentConfig.Project}",
-                "${config:launchOption.currentConfig.BuildType}",
-                "no",
-                "yes",
-                "yes"
-            ],
-            "windows": {
-                "command": "./build_dll_script.bat"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Build Codegen",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "build_console_app_script.sh ECSCodeGen ${config:launchOption.currentConfig.BuildType}",
-
-            "windows": {
-                "command": "./build_console_app_script.bat ECSCodeGen ${config:launchOption.currentConfig.BuildType}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Build ConsoleApp",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "build_console_app_script.sh ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}",
-
-            "windows": {
-                "command": "./build_console_app_script.bat ${config:launchOption.currentConfig.Project} ${config:launchOption.currentConfig.BuildType}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "type": "shell",
-            "label": "Build RT compiler",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "build_console_app_script.sh RTCompilation ${config:launchOption.currentConfig.BuildType}",
-
-            "windows": {
-                "command": "./build_console_app_script.bat RTCompilation ${config:launchOption.currentConfig.BuildType}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "dependsOn":["ecs code generation"]
         },
         {
             "type": "shell",
@@ -143,6 +69,19 @@
                 "cwd": "${workspaceFolder}"
             },
             "command": "del /S *.inl.cpp",
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Remove resources meta",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "del /S *.meta",
             "args": [],
             "group": {
                 "kind": "build",

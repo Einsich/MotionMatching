@@ -99,15 +99,40 @@
     "stop_token": "cpp"
   },
   "launchOption.options": {
-    "Project": [ "MotionMatching", "ECSCodeGen", "ECSExample", "RayTracing", "Strategy", "ShaderCompiler"],
     "BuildType": [
         {"name": "Debug","value": "dbg"},
         {"name": "Release", "value": "rel"}
+    ],
+    "Project": [
+      {
+        "name": "MotionMatching",
+        "value":{
+          "name":"MotionMatching",
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+        }
+      },
+      {
+        "name": "ECSCodeGen",
+        "value":{
+          "name":"ECSCodeGen",
+          "dependencies":""
+        }
+      },
+      {
+        "name": "Strategy",
+        "value":{
+          "name":"Strategy",
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+        }
+      }
     ]
-},
-"launchOption.currentConfig": {
-  "Project": "MotionMatching",
-  "BuildType": "rel"
-},
-"cmake.configureOnOpen": false,
+  },
+  "launchOption.currentConfig": {
+    "BuildType": "dbg",
+    "Project": {
+      "name": "MotionMatching",
+      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+    }
+  },
+  "cmake.configureOnOpen": false,
 }

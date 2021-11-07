@@ -38,3 +38,7 @@ Test
 *.fbx
 *.jpg
 *.png
+
+*.fbx.meta
+*.jpg.meta
+*.png.meta

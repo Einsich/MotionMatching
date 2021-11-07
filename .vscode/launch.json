@@ -8,69 +8,27 @@
             "name": "Run project",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
+            "program": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}-${config:launchOption.currentConfig.BuildType}.exe",
+            "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
             "args": [],
-            "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
-            "preLaunchTask": "Build project",
-            "windows": {
-                "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}"
-            },
-            "linux": {
-                "type": "cppdbg",
-            }
-        },        
-        {
-            "name": "Run console app",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
-            "args": [],
-            "cwd": "${workspaceFolder}/Builds/unix/${config:launchOption.currentConfig.Project}",
-            "preLaunchTask": "Build ConsoleApp",
-            "windows": {
-                "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}/${config:launchOption.currentConfig.Project}-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.Project}"
-            },
+           // "preLaunchTask": "Build project",
             "linux": {
                 "type": "cppdbg",
             }
         },
         {
-            "name": "Test codeGen",
+            "name": "Run ecs codegen",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Builds/unix/ECSCodeGen/ECSCodeGen-${config:launchOption.currentConfig.BuildType}.exe",
+            "program": "${workspaceFolder}/ECSCodeGen/ECSCodeGen-${config:launchOption.currentConfig.BuildType}.exe",
             "args": [
-                "${workspaceFolder}/Projects/${config:launchOption.currentConfig.Project}/Sources/Systems",
+                "${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}",
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Builds/ECSCodeGen",
-            "windows": {
-                "program": "${workspaceFolder}/Builds/win/ECSCodeGen/ECSCodeGen-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
-            },
+            "cwd": "${workspaceFolder}/ECSCodeGen",
             "linux": {
                 "type": "cppdbg",
             }
         },
-        {
-            "name": "Test RT compilation",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/Builds/unix/RTCompilation/RTCompilation-${config:launchOption.currentConfig.BuildType}.exe",
-            "args": [
-                "${workspaceFolder}/Projects/${config:launchOption.currentConfig.Project}/Sources/Systems",
-            ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Builds/RTCompilation",
-            "windows": {
-                "program": "${workspaceFolder}/Builds/win/RTCompilation/RTCompilation-${config:launchOption.currentConfig.BuildType}.exe",
-                "cwd": "${workspaceFolder}/Builds/win/${config:launchOption.currentConfig.Project}"
-            },
-            "linux": {
-                "type": "cppdbg",
-            }
-        }
     ]
 }
