@@ -22,21 +22,34 @@ namespace ecs
     static Core *singleton = new Core();
     return *singleton;
   }
-  void Core::destroy_entities()
+  void Core::destroy_all_entities()
   {
+    destroy_entities_from_destroy_queue(false);
     for (auto it = entityContainer->entityPull.begin(), end = entityContainer->entityPull.end(); it != end; ++it)
     {
       EntityId eid = it.eid();
       if (eid)
       {
-#if ECS_DEBUG_INFO
-        debug_log("add %d %d entity to destroy queue", eid.archetype_index(), eid.array_index());
-#endif
-        send_event(eid, OnEntityDestroyed());
-        toDestroy.push(eid);
+        send_event_immediate(eid, OnEntityDestroyed());
+        entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), false);
       }
     }
     entityContainer->entityPull.clear();
+  }
+  
+  void Core::destroy_entities_from_destroy_queue(bool with_swap_last_element)
+  {
+    for (int i = 0, n = toDestroy.size(); i < n; i++)
+    {
+      EntityId &eid = toDestroy.front();
+      if (eid)
+      {
+        debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
+        core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap_last_element);
+        core().entityContainer->entityPull.destroy_entity(eid);
+      }
+      toDestroy.pop();
+    }
   }
   
   bool Core::allow_system_execute(uint tags, uint require_tags)
@@ -360,6 +373,11 @@ namespace ecs
       }
       printf("}\n");
     }
+  }
+  void destroy_scene()
+  {    
+    core().destroy_all_entities();
+    core().events = {};
   }
 }
 

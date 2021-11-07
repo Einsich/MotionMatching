@@ -4,8 +4,9 @@
 #include "is_vector.h"
 
 #include "glm/glm.hpp"
-#include "../base_types.h"
 #include "entity_id.h"
+#include "../ecs_tag.h"
+#include "../base_types.h"
 #include <type_traits>
 
 template <std::string_view const&... Strs>

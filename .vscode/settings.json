@@ -125,13 +125,20 @@
           "name":"Strategy",
           "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
         }
+      },
+      {
+        "name": "Arcade",
+        "value":{
+          "name":"Arcade",
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+        }
       }
     ]
   },
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "MotionMatching",
+      "name": "Arcade",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },

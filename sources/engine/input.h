@@ -105,8 +105,20 @@ public:
   void event_process(const SDL_MouseButtonEvent& event, float time);
   void event_process(const SDL_MouseMotionEvent& event, float time);
   void event_process(const SDL_MouseWheelEvent& event, float time);
-  float get_key(SDL_Keycode keycode, float reaction_time = 0.1f);
-  float get_key_derivative(SDL_Keycode keycode, float reaction_time = 0.1f);
-  float get_wheel();
-  
+
+  float get_key_impl(SDL_Keycode keycode, float reaction_time = 0.1f);
+  float get_key_derivative_impl(SDL_Keycode keycode, float reaction_time = 0.1f);
+  float get_wheel_impl();
+  static float get_key(SDL_Keycode keycode, float reaction_time = 0.1f)
+  {
+    return input().get_key_impl(keycode, reaction_time);
+  }
+  static float get_key_derivative(SDL_Keycode keycode, float reaction_time = 0.1f)
+  {
+    return input().get_key_derivative_impl(keycode, reaction_time);
+  }
+  static float get_wheel()
+  {
+    return input().get_wheel_impl();
+  }
 };

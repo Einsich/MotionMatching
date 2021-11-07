@@ -7,7 +7,7 @@
 Camera::Camera():
 orthographic(false),
 orhtoScale(1.f),
-aspectRatio((float)Application::get_context().get_width() / Application::get_context().get_height()),
+aspectRatio(Application::get_context().get_aspect_ratio()),
 fieldOfView(90), 
 zNear(0.01f),
 zFar(5000.f)
@@ -27,7 +27,7 @@ void Camera::set_perspective(float fieldOfView, float zNear, float zFar)
   this->fieldOfView = fieldOfView;
   this->zFar = zFar;
   this->zNear = zNear;
-  const float aspectRatio = (float)Application::get_context().get_width() / Application::get_context().get_height();
+  const float aspectRatio = Application::get_context().get_aspect_ratio();
   projection = perspective(fieldOfView * DegToRad, aspectRatio, zNear, zFar);
 }
 const mat4x4& Camera::get_projection() const

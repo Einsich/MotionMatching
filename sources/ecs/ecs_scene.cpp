@@ -89,9 +89,8 @@ namespace ecs
         currentScene->gamePaused = pause;
         if (!pause)
         {
-          core().destroy_entities();
-          process_only_events();
-          destroy_entities(false);
+          process_events();
+          core().destroy_all_entities();
         }
         currentSceneTags = newTags;
         core().currentSceneTags = newTags;
@@ -149,20 +148,7 @@ namespace ecs
     }
 
   }
-  void SceneManager::destroy_entities(bool with_swap)
-  {
-    auto &toDestroy = core().toDestroy;
-    for (int i = 0, n = toDestroy.size(); i < n; i++)
-    {
-      EntityId &eid = toDestroy.front();
-      debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
-      core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap);
-      core().entityContainer->entityPull.destroy_entity(eid);
-      toDestroy.pop();
-      
-    }
-  }
-  void SceneManager::process_only_events()
+  void SceneManager::process_events()
   {
     auto &events = core().events;
     for (int i = 0, n = events.size(); i < n; i++)
@@ -170,12 +156,7 @@ namespace ecs
       events.front()();
       events.pop();
     }
-  }
-  void SceneManager::process_events()
-  {
-    //debug_log("process events");
-    process_only_events();
-    destroy_entities(true);
+    core().destroy_entities_from_destroy_queue(true);
   }
   
   void SceneManager::save_current_scene()
@@ -191,9 +172,8 @@ namespace ecs
   void SceneManager::destroy_scene()
   {
     save_current_scene();
-    core().destroy_entities();
-    process_only_events();
-    destroy_entities(false);
+    process_events();
+    core().destroy_all_entities();
     for (Scene *scene: scenes)
     {
       for (Archetype *archetype : scene->gameScene.archetypes)

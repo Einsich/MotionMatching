@@ -34,7 +34,8 @@ namespace ecs
       static std::vector<SingleEventDescription<E>*> handlers;
       return handlers;
     }
-    void destroy_entities();
+    void destroy_all_entities();
+    void destroy_entities_from_destroy_queue(bool with_swap_last_element);
     void replace_entity_container(EntityContainer *container);
     static bool allow_system_execute(uint tags, uint require_tags);
   };
@@ -182,5 +183,5 @@ namespace ecs
   }
 
   void system_statistic();
-
+  void destroy_scene();
 }

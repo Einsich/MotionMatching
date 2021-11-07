@@ -26,7 +26,6 @@ namespace ecs
     Scene *currentScene;
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
-    void process_only_events();
   public:
     void save_current_scene();
     void start(bool editor);

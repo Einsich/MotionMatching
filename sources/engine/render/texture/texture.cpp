@@ -26,6 +26,12 @@ void Texture::bind(const Shader &shader, const char * textureName) const
   glBindTexture(textureType, textureObject);
   glUniform1i(glGetUniformLocation(shader.get_shader_program(), textureName), activationUnit);
 }
+void Texture::bind(const Shader &shader, const char * textureName, int slot) const
+{
+  glActiveTexture(GL_TEXTURE0 + slot);
+  glBindTexture(textureType, textureObject);
+  glUniform1i(glGetUniformLocation(shader.get_shader_program(), textureName), slot);
+}
 const string &Texture::get_name() const
 {
   return textureName;

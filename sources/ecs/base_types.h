@@ -13,4 +13,5 @@ MACRO(mat3, glm::mat3)\
 MACRO(mat4, glm::mat4)\
 MACRO(double, double)\
 MACRO(string, std::string)\
-MACRO(EntityId, ecs::EntityId)
+MACRO(EntityId, ecs::EntityId)\
+MACRO(Tag, ecs::Tag)

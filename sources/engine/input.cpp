@@ -140,7 +140,7 @@ void Input::event_process(const SDL_MouseWheelEvent& event, float time)
     ecs::send_event(MouseWheelEvent{wheel, time});
 }
 
-float Input::get_key(SDL_Keycode keycode, float reaction_time)
+float Input::get_key_impl(SDL_Keycode keycode, float reaction_time)
 {
   auto p = keyMap[keycode];
   if (p.first == 0)
@@ -154,7 +154,7 @@ float Input::get_key(SDL_Keycode keycode, float reaction_time)
     return t < 1 ? t : 1;
   }
 }
-float Input::get_key_derivative(SDL_Keycode keycode, float reaction_time)
+float Input::get_key_derivative_impl(SDL_Keycode keycode, float reaction_time)
 {
   auto p = keyMap[keycode];
   if (p.first == 0)
@@ -168,7 +168,7 @@ float Input::get_key_derivative(SDL_Keycode keycode, float reaction_time)
     return t < 1 ? 1 : 0;
   }
 }
-float Input::get_wheel()
+float Input::get_wheel_impl()
 {
   float dt = Time::time() - wheelData.lastTime;
   if (dt > wheelDecayTime)

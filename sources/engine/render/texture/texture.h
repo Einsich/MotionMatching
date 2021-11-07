@@ -58,6 +58,7 @@ private:
 public:
   Texture():textureObject(0), textureDepth(1){}
   void bind(const Shader &shader, const char * textureName) const;
+  void bind(const Shader &shader, const char * textureName, int slot) const;
   const string &get_name() const;
   uint get_texture_object() const;
   uint get_texture_type() const;
