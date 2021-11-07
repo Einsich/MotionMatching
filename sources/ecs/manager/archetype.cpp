@@ -21,7 +21,7 @@ namespace ecs
       auto typeIt = TypeInfo::types().find(it->second.typeHash);
       assert(typeIt->first && "Don't found this type");
       fullTypeDescriptions.push_back(&it->second);
-      components.try_emplace(typeNameHash, typeIt->second.hashId, typeNameHash, capacity, typeIt->second.sizeOf);
+      components.try_emplace(typeNameHash, typeIt->second, typeNameHash, capacity);
     }    
   }
 
@@ -170,8 +170,7 @@ namespace ecs
         auto descrIt = full_description().try_emplace(typeNameHash, compName.c_str(), typeHash, typeNameHash);
         archetypes[k]->fullTypeDescriptions[i] = &descrIt.first->second;
         
-        auto p = archetypes[k]->components.try_emplace
-          (typeNameHash, typeInfo.hashId, typeNameHash, count, typeInfo.sizeOf);
+        auto p = archetypes[k]->components.try_emplace(typeNameHash, typeInfo, typeNameHash, count);
         assert(p.second && "Failed to emplace type");
         ComponentContainer &container = p.first->second;
         container.count = count;

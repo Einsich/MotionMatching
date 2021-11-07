@@ -13,8 +13,11 @@ namespace ecs
   public:
     string_hash typeHash, typeNameHash;
     int count, capacity, sizeOf;
+    Constructor constructor = nullptr;
+    CopyConstructor copy_constructor = nullptr;
+    Destructor destructor = nullptr;
     ComponentContainer();
-    ComponentContainer(string_hash type_hash, string_hash type_name_hash, int capacity, int sizeOf);
+    ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity);
     template<typename T>
     T* get_component(int i)
     {

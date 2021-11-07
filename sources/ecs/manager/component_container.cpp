@@ -7,16 +7,22 @@ namespace ecs
   ComponentContainer::ComponentContainer():
   data(), typeHash(-1), count(0)
   {  }
-  ComponentContainer::ComponentContainer(string_hash type_hash, string_hash type_name_hash, int capacity, int sizeOf):
-  data((capacity + binSize - 1) / binSize), typeHash(type_hash), typeNameHash(type_name_hash), count(0), capacity(data.size() * binSize), sizeOf(sizeOf)
+  ComponentContainer::ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity):
+  data((capacity + binSize - 1) / binSize),
+  typeHash(type_info.hashId),
+  typeNameHash(type_name_hash),
+  count(0),
+  capacity(data.size() * binSize),
+  sizeOf(type_info.sizeOf),
+  constructor(type_info.constructor),
+  copy_constructor(type_info.copy_constructor),
+  destructor(type_info.destructor)
   { 
     for (uint i = 0; i < data.size(); ++i)
-      data[i] = malloc(binSize * type_sizeof(typeHash));
+      data[i] = malloc(binSize * sizeOf);
   }
   ComponentContainer::~ComponentContainer()
   {
-    Destructor destructor = type_destructor(typeHash);
-    uint sizeOf = type_sizeof(typeHash);
     for (int i = 0, j = 0; i * binSize + j < count;)
     {
       void *removed = (char*)data[i] + sizeOf * j;
@@ -35,36 +41,32 @@ namespace ecs
   void ComponentContainer::add_component(void *component_data)
   {
     void *dst = add_component();
-    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
-    Constructor constructor = copy_constructor(typeHash);
     constructor(dst);
-    copyConstructor(component_data, dst);
+    copy_constructor(component_data, dst);
   }
   void* ComponentContainer::add_component()
   {
     if (count == capacity)
     {
-      data.push_back(malloc(binSize * type_sizeof(typeHash)));
+      data.push_back(malloc(binSize * sizeOf));
       capacity += binSize;
     }
     int j = count / binSize;
     int i = count % binSize;
-    void *dst = (char*)data[j] + type_sizeof(typeHash) * i;
+    void *dst = (char*)data[j] + sizeOf * i;
     count++;
     return dst;
   }
   void ComponentContainer::destroy_component(int i, bool with_swap)
   {
     count--;
-    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
-    Destructor destructor = type_destructor(typeHash);
     int j = count;
-    void *removed = (char*)data[i / binSize] + type_sizeof(typeHash) * (i % binSize);
+    void *removed = (char*)data[i / binSize] + sizeOf * (i % binSize);
     destructor(removed);
     if (with_swap && j != i)
     {
-      void *copied = (char*)data[j / binSize] + type_sizeof(typeHash) * (j % binSize);
-      copyConstructor(copied, removed);
+      void *copied = (char*)data[j / binSize] + sizeOf * (j % binSize);
+      copy_constructor(copied, removed);
     }
   }
   
@@ -73,20 +75,18 @@ namespace ecs
     assert(count == 0 && "Need empty container to copy to");
     while (other.count >= capacity)
     {
-      data.push_back(malloc(binSize * type_sizeof(typeHash)));
+      data.push_back(malloc(binSize * sizeOf));
       capacity += binSize;
     }
-    CopyConstructor copyConstructor = type_copy_constructor(typeHash);
-    Constructor constructor = copy_constructor(typeHash);
 
     for (;count < other.count; ++count)
     {
       int j = count / binSize;
       int i = count % binSize;
-      const void *scr = (char*)other.data[j] + type_sizeof(typeHash) * i;
-            void *dst = (char*)      data[j] + type_sizeof(typeHash) * i;
+      const void *scr = (char*)other.data[j] + sizeOf * i;
+            void *dst = (char*)      data[j] + sizeOf * i;
       constructor(dst);
-      copyConstructor(scr, dst);
+      copy_constructor(scr, dst);
     }
   }
 }
