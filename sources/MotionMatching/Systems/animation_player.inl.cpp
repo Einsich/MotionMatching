@@ -13,7 +13,7 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false},
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, animation_player_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
+}, animation_player_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
 
 void animation_player_update_func()
 {
@@ -40,7 +40,7 @@ ecs::EventDescription<ecs::OnEntityCreated> init_animation_character_descr("init
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), true},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
-}, init_animation_character_handler, (uint)(ecs::SystemTag::GameEditor));
+}, init_animation_character_handler, ecs::SystemTag::GameEditor);
 
 void init_animation_character_handler(const ecs::OnEntityCreated &event)
 {
@@ -60,7 +60,7 @@ void init_animation_material_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> init_animation_material_descr("init_animation_material", {
   {ecs::get_type_description<Asset<Material>>("material"), false}
-}, init_animation_material_handler, (uint)(ecs::SystemTag::Game));
+}, init_animation_material_handler, ecs::SystemTag::Game);
 
 void init_animation_material_handler(const ecs::OnEntityCreated &event)
 {
@@ -80,7 +80,7 @@ ecs::SingleEventDescription<ecs::OnEntityCreated> init_animation_character_singl
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), true},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
-}, init_animation_character_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+}, init_animation_character_singl_handler, ecs::SystemTag::GameEditor);
 
 void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {
@@ -97,7 +97,7 @@ void init_animation_material_singl_handler(const ecs::OnEntityCreated &event, ec
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> init_animation_material_singl_descr("init_animation_material", {
   {ecs::get_type_description<Asset<Material>>("material"), false}
-}, init_animation_material_singl_handler, (uint)(ecs::SystemTag::Game));
+}, init_animation_material_singl_handler, ecs::SystemTag::Game);
 
 void init_animation_material_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {

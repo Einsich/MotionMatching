@@ -4,7 +4,7 @@
 void menu_profiler_func();
 
 ecs::SystemDescription menu_profiler_descr("menu_profiler", {
-}, menu_profiler_func, ecs::SystemOrder::UIMENU, (uint)( ecs::SystemTag::GameEditor));
+}, menu_profiler_func, ecs::SystemOrder::UIMENU,  ecs::SystemTag::GameEditor);
 
 void menu_profiler_func()
 {

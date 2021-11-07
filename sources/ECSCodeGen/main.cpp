@@ -168,10 +168,9 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
   }
   if (tags.empty())
     tags.push_back("ecs::SystemTag::Game");
-  parserDescr.tags = "(uint)(" + tags[0];
+  parserDescr.tags = tags[0];
   for (uint i = 1; i < tags.size(); ++i)
     parserDescr.tags += "|" + tags[i];
-  parserDescr.tags += ")";
 }
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
   const std::string &file, const std::string &file_path,

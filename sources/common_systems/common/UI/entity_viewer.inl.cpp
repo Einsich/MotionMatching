@@ -5,7 +5,7 @@ void entity_viewer_func();
 
 ecs::SystemDescription entity_viewer_descr("entity_viewer", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, entity_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::GameEditor|ecs::SystemTag::Debug));
+}, entity_viewer_func, ecs::SystemOrder::UI, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
 
 void entity_viewer_func()
 {
@@ -22,7 +22,7 @@ void ecs_types_viewer_func();
 
 ecs::SystemDescription ecs_types_viewer_descr("ecs_types_viewer", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, ecs_types_viewer_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
+}, ecs_types_viewer_func, ecs::SystemOrder::UI, ecs::SystemTag::Editor);
 
 void ecs_types_viewer_func()
 {
@@ -39,7 +39,7 @@ void entity_creater_func();
 
 ecs::SystemDescription entity_creater_descr("entity_creater", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, entity_creater_func, ecs::SystemOrder::UI, (uint)(ecs::SystemTag::Editor));
+}, entity_creater_func, ecs::SystemOrder::UI, ecs::SystemTag::Editor);
 
 void entity_creater_func()
 {
@@ -56,7 +56,7 @@ void init_imgui_style_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> init_imgui_style_descr("init_imgui_style", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, init_imgui_style_handler, (uint)(ecs::SystemTag::GameEditor|ecs::SystemTag::Debug));
+}, init_imgui_style_handler, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
 
 void init_imgui_style_handler(const ecs::OnSceneCreated &event)
 {
@@ -74,7 +74,7 @@ void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::Query
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> init_imgui_style_singl_descr("init_imgui_style", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, init_imgui_style_singl_handler, (uint)(ecs::SystemTag::GameEditor|ecs::SystemTag::Debug));
+}, init_imgui_style_singl_handler, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
 
 void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
 {

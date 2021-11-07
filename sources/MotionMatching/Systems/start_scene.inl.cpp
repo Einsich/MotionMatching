@@ -6,7 +6,7 @@ void init_anim_settings_handler(const ecs::OnSceneCreated &event);
 ecs::EventDescription<ecs::OnSceneCreated> init_anim_settings_descr("init_anim_settings", {
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, init_anim_settings_handler, (uint)(ecs::SystemTag::Game));
+}, init_anim_settings_handler, ecs::SystemTag::Game);
 
 void init_anim_settings_handler(const ecs::OnSceneCreated &event)
 {
@@ -27,7 +27,7 @@ ecs::EventDescription<ecs::OnEntityDestroyed> scene_destroy_descr("scene_destroy
   {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, scene_destroy_handler, (uint)(ecs::SystemTag::Game));
+}, scene_destroy_handler, ecs::SystemTag::Game);
 
 void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
 {
@@ -48,7 +48,7 @@ void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::Que
 ecs::SingleEventDescription<ecs::OnSceneCreated> init_anim_settings_singl_descr("init_anim_settings", {
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, init_anim_settings_singl_handler, (uint)(ecs::SystemTag::Game));
+}, init_anim_settings_singl_handler, ecs::SystemTag::Game);
 
 void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
 {
@@ -66,7 +66,7 @@ ecs::SingleEventDescription<ecs::OnEntityDestroyed> scene_destroy_singl_descr("s
   {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, scene_destroy_singl_handler, (uint)(ecs::SystemTag::Game));
+}, scene_destroy_singl_handler, ecs::SystemTag::Game);
 
 void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::QueryIterator &begin)
 {

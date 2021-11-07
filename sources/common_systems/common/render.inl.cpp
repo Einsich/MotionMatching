@@ -38,7 +38,7 @@ void render_submenu_func();
 
 ecs::SystemDescription render_submenu_descr("render_submenu", {
   {ecs::get_type_description<EditorRenderSettings>("settings"), false}
-}, render_submenu_func, ecs::SystemOrder::UIMENU, (uint)( ecs::SystemTag::Editor));
+}, render_submenu_func, ecs::SystemOrder::UIMENU,  ecs::SystemTag::Editor);
 
 void render_submenu_func()
 {
@@ -55,7 +55,7 @@ void set_global_render_data_func();
 
 ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, set_global_render_data_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
+}, set_global_render_data_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor);
 
 void set_global_render_data_func()
 {
@@ -76,7 +76,7 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, lod_selector_func, ecs::SystemOrder::RENDER-1, (uint)(ecs::SystemTag::GameEditor));
+}, lod_selector_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor);
 
 void lod_selector_func()
 {
@@ -100,7 +100,7 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<RenderQueue>("render"), false}
-}, process_mesh_position_func, ecs::SystemOrder::RENDER, (uint)(ecs::SystemTag::GameEditor));
+}, process_mesh_position_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor);
 
 void process_mesh_position_func()
 {
@@ -120,7 +120,7 @@ void render_sky_box_func();
 
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
   {ecs::get_type_description<SkyBox>("skyBox"), false}
-}, render_sky_box_func, ecs::SystemOrder::RENDER+100, (uint)(ecs::SystemTag::GameEditor));
+}, render_sky_box_func, ecs::SystemOrder::RENDER+100, ecs::SystemTag::GameEditor);
 
 void render_sky_box_func()
 {
@@ -138,7 +138,7 @@ void render_debug_arrows_func();
 ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
   {ecs::get_type_description<DebugArrow>("debugArrows"), false},
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
-}, render_debug_arrows_func, ecs::SystemOrder::RENDER+101, (uint)(ecs::SystemTag::GameEditor));
+}, render_debug_arrows_func, ecs::SystemOrder::RENDER+101, ecs::SystemTag::GameEditor);
 
 void render_debug_arrows_func()
 {
@@ -157,7 +157,7 @@ void main_instanced_render_func();
 ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
   {ecs::get_type_description<RenderQueue>("render"), false}
-}, main_instanced_render_func, ecs::SystemOrder::RENDER + 2, (uint)(ecs::SystemTag::GameEditor));
+}, main_instanced_render_func, ecs::SystemOrder::RENDER + 2, ecs::SystemTag::GameEditor);
 
 void main_instanced_render_func()
 {
@@ -174,7 +174,7 @@ void main_instanced_render_func()
 void add_global_uniform_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
-}, add_global_uniform_handler, (uint)(ecs::SystemTag::GameEditor));
+}, add_global_uniform_handler, ecs::SystemTag::GameEditor);
 
 void add_global_uniform_handler(const ecs::OnSceneCreated &event)
 {
@@ -191,7 +191,7 @@ void mesh_loader_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, mesh_loader_handler, (uint)(ecs::SystemTag::GameEditor));
+}, mesh_loader_handler, ecs::SystemTag::GameEditor);
 
 void mesh_loader_handler(const ecs::OnEntityCreated &event)
 {
@@ -208,7 +208,7 @@ void mesh_loader_handler(const ecs::OnEntityCreated &event)
 void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> add_global_uniform_singl_descr("add_global_uniform", {
-}, add_global_uniform_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+}, add_global_uniform_singl_handler, ecs::SystemTag::GameEditor);
 
 void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
 {
@@ -222,7 +222,7 @@ void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIter
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> mesh_loader_singl_descr("mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, mesh_loader_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+}, mesh_loader_singl_handler, ecs::SystemTag::GameEditor);
 
 void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {

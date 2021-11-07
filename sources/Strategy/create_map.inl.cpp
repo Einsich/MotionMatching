@@ -4,7 +4,7 @@
 void scene_created_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> scene_created_descr("scene_created", {
-}, scene_created_handler, (uint)(ecs::SystemTag::Game));
+}, scene_created_handler, ecs::SystemTag::Game);
 
 void scene_created_handler(const ecs::OnSceneCreated &event)
 {
@@ -20,7 +20,7 @@ void scene_created_handler(const ecs::OnSceneCreated &event)
 void scene_created_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<ecs::OnSceneCreated> scene_created_singl_descr("scene_created", {
-}, scene_created_singl_handler, (uint)(ecs::SystemTag::Game));
+}, scene_created_singl_handler, ecs::SystemTag::Game);
 
 void scene_created_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
 {

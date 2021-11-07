@@ -7,7 +7,7 @@ ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
-}, tester_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
+}, tester_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
 
 void tester_update_func()
 {
@@ -27,7 +27,7 @@ void test_count_func();
 ecs::SystemDescription test_count_descr("test_count", {
   {ecs::get_type_description<vector<ecs::EntityId>>("testers"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, test_count_func, ecs::SystemOrder::NO_ORDER, (uint)(ecs::SystemTag::Game));
+}, test_count_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
 
 void test_count_func()
 {
@@ -49,7 +49,7 @@ ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, start_test_handler, (uint)(ecs::SystemTag::GameEditor));
+}, start_test_handler, ecs::SystemTag::GameEditor);
 
 void start_test_handler(const ecs::OnEntityCreated &event)
 {
@@ -75,7 +75,7 @@ ecs::SingleEventDescription<ecs::OnEntityCreated> start_test_singl_descr("start_
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, start_test_singl_handler, (uint)(ecs::SystemTag::GameEditor));
+}, start_test_singl_handler, ecs::SystemTag::GameEditor);
 
 void start_test_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {

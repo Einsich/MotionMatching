@@ -20,7 +20,7 @@ void update_material(Callable lambda)
 void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event);
 
 ecs::EventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_descr("reload_shaders", {
-}, reload_shaders_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug));
+}, reload_shaders_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug);
 
 void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event)
 {
@@ -37,7 +37,7 @@ void load_directional_light_handler(const ecs::OnEntityCreated &event);
 
 ecs::EventDescription<ecs::OnEntityCreated> load_directional_light_descr("load_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
-}, load_directional_light_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, load_directional_light_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game);
 
 void load_directional_light_handler(const ecs::OnEntityCreated &event)
 {
@@ -55,7 +55,7 @@ void reload_directional_light_handler(const ecs::OnEntityEdited &event);
 
 ecs::EventDescription<ecs::OnEntityEdited> reload_directional_light_descr("reload_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
-}, reload_directional_light_handler, (uint)(ecs::SystemTag::Editor));
+}, reload_directional_light_handler, ecs::SystemTag::Editor);
 
 void reload_directional_light_handler(const ecs::OnEntityEdited &event)
 {
@@ -72,7 +72,7 @@ void reload_directional_light_handler(const ecs::OnEntityEdited &event)
 void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::QueryIterator &begin);
 
 ecs::SingleEventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_singl_descr("reload_shaders", {
-}, reload_shaders_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug));
+}, reload_shaders_singl_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game| ecs::SystemTag::Debug);
 
 void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::QueryIterator &)
 {
@@ -86,7 +86,7 @@ void load_directional_light_singl_handler(const ecs::OnEntityCreated &event, ecs
 
 ecs::SingleEventDescription<ecs::OnEntityCreated> load_directional_light_singl_descr("load_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
-}, load_directional_light_singl_handler, (uint)(ecs::SystemTag::Editor|ecs::SystemTag::Game));
+}, load_directional_light_singl_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game);
 
 void load_directional_light_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
 {
@@ -101,7 +101,7 @@ void reload_directional_light_singl_handler(const ecs::OnEntityEdited &event, ec
 
 ecs::SingleEventDescription<ecs::OnEntityEdited> reload_directional_light_singl_descr("reload_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
-}, reload_directional_light_singl_handler, (uint)(ecs::SystemTag::Editor));
+}, reload_directional_light_singl_handler, ecs::SystemTag::Editor);
 
 void reload_directional_light_singl_handler(const ecs::OnEntityEdited &event, ecs::QueryIterator &begin)
 {

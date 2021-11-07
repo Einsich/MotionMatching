@@ -10,7 +10,7 @@ ecs::SystemDescription peson_controller_update_descr("peson_controller_update", 
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<int>("controllerIndex"), true},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, peson_controller_update_func, ecs::SystemOrder::LOGIC, (uint)(ecs::SystemTag::Game));
+}, peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
 
 void peson_controller_update_func()
 {
@@ -33,7 +33,7 @@ void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event
 ecs::EventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_descr("controller_mouse_move_handler", {
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, controller_mouse_move_handler_handler, (uint)(ecs::SystemTag::Game));
+}, controller_mouse_move_handler_handler, ecs::SystemTag::Game);
 
 void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event)
 {
@@ -52,7 +52,7 @@ void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &even
 
 ecs::EventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_descr("controller_crouch_event_handler", {
   {ecs::get_type_description<PersonController>("personController"), false}
-}, controller_crouch_event_handler_handler, (uint)(ecs::SystemTag::Game));
+}, controller_crouch_event_handler_handler, ecs::SystemTag::Game);
 
 void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &event)
 {
@@ -71,7 +71,7 @@ void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent 
 ecs::SingleEventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_singl_descr("controller_mouse_move_handler", {
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, controller_mouse_move_handler_singl_handler, (uint)(ecs::SystemTag::Game));
+}, controller_mouse_move_handler_singl_handler, ecs::SystemTag::Game);
 
 void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent &event, ecs::QueryIterator &begin)
 {
@@ -87,7 +87,7 @@ void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent
 
 ecs::SingleEventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_singl_descr("controller_crouch_event_handler", {
   {ecs::get_type_description<PersonController>("personController"), false}
-}, controller_crouch_event_handler_singl_handler, (uint)(ecs::SystemTag::Game));
+}, controller_crouch_event_handler_singl_handler, ecs::SystemTag::Game);
 
 void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent &event, ecs::QueryIterator &begin)
 {
