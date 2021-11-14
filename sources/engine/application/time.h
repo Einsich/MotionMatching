@@ -68,8 +68,8 @@ public:
   void stop()
   {
     time_point end = std::chrono::high_resolution_clock::now();
-    time_delta delta = end - start;
-    debug_log("%s\nspend %f seconds", message, delta * 0.001f);
+    float delta = duration_cast<std::chrono::duration<float>>(end - start).count();
+    debug_log("%s\nspend %f seconds", message, delta);
     stopped = true;
   }
   ~TimeScope()

@@ -120,6 +120,13 @@
         }
       },
       {
+        "name": "ECSbenchmark",
+        "value":{
+          "name":"ECSbenchmark",
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;"
+        }
+      },
+      {
         "name": "Strategy",
         "value":{
           "name":"Strategy",
@@ -136,10 +143,10 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "dev",
     "Project": {
-      "name": "Arcade",
-      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+      "name": "ECSbenchmark",
+      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;"
     }
   },
   "cmake.configureOnOpen": false,

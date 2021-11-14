@@ -161,7 +161,7 @@ namespace ecs
   
   bool check_entity_container()
   {
-    return core().entityContainer->dontAddable;
+    return false;//core().entityContainer->dontAddable;
   }
   pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes)
   {

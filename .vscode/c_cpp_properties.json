@@ -7,6 +7,7 @@
                 "${workspaceFolder}/sources/Strategy/**",
                 "${workspaceFolder}/sources/engine/**",
                 "${workspaceFolder}/sources/ecs/**",
+                "${workspaceFolder}/sources/ECSbenchmark/**",
                 "${workspaceFolder}/sources/3rd_party/3d_application/**",
                 "${workspaceFolder}/sources/3rd_party/imgui/**",
             ],

@@ -82,7 +82,7 @@ namespace ecs
   template<typename T>
   string_hash component_initializer_hash(const ComponentInitializer<T> &component)
   {
-    return TypeDescription::typeDescriptionHash<T>(component.name);
+    return get_type_description<T>(component.name).type_name_hash();
   }
   template<typename T> 
   void component_copy(void *data, const T & component)
@@ -104,7 +104,7 @@ namespace ecs
     if (check_entity_container())
       return EntityId();
     vector<string_hash> typeHashes = 
-      {TypeDescription::typeDescriptionHash<EntityId>("eid"), component_initializer_hash(args)... };
+      {get_type_description<EntityId>("eid").type_name_hash(), component_initializer_hash(args)... };
     auto [eid, archetype] = add_entity(typeHashes);
     vector<void*> data = archetype.get_entity_data(typeHashes);
     component_copy(data[0], eid);
