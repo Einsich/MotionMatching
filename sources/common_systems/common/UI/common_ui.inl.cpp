@@ -12,7 +12,7 @@ void fps_ui_func()
   for (ecs::QueryIterator begin = fps_ui_descr.begin(), end = fps_ui_descr.end(); begin != end; ++begin)
   {
     fps_ui(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }
@@ -29,7 +29,7 @@ void debug_console_ui_func()
   for (ecs::QueryIterator begin = debug_console_ui_descr.begin(), end = debug_console_ui_descr.end(); begin != end; ++begin)
   {
     debug_console_ui(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }

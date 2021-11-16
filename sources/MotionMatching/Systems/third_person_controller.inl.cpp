@@ -12,7 +12,7 @@ void update_attached_camera(const ecs::EntityId &eid, Callable lambda)
   if (ecs::get_iterator(update_attached_camera_descr, eid, begin))
   {
     lambda(
-      *begin.get_component<Transform>(0)
+      *begin.get_component<Transform, 0>()
     );
   }
 }
@@ -31,9 +31,9 @@ void third_peson_controller_update_func()
   for (ecs::QueryIterator begin = third_peson_controller_update_descr.begin(), end = third_peson_controller_update_descr.end(); begin != end; ++begin)
   {
     third_peson_controller_update(
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<PersonController>(1),
-      *begin.get_component<ThirdPersonController>(2)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<PersonController, 1>(),
+      *begin.get_component<ThirdPersonController, 2>()
     );
   }
 }
@@ -52,8 +52,8 @@ void third_controller_appear_handler(const ecs::OnEntityCreated &event)
   {
     third_controller_appear(
       event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ThirdPersonController>(1)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<ThirdPersonController, 1>()
     );
   }
 }
@@ -74,10 +74,10 @@ void mouse_move_handler_handler(const MouseMoveEvent &event)
   {
     mouse_move_handler(
       event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ThirdPersonController>(1),
-      *begin.get_component<PersonController>(2),
-      *begin.get_component<Settings>(3)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<ThirdPersonController, 1>(),
+      *begin.get_component<PersonController, 2>(),
+      *begin.get_component<Settings, 3>()
     );
   }
 }
@@ -95,7 +95,7 @@ void mouse_wheel_handler_handler(const MouseWheelEvent &event)
   {
     mouse_wheel_handler(
       event,
-      *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ThirdPersonController, 0>()
     );
   }
 }
@@ -114,7 +114,7 @@ void crouch_event_handler_handler(const KeyEventAnyActionKey &event)
   {
     crouch_event_handler(
       event,
-      *begin.get_component<ecs::EntityId>(0)
+      *begin.get_component<ecs::EntityId, 0>()
     );
   }
 }
@@ -133,7 +133,7 @@ void animation_player_handler_handler(const KeyEventAnyActionKey &event)
   {
     animation_player_handler(
       event,
-      *begin.get_component<AnimationPlayer>(0)
+      *begin.get_component<AnimationPlayer, 0>()
     );
   }
 }
@@ -150,8 +150,8 @@ void third_controller_appear_singl_handler(const ecs::OnEntityCreated &event, ec
 {
   third_controller_appear(
     event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ThirdPersonController>(1)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<ThirdPersonController, 1>()
   );
 }
 
@@ -169,10 +169,10 @@ void mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 {
   mouse_move_handler(
     event,
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<ThirdPersonController>(1),
-      *begin.get_component<PersonController>(2),
-      *begin.get_component<Settings>(3)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<ThirdPersonController, 1>(),
+      *begin.get_component<PersonController, 2>(),
+      *begin.get_component<Settings, 3>()
   );
 }
 
@@ -187,7 +187,7 @@ void mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs::QueryI
 {
   mouse_wheel_handler(
     event,
-      *begin.get_component<ThirdPersonController>(0)
+      *begin.get_component<ThirdPersonController, 0>()
   );
 }
 
@@ -203,7 +203,7 @@ void crouch_event_handler_singl_handler(const KeyEventAnyActionKey &event, ecs::
 {
   crouch_event_handler(
     event,
-      *begin.get_component<ecs::EntityId>(0)
+      *begin.get_component<ecs::EntityId, 0>()
   );
 }
 
@@ -219,7 +219,7 @@ void animation_player_handler_singl_handler(const KeyEventAnyActionKey &event, e
 {
   animation_player_handler(
     event,
-      *begin.get_component<AnimationPlayer>(0)
+      *begin.get_component<AnimationPlayer, 0>()
   );
 }
 

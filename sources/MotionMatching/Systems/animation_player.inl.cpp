@@ -20,15 +20,15 @@ void animation_player_update_func()
   for (ecs::QueryIterator begin = animation_player_update_descr.begin(), end = animation_player_update_descr.end(); begin != end; ++begin)
   {
     animation_player_update(
-      *begin.get_component<Transform>(0),
-      *begin.get_component<AnimationPlayer>(1),
-      *begin.get_component<Asset<Material>>(2),
-       begin.get_component<ThirdPersonController>(3),
-       begin.get_component<int>(4),
-       begin.get_component<int>(5),
-      *begin.get_component<Settings>(6),
-      *begin.get_component<SettingsContainer>(7),
-      *begin.get_component<MainCamera>(8)
+      *begin.get_component<Transform, 0>(),
+      *begin.get_component<AnimationPlayer, 1>(),
+      *begin.get_component<Asset<Material>, 2>(),
+       begin.get_component<ThirdPersonController, 3>(),
+       begin.get_component<int, 4>(),
+       begin.get_component<int, 5>(),
+      *begin.get_component<Settings, 6>(),
+      *begin.get_component<SettingsContainer, 7>(),
+      *begin.get_component<MainCamera, 8>()
     );
   }
 }
@@ -48,9 +48,9 @@ void init_animation_character_handler(const ecs::OnEntityCreated &event)
   {
     init_animation_character(
       event,
-      *begin.get_component<Asset<Mesh>>(0),
-       begin.get_component<vector<Asset<Mesh>>>(1),
-      *begin.get_component<AnimationPlayer>(2)
+      *begin.get_component<Asset<Mesh>, 0>(),
+       begin.get_component<vector<Asset<Mesh>>, 1>(),
+      *begin.get_component<AnimationPlayer, 2>()
     );
   }
 }
@@ -68,7 +68,7 @@ void init_animation_material_handler(const ecs::OnEntityCreated &event)
   {
     init_animation_material(
       event,
-      *begin.get_component<Asset<Material>>(0)
+      *begin.get_component<Asset<Material>, 0>()
     );
   }
 }
@@ -86,9 +86,9 @@ void init_animation_character_singl_handler(const ecs::OnEntityCreated &event, e
 {
   init_animation_character(
     event,
-      *begin.get_component<Asset<Mesh>>(0),
-       begin.get_component<vector<Asset<Mesh>>>(1),
-      *begin.get_component<AnimationPlayer>(2)
+      *begin.get_component<Asset<Mesh>, 0>(),
+       begin.get_component<vector<Asset<Mesh>>, 1>(),
+      *begin.get_component<AnimationPlayer, 2>()
   );
 }
 
@@ -103,7 +103,7 @@ void init_animation_material_singl_handler(const ecs::OnEntityCreated &event, ec
 {
   init_animation_material(
     event,
-      *begin.get_component<Asset<Material>>(0)
+      *begin.get_component<Asset<Material>, 0>()
   );
 }
 

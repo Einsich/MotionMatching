@@ -14,9 +14,9 @@ void tester_update_func()
   for (ecs::QueryIterator begin = tester_update_descr.begin(), end = tester_update_descr.end(); begin != end; ++begin)
   {
     tester_update(
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<AnimationTester>(1),
-      *begin.get_component<AnimationPlayer>(2)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<AnimationTester, 1>(),
+      *begin.get_component<AnimationPlayer, 2>()
     );
   }
 }
@@ -34,8 +34,8 @@ void test_count_func()
   for (ecs::QueryIterator begin = test_count_descr.begin(), end = test_count_descr.end(); begin != end; ++begin)
   {
     test_count(
-      *begin.get_component<vector<ecs::EntityId>>(0),
-      *begin.get_component<Settings>(1)
+      *begin.get_component<vector<ecs::EntityId>, 0>(),
+      *begin.get_component<Settings, 1>()
     );
   }
 }
@@ -57,11 +57,11 @@ void start_test_handler(const ecs::OnEntityCreated &event)
   {
     start_test(
       event,
-      *begin.get_component<AnimationTester>(0),
-      *begin.get_component<AnimationPlayer>(1),
-      *begin.get_component<Transform>(2),
-      *begin.get_component<PersonController>(3),
-      *begin.get_component<Settings>(4)
+      *begin.get_component<AnimationTester, 0>(),
+      *begin.get_component<AnimationPlayer, 1>(),
+      *begin.get_component<Transform, 2>(),
+      *begin.get_component<PersonController, 3>(),
+      *begin.get_component<Settings, 4>()
     );
   }
 }
@@ -81,11 +81,11 @@ void start_test_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryItera
 {
   start_test(
     event,
-      *begin.get_component<AnimationTester>(0),
-      *begin.get_component<AnimationPlayer>(1),
-      *begin.get_component<Transform>(2),
-      *begin.get_component<PersonController>(3),
-      *begin.get_component<Settings>(4)
+      *begin.get_component<AnimationTester, 0>(),
+      *begin.get_component<AnimationPlayer, 1>(),
+      *begin.get_component<Transform, 2>(),
+      *begin.get_component<PersonController, 3>(),
+      *begin.get_component<Settings, 4>()
   );
 }
 

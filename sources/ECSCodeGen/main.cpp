@@ -248,7 +248,7 @@ void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
     {
       auto& arg  = args[i];
       snprintf(buffer, bufferSize,
-      "      %sbegin.get_component<%s>(%d)%s\n",
+      "      %sbegin.get_component<%s, %d>()%s\n",
       arg.optional ? " " : "*", arg.type.c_str(), i - i0, i + 1 == (uint)args.size() ? "" : ",");
       outFile << buffer;
     }

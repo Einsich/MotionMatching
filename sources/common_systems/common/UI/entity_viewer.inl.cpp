@@ -12,7 +12,7 @@ void entity_viewer_func()
   for (ecs::QueryIterator begin = entity_viewer_descr.begin(), end = entity_viewer_descr.end(); begin != end; ++begin)
   {
     entity_viewer(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }
@@ -29,7 +29,7 @@ void ecs_types_viewer_func()
   for (ecs::QueryIterator begin = ecs_types_viewer_descr.begin(), end = ecs_types_viewer_descr.end(); begin != end; ++begin)
   {
     ecs_types_viewer(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }
@@ -46,7 +46,7 @@ void entity_creater_func()
   for (ecs::QueryIterator begin = entity_creater_descr.begin(), end = entity_creater_descr.end(); begin != end; ++begin)
   {
     entity_creater(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }
@@ -64,7 +64,7 @@ void init_imgui_style_handler(const ecs::OnSceneCreated &event)
   {
     init_imgui_style(
       event,
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }
@@ -80,7 +80,7 @@ void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::Query
 {
   init_imgui_style(
     event,
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
   );
 }
 

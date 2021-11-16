@@ -15,10 +15,10 @@ void process_animation_func()
   for (ecs::QueryIterator begin = process_animation_descr.begin(), end = process_animation_descr.end(); begin != end; ++begin)
   {
     process_animation(
-      *begin.get_component<Asset<Mesh>>(0),
-      *begin.get_component<AnimationPlayer>(1),
-      *begin.get_component<Transform>(2),
-      *begin.get_component<Settings>(3)
+      *begin.get_component<Asset<Mesh>, 0>(),
+      *begin.get_component<AnimationPlayer, 1>(),
+      *begin.get_component<Transform, 2>(),
+      *begin.get_component<Settings, 3>()
     );
   }
 }

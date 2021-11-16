@@ -11,7 +11,7 @@ void update_material(Callable lambda)
   for (ecs::QueryIterator begin = update_material_descr.begin(), end = update_material_descr.end(); begin != end; ++begin)
   {
     lambda(
-      *begin.get_component<Asset<Material>>(0)
+      *begin.get_component<Asset<Material>, 0>()
     );
   }
 }
@@ -45,7 +45,7 @@ void load_directional_light_handler(const ecs::OnEntityCreated &event)
   {
     load_directional_light(
       event,
-      *begin.get_component<DirectionLight>(0)
+      *begin.get_component<DirectionLight, 0>()
     );
   }
 }
@@ -63,7 +63,7 @@ void reload_directional_light_handler(const ecs::OnEntityEdited &event)
   {
     reload_directional_light(
       event,
-      *begin.get_component<DirectionLight>(0)
+      *begin.get_component<DirectionLight, 0>()
     );
   }
 }
@@ -92,7 +92,7 @@ void load_directional_light_singl_handler(const ecs::OnEntityCreated &event, ecs
 {
   load_directional_light(
     event,
-      *begin.get_component<DirectionLight>(0)
+      *begin.get_component<DirectionLight, 0>()
   );
 }
 
@@ -107,7 +107,7 @@ void reload_directional_light_singl_handler(const ecs::OnEntityEdited &event, ec
 {
   reload_directional_light(
     event,
-      *begin.get_component<DirectionLight>(0)
+      *begin.get_component<DirectionLight, 0>()
   );
 }
 

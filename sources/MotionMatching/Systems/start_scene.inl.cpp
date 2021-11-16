@@ -14,8 +14,8 @@ void init_anim_settings_handler(const ecs::OnSceneCreated &event)
   {
     init_anim_settings(
       event,
-      *begin.get_component<Settings>(0),
-      *begin.get_component<SettingsContainer>(1)
+      *begin.get_component<Settings, 0>(),
+      *begin.get_component<SettingsContainer, 1>()
     );
   }
 }
@@ -35,9 +35,9 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
   {
     scene_destroy(
       event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<Settings>(1),
-      *begin.get_component<SettingsContainer>(2)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<Settings, 1>(),
+      *begin.get_component<SettingsContainer, 2>()
     );
   }
 }
@@ -54,8 +54,8 @@ void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::Que
 {
   init_anim_settings(
     event,
-      *begin.get_component<Settings>(0),
-      *begin.get_component<SettingsContainer>(1)
+      *begin.get_component<Settings, 0>(),
+      *begin.get_component<SettingsContainer, 1>()
   );
 }
 
@@ -72,9 +72,9 @@ void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::Query
 {
   scene_destroy(
     event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<Settings>(1),
-      *begin.get_component<SettingsContainer>(2)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<Settings, 1>(),
+      *begin.get_component<SettingsContainer, 2>()
   );
 }
 

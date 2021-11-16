@@ -95,7 +95,7 @@ namespace ecs
 
   static void register_archetype_to(QueryDescription *query, Archetype *archetype)
   {
-    if (query->withoutArgs)
+    if (!query->withArgs)
       return;
     std::vector<SystemCashedArchetype> &sys_archetypes = query->archetypes;
     std::vector<ComponentContainer*> containers(query->args.size());
@@ -103,12 +103,12 @@ namespace ecs
     int i = 0;
     for(auto& arg : query->args)
     {
-      if (arg.descr.type_name_hash() != 0)//singleton case
+      if (arg.descr != 0)//singleton case
       {
         ComponentContainer* container = archetype->get_container(arg.descr);
         if (!arg.optional)
         {
-          if (container == nullptr || container->typeNameHash != arg.descr.type_name_hash())
+          if (container == nullptr || container->typeNameHash != arg.descr)
           {
             breaked = true;
             break;

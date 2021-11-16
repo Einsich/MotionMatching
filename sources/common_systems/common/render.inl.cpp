@@ -11,7 +11,7 @@ void find_light(Callable lambda)
   for (ecs::QueryIterator begin = find_light_descr.begin(), end = find_light_descr.end(); begin != end; ++begin)
   {
     lambda(
-      *begin.get_component<DirectionLight>(0)
+      *begin.get_component<DirectionLight, 0>()
     );
   }
 }
@@ -28,7 +28,7 @@ void find_matrices(const ecs::EntityId &eid, Callable lambda)
   if (ecs::get_iterator(find_matrices_descr, eid, begin))
   {
     lambda(
-       begin.get_component<Transform>(0)
+       begin.get_component<Transform, 0>()
     );
   }
 }
@@ -45,7 +45,7 @@ void render_submenu_func()
   for (ecs::QueryIterator begin = render_submenu_descr.begin(), end = render_submenu_descr.end(); begin != end; ++begin)
   {
     render_submenu(
-      *begin.get_component<EditorRenderSettings>(0)
+      *begin.get_component<EditorRenderSettings, 0>()
     );
   }
 }
@@ -62,7 +62,7 @@ void set_global_render_data_func()
   for (ecs::QueryIterator begin = set_global_render_data_descr.begin(), end = set_global_render_data_descr.end(); begin != end; ++begin)
   {
     set_global_render_data(
-      *begin.get_component<MainCamera>(0)
+      *begin.get_component<MainCamera, 0>()
     );
   }
 }
@@ -83,11 +83,11 @@ void lod_selector_func()
   for (ecs::QueryIterator begin = lod_selector_descr.begin(), end = lod_selector_descr.end(); begin != end; ++begin)
   {
     lod_selector(
-      *begin.get_component<MainCamera>(0),
-      *begin.get_component<Transform>(1),
-      *begin.get_component<vector<Asset<Mesh>>>(2),
-      *begin.get_component<vector<float>>(3),
-      *begin.get_component<Asset<Mesh>>(4)
+      *begin.get_component<MainCamera, 0>(),
+      *begin.get_component<Transform, 1>(),
+      *begin.get_component<vector<Asset<Mesh>>, 2>(),
+      *begin.get_component<vector<float>, 3>(),
+      *begin.get_component<Asset<Mesh>, 4>()
     );
   }
 }
@@ -107,10 +107,10 @@ void process_mesh_position_func()
   for (ecs::QueryIterator begin = process_mesh_position_descr.begin(), end = process_mesh_position_descr.end(); begin != end; ++begin)
   {
     process_mesh_position(
-      *begin.get_component<Asset<Mesh>>(0),
-      *begin.get_component<Asset<Material>>(1),
-      *begin.get_component<ecs::EntityId>(2),
-      *begin.get_component<RenderQueue>(3)
+      *begin.get_component<Asset<Mesh>, 0>(),
+      *begin.get_component<Asset<Material>, 1>(),
+      *begin.get_component<ecs::EntityId, 2>(),
+      *begin.get_component<RenderQueue, 3>()
     );
   }
 }
@@ -127,7 +127,7 @@ void render_sky_box_func()
   for (ecs::QueryIterator begin = render_sky_box_descr.begin(), end = render_sky_box_descr.end(); begin != end; ++begin)
   {
     render_sky_box(
-      *begin.get_component<SkyBox>(0)
+      *begin.get_component<SkyBox, 0>()
     );
   }
 }
@@ -145,8 +145,8 @@ void render_debug_arrows_func()
   for (ecs::QueryIterator begin = render_debug_arrows_descr.begin(), end = render_debug_arrows_descr.end(); begin != end; ++begin)
   {
     render_debug_arrows(
-      *begin.get_component<DebugArrow>(0),
-      *begin.get_component<EditorRenderSettings>(1)
+      *begin.get_component<DebugArrow, 0>(),
+      *begin.get_component<EditorRenderSettings, 1>()
     );
   }
 }
@@ -164,8 +164,8 @@ void main_instanced_render_func()
   for (ecs::QueryIterator begin = main_instanced_render_descr.begin(), end = main_instanced_render_descr.end(); begin != end; ++begin)
   {
     main_instanced_render(
-      *begin.get_component<EditorRenderSettings>(0),
-      *begin.get_component<RenderQueue>(1)
+      *begin.get_component<EditorRenderSettings, 0>(),
+      *begin.get_component<RenderQueue, 1>()
     );
   }
 }
@@ -199,7 +199,7 @@ void mesh_loader_handler(const ecs::OnEntityCreated &event)
   {
     mesh_loader(
       event,
-      *begin.get_component<Asset<Mesh>>(0)
+      *begin.get_component<Asset<Mesh>, 0>()
     );
   }
 }
@@ -228,7 +228,7 @@ void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIter
 {
   mesh_loader(
     event,
-      *begin.get_component<Asset<Mesh>>(0)
+      *begin.get_component<Asset<Mesh>, 0>()
   );
 }
 

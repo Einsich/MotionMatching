@@ -12,7 +12,7 @@ void open_dialog_func()
   for (ecs::QueryIterator begin = open_dialog_descr.begin(), end = open_dialog_descr.end(); begin != end; ++begin)
   {
     open_dialog(
-      *begin.get_component<EditorUI>(0)
+      *begin.get_component<EditorUI, 0>()
     );
   }
 }

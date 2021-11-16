@@ -48,11 +48,11 @@ namespace ecs
 
 
   template<typename T>
-  TypeDescription get_type_description(const char *name)
+  string_hash register_type_description(const char *name)
   {
     if constexpr (is_singleton<T>::value)
     {
-      return TypeDescription(0);
+      return 0;
     }
     else
     {
@@ -66,7 +66,19 @@ namespace ecs
         assert(result.second && "Failed to add new type in get_type_description");
         it = result.first;
       }
-      return TypeDescription(typeNameHash);
+      return typeNameHash;
+    }
+  }
+  template<typename T>
+  constexpr string_hash get_type_description(const char *name)
+  {
+    if constexpr (is_singleton<T>::value)
+    {
+      return 0;
+    }
+    else
+    {
+      return TypeDescription::hash(HashedString(name), HashedString(nameOf<T>::value));
     }
   }
 }

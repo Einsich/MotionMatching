@@ -74,7 +74,7 @@ namespace ecs
     count--;
     if (with_swap && index != count)
     {
-      EntityId &eid = *components[get_type_description<EntityId>("eid").type_name_hash()]
+      EntityId &eid = *components[get_type_description<EntityId>("eid")]
       .get_component<EntityId>(index);
       eid.migrate(eid.archetype_index(), index);
     }

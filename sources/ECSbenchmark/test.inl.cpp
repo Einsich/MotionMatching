@@ -15,10 +15,10 @@ void ecs_update_func()
   for (ecs::QueryIterator begin = ecs_update_descr.begin(), end = ecs_update_descr.end(); begin != end; ++begin)
   {
     ecs_update(
-      *begin.get_component<vec3>(0),
-      *begin.get_component<vec3>(1),
-      *begin.get_component<vec3>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<vec3, 0>(),
+      *begin.get_component<vec3, 1>(),
+      *begin.get_component<vec3, 2>(),
+      *begin.get_component<float, 3>()
     );
   }
 }

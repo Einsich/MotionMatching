@@ -3,7 +3,7 @@
 #include <3dmath.h>
 struct Data
 {
-  mat4 data[4];
+  //mat4 data[8];
 };
 REGISTER_TYPE(Data)
 EDIT_STUB(Data)

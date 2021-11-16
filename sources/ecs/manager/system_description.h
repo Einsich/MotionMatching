@@ -7,7 +7,7 @@ namespace ecs
 {
   struct FunctionArgument
   {
-    TypeDescription descr;
+    string_hash descr;
     bool optional = false;
   };
   struct SystemCashedArchetype
@@ -25,7 +25,7 @@ namespace ecs
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
-    bool withoutArgs;
+    bool withArgs;
     QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
@@ -36,7 +36,7 @@ namespace ecs
     std::vector<FunctionArgument> args;
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
-    bool withoutArgs;
+    bool withArgs;
     SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
@@ -55,23 +55,23 @@ namespace ecs
   {
     friend struct QueryDescription;
   public:
-    QueryIterator();
+    QueryIterator() = default;
     QueryIterator(const QueryDescription *query, int archetype, int component);
 
     bool operator!=(const QueryIterator &other) const;
     void operator++();
-    template<typename T>
-    T *get_component(int ind)
+    template<typename T, uint ind>
+    T *get_component()
     {
       if constexpr (is_singleton<T>::value)
         return &get_singleton<T>();
       else
-        return query->archetypes[archetypeIndex].containers[ind]->get_component<T>(componentIndex);
+        return archetype->containers[ind]->get_component<T>(binIndex, inBinIndex);
     }
   private:
     const QueryDescription *query;
-    int archetypeIndex;
-    int componentIndex;
+    const SystemCashedArchetype *archetype;
+    uint archetypeIndex, componentIndex, binIndex, inBinIndex;
     void skip_empty_archetype();
   };
 }

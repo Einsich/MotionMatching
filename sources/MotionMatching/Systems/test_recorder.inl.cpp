@@ -15,10 +15,10 @@ void recorder_ui_func()
   for (ecs::QueryIterator begin = recorder_ui_descr.begin(), end = recorder_ui_descr.end(); begin != end; ++begin)
   {
     recorder_ui(
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<int>(1),
-      *begin.get_component<int>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<int, 1>(),
+      *begin.get_component<int, 2>(),
+      *begin.get_component<float, 3>()
     );
   }
 }
@@ -39,10 +39,10 @@ void listener_keybord_handler(const KeyEventAnyActionKey &event)
   {
     listener_keybord(
       event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<int>(1),
-      *begin.get_component<int>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<int, 1>(),
+      *begin.get_component<int, 2>(),
+      *begin.get_component<float, 3>()
     );
   }
 }
@@ -63,10 +63,10 @@ void listener_mousemove_handler(const MouseMoveEvent &event)
   {
     listener_mousemove(
       event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<int>(1),
-      *begin.get_component<int>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<int, 1>(),
+      *begin.get_component<int, 2>(),
+      *begin.get_component<float, 3>()
     );
   }
 }
@@ -85,10 +85,10 @@ void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::Quer
 {
   listener_keybord(
     event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<int>(1),
-      *begin.get_component<int>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<int, 1>(),
+      *begin.get_component<int, 2>(),
+      *begin.get_component<float, 3>()
   );
 }
 
@@ -106,10 +106,10 @@ void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::QueryIte
 {
   listener_mousemove(
     event,
-      *begin.get_component<AnimationDataBasePtr>(0),
-      *begin.get_component<int>(1),
-      *begin.get_component<int>(2),
-      *begin.get_component<float>(3)
+      *begin.get_component<AnimationDataBasePtr, 0>(),
+      *begin.get_component<int, 1>(),
+      *begin.get_component<int, 2>(),
+      *begin.get_component<float, 3>()
   );
 }
 

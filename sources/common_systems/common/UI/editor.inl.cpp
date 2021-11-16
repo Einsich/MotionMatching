@@ -12,7 +12,7 @@ void resources_menu_func()
   for (ecs::QueryIterator begin = resources_menu_descr.begin(), end = resources_menu_descr.end(); begin != end; ++begin)
   {
     resources_menu(
-      *begin.get_component<SelectedAsset>(0)
+      *begin.get_component<SelectedAsset, 0>()
     );
   }
 }
@@ -30,8 +30,8 @@ void asset_viewer_func()
   for (ecs::QueryIterator begin = asset_viewer_descr.begin(), end = asset_viewer_descr.end(); begin != end; ++begin)
   {
     asset_viewer(
-      *begin.get_component<SelectedAsset>(0),
-      *begin.get_component<EditorUI>(1)
+      *begin.get_component<SelectedAsset, 0>(),
+      *begin.get_component<EditorUI, 1>()
     );
   }
 }

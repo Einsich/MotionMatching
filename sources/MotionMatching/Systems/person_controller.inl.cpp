@@ -17,12 +17,12 @@ void peson_controller_update_func()
   for (ecs::QueryIterator begin = peson_controller_update_descr.begin(), end = peson_controller_update_descr.end(); begin != end; ++begin)
   {
     peson_controller_update(
-      *begin.get_component<AnimationPlayer>(0),
-      *begin.get_component<PersonController>(1),
-       begin.get_component<AnimationTester>(2),
-      *begin.get_component<Transform>(3),
-       begin.get_component<int>(4),
-      *begin.get_component<SettingsContainer>(5)
+      *begin.get_component<AnimationPlayer, 0>(),
+      *begin.get_component<PersonController, 1>(),
+       begin.get_component<AnimationTester, 2>(),
+      *begin.get_component<Transform, 3>(),
+       begin.get_component<int, 4>(),
+      *begin.get_component<SettingsContainer, 5>()
     );
   }
 }
@@ -41,8 +41,8 @@ void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event
   {
     controller_mouse_move_handler(
       event,
-      *begin.get_component<PersonController>(0),
-      *begin.get_component<Settings>(1)
+      *begin.get_component<PersonController, 0>(),
+      *begin.get_component<Settings, 1>()
     );
   }
 }
@@ -60,7 +60,7 @@ void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &even
   {
     controller_crouch_event_handler(
       event,
-      *begin.get_component<PersonController>(0)
+      *begin.get_component<PersonController, 0>()
     );
   }
 }
@@ -77,8 +77,8 @@ void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent 
 {
   controller_mouse_move_handler(
     event,
-      *begin.get_component<PersonController>(0),
-      *begin.get_component<Settings>(1)
+      *begin.get_component<PersonController, 0>(),
+      *begin.get_component<Settings, 1>()
   );
 }
 
@@ -93,7 +93,7 @@ void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent
 {
   controller_crouch_event_handler(
     event,
-      *begin.get_component<PersonController>(0)
+      *begin.get_component<PersonController, 0>()
   );
 }
 

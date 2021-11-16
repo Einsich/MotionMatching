@@ -26,39 +26,46 @@ namespace ecs
   {
     if (query)
       add_query(this);
-    withoutArgs = true;
-    for (auto &arg : args)
-      if(arg.descr.type_name_hash())
-        withoutArgs = false;
+    withArgs = false;
+    for (auto arg : args)
+      if(arg.descr)
+      {
+        withArgs = true;
+        break;
+      }
   }
   SingleQueryDescription::SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &in_args, bool query):
     name(name), args(std::move(in_args)), archetypes()
   {
     if (query)
       add_query((QueryDescription*)this);
-    withoutArgs = true;
-    for (auto &arg : args)
-      if(arg.descr.type_name_hash())
-        withoutArgs = false;
+    withArgs = false;
+    for (auto arg : args)
+      if(arg.descr)
+      {
+        withArgs = true;
+        break;
+      }
   }
 
   QueryIterator QueryDescription::begin()
   {
     QueryIterator it(this, 0, 0);
-    if (!withoutArgs)
+    if (withArgs)
+    {
       it.skip_empty_archetype();
+    }
     return it;
   }
   QueryIterator QueryDescription::end()
   {
-    return !withoutArgs ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
+    return withArgs ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
   }
 
-  QueryIterator::QueryIterator():
-  query(nullptr), archetypeIndex(-1), componentIndex(0){}
 
   QueryIterator::QueryIterator(const QueryDescription *query, int archetype, int component):
-    query(query), archetypeIndex(archetype), componentIndex(component){}
+    query(query), archetypeIndex(archetype), componentIndex(component),
+    binIndex(component / binSize), inBinIndex(component % binSize) {}
 
 
   bool QueryIterator::operator!=(QueryIterator const& other) const
@@ -68,15 +75,30 @@ namespace ecs
   void QueryIterator::operator++()
   {
     componentIndex++;
-    skip_empty_archetype();
+    inBinIndex++;
+    if (query->withArgs)
+    {
+      if ((uint)archetype->archetype->count <= componentIndex)
+      {
+        componentIndex = binIndex = inBinIndex = 0;
+        archetypeIndex++;
+        skip_empty_archetype();
+      }
+      else if (inBinIndex >= binSize)
+      {
+        inBinIndex = 0;
+        binIndex++;
+      }
+    }
   }
 
   void QueryIterator::skip_empty_archetype()
   {
-    while ((uint)archetypeIndex < query->archetypes.size() && query->archetypes[archetypeIndex].archetype->count <= componentIndex)
+    while (archetypeIndex < query->archetypes.size() && query->archetypes[archetypeIndex].archetype->count == 0)
     {
-      componentIndex = 0;
       archetypeIndex++;
     }
+    if (archetypeIndex < query->archetypes.size())
+      archetype = &query->archetypes[archetypeIndex];
   }
 }

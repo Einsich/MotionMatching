@@ -14,9 +14,9 @@ void find_all_created_camera(Callable lambda)
   for (ecs::QueryIterator begin = find_all_created_camera_descr.begin(), end = find_all_created_camera_descr.end(); begin != end; ++begin)
   {
     lambda(
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<bool>(1),
-       begin.get_component<bool>(2)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<bool, 1>(),
+       begin.get_component<bool, 2>()
     );
   }
 }
@@ -33,8 +33,8 @@ void find_editor_camera(Callable lambda)
   for (ecs::QueryIterator begin = find_editor_camera_descr.begin(), end = find_editor_camera_descr.end(); begin != end; ++begin)
   {
     lambda(
-      *begin.get_component<bool>(0),
-      *begin.get_component<ecs::EntityId>(1)
+      *begin.get_component<bool, 0>(),
+      *begin.get_component<ecs::EntityId, 1>()
     );
   }
 }
@@ -51,7 +51,7 @@ void check_arcball_target(const ecs::EntityId &eid, Callable lambda)
   if (ecs::get_iterator(check_arcball_target_descr, eid, begin))
   {
     lambda(
-      *begin.get_component<Transform>(0)
+      *begin.get_component<Transform, 0>()
     );
   }
 }
@@ -69,8 +69,8 @@ void get_main_cam_query(const ecs::EntityId &eid, Callable lambda)
   if (ecs::get_iterator(get_main_cam_query_descr, eid, begin))
   {
     lambda(
-      *begin.get_component<Camera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<Camera, 0>(),
+      *begin.get_component<Transform, 1>()
     );
   }
 }
@@ -90,9 +90,9 @@ void set_main_camera_func()
   for (ecs::QueryIterator begin = set_main_camera_descr.begin(), end = set_main_camera_descr.end(); begin != end; ++begin)
   {
     set_main_camera(
-      *begin.get_component<ecs::EntityId>(0),
-      *begin.get_component<bool>(1),
-      *begin.get_component<MainCamera>(2)
+      *begin.get_component<ecs::EntityId, 0>(),
+      *begin.get_component<bool, 1>(),
+      *begin.get_component<MainCamera, 2>()
     );
   }
 }
@@ -112,10 +112,10 @@ void arcball_camera_update_func()
   for (ecs::QueryIterator begin = arcball_camera_update_descr.begin(), end = arcball_camera_update_descr.end(); begin != end; ++begin)
   {
     arcball_camera_update(
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1),
-      *begin.get_component<Transform>(2),
-      *begin.get_component<ecs::EntityId>(3)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>(),
+      *begin.get_component<Transform, 2>(),
+      *begin.get_component<ecs::EntityId, 3>()
     );
   }
 }
@@ -134,9 +134,9 @@ void freecamera_update_func()
   for (ecs::QueryIterator begin = freecamera_update_descr.begin(), end = freecamera_update_descr.end(); begin != end; ++begin)
   {
     freecamera_update(
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<bool>(1),
-      *begin.get_component<Transform>(2)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<bool, 1>(),
+      *begin.get_component<Transform, 2>()
     );
   }
 }
@@ -153,7 +153,7 @@ void update_main_camera_game_transformations_func()
   for (ecs::QueryIterator begin = update_main_camera_game_transformations_descr.begin(), end = update_main_camera_game_transformations_descr.end(); begin != end; ++begin)
   {
     update_main_camera_game_transformations(
-      *begin.get_component<MainCamera>(0)
+      *begin.get_component<MainCamera, 0>()
     );
   }
 }
@@ -171,8 +171,8 @@ void update_main_camera_editor_transformations_func()
   for (ecs::QueryIterator begin = update_main_camera_editor_transformations_descr.begin(), end = update_main_camera_editor_transformations_descr.end(); begin != end; ++begin)
   {
     update_main_camera_editor_transformations(
-      *begin.get_component<MainCamera>(0),
-      *begin.get_component<EditorCamera>(1)
+      *begin.get_component<MainCamera, 0>(),
+      *begin.get_component<EditorCamera, 1>()
     );
   }
 }
@@ -190,7 +190,7 @@ void find_main_camera_game_handler(const ecs::OnSceneCreated &event)
   {
     find_main_camera_game(
       event,
-      *begin.get_component<MainCamera>(0)
+      *begin.get_component<MainCamera, 0>()
     );
   }
 }
@@ -208,7 +208,7 @@ void find_main_camera_editor_handler(const ecs::OnSceneCreated &event)
   {
     find_main_camera_editor(
       event,
-      *begin.get_component<EditorCamera>(0)
+      *begin.get_component<EditorCamera, 0>()
     );
   }
 }
@@ -227,8 +227,8 @@ void arcball_created_handler(const ecs::OnEntityCreated &event)
   {
     arcball_created(
       event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<Transform, 1>()
     );
   }
 }
@@ -247,8 +247,8 @@ void arccam_mouse_move_handler_handler(const MouseMoveEvent &event)
   {
     arccam_mouse_move_handler(
       event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
     );
   }
 }
@@ -267,8 +267,8 @@ void arccam_mouse_click_handler_handler(const MouseClickEvent &event)
   {
     arccam_mouse_click_handler(
       event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
     );
   }
 }
@@ -287,8 +287,8 @@ void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event)
   {
     arccam_mouse_wheel_handler(
       event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
     );
   }
 }
@@ -307,8 +307,8 @@ void freecam_created_handler(const ecs::OnEntityCreated &event)
   {
     freecam_created(
       event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<Transform, 1>()
     );
   }
 }
@@ -328,9 +328,9 @@ void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
   {
     freecam_mouse_move_handler(
       event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<Transform>(1),
-      *begin.get_component<bool>(2)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<Transform, 1>(),
+      *begin.get_component<bool, 2>()
     );
   }
 }
@@ -349,8 +349,8 @@ void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
   {
     freecam_mouse_click_handler(
       event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<bool, 1>()
     );
   }
 }
@@ -366,7 +366,7 @@ void find_main_camera_game_singl_handler(const ecs::OnSceneCreated &event, ecs::
 {
   find_main_camera_game(
     event,
-      *begin.get_component<MainCamera>(0)
+      *begin.get_component<MainCamera, 0>()
   );
 }
 
@@ -381,7 +381,7 @@ void find_main_camera_editor_singl_handler(const ecs::OnSceneCreated &event, ecs
 {
   find_main_camera_editor(
     event,
-      *begin.get_component<EditorCamera>(0)
+      *begin.get_component<EditorCamera, 0>()
   );
 }
 
@@ -397,8 +397,8 @@ void arcball_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   arcball_created(
     event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<Transform, 1>()
   );
 }
 
@@ -414,8 +414,8 @@ void arccam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::Q
 {
   arccam_mouse_move_handler(
     event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
   );
 }
 
@@ -431,8 +431,8 @@ void arccam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs:
 {
   arccam_mouse_click_handler(
     event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
   );
 }
 
@@ -448,8 +448,8 @@ void arccam_mouse_wheel_handler_singl_handler(const MouseWheelEvent &event, ecs:
 {
   arccam_mouse_wheel_handler(
     event,
-      *begin.get_component<ArcballCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<ArcballCamera, 0>(),
+      *begin.get_component<bool, 1>()
   );
 }
 
@@ -465,8 +465,8 @@ void freecam_created_singl_handler(const ecs::OnEntityCreated &event, ecs::Query
 {
   freecam_created(
     event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<Transform>(1)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<Transform, 1>()
   );
 }
 
@@ -483,9 +483,9 @@ void freecam_mouse_move_handler_singl_handler(const MouseMoveEvent &event, ecs::
 {
   freecam_mouse_move_handler(
     event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<Transform>(1),
-      *begin.get_component<bool>(2)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<Transform, 1>(),
+      *begin.get_component<bool, 2>()
   );
 }
 
@@ -501,8 +501,8 @@ void freecam_mouse_click_handler_singl_handler(const MouseClickEvent &event, ecs
 {
   freecam_mouse_click_handler(
     event,
-      *begin.get_component<FreeCamera>(0),
-      *begin.get_component<bool>(1)
+      *begin.get_component<FreeCamera, 0>(),
+      *begin.get_component<bool, 1>()
   );
 }
 

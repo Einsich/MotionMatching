@@ -29,8 +29,8 @@ void motion_matching_statistic_func()
   for (ecs::QueryIterator begin = motion_matching_statistic_descr.begin(), end = motion_matching_statistic_descr.end(); begin != end; ++begin)
   {
     motion_matching_statistic(
-      *begin.get_component<AnimationPlayer>(0),
-      *begin.get_component<Settings>(1)
+      *begin.get_component<AnimationPlayer, 0>(),
+      *begin.get_component<Settings, 1>()
     );
   }
 }
@@ -48,7 +48,7 @@ void current_anim_index_func()
   for (ecs::QueryIterator begin = current_anim_index_descr.begin(), end = current_anim_index_descr.end(); begin != end; ++begin)
   {
     current_anim_index(
-      *begin.get_component<AnimationPlayer>(0)
+      *begin.get_component<AnimationPlayer, 0>()
     );
   }
 }
@@ -66,8 +66,8 @@ void menu_ui_func()
   for (ecs::QueryIterator begin = menu_ui_descr.begin(), end = menu_ui_descr.end(); begin != end; ++begin)
   {
     menu_ui(
-      *begin.get_component<Settings>(0),
-      *begin.get_component<SettingsContainer>(1)
+      *begin.get_component<Settings, 0>(),
+      *begin.get_component<SettingsContainer, 1>()
     );
   }
 }
@@ -84,7 +84,7 @@ void mm_early_text_perf_func()
   for (ecs::QueryIterator begin = mm_early_text_perf_descr.begin(), end = mm_early_text_perf_descr.end(); begin != end; ++begin)
   {
     mm_early_text_perf(
-      *begin.get_component<Settings>(0)
+      *begin.get_component<Settings, 0>()
     );
   }
 }
