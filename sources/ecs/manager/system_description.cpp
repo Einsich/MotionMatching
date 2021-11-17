@@ -65,7 +65,7 @@ namespace ecs
 
   QueryIterator::QueryIterator(const QueryDescription *query, int archetype, int component):
     query(query), archetypeIndex(archetype), componentIndex(component),
-    binIndex(component / binSize), inBinIndex(component % binSize) {}
+    binIndex(component >> binPow), inBinIndex(component & binMask) {}
 
 
   bool QueryIterator::operator!=(QueryIterator const& other) const

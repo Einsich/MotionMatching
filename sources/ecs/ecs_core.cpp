@@ -342,7 +342,9 @@ namespace ecs
         [archetype](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype == archetype;});
       if (it != descr.archetypes.end())
       {
-        iterator = QueryIterator(&descr, it - descr.archetypes.begin(), index);
+        uint archetypeIndex = it - descr.archetypes.begin();
+        iterator = QueryIterator(&descr, archetypeIndex, index);
+        iterator.set_archetype();
         return true;
       }
     }

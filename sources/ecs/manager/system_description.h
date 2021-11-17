@@ -68,6 +68,10 @@ namespace ecs
       else
         return archetype->containers[ind]->get_component<T>(binIndex, inBinIndex);
     }
+    void set_archetype()
+    {
+      archetype = &query->archetypes[archetypeIndex];
+    }
   private:
     const QueryDescription *query;
     const SystemCashedArchetype *archetype;

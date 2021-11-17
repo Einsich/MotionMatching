@@ -8,22 +8,22 @@ namespace ecs
   data(), typeHash(-1), count(0)
   {  }
   ComponentContainer::ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity):
-  data((capacity + binSize - 1) / binSize),
+  data((capacity + binSize - 1) >> binPow),
   typeHash(type_info.hashId),
   typeNameHash(type_name_hash),
   count(0),
-  capacity(data.size() * binSize),
+  capacity(data.size() << binPow),
   sizeOf(type_info.sizeOf),
   constructor(type_info.constructor),
   copy_constructor(type_info.copy_constructor),
   destructor(type_info.destructor)
   { 
     for (uint i = 0; i < data.size(); ++i)
-      data[i] = malloc(binSize * sizeOf);
+      data[i] = malloc(sizeOf << binPow);
   }
   ComponentContainer::~ComponentContainer()
   {
-    for (int i = 0, j = 0; i * binSize + j < count;)
+    for (uint i = 0, j = 0; (i << binPow) + j < count;)
     {
       void *removed = (char*)data[i] + sizeOf * j;
       destructor(removed);
@@ -48,11 +48,11 @@ namespace ecs
   {
     if (count == capacity)
     {
-      data.push_back(malloc(binSize * sizeOf));
+      data.push_back(malloc(sizeOf << binPow));
       capacity += binSize;
     }
-    int j = count / binSize;
-    int i = count % binSize;
+    int j = count >> binPow;
+    int i = count & binMask;
     void *dst = (char*)data[j] + sizeOf * i;
     count++;
     return dst;
@@ -61,11 +61,11 @@ namespace ecs
   {
     count--;
     int j = count;
-    void *removed = (char*)data[i / binSize] + sizeOf * (i % binSize);
+    void *removed = (char*)data[i >> binPow] + sizeOf * (i & binMask);
     destructor(removed);
     if (with_swap && j != i)
     {
-      void *copied = (char*)data[j / binSize] + sizeOf * (j % binSize);
+      void *copied = (char*)data[j >> binPow] + sizeOf * (j & binMask);
       copy_constructor(copied, removed);
     }
   }
@@ -75,14 +75,14 @@ namespace ecs
     assert(count == 0 && "Need empty container to copy to");
     while (other.count >= capacity)
     {
-      data.push_back(malloc(binSize * sizeOf));
+      data.push_back(malloc(sizeOf << binPow));
       capacity += binSize;
     }
 
     for (;count < other.count; ++count)
     {
-      int j = count / binSize;
-      int i = count % binSize;
+      int j = count >> binPow;
+      int i = count & binMask;
       const void *scr = (char*)other.data[j] + sizeOf * i;
             void *dst = (char*)      data[j] + sizeOf * i;
       constructor(dst);

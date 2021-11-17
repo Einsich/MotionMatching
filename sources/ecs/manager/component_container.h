@@ -6,36 +6,38 @@
 #include <algorithm>
 namespace ecs
 {
-  constexpr int binSize = 8;
+  constexpr uint binPow = 8;
+  constexpr uint binSize = 1u << binPow;
+  constexpr uint binMask = binSize - 1;
   class ComponentContainer
   {
     std::vector<void*> data;
   public:
     string_hash typeHash, typeNameHash;
-    int count, capacity, sizeOf;
+    uint count, capacity, sizeOf;
     Constructor constructor = nullptr;
     CopyConstructor copy_constructor = nullptr;
     Destructor destructor = nullptr;
     ComponentContainer();
     ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity);
     template<typename T>
-    T* get_component(int i)
+    T* get_component(uint i)
     {
       if (0 <= i && i < count)
       {
-        int j = i / binSize;
-        i %= binSize;
+        int j = i >> binPow;
+        i &= binMask;
         return (T*)((char*)data[j] + i * sizeOf);
       }
       return nullptr;
     }
     template<typename T>
-    const T* get_component(int i) const
+    const T* get_component(uint i) const
     {
       if (0 <= i && i < count)
       {
-        int j = i / binSize;
-        i %= binSize;
+        int j = i >> binPow;
+        i &= binMask;
         return (T*)((char*)data[j] + i * sizeOf);
       }
       return nullptr;
