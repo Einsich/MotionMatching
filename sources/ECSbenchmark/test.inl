@@ -3,6 +3,10 @@
 #include <3dmath.h>
 struct Data
 {
+  //mat4 data[1];
+  //mat4 data[2];
+  //mat4 data[3];
+  mat4 data[4];
   //mat4 data[8];
 };
 REGISTER_TYPE(Data)
