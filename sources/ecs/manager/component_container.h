@@ -11,8 +11,8 @@ namespace ecs
   constexpr uint binMask = binSize - 1;
   class ComponentContainer
   {
-    std::vector<void*> data;
   public:
+    std::vector<void*> data;
     string_hash typeHash, typeNameHash;
     uint count, capacity, sizeOf;
     Constructor constructor = nullptr;
@@ -41,17 +41,6 @@ namespace ecs
         return (T*)((char*)data[j] + i * sizeOf);
       }
       return nullptr;
-    }
-    template<typename T>
-    T* get_component(uint binIndex, uint inBinIndex)
-    {
-      return (binIndex < data.size() && inBinIndex < binSize) ? (T*)data[binIndex] + inBinIndex : nullptr;
-    }
-    
-    template<typename T>
-    const T* get_component(uint binIndex, uint inBinIndex) const
-    {
-      return (binIndex < data.size() && inBinIndex < binSize) ? (T*)data[binIndex] + inBinIndex : nullptr;
     }
     void destroy_component(int i, bool without_copy);
     void add_component(void *component_data);

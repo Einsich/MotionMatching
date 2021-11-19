@@ -98,7 +98,7 @@ namespace ecs
     if (!query->withArgs)
       return;
     std::vector<SystemCashedArchetype> &sys_archetypes = query->archetypes;
-    std::vector<ComponentContainer*> containers(query->args.size());
+    std::vector<ComponentContainer*> containers(query->args.size(), nullptr);
     bool breaked = false;
     int i = 0;
     for(auto& arg : query->args)

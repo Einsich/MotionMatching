@@ -26,6 +26,7 @@ namespace ecs
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
     bool withArgs;
+    uint realArgs;
     QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
@@ -37,6 +38,7 @@ namespace ecs
     std::vector<SystemCashedArchetype> archetypes;
     void (*function)();
     bool withArgs;
+    uint realArgs;
     SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
     QueryIterator begin();
     QueryIterator end();
@@ -66,15 +68,16 @@ namespace ecs
       if constexpr (is_singleton<T>::value)
         return &get_singleton<T>();
       else
-        return archetype->containers[ind]->get_component<T>(binIndex, inBinIndex);
+      {
+        return (dataArrays[ind].second) ? (T*)(*dataArrays[ind].first)[binIndex] + inBinIndex : nullptr;
+      }
     }
-    void set_archetype()
-    {
-      archetype = &query->archetypes[archetypeIndex];
-    }
+    void set_archetype();
   private:
     const QueryDescription *query;
     const SystemCashedArchetype *archetype;
+    vector<pair<vector<void*>*, bool>>dataArrays;
+    uint componentCount;
     uint archetypeIndex, componentIndex, binIndex, inBinIndex;
     void skip_empty_archetype();
   };

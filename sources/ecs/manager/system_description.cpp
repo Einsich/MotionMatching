@@ -27,11 +27,12 @@ namespace ecs
     if (query)
       add_query(this);
     withArgs = false;
+    realArgs = 0;
     for (auto arg : args)
       if(arg.descr)
       {
         withArgs = true;
-        break;
+        realArgs++;
       }
   }
   SingleQueryDescription::SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &in_args, bool query):
@@ -40,11 +41,12 @@ namespace ecs
     if (query)
       add_query((QueryDescription*)this);
     withArgs = false;
+    realArgs = 0;
     for (auto arg : args)
       if(arg.descr)
       {
         withArgs = true;
-        break;
+        realArgs++;
       }
   }
 
@@ -55,6 +57,8 @@ namespace ecs
     {
       it.skip_empty_archetype();
     }
+    else
+      it.componentCount = 2;
     return it;
   }
   QueryIterator QueryDescription::end()
@@ -64,8 +68,9 @@ namespace ecs
 
 
   QueryIterator::QueryIterator(const QueryDescription *query, int archetype, int component):
-    query(query), archetypeIndex(archetype), componentIndex(component),
-    binIndex(component >> binPow), inBinIndex(component & binMask) {}
+    query(query), dataArrays(query->realArgs), archetypeIndex(archetype), componentIndex(component),
+    binIndex(component >> binPow), inBinIndex(component & binMask)
+    { }
 
 
   bool QueryIterator::operator!=(QueryIterator const& other) const
@@ -76,19 +81,17 @@ namespace ecs
   {
     componentIndex++;
     inBinIndex++;
-    if (query->withArgs)
+    if (componentIndex < componentCount)
     {
-      if ((uint)archetype->archetype->count <= componentIndex)
-      {
-        componentIndex = binIndex = inBinIndex = 0;
-        archetypeIndex++;
-        skip_empty_archetype();
-      }
-      else if (inBinIndex >= binSize)
-      {
-        inBinIndex = 0;
-        binIndex++;
-      }
+      bool nextBin = inBinIndex >= binSize;
+      inBinIndex = nextBin ? 0 : inBinIndex;
+      binIndex += nextBin ? 1 : 0;
+    }
+    else
+    {
+      componentIndex = binIndex = inBinIndex = 0;
+      archetypeIndex++;
+      skip_empty_archetype();
     }
   }
 
@@ -98,7 +101,23 @@ namespace ecs
     {
       archetypeIndex++;
     }
+    set_archetype();
+  }
+  void QueryIterator::set_archetype()
+  {
     if (archetypeIndex < query->archetypes.size())
+    {
       archetype = &query->archetypes[archetypeIndex];
+      for (uint i = 0, n = dataArrays.size(); i < n; i++)
+      {
+        auto *container = archetype->containers[i];
+        if (container)
+          dataArrays[i] = {&container->data, true};
+        else
+          dataArrays[i] = {nullptr, false};
+
+      }
+      componentCount = archetype->archetype->count;
+    }
   }
 }

@@ -5,7 +5,6 @@
 #include "../ecs_event.h"
 namespace ecs
 {
-  static ComponentContainer *dummyContainer = new ComponentContainer();
 
   Archetype::Archetype(int count, const string &synonim, int type_count):
     components(), count(count), capacity(count), fullTypeDescriptions(type_count), synonim(synonim), dontSave(false)
@@ -40,13 +39,13 @@ namespace ecs
   ComponentContainer *Archetype::get_container(const TypeDescription &type)
   {
     auto it = components.find(type.type_name_hash());
-    return it == components.end() ? dummyContainer : &it->second;
+    return it == components.end() ? nullptr : &it->second;
   }
   template<typename T>
   ComponentContainer *Archetype::get_container(const char *name)
   {
     auto it = components.find(TypeDescription::typeDescriptionHash<T>(name));
-    return it == components.end() ? dummyContainer : &it->second;
+    return it == components.end() ? nullptr : &it->second;
   }
 
   vector<void*> Archetype::get_entity_data(const vector<string_hash> &type_hashes)
