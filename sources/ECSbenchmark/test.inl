@@ -1,6 +1,7 @@
 #include <ecs.h>
 #include <application/time.h>
 #include <3dmath.h>
+#include "constanta.h"
 struct Data
 {
   //mat4 data[1];
@@ -32,7 +33,7 @@ static vector<TestClass*> list1;
 EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
 {
   debug_log("struct sizeof = %d", sizeof(TestClass));
-  uint entityCount = 500000;
+
   {
     TimeScope a("ecs_create");
     for (uint i = 0; i < entityCount; i++)

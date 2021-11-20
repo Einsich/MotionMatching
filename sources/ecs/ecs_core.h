@@ -182,6 +182,90 @@ namespace ecs
     }
   }
 
+
+  template<std::size_t... Is, std::size_t N>
+  std::array<char*, N> copy_data_pointer_impl(uint binIndex,
+    const std::array<vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
+  {
+    return std::array<char*, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
+  }
+  
+  template<std::size_t N, typename ...Args, std::size_t... Is>
+  void update_data_pointer_impl(std::array<char *, N> &pointers, void(*)(Args...), std::index_sequence<Is...>)
+  {
+    std::array<char*, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_cvref_t<Args>) : pointers[Is])...};
+    (void)dummy;
+  }
+  template<uint I, typename R, typename T>
+  R get_smart_component(T arg)
+  {
+
+    using cvrefT = typename std::remove_cvref_t<R>;
+    if constexpr (std::is_pointer<cvrefT>::value)
+    {
+      using smartT = typename std::remove_pointer_t<cvrefT>;
+      static_assert(is_singleton<smartT>::value);
+      return arg ? (R)arg : nullptr;
+    }
+    else
+    {
+      if constexpr(is_singleton<R>::value)
+        return get_singleton<R>();
+      else
+        return *arg;
+    }
+  }
+  
+  template<typename ...Args, std::size_t... Is, std::size_t N>
+  void perform_query_impl(const std::array<char *, N> &pointers, void(*function)(Args...), std::index_sequence<Is...>)
+  {
+    function(get_smart_component<Is, Args>((std::remove_cvref_t<Args>*)pointers[Is])...);
+  }
+
+  template<typename ...Args, uint N = sizeof...(Args)>
+  void perform_query(const QueryDescription &query, void(*function)(Args...))
+  {
+    constexpr auto indexes = std::make_index_sequence<N>();
+
+    if constexpr (!std::conjunction_v<is_singleton<Args>...>)
+    {
+      for (uint archetypeIdx = 0, archetypeN = query.archetypes.size(); archetypeIdx < archetypeN; ++archetypeIdx)
+      {
+        const auto &cachedArchetype = query.archetypes[archetypeIdx];
+        if (cachedArchetype.archetype->count == 0)
+          continue;
+        
+        std::array<vector<void*>*, N> dataVectors;
+        for (uint i = 0; i < N; ++i)
+          dataVectors[i] = cachedArchetype.containers[i] ? &cachedArchetype.containers[i]->data : nullptr;
+        uint binN = (uint)cachedArchetype.archetype->count >> binPow;
+        for (uint binIdx = 0; binIdx < binN; ++binIdx)
+        {
+          auto dataPointers = copy_data_pointer_impl(binIdx, dataVectors, indexes);
+          for (uint inBinIdx = 0; inBinIdx < binSize; ++inBinIdx)
+          {
+            perform_query_impl(dataPointers, function, indexes);
+            update_data_pointer_impl(dataPointers, function, indexes);
+          }
+        }
+        uint lastBinSize = cachedArchetype.archetype->count - (binN << binPow);
+        if (lastBinSize > 0)
+        {
+          auto dataPointers = copy_data_pointer_impl(binN, dataVectors, indexes);
+          for (uint inBinIdx = 0; inBinIdx < lastBinSize; ++inBinIdx)
+          {
+            perform_query_impl(dataPointers, function, indexes);
+            update_data_pointer_impl(dataPointers, function, indexes);
+          }
+        }
+      }
+    }
+    else
+    {
+      function(get_singleton<Args>()...);
+    }
+  }
+
   void system_statistic();
   void destroy_scene();
 }

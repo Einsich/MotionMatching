@@ -28,8 +28,8 @@ namespace ecs
     bool withArgs;
     uint realArgs;
     QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
-    QueryIterator begin();
-    QueryIterator end();
+    QueryIterator begin() const;
+    QueryIterator end() const;
   };
   struct SingleQueryDescription
   {
@@ -40,8 +40,8 @@ namespace ecs
     bool withArgs;
     uint realArgs;
     SingleQueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
-    QueryIterator begin();
-    QueryIterator end();
+    QueryIterator begin() const;
+    QueryIterator end() const;
   };
   struct SystemDescription : QueryDescription
   {

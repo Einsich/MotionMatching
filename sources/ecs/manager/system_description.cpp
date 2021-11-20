@@ -50,7 +50,7 @@ namespace ecs
       }
   }
 
-  QueryIterator QueryDescription::begin()
+  QueryIterator QueryDescription::begin() const
   {
     QueryIterator it(this, 0, 0);
     if (withArgs)
@@ -61,7 +61,7 @@ namespace ecs
       it.componentCount = 2;
     return it;
   }
-  QueryIterator QueryDescription::end()
+  QueryIterator QueryDescription::end() const
   {
     return withArgs ? QueryIterator(this, archetypes.size(), 0) : QueryIterator(this, 0, 1);
   }
