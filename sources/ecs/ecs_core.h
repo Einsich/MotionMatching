@@ -190,10 +190,10 @@ namespace ecs
     return std::array<char*, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
   }
   
-  template<std::size_t N, typename ...Args, std::size_t... Is>
-  void update_data_pointer_impl(std::array<char *, N> &pointers, void(*)(Args...), std::index_sequence<Is...>)
+  template<typename ...Args, std::size_t N, std::size_t... Is>
+  void update_data_pointer_impl(std::array<char *, N> &pointers, std::index_sequence<Is...>)
   {
-    std::array<char*, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_cvref_t<Args>) : pointers[Is])...};
+    std::array<char*, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_pointer_t<std::remove_cvref_t<Args>>) : pointers[Is])...};
     (void)dummy;
   }
   template<uint I, typename R, typename T>
@@ -204,30 +204,33 @@ namespace ecs
     if constexpr (std::is_pointer<cvrefT>::value)
     {
       using smartT = typename std::remove_pointer_t<cvrefT>;
-      static_assert(is_singleton<smartT>::value);
-      return arg ? (R)arg : nullptr;
+      if constexpr(is_singleton<smartT>::value)
+        return &get_singleton<smartT>();
+      else
+        return arg ? (R)arg : nullptr;
     }
     else
     {
-      if constexpr(is_singleton<R>::value)
-        return get_singleton<R>();
+      if constexpr(is_singleton<cvrefT>::value)
+        return get_singleton<cvrefT>();
       else
         return *arg;
     }
   }
   
-  template<typename ...Args, std::size_t... Is, std::size_t N>
-  void perform_query_impl(const std::array<char *, N> &pointers, void(*function)(Args...), std::index_sequence<Is...>)
+  template<typename ...Args, typename Callable, std::size_t... Is, std::size_t N>
+  void perform_query_impl(const std::array<char *, N> &pointers, Callable function, std::index_sequence<Is...>)
   {
-    function(get_smart_component<Is, Args>((std::remove_cvref_t<Args>*)pointers[Is])...);
+    function(get_smart_component<Is, Args>((std::remove_pointer_t<std::remove_cvref_t<Args>>*)pointers[Is])...);
   }
 
-  template<typename ...Args, uint N = sizeof...(Args)>
-  void perform_query(const QueryDescription &query, void(*function)(Args...))
+  template<typename ...Args, typename Callable>
+  void perform_query(const QueryDescription &query, Callable function)
   {
+    constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
 
-    if constexpr (!std::conjunction_v<is_singleton<Args>...>)
+    if constexpr (!std::conjunction_v<is_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>...>)
     {
       for (uint archetypeIdx = 0, archetypeN = query.archetypes.size(); archetypeIdx < archetypeN; ++archetypeIdx)
       {
@@ -244,8 +247,8 @@ namespace ecs
           auto dataPointers = copy_data_pointer_impl(binIdx, dataVectors, indexes);
           for (uint inBinIdx = 0; inBinIdx < binSize; ++inBinIdx)
           {
-            perform_query_impl(dataPointers, function, indexes);
-            update_data_pointer_impl(dataPointers, function, indexes);
+            perform_query_impl<Args...>(dataPointers, function, indexes);
+            update_data_pointer_impl<Args...>(dataPointers, indexes);
           }
         }
         uint lastBinSize = cachedArchetype.archetype->count - (binN << binPow);
@@ -254,16 +257,27 @@ namespace ecs
           auto dataPointers = copy_data_pointer_impl(binN, dataVectors, indexes);
           for (uint inBinIdx = 0; inBinIdx < lastBinSize; ++inBinIdx)
           {
-            perform_query_impl(dataPointers, function, indexes);
-            update_data_pointer_impl(dataPointers, function, indexes);
+            perform_query_impl<Args...>(dataPointers, function, indexes);
+            update_data_pointer_impl<Args...>(dataPointers, indexes);
           }
         }
       }
     }
     else
     {
-      function(get_singleton<Args>()...);
+      function(get_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>()...);
     }
+  }
+  
+  template<typename ...Args>
+  void perform_system(const QueryDescription &query, void(*function)(Args...))
+  {
+    perform_query<Args...>(query, function);
+  }
+  template<typename E, typename Event, typename ...Args>
+  void perform_event(const E &event, const QueryDescription &query, void(*function)(Event, Args...))
+  {
+    perform_query<Args...>(query, [&](Args...args){function(event, args...);});
   }
 
   void system_statistic();

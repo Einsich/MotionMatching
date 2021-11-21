@@ -2,27 +2,15 @@
 #include <application/time.h>
 #include <3dmath.h>
 #include "constanta.h"
-struct Data
-{
-  //mat4 data[1];
-  //mat4 data[2];
-  //mat4 data[3];
-  //mat4 data[4];
-  //mat4 data[8];
-};
 REGISTER_TYPE(Data)
 EDIT_STUB(Data)
 
 struct TestClass
 {
   uint index;
-  Data data0;
   vec3 pos;
-  Data data1;
   vec3 vel;
-  Data data2;
   vec3 center;
-  Data data3;
   float m;
   Data data4;
 };
@@ -38,17 +26,13 @@ EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
     TimeScope a("ecs_create");
     for (uint i = 0; i < entityCount; i++)
     {
-      ecs::create_entity<uint, Data, vec3, Data, vec3, Data, vec3, Data, float, Data>(
+      ecs::create_entity<uint, vec3, vec3, vec3, float, Data>(
         {"index", i},
-        {"data0", Data{}},
         {"pos", rand_vec3()},
-        {"data1", Data{}},
         {"vel", rand_vec3()},
-        {"data2", Data{}},
         {"center", rand_vec3()},
-        {"data3", Data{}},
         {"m", rand_float(1.f, 10.f)},
-        {"data4", Data{}}
+        {"data", Data{}}
       );
     }
   }
@@ -58,13 +42,9 @@ EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
     {
       list0.emplace_back(TestClass{
         i,
-        Data{},
         rand_vec3(),
-        Data{},
         rand_vec3(),
-        Data{},
         rand_vec3(),
-        Data{},
         rand_float(1.f, 10.f),
         Data{}
       });
@@ -76,13 +56,9 @@ EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
     {
       list1.push_back(new TestClass{
         i,
-        Data{},
         rand_vec3(),
-        Data{},
         rand_vec3(),
-        Data{},
         rand_vec3(),
-        Data{},
         rand_float(1.f, 10.f),
         Data{}
       });

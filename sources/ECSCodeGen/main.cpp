@@ -17,6 +17,7 @@ enum class ArgType
 struct ParserFunctionArgument
 {
   std::string type, name;
+  bool reference = false;
   bool optional = false;
   ArgType argType; 
 };
@@ -135,6 +136,7 @@ ParserFunctionArgument clear_arg(std::string str)
     arg.argType = ArgType::ReadOnly;
   }
   arg.optional = optional;
+  arg.reference = ref;
 
   const std::regex arg_regex("[A-Za-z0-9_:<>]+");
   auto args = get_matches(str, arg_regex, 3);
@@ -253,6 +255,18 @@ void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
       outFile << buffer;
     }
 }
+
+void template_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, bool event = false)
+{
+  int i0 = event ? 1 : 0;
+  for (uint i = i0; i < args.size(); i++)
+    {
+      auto& arg  = args[i];
+      snprintf(buffer, bufferSize, "%s%s%s",
+        arg.type.c_str(), arg.optional ? "*" : arg.reference ? "&" : "", i + 1 == (uint)args.size() ? "" : ", ");
+      outFile << buffer;
+    }
+}
     
 void write(std::ofstream &outFile, const char *fmt, ...)
 {
@@ -305,17 +319,13 @@ void process_inl_file(const fs::path& path)
     "template<typename Callable>\n"
     "void %s(Callable lambda)\n"
     "{\n"
-    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-    "  {\n"
-    "    lambda(\n",
-      query.sys_name.c_str(), query_descr.c_str(), query_descr.c_str());
-
-    pass_arguments(outFile, query.args);
+    "  ecs::perform_query<", query.sys_name.c_str());
+    template_arguments(outFile, query.args);
 
     write(outFile,
-    "    );\n"
-    "  }\n"
-    "}\n\n\n");
+    ">\n"
+    "  (%s, lambda);\n"
+    "}\n\n\n",  query_descr.c_str());
   }
 
   for (auto& query : singlqueriesDescriptions)
@@ -366,17 +376,10 @@ void process_inl_file(const fs::path& path)
     write(outFile,
     "void %s()\n"
     "{\n"
-    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-    "  {\n"
-    "    %s(\n",
-    sys_func.c_str(), sys_descr.c_str(), sys_descr.c_str(), system.sys_name.c_str());
-    
-    pass_arguments(outFile, system.args);
+    "  ecs::perform_system(%s, %s);\n"
+    "}\n",
+    sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
 
-    write(outFile,
-    "    );\n"
-    "  }\n"
-    "}\n\n\n");
   }
 
   for (auto& event : eventsDescriptions)
@@ -396,20 +399,10 @@ void process_inl_file(const fs::path& path)
     write(outFile,
     "void %s(const %s &event)\n"
     "{\n"
-    "  for (ecs::QueryIterator begin = %s.begin(), end = %s.end(); begin != end; ++begin)\n"
-    "  {\n"
-    "    %s(\n",
-    event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event_descr.c_str(), event.sys_name.c_str());
+    "  ecs::perform_event(event, %s, %s);\n"
+    "}\n\n\n",
+    event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
-    write(outFile,
-    "      event%s\n", 1 == (uint)event.args.size() ? "" : ",");
-
-    pass_arguments(outFile, event.args, true);
-
-    write(outFile,
-    "    );\n"
-    "  }\n"
-    "}\n\n\n");
   }
   
   for (auto& event : eventsDescriptions)

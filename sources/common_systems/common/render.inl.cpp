@@ -8,12 +8,8 @@ ecs::QueryDescription find_light_descr("find_light", {
 template<typename Callable>
 void find_light(Callable lambda)
 {
-  for (ecs::QueryIterator begin = find_light_descr.begin(), end = find_light_descr.end(); begin != end; ++begin)
-  {
-    lambda(
-      *begin.get_component<DirectionLight, 0>()
-    );
-  }
+  ecs::perform_query<DirectionLight&>
+  (find_light_descr, lambda);
 }
 
 
@@ -42,15 +38,8 @@ ecs::SystemDescription render_submenu_descr("render_submenu", {
 
 void render_submenu_func()
 {
-  for (ecs::QueryIterator begin = render_submenu_descr.begin(), end = render_submenu_descr.end(); begin != end; ++begin)
-  {
-    render_submenu(
-      *begin.get_component<EditorRenderSettings, 0>()
-    );
-  }
+  ecs::perform_system(render_submenu_descr, render_submenu);
 }
-
-
 void set_global_render_data_func();
 
 ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
@@ -59,15 +48,8 @@ ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
 
 void set_global_render_data_func()
 {
-  for (ecs::QueryIterator begin = set_global_render_data_descr.begin(), end = set_global_render_data_descr.end(); begin != end; ++begin)
-  {
-    set_global_render_data(
-      *begin.get_component<MainCamera, 0>()
-    );
-  }
+  ecs::perform_system(set_global_render_data_descr, set_global_render_data);
 }
-
-
 void lod_selector_func();
 
 ecs::SystemDescription lod_selector_descr("lod_selector", {
@@ -80,19 +62,8 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
 
 void lod_selector_func()
 {
-  for (ecs::QueryIterator begin = lod_selector_descr.begin(), end = lod_selector_descr.end(); begin != end; ++begin)
-  {
-    lod_selector(
-      *begin.get_component<MainCamera, 0>(),
-      *begin.get_component<Transform, 1>(),
-      *begin.get_component<vector<Asset<Mesh>>, 2>(),
-      *begin.get_component<vector<float>, 3>(),
-      *begin.get_component<Asset<Mesh>, 4>()
-    );
-  }
+  ecs::perform_system(lod_selector_descr, lod_selector);
 }
-
-
 void process_mesh_position_func();
 
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
@@ -104,18 +75,8 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
 
 void process_mesh_position_func()
 {
-  for (ecs::QueryIterator begin = process_mesh_position_descr.begin(), end = process_mesh_position_descr.end(); begin != end; ++begin)
-  {
-    process_mesh_position(
-      *begin.get_component<Asset<Mesh>, 0>(),
-      *begin.get_component<Asset<Material>, 1>(),
-      *begin.get_component<ecs::EntityId, 2>(),
-      *begin.get_component<RenderQueue, 3>()
-    );
-  }
+  ecs::perform_system(process_mesh_position_descr, process_mesh_position);
 }
-
-
 void render_sky_box_func();
 
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
@@ -124,15 +85,8 @@ ecs::SystemDescription render_sky_box_descr("render_sky_box", {
 
 void render_sky_box_func()
 {
-  for (ecs::QueryIterator begin = render_sky_box_descr.begin(), end = render_sky_box_descr.end(); begin != end; ++begin)
-  {
-    render_sky_box(
-      *begin.get_component<SkyBox, 0>()
-    );
-  }
+  ecs::perform_system(render_sky_box_descr, render_sky_box);
 }
-
-
 void render_debug_arrows_func();
 
 ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
@@ -142,16 +96,8 @@ ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
 
 void render_debug_arrows_func()
 {
-  for (ecs::QueryIterator begin = render_debug_arrows_descr.begin(), end = render_debug_arrows_descr.end(); begin != end; ++begin)
-  {
-    render_debug_arrows(
-      *begin.get_component<DebugArrow, 0>(),
-      *begin.get_component<EditorRenderSettings, 1>()
-    );
-  }
+  ecs::perform_system(render_debug_arrows_descr, render_debug_arrows);
 }
-
-
 void main_instanced_render_func();
 
 ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
@@ -161,16 +107,8 @@ ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
 
 void main_instanced_render_func()
 {
-  for (ecs::QueryIterator begin = main_instanced_render_descr.begin(), end = main_instanced_render_descr.end(); begin != end; ++begin)
-  {
-    main_instanced_render(
-      *begin.get_component<EditorRenderSettings, 0>(),
-      *begin.get_component<RenderQueue, 1>()
-    );
-  }
+  ecs::perform_system(main_instanced_render_descr, main_instanced_render);
 }
-
-
 void add_global_uniform_handler(const ecs::OnSceneCreated &event);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
@@ -178,12 +116,7 @@ ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_
 
 void add_global_uniform_handler(const ecs::OnSceneCreated &event)
 {
-  for (ecs::QueryIterator begin = add_global_uniform_descr.begin(), end = add_global_uniform_descr.end(); begin != end; ++begin)
-  {
-    add_global_uniform(
-      event
-    );
-  }
+  ecs::perform_event(event, add_global_uniform_descr, add_global_uniform);
 }
 
 
@@ -195,13 +128,7 @@ ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
 
 void mesh_loader_handler(const ecs::OnEntityCreated &event)
 {
-  for (ecs::QueryIterator begin = mesh_loader_descr.begin(), end = mesh_loader_descr.end(); begin != end; ++begin)
-  {
-    mesh_loader(
-      event,
-      *begin.get_component<Asset<Mesh>, 0>()
-    );
-  }
+  ecs::perform_event(event, mesh_loader_descr, mesh_loader);
 }
 
 

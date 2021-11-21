@@ -8,12 +8,6 @@ ecs::SystemDescription menu_profiler_descr("menu_profiler", {
 
 void menu_profiler_func()
 {
-  for (ecs::QueryIterator begin = menu_profiler_descr.begin(), end = menu_profiler_descr.end(); begin != end; ++begin)
-  {
-    menu_profiler(
-    );
-  }
+  ecs::perform_system(menu_profiler_descr, menu_profiler);
 }
-
-
 
