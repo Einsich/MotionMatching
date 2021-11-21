@@ -11,6 +11,7 @@ void fps_ui_func()
 {
   ecs::perform_system(fps_ui_descr, fps_ui);
 }
+
 void debug_console_ui_func();
 
 ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
@@ -21,4 +22,5 @@ void debug_console_ui_func()
 {
   ecs::perform_system(debug_console_ui_descr, debug_console_ui);
 }
+
 

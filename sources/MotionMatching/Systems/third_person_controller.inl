@@ -31,7 +31,7 @@ EVENT() third_controller_appear(
 }
 
 template<typename Callable>
-void update_attached_camera(const ecs::EntityId&, Callable);
+void update_attached_camera(ecs::EntityId, Callable);
 
 SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
   ecs::EntityId attachedCamera,

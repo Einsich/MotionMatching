@@ -28,12 +28,6 @@ namespace ecs
       static std::vector<EventDescription<E>*> handlers;
       return handlers;
     }
-    template<typename E>
-    std::vector<SingleEventDescription<E>*> &single_events_handler()
-    {
-      static std::vector<SingleEventDescription<E>*> handlers;
-      return handlers;
-    }
     void destroy_all_entities();
     void destroy_entities_from_destroy_queue(bool with_swap_last_element);
     void replace_entity_container(EntityContainer *container);
@@ -45,33 +39,17 @@ namespace ecs
   struct EventDescription : QueryDescription
   {
     typedef  void (*EventHandler)(const E&);
+    typedef  void (*SingleEventHandler)(const E&, ecs::EntityId);
     EventHandler eventHandler;
+    SingleEventHandler singleEventHandler;
     uint tags;
-    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, uint tags):
-      QueryDescription(name, args, false), eventHandler(eventHandler), tags(tags)
+    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, SingleEventHandler singleEventHandler, uint tags):
+      QueryDescription(name, args, false), eventHandler(eventHandler), singleEventHandler(singleEventHandler), tags(tags)
     {
       core().events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);
-      //printf("EventDescription %s\n", name);
     }
   };
-  template<typename E>
-  struct SingleEventDescription : QueryDescription
-  {
-    typedef  void (*EventHandler)(const E&, ecs::QueryIterator&);
-    EventHandler eventHandler;
-    uint tags;
-    SingleEventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, uint tags):
-      QueryDescription(name, args, false), eventHandler(eventHandler), tags(tags)
-    {
-      core().single_events_handler<E>().push_back(this);
-      core().event_queries.push_back((QueryDescription*)this);
-    }
-  };
-
-
-  template<typename T>
-  T* get_component(const EntityId &entity, const char *name);
 
   template<typename T>
   struct ComponentInitializer
@@ -138,47 +116,26 @@ namespace ecs
         descr->eventHandler(event);
   }
 
-
-  bool get_iterator(const QueryDescription &descr, const EntityId &eid, QueryIterator &iterator);
-  bool get_iterator(const SingleQueryDescription &descr, const EntityId &eid, QueryIterator &iterator);
-
-
   template<typename E>
-  void send_event(const EntityId &eid, const E &event)
+  void send_event(EntityId eid, const E &event)
   {
     if (eid)
     {
       core().events.push([eid, event](){
-        for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
-        {
+        for (EventDescription<E> *descr : core().events_handler<E>())
           if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-          {
-            QueryIterator iterator;
-            if (get_iterator(*((QueryDescription*)descr), eid, iterator))
-            {
-              descr->eventHandler(event, iterator);
-            }
-          }
-        } 
+            descr->singleEventHandler(event, eid);
       });
     }
   }
   template<typename E>
-  void send_event_immediate(const EntityId &eid, const E &event)
+  void send_event_immediate(EntityId eid, const E &event)
   {
     if (eid)
     {
-      for (SingleEventDescription<E> *descr : core().single_events_handler<E>())
-      {
+      for (EventDescription<E> *descr : core().events_handler<E>())
         if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-        {
-          QueryIterator iterator;
-          if (get_iterator(*((QueryDescription*)descr), eid, iterator))
-          {
-            descr->eventHandler(event, iterator);
-          }
-        }
-      } 
+          descr->singleEventHandler(event, eid);
     }
   }
 
@@ -188,6 +145,16 @@ namespace ecs
     const std::array<vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
   {
     return std::array<char*, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
+  }
+
+  template<std::size_t N, std::size_t... Is>
+  std::array<char*, N> data_pointer(uint binIndex, uint inBinIndex,
+    const SystemCashedArchetype &archetype, std::index_sequence<Is...>)
+  {
+    return std::array<char*, N> {
+      (archetype.containers[Is] ?
+      ((char*)(archetype.containers[Is]->data[binIndex]) + archetype.containers[Is]->sizeOf * inBinIndex)
+      : nullptr)...};
   }
   
   template<typename ...Args, std::size_t N, std::size_t... Is>
@@ -225,16 +192,16 @@ namespace ecs
   }
 
   template<typename ...Args, typename Callable>
-  void perform_query(const QueryDescription &query, Callable function)
+  void perform_query(const QueryDescription &descr, Callable function)
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
 
     if constexpr (!std::conjunction_v<is_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>...>)
     {
-      for (uint archetypeIdx = 0, archetypeN = query.archetypes.size(); archetypeIdx < archetypeN; ++archetypeIdx)
+      for (uint archetypeIdx = 0, archetypeN = descr.archetypes.size(); archetypeIdx < archetypeN; ++archetypeIdx)
       {
-        const auto &cachedArchetype = query.archetypes[archetypeIdx];
+        const auto &cachedArchetype = descr.archetypes[archetypeIdx];
         if (cachedArchetype.archetype->count == 0)
           continue;
         
@@ -270,16 +237,43 @@ namespace ecs
   }
   
   template<typename ...Args>
-  void perform_system(const QueryDescription &query, void(*function)(Args...))
+  void perform_system(const QueryDescription &descr, void(*function)(Args...))
   {
-    perform_query<Args...>(query, function);
+    perform_query<Args...>(descr, function);
   }
   template<typename E, typename Event, typename ...Args>
-  void perform_event(const E &event, const QueryDescription &query, void(*function)(Event, Args...))
+  void perform_event(const E &event, const QueryDescription &descr, void(*function)(Event, Args...))
   {
-    perform_query<Args...>(query, [&](Args...args){function(event, args...);});
+    perform_query<Args...>(descr, [&](Args...args){function(event, args...);});
   }
 
+
+  template<typename ...Args, typename Callable>
+  void perform_query(const QueryDescription &descr, EntityId eid, Callable function)
+  {
+    constexpr uint N = sizeof...(Args);
+    constexpr auto indexes = std::make_index_sequence<N>();
+    if (eid)
+    {
+      uint index = eid.array_index();
+      int archetypeInd = eid.archetype_index();
+      auto it = std::find_if(descr.archetypes.begin(), descr.archetypes.end(),
+        [archetypeInd](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype->index == archetypeInd;});
+      if (it != descr.archetypes.end())
+      {
+        uint binIdx = index >> binPow;
+        uint inBinIdx = index & binMask;
+        auto dataPointers = data_pointer<N>(binIdx, inBinIdx, *it, indexes);
+        perform_query_impl<Args...>(dataPointers, function, indexes);
+      }
+    }
+  }
+
+  template<typename E, typename Event, typename ...Args>
+  void perform_event(const E &event, const QueryDescription &descr, EntityId eid, void(*function)(Event, Args...))
+  {
+    perform_query<Args...>(descr, eid, [&](Args...args){function(event, args...);});
+  }
   void system_statistic();
   void destroy_scene();
 }

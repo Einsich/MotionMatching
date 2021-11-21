@@ -13,6 +13,7 @@ void start_game_button_func()
 {
   ecs::perform_system(start_game_button_descr, start_game_button);
 }
+
 void exit_menu_button_func();
 
 ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
@@ -25,31 +26,21 @@ void exit_menu_button_func()
 {
   ecs::perform_system(exit_menu_button_descr, exit_menu_button);
 }
+
 void init_menu_handler(const StartMenuEvent &event);
+void init_menu_singl_handler(const StartMenuEvent &event, ecs::EntityId eid);
 
 ecs::EventDescription<StartMenuEvent> init_menu_descr("init_menu", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, init_menu_handler, ecs::SystemTag::Game);
+}, init_menu_handler, init_menu_singl_handler, ecs::SystemTag::Game);
 
 void init_menu_handler(const StartMenuEvent &event)
 {
   ecs::perform_event(event, init_menu_descr, init_menu);
 }
-
-
-void init_menu_singl_handler(const StartMenuEvent &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<StartMenuEvent> init_menu_singl_descr("init_menu", {
-  {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, init_menu_singl_handler, ecs::SystemTag::Game);
-
-void init_menu_singl_handler(const StartMenuEvent &event, ecs::QueryIterator &begin)
+void init_menu_singl_handler(const StartMenuEvent &event, ecs::EntityId eid)
 {
-  init_menu(
-    event,
-      *begin.get_component<WorldRenderer, 0>()
-  );
+  ecs::perform_event(event, init_menu_descr, eid, init_menu);
 }
-
 
 

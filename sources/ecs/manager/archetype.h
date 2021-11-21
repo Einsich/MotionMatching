@@ -8,6 +8,7 @@ namespace ecs
   class Archetype
   {
   public: 
+    int index;
     std::unordered_map<uint, ComponentContainer> components;
     int count, capacity;
     std::vector<FullTypeDescription*> fullTypeDescriptions;
@@ -15,8 +16,8 @@ namespace ecs
     bool dontSave;
 
     //after this constructor need to feel components and fullTypeDescriptions correctly
-    Archetype(int count, const string &synonim, int type_count);
-    Archetype(const vector<string_hash> &type_hashes, int count, const string &synonim);
+    Archetype(int index, int count, const string &synonim, int type_count);
+    Archetype(int index, const vector<string_hash> &type_hashes, int count, const string &synonim);
     bool in_archetype(const vector<string_hash> &type_hashes) const;
 
     ComponentContainer *get_container(const TypeDescription &type);

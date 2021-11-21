@@ -332,7 +332,7 @@ void process_inl_file(const fs::path& path)
   {
     std::string query_descr = query.sys_name + "_descr";
     write(outFile,
-    "ecs::SingleQueryDescription %s(\"%s\", {\n",
+    "ecs::QueryDescription %s(\"%s\", {\n",
     query_descr.c_str(), query.sys_name.c_str());
 
     fill_arguments(outFile, query.args, query.req_args);
@@ -342,19 +342,16 @@ void process_inl_file(const fs::path& path)
 
     write(outFile,
     "template<typename Callable>\n"
-    "void %s(const ecs::EntityId &eid, Callable lambda)\n"
+    "void %s(ecs::EntityId eid, Callable lambda)\n"
     "{\n"
-    "  ecs::QueryIterator begin;\n"
-    "  if (ecs::get_iterator(%s, eid, begin))\n"
-    "  {\n"
-    "    lambda(\n",
-    query.sys_name.c_str(), query_descr.c_str());
+    "  ecs::perform_query<", query.sys_name.c_str());
 
-    pass_arguments(outFile, query.args);
+    template_arguments(outFile, query.args);
+
     write(outFile,
-    "    );\n"
-    "  }\n"
-    "}\n\n\n");
+    ">\n"
+    "  (%s, eid, lambda);\n"
+    "}\n\n\n",  query_descr.c_str());
   }
 
   
@@ -377,7 +374,7 @@ void process_inl_file(const fs::path& path)
     "void %s()\n"
     "{\n"
     "  ecs::perform_system(%s, %s);\n"
-    "}\n",
+    "}\n\n",
     sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
 
   }
@@ -386,55 +383,33 @@ void process_inl_file(const fs::path& path)
   {
     std::string event_descr = event.sys_name + "_descr";
     std::string event_handler = event.sys_name + "_handler";
+    std::string event_singl_handler = event.sys_name + "_singl_handler";
     std::string event_type = event.args[0].type;
     write(outFile,
-    "void %s(const %s &event);\n\n"
+    "void %s(const %s &event);\n"
+    "void %s(const %s &event, ecs::EntityId eid);\n\n"
     "ecs::EventDescription<%s> %s(\"%s\", {\n",
-    event_handler.c_str(), event_type.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
+    event_handler.c_str(), event_type.c_str(),
+    event_singl_handler.c_str(), event_type.c_str(),
+    event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
     fill_arguments(outFile, event.args, event.req_args, true);
     write(outFile, 
-    "}, %s, %s);\n\n", event_handler.c_str(), event.tags.c_str());
+    "}, %s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
 
     write(outFile,
     "void %s(const %s &event)\n"
     "{\n"
     "  ecs::perform_event(event, %s, %s);\n"
-    "}\n\n\n",
+    "}\n",
     event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
-  }
-  
-  for (auto& event : eventsDescriptions)
-  {
-    std::string event_singl_descr = event.sys_name + "_singl_descr";
-    std::string event_singl_handler = event.sys_name + "_singl_handler";
-    std::string event_type = event.args[0].type;
     write(outFile,
-    "void %s(const %s &event, ecs::QueryIterator &begin);\n\n"
-    "ecs::SingleEventDescription<%s> %s(\"%s\", {\n",
-    event_singl_handler.c_str(), event_type.c_str(), event_type.c_str(), event_singl_descr.c_str(), event.sys_name.c_str());
-
-    fill_arguments(outFile, event.args, event.req_args, true);
-
-    write(outFile,
-    "}, %s, %s);\n\n", event_singl_handler.c_str(), event.tags.c_str());
-
-    bool noAgrs = (uint)event.args.size() == 1;
-    write(outFile,
-    "void %s(const %s &event, ecs::QueryIterator &%s)\n"
+    "void %s(const %s &event, ecs::EntityId eid)\n"
     "{\n"
-    "  %s(\n",
-    event_singl_handler.c_str(), event_type.c_str(), noAgrs ? "" : "begin", event.sys_name.c_str());
-
-    write(outFile,
-    "    event%s\n", noAgrs ? "" : ",");
-
-    pass_arguments(outFile, event.args, true);
-
-    write(outFile,
-    "  );\n"
-    "}\n\n\n");
+    "  ecs::perform_event(event, %s, eid, %s);\n"
+    "}\n\n",
+    event_singl_handler.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
   }
   
   outFile << "\n";

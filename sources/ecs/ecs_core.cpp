@@ -150,7 +150,7 @@ namespace ecs
   }
   Archetype *add_archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim)
   {
-    Archetype *archetype = new Archetype(type_hashes, capacity, synonim);
+    Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), type_hashes, capacity, synonim);
     core().entityContainer->archetypes.push_back(archetype);
 
     register_archetype(archetype);
@@ -328,31 +328,6 @@ namespace ecs
   EntityId find_entity(uint archetype, uint index)
   {
     return core().entityContainer->entityPull.find_entity(archetype, index);
-  }
-
-  bool get_iterator(const QueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
-  {
-    if (eid)
-    {
-      int index = eid.array_index();
-      int archetypeInd = eid.archetype_index();
-      Archetype *archetype = core().entityContainer->archetypes[archetypeInd];
-
-      auto it = std::find_if(descr.archetypes.begin(), descr.archetypes.end(),
-        [archetype](const SystemCashedArchetype &cashed_archetype){return cashed_archetype.archetype == archetype;});
-      if (it != descr.archetypes.end())
-      {
-        uint archetypeIndex = it - descr.archetypes.begin();
-        iterator = QueryIterator(&descr, archetypeIndex, index);
-        iterator.set_archetype();
-        return true;
-      }
-    }
-    return false;
-  }
-  bool get_iterator(const SingleQueryDescription &descr, const EntityId &eid, QueryIterator &iterator)
-  {
-    return get_iterator((const QueryDescription &)descr, eid, iterator);
   }
 
   void system_statistic()

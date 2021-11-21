@@ -23,6 +23,7 @@ void show_kill_stat_func()
 {
   ecs::perform_system(show_kill_stat_descr, show_kill_stat);
 }
+
 void check_winner_func();
 
 ecs::SystemDescription check_winner_descr("check_winner", {
@@ -34,33 +35,22 @@ void check_winner_func()
 {
   ecs::perform_system(check_winner_descr, check_winner);
 }
+
 void collect_kills_handler(const KillTargetEvent &event);
+void collect_kills_singl_handler(const KillTargetEvent &event, ecs::EntityId eid);
 
 ecs::EventDescription<KillTargetEvent> collect_kills_descr("collect_kills", {
   {ecs::get_type_description<int>("killsCount"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, collect_kills_handler, ecs::SystemTag::Game);
+}, collect_kills_handler, collect_kills_singl_handler, ecs::SystemTag::Game);
 
 void collect_kills_handler(const KillTargetEvent &event)
 {
   ecs::perform_event(event, collect_kills_descr, collect_kills);
 }
-
-
-void collect_kills_singl_handler(const KillTargetEvent &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<KillTargetEvent> collect_kills_singl_descr("collect_kills", {
-  {ecs::get_type_description<int>("killsCount"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, collect_kills_singl_handler, ecs::SystemTag::Game);
-
-void collect_kills_singl_handler(const KillTargetEvent &event, ecs::QueryIterator &begin)
+void collect_kills_singl_handler(const KillTargetEvent &event, ecs::EntityId eid)
 {
-  collect_kills(
-    event,
-      *begin.get_component<int, 0>()
-  );
+  ecs::perform_event(event, collect_kills_descr, eid, collect_kills);
 }
-
 
 

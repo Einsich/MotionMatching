@@ -108,7 +108,8 @@ EVENT() arccam_mouse_wheel_handler(
 }
 
 template<typename Callable>
-void check_arcball_target(const ecs::EntityId&, Callable);
+void check_arcball_target(ecs::EntityId, Callable);
+
 SYSTEM() arcball_camera_update(
   ArcballCamera &arcballCamera,
   bool isMainCamera,
@@ -215,7 +216,7 @@ SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
 
 
 template<typename Callable>
-static void get_main_cam_query(const ecs::EntityId&, Callable);
+static void get_main_cam_query(ecs::EntityId, Callable);
 
 void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
 {

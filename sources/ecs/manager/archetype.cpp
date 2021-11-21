@@ -6,12 +6,12 @@
 namespace ecs
 {
 
-  Archetype::Archetype(int count, const string &synonim, int type_count):
-    components(), count(count), capacity(count), fullTypeDescriptions(type_count), synonim(synonim), dontSave(false)
+  Archetype::Archetype(int index, int count, const string &synonim, int type_count):
+    index(index), components(), count(count), capacity(count), fullTypeDescriptions(type_count), synonim(synonim), dontSave(false)
   {}
   
-  Archetype::Archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim):
-    components(), count(0), capacity(capacity), fullTypeDescriptions(), synonim(synonim), dontSave(false)
+  Archetype::Archetype(int index, const vector<string_hash> &type_hashes, int capacity, const string &synonim):
+    index(index), components(), count(0), capacity(capacity), fullTypeDescriptions(), synonim(synonim), dontSave(false)
   {
     for (string_hash typeNameHash : type_hashes)
     {
@@ -139,7 +139,7 @@ namespace ecs
   }
   
   template<typename E>
-  void send_event(const EntityId &eid, const E &event);
+  void send_event(EntityId eid, const E &event);
   void register_archetype(Archetype* archetype);
 
   void load(std::istream& is, std::vector<Archetype*> &archetypes, EntityPull &entityPull)
@@ -156,7 +156,7 @@ namespace ecs
       std::string synonim;
       size_t descrN = 0;
       size += read(is, synonim, count, descrN);
-      archetypes[k] = new Archetype(count, synonim, descrN);
+      archetypes[k] = new Archetype(k, count, synonim, descrN);
       for (size_t i = 0; i < descrN; ++i)
       {
         string typeName, compName;

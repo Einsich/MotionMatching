@@ -11,6 +11,7 @@ void entity_viewer_func()
 {
   ecs::perform_system(entity_viewer_descr, entity_viewer);
 }
+
 void ecs_types_viewer_func();
 
 ecs::SystemDescription ecs_types_viewer_descr("ecs_types_viewer", {
@@ -21,6 +22,7 @@ void ecs_types_viewer_func()
 {
   ecs::perform_system(ecs_types_viewer_descr, ecs_types_viewer);
 }
+
 void entity_creater_func();
 
 ecs::SystemDescription entity_creater_descr("entity_creater", {
@@ -31,31 +33,21 @@ void entity_creater_func()
 {
   ecs::perform_system(entity_creater_descr, entity_creater);
 }
+
 void init_imgui_style_handler(const ecs::OnSceneCreated &event);
+void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> init_imgui_style_descr("init_imgui_style", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, init_imgui_style_handler, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
+}, init_imgui_style_handler, init_imgui_style_singl_handler, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
 
 void init_imgui_style_handler(const ecs::OnSceneCreated &event)
 {
   ecs::perform_event(event, init_imgui_style_descr, init_imgui_style);
 }
-
-
-void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<ecs::OnSceneCreated> init_imgui_style_singl_descr("init_imgui_style", {
-  {ecs::get_type_description<EditorUI>("ui"), false}
-}, init_imgui_style_singl_handler, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
-
-void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin)
+void init_imgui_style_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
 {
-  init_imgui_style(
-    event,
-      *begin.get_component<EditorUI, 0>()
-  );
+  ecs::perform_event(event, init_imgui_style_descr, eid, init_imgui_style);
 }
-
 
 

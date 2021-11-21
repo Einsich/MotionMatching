@@ -129,7 +129,7 @@ bool emptyRenderStuff(const RenderStuff &a)
 };
 
 template<typename Callable> 
-void find_matrices(const ecs::EntityId &eid, Callable);
+void find_matrices(ecs::EntityId, Callable);
 
 void set_matrices_to_buffer(ecs::EntityId eid, const ShaderBuffer &buffer, char *data)
 {

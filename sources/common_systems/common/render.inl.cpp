@@ -13,20 +13,15 @@ void find_light(Callable lambda)
 }
 
 
-ecs::SingleQueryDescription find_matrices_descr("find_matrices", {
+ecs::QueryDescription find_matrices_descr("find_matrices", {
   {ecs::get_type_description<Transform>("transform"), true}
 });
 
 template<typename Callable>
-void find_matrices(const ecs::EntityId &eid, Callable lambda)
+void find_matrices(ecs::EntityId eid, Callable lambda)
 {
-  ecs::QueryIterator begin;
-  if (ecs::get_iterator(find_matrices_descr, eid, begin))
-  {
-    lambda(
-       begin.get_component<Transform, 0>()
-    );
-  }
+  ecs::perform_query<Transform*>
+  (find_matrices_descr, eid, lambda);
 }
 
 
@@ -40,6 +35,7 @@ void render_submenu_func()
 {
   ecs::perform_system(render_submenu_descr, render_submenu);
 }
+
 void set_global_render_data_func();
 
 ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
@@ -50,6 +46,7 @@ void set_global_render_data_func()
 {
   ecs::perform_system(set_global_render_data_descr, set_global_render_data);
 }
+
 void lod_selector_func();
 
 ecs::SystemDescription lod_selector_descr("lod_selector", {
@@ -64,6 +61,7 @@ void lod_selector_func()
 {
   ecs::perform_system(lod_selector_descr, lod_selector);
 }
+
 void process_mesh_position_func();
 
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
@@ -77,6 +75,7 @@ void process_mesh_position_func()
 {
   ecs::perform_system(process_mesh_position_descr, process_mesh_position);
 }
+
 void render_sky_box_func();
 
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
@@ -87,6 +86,7 @@ void render_sky_box_func()
 {
   ecs::perform_system(render_sky_box_descr, render_sky_box);
 }
+
 void render_debug_arrows_func();
 
 ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
@@ -98,6 +98,7 @@ void render_debug_arrows_func()
 {
   ecs::perform_system(render_debug_arrows_descr, render_debug_arrows);
 }
+
 void main_instanced_render_func();
 
 ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
@@ -109,55 +110,36 @@ void main_instanced_render_func()
 {
   ecs::perform_system(main_instanced_render_descr, main_instanced_render);
 }
+
 void add_global_uniform_handler(const ecs::OnSceneCreated &event);
+void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
-}, add_global_uniform_handler, ecs::SystemTag::GameEditor);
+}, add_global_uniform_handler, add_global_uniform_singl_handler, ecs::SystemTag::GameEditor);
 
 void add_global_uniform_handler(const ecs::OnSceneCreated &event)
 {
   ecs::perform_event(event, add_global_uniform_descr, add_global_uniform);
 }
-
+void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+{
+  ecs::perform_event(event, add_global_uniform_descr, eid, add_global_uniform);
+}
 
 void mesh_loader_handler(const ecs::OnEntityCreated &event);
+void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, mesh_loader_handler, ecs::SystemTag::GameEditor);
+}, mesh_loader_handler, mesh_loader_singl_handler, ecs::SystemTag::GameEditor);
 
 void mesh_loader_handler(const ecs::OnEntityCreated &event)
 {
   ecs::perform_event(event, mesh_loader_descr, mesh_loader);
 }
-
-
-void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<ecs::OnSceneCreated> add_global_uniform_singl_descr("add_global_uniform", {
-}, add_global_uniform_singl_handler, ecs::SystemTag::GameEditor);
-
-void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::QueryIterator &)
+void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
 {
-  add_global_uniform(
-    event
-  );
+  ecs::perform_event(event, mesh_loader_descr, eid, mesh_loader);
 }
-
-
-void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<ecs::OnEntityCreated> mesh_loader_singl_descr("mesh_loader", {
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, mesh_loader_singl_handler, ecs::SystemTag::GameEditor);
-
-void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::QueryIterator &begin)
-{
-  mesh_loader(
-    event,
-      *begin.get_component<Asset<Mesh>, 0>()
-  );
-}
-
 
 

@@ -28,6 +28,7 @@ void move_all_entity_with_velocity_func()
 {
   ecs::perform_system(move_all_entity_with_velocity_descr, move_all_entity_with_velocity);
 }
+
 void collision_detection_func();
 
 ecs::SystemDescription collision_detection_descr("collision_detection", {
@@ -40,4 +41,5 @@ void collision_detection_func()
 {
   ecs::perform_system(collision_detection_descr, collision_detection);
 }
+
 

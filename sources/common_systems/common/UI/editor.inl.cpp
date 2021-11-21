@@ -11,6 +11,7 @@ void resources_menu_func()
 {
   ecs::perform_system(resources_menu_descr, resources_menu);
 }
+
 void asset_viewer_func();
 
 ecs::SystemDescription asset_viewer_descr("asset_viewer", {
@@ -22,4 +23,5 @@ void asset_viewer_func()
 {
   ecs::perform_system(asset_viewer_descr, asset_viewer);
 }
+
 

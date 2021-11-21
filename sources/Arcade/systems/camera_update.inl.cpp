@@ -25,36 +25,23 @@ void update_camera_pos_before_render_func()
 {
   ecs::perform_system(update_camera_pos_before_render_descr, update_camera_pos_before_render);
 }
+
 void change_zoom_handler(const MouseWheelEvent &event);
+void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, change_zoom_handler, ecs::SystemTag::Game);
+}, change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
 
 void change_zoom_handler(const MouseWheelEvent &event)
 {
   ecs::perform_event(event, change_zoom_descr, change_zoom);
 }
-
-
-void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::QueryIterator &begin);
-
-ecs::SingleEventDescription<MouseWheelEvent> change_zoom_singl_descr("change_zoom", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<vec3>("zoom"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, change_zoom_singl_handler, ecs::SystemTag::Game);
-
-void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::QueryIterator &begin)
+void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid)
 {
-  change_zoom(
-    event,
-      *begin.get_component<Transform2D, 0>(),
-      *begin.get_component<vec3, 1>()
-  );
+  ecs::perform_event(event, change_zoom_descr, eid, change_zoom);
 }
-
 
 
