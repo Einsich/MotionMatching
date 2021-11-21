@@ -145,8 +145,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "Arcade",
-      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+      "name": "ECSbenchmark",
+      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;"
     }
   },
   "cmake.configureOnOpen": false,
