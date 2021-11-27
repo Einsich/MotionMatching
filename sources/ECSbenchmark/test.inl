@@ -2,6 +2,7 @@
 #include <application/time.h>
 #include <3dmath.h>
 #include "constanta.h"
+#include "data_block/data_block.h"
 REGISTER_TYPE(Data)
 EDIT_STUB(Data)
 
@@ -20,6 +21,22 @@ static vector<TestClass*> list1;
 
 EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
 {
+  DataBlock blk;
+  
+  blk.add<int>("a", 1);
+  blk.add<float>("b", 2);
+  blk.add<float>("b", 3);
+  blk.add<string>("s", "kek");
+  {
+    DataBlock *block = blk.addBlock("bl");
+  }
+  debug_log("%d", blk.get<int>("a", 0));
+  debug_log("%f", blk.get<float>("b", 0));
+  debug_log("%f", blk.get<float>("c", 0));
+  debug_log("%s", blk.get<string>("c", "lol").c_str());
+  debug_log("%d", blk.getBlock("bl") ? 1 : 0);
+  DataBlock blk2(root_path("ECSbenchmark/test.blk"));
+  
   debug_log("struct sizeof = %d", sizeof(TestClass));
 
   {
