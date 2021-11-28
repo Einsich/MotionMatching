@@ -24,7 +24,7 @@ boool1_ :b = true ;//comment
 boool1:b = yes ;
 boool0_ :b = false ;
 boool0 :b = no;
-f_3 :s = "lol_kek\nchebureck 2.0
+f_3 :t = "lol_kek\nchebureck 2.0
 string in \"bracket\"";
 
 name:Type {
@@ -34,7 +34,7 @@ name:Type {
 }
 
 just_name {
-  label:s="Hi,
+  label:t="Hi,
   My name is
   Yan";
 }

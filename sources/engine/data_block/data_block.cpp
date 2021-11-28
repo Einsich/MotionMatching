@@ -250,31 +250,23 @@ static bool try_parse_value(Stream &stream, DataBlock &blk, const char *varName,
     return false;
   }
 }
-static vector<pair<const char*, bool(*)(Stream &, DataBlock &, const char *, const char *)>>
-  parsers =
+static array<const char*, DataBlock::AllowedTypes::size> types_literals
 {
-  {"i", &try_parse_value<int>},
-  {"i2", &try_parse_value<ivec2>},
-  {"i3", &try_parse_value<ivec3>},
-  {"i4", &try_parse_value<ivec4>},
-  {"u", &try_parse_value<unsigned>},
-  {"u2", &try_parse_value<uvec2>},
-  {"u3", &try_parse_value<uvec3>},
-  {"u4", &try_parse_value<uvec4>},
-  {"f", &try_parse_value<float>},
-  {"f2", &try_parse_value<vec2>},
-  {"f3", &try_parse_value<vec3>},
-  {"f4", &try_parse_value<vec4>},
-  {"b", &try_parse_value<bool>},
-  {"s", &try_parse_value<string>}
+  "i", "i2","i3", "i4",
+  "u", "u2", "u3", "u4",
+  "f", "f2", "f3", "f4",
+  "t", "b"
 };
+
+
+GET_FUNCTIONS(parsers, try_parse_value)
 
 static bool add_variable(Stream &stream, DataBlock &block, const string &varName, const string &varType)
 {
-  for (uint32_t i = 0, n = parsers.size(); i < n; i++)
-    if (strcmp(varType.c_str(), parsers[i].first) == 0)
+  for (uint32_t i = 0, n = types_literals.size(); i < n; i++)
+    if (strcmp(varType.c_str(), types_literals[i]) == 0)
     {
-      return parsers[i].second(stream, block, varName.c_str(), varType.c_str());
+      return parsers[i](stream, block, varName.c_str(), varType.c_str());
     }
   debug_error("line %d, unknown type %s", stream.line, varType.c_str());
   return false;
@@ -376,13 +368,26 @@ const char* DataBlock::name() const
 {
   return blockName.c_str();
 }
+
+const char* DataBlock::type() const
+{
+  return blockType.c_str();
+}
+
+size_t DataBlock::blockCount() const
+{
+  return blocks.size();
+}
+size_t DataBlock::propertiesCount() const
+{
+  return properties.size();
+}
+
 DataBlock *DataBlock::getBlock(const char *name)
 {
-  for (shared_ptr<DataBlock> &block : blocks)
-    if (strcmp(block->name(), name) == 0)
-      return block.get();
-  return nullptr;
+  return const_cast<DataBlock *>(static_cast<const DataBlock &>(*this).getBlock(name));
 }
+
 const DataBlock *DataBlock::getBlock(const char *name) const
 {
   for (const shared_ptr<DataBlock> &block : blocks)
@@ -390,7 +395,23 @@ const DataBlock *DataBlock::getBlock(const char *name) const
       return block.get();
   return nullptr;
 }
+
+DataBlock *DataBlock::getBlock(size_t index)
+{
+  return const_cast<DataBlock *>(static_cast<const DataBlock &>(*this).getBlock(index));
+}
+
+const DataBlock *DataBlock::getBlock(size_t index) const
+{
+  return index < blocks.size() ? blocks[index].get() : nullptr;
+}
+
 DataBlock* DataBlock::addBlock(const char *name, const char *type)
 {
   return blocks.emplace_back(make_shared<DataBlock>(name, type)).get();
+}
+
+const DataBlock::Property &DataBlock::getProperty(size_t index) const
+{
+  return properties[index];
 }

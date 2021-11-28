@@ -4,59 +4,55 @@
 #include <array>
 #include <istream>
 #include <ostream>
+#include "type_tuple.h"
 #include "3dmath.h"
+
 
 class DataBlock
 {
-  template<typename U, typename ...Ts> struct belong_to
-  {
-    static constexpr bool value = (std::is_same<U, Ts>::value || ... );
-  };
-  template<typename ...Args>
-  struct TypeList
-  {
-    std::tuple<std::vector<Args>...> fields;
-    std::array<std::vector<int>, sizeof...(Args)> indices;
-    template<typename T, typename H, typename ... B>
-    static constexpr size_t getTypeIndexInTemplateList()
-    {
-      if constexpr (std::is_same<T, H>::value)
-        return 0;
-      else
-        return 1 + getTypeIndexInTemplateList<T, B...>();
-    }
-    template<typename T>
-    static constexpr size_t getIndexOfType() {  return getTypeIndexInTemplateList<T, Args...>(); }
-  };
-  using MyTypeList = TypeList<
+public:
+  using AllowedTypes = TypeTuple<
       int, ivec2, ivec3, ivec4,
       unsigned, uvec2, uvec3, uvec4,
       float, vec2, vec3, vec4,
       std::string, bool>;
+private:
+  template<typename U, typename ...Ts> struct belong_to
+  {
+    static constexpr bool value = (std::is_same<U, Ts>::value || ... );
+  };
+  template<typename T>
+  struct PropertiesTuple ;
+  template<template <typename...> class Tuple, typename ...Args>
+  struct PropertiesTuple<Tuple<Args...>> 
+  {
+    std::tuple<std::vector<Args>...> fields;
+    std::array<std::vector<int>, sizeof...(Args)> indices;
+  };
   enum VarType
   {
     Int, String, Float
   };
-  struct Field
+  struct Property
   {
     std::string name;
     int type;
     int index;
-    Field(const char*name, int type, int index):
+    Property(const char*name, int type, int index):
       name(name), type(type), index(index) {}
   };
   std::string blockName, blockType;
-  MyTypeList typeList;
-  std::vector<Field> fields;
+  PropertiesTuple<AllowedTypes> typeList;
+  std::vector<Property> properties;
   std::vector<std::shared_ptr<DataBlock>> blocks;
 
-  template<typename T, size_t N = MyTypeList::getIndexOfType<T>()>
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
   bool find_implementation(const char *name, uint32_t &index) const 
   {
     const std::vector<int> &indicesWithT = std::get<N>(typeList.indices);
     for (uint32_t i = 0, n = indicesWithT.size(); i < n; i++)
     {
-      if (strcmp(fields[indicesWithT[i]].name.c_str(), name) == 0)
+      if (strcmp(properties[indicesWithT[i]].name.c_str(), name) == 0)
       {
         index = i;
         return true;
@@ -64,7 +60,7 @@ class DataBlock
     }
     return false;
   }
-  template<typename T, size_t N = MyTypeList::getIndexOfType<T>()>
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
   const T* get_implementation(const char *name) const
   {
     uint32_t index;
@@ -74,7 +70,7 @@ class DataBlock
     }
     return nullptr;
   }
-  template<typename T, size_t N = MyTypeList::getIndexOfType<T>()>
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
   T* get_implementation(const char *name)
   {
     uint32_t index;
@@ -84,15 +80,15 @@ class DataBlock
     }
     return nullptr;
   }
-  template<typename T, size_t N = MyTypeList::getIndexOfType<T>()>
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
   void add_implementation(const char *name, const T &value)
   {
     std::vector<T> &fieldsWithT = std::get<N>(typeList.fields);
     std::vector<int> &indicesWithT = std::get<N>(typeList.indices);
     int index = fieldsWithT.size();
     fieldsWithT.emplace_back(value);
-    indicesWithT.emplace_back(fields.size());
-    fields.emplace_back(name, N, index);
+    indicesWithT.emplace_back(properties.size());
+    properties.emplace_back(name, N, index);
   }
   
 
@@ -104,10 +100,18 @@ public:
   DataBlock(std::ifstream &stream);
 
   const char* name() const;
+  const char* type() const;
   DataBlock *getBlock(const char *name);
   const DataBlock *getBlock(const char *name) const;
+  DataBlock *getBlock(size_t index);
+  const DataBlock *getBlock(size_t index) const;
+
+  const Property &getProperty(size_t index) const;
+
   DataBlock* addBlock(const char *name, const char *type = nullptr);
 
+  size_t blockCount() const;
+  size_t propertiesCount() const;
   
   template<typename T>
   const T& get(const char* name, const T &default_value) const
@@ -140,4 +144,13 @@ public:
     return find_implementation<T>(name, index);
   }
 };
+#define GET_FUNCTIONS(array_name, function_name)\
+template<std::size_t... Is, std::size_t N = sizeof...(Is)>\
+constexpr auto get_functions##function_name(std::index_sequence<Is...>)\
+{\
+  return std::array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), N> {\
+      (&function_name<DataBlock::AllowedTypes::TypeOf<Is>>)...};\
+}\
+static array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), DataBlock::AllowedTypes::size>\
+  array_name = get_functions##function_name(std::make_index_sequence<DataBlock::AllowedTypes::size>());
 
