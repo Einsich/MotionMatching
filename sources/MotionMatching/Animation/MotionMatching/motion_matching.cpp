@@ -1,6 +1,7 @@
 #include "motion_matching.h"
 #include "../settings.h"
 #include <map>
+#include "application/profile_tracker.h"
 
 static std::map<intptr_t, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
 
@@ -36,7 +37,7 @@ void MotionMatching::update(float dt, const AnimationGoal &goal,
   bool updateStatistic,
   Settings &settings)
 {
-  
+  //PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 2000);
   if (!solver)
     return;
   AnimationIndex saveIndex = index.current_index();
