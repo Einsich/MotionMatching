@@ -17,6 +17,7 @@ namespace ecs
     uint count, capacity, sizeOf;
     Constructor constructor = nullptr;
     CopyConstructor copy_constructor = nullptr;
+    MoveConstructor move_constructor = nullptr;
     Destructor destructor = nullptr;
     ComponentContainer();
     ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity);
@@ -44,6 +45,7 @@ namespace ecs
     }
     void destroy_component(int i, bool without_copy);
     void add_component(void *component_data);
+    void add_component(const void *component_data);
     void* add_component();
     void copy_components(const ComponentContainer &other);
     ~ComponentContainer();

@@ -1,5 +1,8 @@
 #include <vector>
+#include "manager/type_info.h"
 #include "skybox.h"
+
+REGISTER_TYPE(SkyBox)
 
 SkyBox::SkyBox()
 {

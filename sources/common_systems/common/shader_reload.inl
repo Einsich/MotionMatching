@@ -2,10 +2,9 @@
 #include <resources/resources.h>
 #include <input.h>
 #include <render/shader/shader_factory.h>
-#include <render/skybox.h>
 #include <render/direction_light.h>
+#include <render/material.h>
 
-REGISTER_TYPE(SkyBox)
 
 template<typename T>
 void foreach_resources(std::function<void(Asset<T>)> && pred)

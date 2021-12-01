@@ -1,0 +1,28 @@
+
+particle {
+  pos:f3 = 0,0,0;
+  vel:f3 = 0,0,0;
+  m:f = 1;
+  center:f3 = 0,0,0;  
+}
+
+transform {
+  transform:Transform {
+    position:f3 = 10,0,5;
+    scale:f3 = 1,2,1;
+  }
+}
+
+phys_body {
+  _extends:t="particle";
+  _extends:t="transform";
+  
+}
+
+test_template {
+  _extends:t="particle";
+  center:f3 = 0,0,0;
+  data:Data {}
+
+}
+

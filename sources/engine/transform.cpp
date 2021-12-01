@@ -1,5 +1,7 @@
 #include "transform.h"
+#include "manager/type_info.h"
 
+REGISTER_TYPE(Transform)
 Transform::Transform(vec3 position, mat4x4 rotation, vec3 scale):
   position(position), rotation(rotation), scale(scale)
 {}

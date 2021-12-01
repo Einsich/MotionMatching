@@ -250,6 +250,7 @@ static bool try_parse_value(Stream &stream, DataBlock &blk, const char *varName,
     return false;
   }
 }
+//must be parrallel with DataBlock::AllowedTypes
 static array<const char*, DataBlock::AllowedTypes::size> types_literals
 {
   "i", "i2","i3", "i4",
@@ -364,14 +365,14 @@ DataBlock::DataBlock(std::ifstream &stream)
 }
 
 
-const char* DataBlock::name() const
+const string& DataBlock::name() const
 {
-  return blockName.c_str();
+  return blockName;
 }
 
-const char* DataBlock::type() const
+const string& DataBlock::type() const
 {
-  return blockType.c_str();
+  return blockType;
 }
 
 size_t DataBlock::blockCount() const
@@ -391,7 +392,7 @@ DataBlock *DataBlock::getBlock(const char *name)
 const DataBlock *DataBlock::getBlock(const char *name) const
 {
   for (const shared_ptr<DataBlock> &block : blocks)
-    if (strcmp(block->name(), name) == 0)
+    if (block->name() == name)
       return block.get();
   return nullptr;
 }

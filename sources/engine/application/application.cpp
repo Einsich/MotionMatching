@@ -7,9 +7,15 @@
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "editor/template.h"
+#include "template/blk_template.h"
 #include "system_tag.h"
 #include "ecs_scene.h"
 #include "application_metainfo.h"
+
+namespace ecs
+{
+  void load_templates_from_blk();
+}
 
 Application::Application(const string &project_name,const string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
@@ -41,6 +47,7 @@ void Application::start()
   #endif
   scene->start(editor);
   ecs::load_templates();
+  ecs::load_templates_from_blk();
   get_profiler();
   string sceneName;
   uint tags = editor ? (uint)ecs::SystemTag::Editor : (uint)ecs::SystemTag::Game;

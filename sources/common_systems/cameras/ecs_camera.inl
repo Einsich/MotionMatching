@@ -5,7 +5,6 @@
 REGISTER_TYPE(Camera)
 REGISTER_TYPE(FreeCamera)
 REGISTER_TYPE(ArcballCamera)
-REGISTER_TYPE(Transform)
 // CameraManager
 
 template<typename Callable>

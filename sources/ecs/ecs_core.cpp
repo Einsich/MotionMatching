@@ -6,6 +6,8 @@
 #include "editor/template.h"
 #include "common.h"
 #include "manager/entity_container.h"
+#include "template/blk_template.h"
+
 #define ECS_DEBUG_INFO 0
 namespace ecs
 {
@@ -159,10 +161,7 @@ namespace ecs
   }
 
   
-  bool check_entity_container()
-  {
-    return false;//core().entityContainer->dontAddable;
-  }
+
   pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes)
   {
     Archetype *found_archetype = nullptr;
@@ -189,8 +188,6 @@ namespace ecs
   }
   EntityId create_entity(const char *template_name)
   {
-    if (check_entity_container())
-      return EntityId();
     const Template *t = TemplateManager::get_template_by_name(template_name);
     if (!t)
     {
@@ -201,8 +198,6 @@ namespace ecs
   }
   EntityId create_entity(const Template *t)
   {
-    if (check_entity_container())
-      return EntityId();
     constexpr string_hash eidHash  = HashedString(nameOf<EntityId>::value);
     static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
     static TemplateInfo eidTemplateInfo(eidHash, eidInfo, "eid");
@@ -238,6 +233,72 @@ namespace ecs
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
     eidInfo.copy_constructor(&eid, eidTemplateInfo.data); 
     found_archetype->add_entity(list);
+    send_event_immediate(eid, OnEntityCreated());
+    return eid;
+  }
+
+  EntityId create_entity(const BlkTemplate *blkTemplate, ComponentInitializerList &&list)
+  {
+    Archetype *found_archetype = blkTemplate->archetype;
+    if (!blkTemplate->archetype)
+    {
+      size_t templateComponentsCount = blkTemplate->components.size();
+    
+      vector<string_hash> typeHashes(templateComponentsCount);
+      
+      for (uint i = 0; i < templateComponentsCount; ++i)
+        typeHashes[i] = blkTemplate->components[i].typeNameHash;
+
+      for (Archetype *archetype : core().entityContainer->archetypes)
+      {
+        if (archetype->in_archetype(typeHashes))
+        {
+          found_archetype = archetype;
+          break;
+        }
+      }
+      if (!found_archetype)
+      {
+        auto &fullDecr = full_description();
+        for (const ComponentInstance &t: blkTemplate->components)
+          fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeInfo->hashId, t.typeNameHash);
+        blkTemplate->archetype  = found_archetype = add_archetype(typeHashes, 1, blkTemplate->name);
+      }
+      size_t count = blkTemplate->components.size();
+      blkTemplate->containers.reserve(count);
+      for (const ComponentInstance &instance : blkTemplate->components)
+      {
+        blkTemplate->containers.emplace_back(&found_archetype->components[instance.typeNameHash]);
+      }
+    }
+    int index = found_archetype->count;
+    int archetype_ind = found_archetype->index;
+    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
+    constexpr string_hash eidHash = HashedString(nameOf<EntityId>::value);
+    static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
+    list.components.emplace_back(eidInfo, "eid", eid);
+    {
+      const vector<ComponentInstance> &template_list = blkTemplate->components;
+      vector<ComponentInstance> &&init_list = std::move(list.components);
+      for (size_t i = 0, n = template_list.size(); i < n; ++i)
+      {
+        const ComponentInstance &instance = template_list[i];
+        ComponentContainer *container = blkTemplate->containers[i];
+        size_t j = 0, m = init_list.size();
+        for (; j < m; ++j)
+        {
+          if (instance.typeNameHash == init_list[j].typeNameHash)
+          {
+            break;
+          }
+        }
+        if (j == m)
+          container->add_component(instance.get_data());
+        else
+          container->add_component(init_list[j].get_data());
+      }
+      found_archetype->count++;
+    }
     send_event_immediate(eid, OnEntityCreated());
     return eid;
   }

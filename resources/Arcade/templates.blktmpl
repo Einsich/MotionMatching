@@ -1,0 +1,24 @@
+movable_sprite {
+  sprite:Sprite {}
+  transform:Transform2D {
+    position:f2 = 0,0;
+    scale:f2 = 1,1;
+  }
+  velocity:f2 = 0,0;
+  color:f4 = 1,1,1,1;
+}
+
+targets {
+  _extends:t="movable_sprite";
+  rotationVelocity:f = 0;
+  destroyed:b = false;
+  target:Tag {}
+}
+
+main_hero {
+  _extends:t="movable_sprite";
+  color:f4 = 1,0.84,0,1;
+  killsCount:i = 0;
+  isWinner:b = false;
+  mainHero:Tag {}
+}

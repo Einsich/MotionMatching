@@ -17,6 +17,8 @@ private:
 public:
   template<typename T>
   static constexpr size_t getIndexOfType() {  return getTypeIndexInTemplateList<T, Args...>(); }
+  template<typename T>
+  static constexpr bool hasType() {  return std::disjunction<std::is_same<T, Args>...>::value; }
   template<int N> using TypeOf =
   typename std::tuple_element<N, std::tuple<Args...>>::type;
   static constexpr size_t size = sizeof...(Args);

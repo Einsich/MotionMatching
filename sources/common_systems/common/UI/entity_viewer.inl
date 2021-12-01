@@ -367,7 +367,7 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) ecs_types_viewer(const Edito
         names[i] = templates[i]->name.c_str();
       bool selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
       const char *cur_name = selectedCorrectTemplate ? templates[selectedTemplate]->name.c_str() : "";
-      ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
+      ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), glm::min(10, (int)names.size()));
       
       selectedCorrectTemplate = 0 <= selectedTemplate && selectedTemplate < (int)templates.size();
       if (selectedCorrectTemplate)
@@ -467,7 +467,7 @@ SYSTEM(ecs::SystemOrder::UI,ecs::SystemTag::Editor) entity_creater(const EditorU
       ecs::create_entity(templatePtrs[selectedTemplate]);
   }
   const char *cur_name = selectedCorrectTemplate ? templatePtrs[selectedTemplate]->name.c_str() : "";
-  ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), min(10, (int)names.size()));
+  ImGui::ListBox(cur_name, &selectedTemplate, names.data(), names.size(), glm::min(10, (int)names.size()));
   
 
   ImGui::End();

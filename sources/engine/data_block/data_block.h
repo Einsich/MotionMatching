@@ -4,6 +4,7 @@
 #include <array>
 #include <istream>
 #include <ostream>
+#include <memory>
 #include "type_tuple.h"
 #include "3dmath.h"
 
@@ -16,6 +17,15 @@ public:
       unsigned, uvec2, uvec3, uvec4,
       float, vec2, vec3, vec4,
       std::string, bool>;
+      
+  struct Property
+  {
+    std::string name;
+    int type;
+    int index;
+    Property(const char*name, int type, int index):
+      name(name), type(type), index(index) {}
+  };
 private:
   template<typename U, typename ...Ts> struct belong_to
   {
@@ -28,18 +38,6 @@ private:
   {
     std::tuple<std::vector<Args>...> fields;
     std::array<std::vector<int>, sizeof...(Args)> indices;
-  };
-  enum VarType
-  {
-    Int, String, Float
-  };
-  struct Property
-  {
-    std::string name;
-    int type;
-    int index;
-    Property(const char*name, int type, int index):
-      name(name), type(type), index(index) {}
   };
   std::string blockName, blockType;
   PropertiesTuple<AllowedTypes> typeList;
@@ -99,8 +97,8 @@ public:
   DataBlock(const char *path);
   DataBlock(std::ifstream &stream);
 
-  const char* name() const;
-  const char* type() const;
+  const std::string& name() const;
+  const std::string& type() const;
   DataBlock *getBlock(const char *name);
   const DataBlock *getBlock(const char *name) const;
   DataBlock *getBlock(size_t index);
@@ -118,6 +116,18 @@ public:
   {
     const T* value = get_implementation<T>(name);
     return value ? *value : default_value;
+  }
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
+  std::enable_if_t<!(sizeof(T) <= sizeof(size_t)), const T&> get(const Property &property) const
+  {
+    assert(property.type == N);
+    return std::get<N>(typeList.fields)[property.index];
+  }
+  template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
+  std::enable_if_t<sizeof(T) <= sizeof(size_t), T> get(const Property &property) const
+  {
+    assert(property.type == N);
+    return std::get<N>(typeList.fields)[property.index];
   }
   
   template<typename T>
@@ -144,6 +154,8 @@ public:
     return find_implementation<T>(name, index);
   }
 };
+using DataBlockPtr = std::shared_ptr<DataBlock>;
+
 #define GET_FUNCTIONS(array_name, function_name)\
 template<std::size_t... Is, std::size_t N = sizeof...(Is)>\
 constexpr auto get_functions##function_name(std::index_sequence<Is...>)\
@@ -151,6 +163,6 @@ constexpr auto get_functions##function_name(std::index_sequence<Is...>)\
   return std::array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), N> {\
       (&function_name<DataBlock::AllowedTypes::TypeOf<Is>>)...};\
 }\
-static array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), DataBlock::AllowedTypes::size>\
+static constexpr array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), DataBlock::AllowedTypes::size>\
   array_name = get_functions##function_name(std::make_index_sequence<DataBlock::AllowedTypes::size>());
 

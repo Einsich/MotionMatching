@@ -143,10 +143,10 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "dev",
     "Project": {
-      "name": "ECSbenchmark",
-      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;"
+      "name": "Arcade",
+      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },
   "cmake.configureOnOpen": false,

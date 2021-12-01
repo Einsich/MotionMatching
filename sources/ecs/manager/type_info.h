@@ -1,10 +1,12 @@
 #pragma once
 #include "compile_time_string.h"
 #include "string_hash.h"
+#include "data_block/data_block.h"
 #include "component_function.h"
 #include <unordered_map>
 #include "../singleton.h"
 #include "../component_editor.h"
+#include "data_block/data_block_serialization.h"
 
 namespace ecs
 {
@@ -22,10 +24,12 @@ namespace ecs
     const int sizeOf = 0;
     const Constructor constructor = nullptr;
     const CopyConstructor copy_constructor = nullptr;
+    const MoveConstructor move_constructor = nullptr;
     const Destructor destructor = nullptr;
     const ComponentEdition componentEdition = nullptr;
     const Serializer serialiser = nullptr;
     const Deserializer deserialiser = nullptr;
+    const BlkRead blkReader = nullptr;
   
   };
   struct SingletonTypeInfo : public TypeInfo
@@ -57,6 +61,11 @@ namespace ecs
   {
     return new (dst) T(*((T*)src));
   }
+  template<typename T>
+  void* template_move_constructor(void *src, void *dst)
+  {
+    return new (dst) T(std::move(*((T*)src)));
+  }
 
   template<typename T>
   bool template_component_edition(void *ptr, bool view_only)
@@ -76,6 +85,11 @@ namespace ecs
     return read(is, *((T*)ptr));
   }
   template<typename T>
+  void template_blk_reader(const DataBlock &blk, void *ptr)
+  {
+    return read(blk, *((T*)ptr));
+  }
+  template<typename T>
   void* template_singleton_instance()
   {
     return &get_singleton<T>();
@@ -89,16 +103,19 @@ namespace ecs
     {
       SingletonTypeInfo::types().try_emplace(
         hash, SingletonTypeInfo{{hash, string(nameOf<T>::value), sizeof(T), 
-        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>,
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
+        ecs::template_destructor<T>,
         ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>},
-        template_singleton_instance<T>});
+        ecs::template_blk_reader<T>, template_singleton_instance<T>});
     }
     else
     {
       TypeInfo::types().try_emplace(
         hash, TypeInfo{hash, string(nameOf<T>::value), sizeof(T), 
-        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_destructor<T>,
-        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>});
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
+        ecs::template_destructor<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>,
+        ecs::template_blk_reader<T>});
     }
     return RegisterTypeInfoRT();
   }

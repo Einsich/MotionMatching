@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <vector>
 #include "component_container.h"
+#include "component_instance.h"
 namespace ecs
 {
   struct TemplateInfo;

@@ -33,6 +33,7 @@ void prune_cache()
 
 EVENT(ecs::SystemTag::GameEditor) dag_init(const ecs::OnSceneCreated &)
 {
+  return;
   static vector<int>v(1 << 28);
   v[0]++;
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));

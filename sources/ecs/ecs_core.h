@@ -3,6 +3,7 @@
 #include <queue>
 #include <functional>
 #include "manager/system_description.h"
+#include "template/blk_template.h"
 namespace ecs
 {
   template<typename E>
@@ -74,13 +75,11 @@ namespace ecs
     if constexpr (sizeof...(args) > 0)
       component_initializer_copy<N+1>(data, args...);
   }
-  bool check_entity_container();
+  
   pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes);
   template<typename ...Args>
   EntityId create_entity(const ComponentInitializer<Args> &...args)
   {
-    if (check_entity_container())
-      return EntityId();
     vector<string_hash> typeHashes = 
       {register_type_description<EntityId>("eid"), component_initializer_hash(args)... };
     auto [eid, archetype] = add_entity(typeHashes);
@@ -94,6 +93,8 @@ namespace ecs
   EntityId create_entity(const char *template_name);
   struct Template;
   EntityId create_entity(const Template *temp);
+  struct BlkTemplate;
+  EntityId create_entity(const BlkTemplate *temp, ComponentInitializerList &&list);
   EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
 
@@ -196,9 +197,16 @@ namespace ecs
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
-
-    if constexpr (!std::conjunction_v<is_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>...>)
+    if constexpr (N == 0 || !std::conjunction_v<is_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>...>)
     {
+      if constexpr(N == 0)
+      {
+        if (descr.realArgs == 0)
+        {
+          function();
+          return;
+        }
+      }
       for (uint archetypeIdx = 0, archetypeN = descr.archetypes.size(); archetypeIdx < archetypeN; ++archetypeIdx)
       {
         const auto &cachedArchetype = descr.archetypes[archetypeIdx];

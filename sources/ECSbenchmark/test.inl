@@ -3,6 +3,7 @@
 #include <3dmath.h>
 #include "constanta.h"
 #include "data_block/data_block.h"
+#include "transform.h"
 REGISTER_TYPE(Data)
 EDIT_STUB(Data)
 
@@ -13,7 +14,7 @@ struct TestClass
   vec3 vel;
   vec3 center;
   float m;
-  Data data4;
+  Data data;
 };
 
 static vector<TestClass> list0;
@@ -21,7 +22,7 @@ static vector<TestClass*> list1;
 
 EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
 {
-  DataBlock blk;
+/*   DataBlock blk;
   
   blk.add<int>("a", 1);
   blk.add<float>("b", 2);
@@ -35,22 +36,20 @@ EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
   debug_log("%f", blk.get<float>("c", 0));
   debug_log("%s", blk.get<string>("c", "lol").c_str());
   debug_log("%d", blk.getBlock("bl") ? 1 : 0);
-  DataBlock blk2(root_path("ECSbenchmark/test.blk"));
+  DataBlock blk2(root_path("ECSbenchmark/test.blk")); */
   
   debug_log("struct sizeof = %d", sizeof(TestClass));
-
   {
     TimeScope a("ecs_create");
+    const ecs::BlkTemplate *tmpl = ecs::get_template("test_template");
     for (uint i = 0; i < entityCount; i++)
     {
-      ecs::create_entity<uint, vec3, vec3, vec3, float, Data>(
-        {"index", i},
-        {"pos", rand_vec3()},
-        {"vel", rand_vec3()},
-        {"center", rand_vec3()},
-        {"m", rand_float(1.f, 10.f)},
-        {"data", Data{}}
-      );
+      ecs::ComponentInitializerList list;
+      list.set("index", i);
+      list.set("pos", rand_vec3());
+      list.set("vel", rand_vec3());
+      list.set("m", rand_float(1.f, 10.f));
+      ecs::create_entity(tmpl, std::move(list));
     }
   }
   {

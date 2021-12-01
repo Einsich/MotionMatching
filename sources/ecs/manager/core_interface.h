@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "data_block/data_block.h"
 #include "component_function.h"
 #include <unordered_map>
 namespace ecs

@@ -16,6 +16,7 @@ namespace ecs
   sizeOf(type_info.sizeOf),
   constructor(type_info.constructor),
   copy_constructor(type_info.copy_constructor),
+  move_constructor(type_info.move_constructor),
   destructor(type_info.destructor)
   { 
     for (uint i = 0; i < data.size(); ++i)
@@ -38,11 +39,17 @@ namespace ecs
       free(data[i]);
   }
 
-  void ComponentContainer::add_component(void *component_data)
+  void ComponentContainer::add_component(const void *component_data)
   {
     void *dst = add_component();
     constructor(dst);
     copy_constructor(component_data, dst);
+  }
+  void ComponentContainer::add_component(void *component_data)
+  {
+    void *dst = add_component();
+    constructor(dst);
+    move_constructor(component_data, dst);
   }
   void* ComponentContainer::add_component()
   {
