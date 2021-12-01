@@ -59,7 +59,7 @@ namespace ecs
   {
     for (const TemplateInfo *component : list)
     {
-      components[component->type_name_hash()].add_component(component->data);
+      components[component->type_name_hash()].add_component((const void*)component->data);
     }
     count++;
   }

@@ -24,13 +24,14 @@ void profiler()
   for (const TimeLabel &label : history)
   {
     float dt = get_profiler().get_averange(label.label);
+    float spike = get_profiler().get_max(label.label);
     int level = openTimes.size();
     if (label.open)
     {
       openTimes.push(lastCloseTime);
       float hardness = sqrt(dt / maxdt);
       vec3 color = glm::lerp(vec3(1), vec3(1,0,0), hardness);
-      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: %.2f ms",level*3, ' ', label.label.c_str(), dt);
+      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: avg %.2f, max %.2f ms",level*3, ' ', label.label.c_str(), dt, spike);
 
     }
     else

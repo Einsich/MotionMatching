@@ -25,6 +25,7 @@ private:
     float curSum;
     AverangeTime();
     float get_averange() const;
+    float get_max() const;
     void add_time(float dt);
   };
 
@@ -36,6 +37,7 @@ public:
   void open_label(time_point start, const string &label);
   void close_label(time_point start, time_point end, const string &label);
   float get_averange(const string &label);
+  float get_max(const string &label);
   const vector<TimeLabel> &get_frame_history();
 };
 

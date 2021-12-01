@@ -145,7 +145,7 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "Arcade",
+      "name": "MotionMatching",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },

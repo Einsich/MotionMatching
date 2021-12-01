@@ -239,6 +239,8 @@ namespace ecs
 
   EntityId create_entity(const BlkTemplate *blkTemplate, ComponentInitializerList &&list)
   {
+    if (!blkTemplate)
+      return EntityId();
     Archetype *found_archetype = blkTemplate->archetype;
     if (!blkTemplate->archetype)
     {

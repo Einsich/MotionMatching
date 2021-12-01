@@ -106,7 +106,7 @@ namespace ecs
         ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
         ecs::template_destructor<T>,
         ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>},
-        ecs::template_blk_reader<T>, template_singleton_instance<T>});
+        template_singleton_instance<T>});
     }
     else
     {

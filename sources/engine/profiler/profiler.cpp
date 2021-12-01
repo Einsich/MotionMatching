@@ -38,6 +38,12 @@ float Profiler::get_averange(const string &label)
 {
   return labelAveranges[label].get_averange();
 }
+
+float Profiler::get_max(const string &label)
+{
+  return labelAveranges[label].get_max();
+}
+
 const vector<TimeLabel> &Profiler::get_frame_history()
 {
   return prev_frame_labels;
@@ -57,6 +63,15 @@ float Profiler::AverangeTime::get_averange() const
 {
   return curSum / framesCount;
 }
+
+float Profiler::AverangeTime::get_max() const
+{
+  float maxTime = 0;
+  for (float dt : dtChain)
+    maxTime = max(maxTime, dt);
+  return maxTime;
+}
+
 void Profiler::AverangeTime::add_time(float dt)
 {
   curSum += -dtChain[curIndex] + dt;
