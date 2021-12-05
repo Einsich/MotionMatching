@@ -33,28 +33,18 @@ int find_last(const std::string &s, const char *substr)
   return off == 0 ? pos : off;
 }
 
-void get_tag(const string &s, set<AnimationTag> &tags)
-{
-  debug_log("tag %s", s.c_str());
-  #define CHECK_TAG(TAG) if (s == #TAG) {tags.insert(AnimationTag::TAG); return;}
-  CHECK_TAG(Stay)
-  CHECK_TAG(Crouch)
-  CHECK_TAG(Jump)
-  CHECK_TAG(Idle)
-}
-
-set<AnimationTag> split(const string &s, char delim) {
-  set<AnimationTag> result;
+vector<string> split(const string &s, char delim) {
+  vector<string> result;
   stringstream ss(s);
   string item;
   while (getline(ss, item, delim))
-    get_tag(item, result);
+    result.emplace_back(item);
   return result;
 }
 
 struct ClipProperty
 {
-  set<AnimationTag> tags;
+  AnimationTags tags;
   bool loopable;
   string nextClip;
 };
@@ -68,7 +58,7 @@ map<string, ClipProperty> read_tag_map(const string &path)
     if (!clip->get<int>("unused", 0))
     {
       ClipProperty prop;
-      prop.tags = split(clip->get<string>("tags", ""), '|');
+      prop.tags = AnimationTags(split(clip->get<string>("tags", ""), '|'));
       prop.nextClip = clip->get<string>("next", "");
       prop.loopable = prop.nextClip == "";
       propertyMap.try_emplace(clip->name(), prop);

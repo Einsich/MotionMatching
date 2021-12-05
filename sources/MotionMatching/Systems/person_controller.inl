@@ -128,7 +128,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   float h = settings.hipsHeightStand;
   if (personController.crouching)
   {
-    h = animationPlayer.inputGoal.tags.find(AnimationTag::Idle) != animationPlayer.inputGoal.tags.end() ?
+    h = animationPlayer.inputGoal.tags.contains("Idle") ?
         settings.hipsHeightCrouchIdle : settings.hipsHeightCrouch;
   }
   
@@ -169,12 +169,12 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   animationPlayer.inputGoal.tags.clear();
   if(personController.crouching)
-    animationPlayer.inputGoal.tags.insert(AnimationTag::Crouch);
+    animationPlayer.inputGoal.tags.add("Crouch");
 
   float dr = abs(desiredOrientation);
   dr = dr < PI ? dr : PITWO - dr;
   if (onPlaceError < settings.onPlaceMoveError && dr * RadToDeg < settings.onPlaceRotationError)
-    animationPlayer.inputGoal.tags.insert(AnimationTag::Idle);
+    animationPlayer.inputGoal.tags.add("Idle");
 
   if (input.get_key(SDLK_SPACE) > 0)
   {

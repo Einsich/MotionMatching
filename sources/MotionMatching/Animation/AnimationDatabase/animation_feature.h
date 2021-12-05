@@ -25,12 +25,12 @@ struct MotionMatchingSettings;
 
 float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const MotionMatchingSettings &settings);
 
-float goal_tag_norma(const vector<AnimationTag> &target, const vector<AnimationTag> &set);
+float goal_tag_norma(AnimationTags goal, AnimationTags clips_tag);
 float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal);
 float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal);
 
 float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght);
 
-MatchingScores get_score(const AnimationFeatures& feature1, const set<AnimationTag> &clip_tags, const AnimationFeatures& feature2,  const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal, const MotionMatchingSettings &settings);
+MatchingScores get_score(const AnimationFeatures& feature1, AnimationTags clip_tags, const AnimationFeatures& feature2,  const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal, const MotionMatchingSettings &settings);
 
-bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag);
+bool has_goal_tags(AnimationTags goal, AnimationTags clips_tag);

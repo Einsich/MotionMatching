@@ -24,12 +24,12 @@ public:
   AnimationClip()=default;
   ~AnimationClip()=default;
   AnimationClip(uint duration, float ticksPerSecond, const string &name, const AnimationTreeData& tree,
-  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, const set<AnimationTag> &tags,
+  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, AnimationTags tags,
   bool loopable, string nextClip, bool rotatable);
   uint duration;
   float ticksPerSecond;
   string name;
-  set<AnimationTag> tags;
+  AnimationTags tags;
   bool loopable;
   string nextClip;
   int nextClipIdx;
@@ -42,5 +42,4 @@ public:
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_frame(uint frame) const;
   AnimationTrajectory get_frame_trajectory(uint frame) const;
-  bool contains_tag(AnimationTag tag) const;
 };

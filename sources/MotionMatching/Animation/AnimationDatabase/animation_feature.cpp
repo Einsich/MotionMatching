@@ -52,27 +52,16 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
   }
   return settings.poseMatchingWeight * pose_norma + settings.velocityMatchingWeight * vel_norma;
 }
-bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
+bool has_goal_tags(AnimationTags goal, AnimationTags clips_tag)
 {
-  if (goal.size() != clips_tag.size())
-    return false;
-  for (AnimationTag tag1 : goal)
-    if (clips_tag.find(tag1) == clips_tag.end())
-      return false;
-  return true;
+  return goal.tags == clips_tag.tags;
 }
-float goal_tag_norma(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
+
+float goal_tag_norma(AnimationTags /* goal */, AnimationTags /* clips_tag */)
 {
-  //if (goal.size() == 0)
-    return 0;
-  float count = 0;
-  for (AnimationTag tag1 : goal)
-  {
-    bool exist = clips_tag.find(tag1) != clips_tag.end();
-    count += exist;
-  }
-  return -(count / goal.size());
+  return 0;
 }
+
 float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
 {
   float rotation_norma = 0.f;
@@ -94,7 +83,7 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal
   return  path_norma / (0.1f + distScale);
 }
 
-MatchingScores get_score(const AnimationFeatures& feature1, const set<AnimationTag> &clip_tags, 
+MatchingScores get_score(const AnimationFeatures& feature1, AnimationTags clip_tags, 
   const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal,
   const MotionMatchingSettings &settings)
 {
@@ -110,13 +99,4 @@ MatchingScores get_score(const AnimationFeatures& feature1, const set<AnimationT
   NAN_LOG(score.goal_path)
   NAN_LOG(score.goal_rotation)
   return score;
-}
-const std::string &get_tag_name(AnimationTag tag)
-{
-  #define ADD_TAG(TAG) #TAG
-  static vector<string> tag_names = {
-    TAGS
-  };
-  return tag_names[(int)tag];
-  #undef ADD_TAG
 }

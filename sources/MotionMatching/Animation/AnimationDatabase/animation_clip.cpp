@@ -2,7 +2,7 @@
 #include "animation_nodes.h"
 
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, const set<AnimationTag> &tags,
+ const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, AnimationTags tags,
  bool loopable, string nextClip, bool rotatable):
  hipsTranslation(duration), hipsRotation(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), 
@@ -28,8 +28,8 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     channels.emplace_back(duration, itVec == vecs.end() ? zeroVec : itVec->second, itQuat == quats.end() ? zeroQuat : itQuat->second);
 
   }
-  bool idle = std::find(tags.begin(), tags.end(), AnimationTag::Idle) != tags.end();
-  bool crouch = std::find(tags.begin(), tags.end(), AnimationTag::Crouch) != tags.end();
+  bool idle = tags.contains("Idle");
+  bool crouch = tags.contains("Crouch");
   vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
   {
@@ -172,10 +172,7 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   }
   return pathFeature;
 }
-bool AnimationClip::contains_tag(AnimationTag tag) const
-{
-  return std::find(tags.begin(), tags.end(), tag) != tags.end();
-}
+
 void AnimationClip::leg_process(int leg_index, u8 leg)
 {
   vector<float> h(features.size());

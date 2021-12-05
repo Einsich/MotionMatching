@@ -43,20 +43,9 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteS
   draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + size.x, p.y + size.y), ImGui::ColorConvertFloat4ToU32(ImVec4(1.f, 1.f, 1.f ,1.f))); 
   ImGui::End();
 }
-string tags_to_text(const set<AnimationTag> &tags)
-{
-  string tagsString = "";
-  bool first = true;
-  for (AnimationTag tag : tags)
-  {
-    if (!first)
-      tagsString += ", ";
-    tagsString += get_tag_name(tag);
-    first = false;
-  }
-  return tagsString;
-}
-void show_best_score(const MatchingScores &score, const MotionMatching &mm, const set<AnimationTag> &tags)
+
+
+void show_best_score(const MatchingScores &score, const MotionMatching &mm, AnimationTags tags)
 {
   if (!ImGui::Begin("Best score"))
   {
@@ -101,8 +90,8 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, cons
     draw_list->AddRectFilled(p, q, color);
   }
   
-  ImGui::Text("goal tags { %s }", tags_to_text(tags).c_str());
-  ImGui::Text("clips tags { %s }", tags_to_text(mm.get_index().current_index().get_clip().tags).c_str());
+  ImGui::Text("goal tags { %s }", tags.to_string().c_str());
+  ImGui::Text("clips tags { %s }", mm.get_index().current_index().get_clip().tags.to_string().c_str());
   bool loopable = mm.get_index().current_index().get_clip().loopable;
   if (loopable)
     ImGui::Text("[loopable]");

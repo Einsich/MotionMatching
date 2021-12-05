@@ -45,9 +45,10 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
       draw_arrow(t, p, boneOffsets[i], vec3(0,0.8f,0), width);
     }
   }
-
   AnimationLerpedIndex index = animationPlayer.get_motion_matching() ? animationPlayer.get_motion_matching()->get_index() : animationPlayer.get_index();
 
+  if (!index)
+    return;
   mat4 transformation = transform.get_transform();
 
   const AnimationFeatures& feature = index.current_index().get_feature();
