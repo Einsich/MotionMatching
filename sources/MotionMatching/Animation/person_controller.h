@@ -1,6 +1,6 @@
 #pragma once
 #include "3dmath.h"
-#include "AnimationDatabase/animation_trajectory.h"
+#include "AnimationDatabase/animation_feature.h"
 #include "serialization/reflection.h"
 class AnimationPlayer;
 class Transform;

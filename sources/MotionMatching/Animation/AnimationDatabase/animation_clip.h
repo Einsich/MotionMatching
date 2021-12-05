@@ -34,8 +34,7 @@ public:
   string nextClip;
   int nextClipIdx;
   bool rotatable;
-  vector<AnimationFeatures> features;
-  vector<AnimationTrajectory> trajectories;
+  vector<FrameFeature> features;
 
   vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;

@@ -51,7 +51,7 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
     return;
   mat4 transformation = transform.get_transform();
 
-  const AnimationFeatures& feature = index.current_index().get_feature();
+  const NodeFeatures& feature = index.current_index().get_feature();
   
   //vec3 man = transformation * vec4(feature.nodes[(int)AnimationFeaturesNode::Hips], 1.f);
   //Ray ray(man, vec3(0,-1,0), 100);
@@ -102,7 +102,7 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_animation(
     constexpr float lenghts[2] = {0.3f, 0.3f};
     const AnimationTrajectory &trajectory = index.current_index().get_trajectory();
 
-    const std::array<TrajectoryPoint,AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &animationPlayer.inputGoal.path.trajectory};
+    const std::array<TrajectoryPoint, AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &animationPlayer.inputGoal.feature.trajectory.trajectory};
     for(int i = 0; i < 2; i++)
     {
       for (const TrajectoryPoint &p: *trajectories[i])

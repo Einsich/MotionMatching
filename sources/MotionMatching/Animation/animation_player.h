@@ -2,7 +2,6 @@
 #include <input.h>
 #include "MotionMatching/motion_matching.h"
 #include "AnimationTree/animation_tree.h"
-#include "animation_goal.h"
 #include <serialization/iserializable.h>
 enum class AnimationPlayerType
 {

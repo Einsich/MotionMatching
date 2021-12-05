@@ -31,7 +31,7 @@ AnimationLerpedIndex MotionMatching::get_index() const
 {
   return index;
 }
-void MotionMatching::update(float dt, const AnimationGoal &goal,
+void MotionMatching::update(float dt, AnimationGoal &goal,
   const MotionMatchingSettings &mmsettings,
   const MotionMatchingOptimisationSettings &optimisationSettings,
   bool updateStatistic,

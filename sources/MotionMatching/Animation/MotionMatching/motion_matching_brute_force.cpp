@@ -20,7 +20,7 @@ ArgMin mm_min2(const ArgMin &a, const ArgMin &b) {
 }
 AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
   const AnimationIndex &index,
-  const AnimationGoal &goal,
+  AnimationGoal &goal,
   MatchingScores &best_score,
   Settings &settings,
   const MotionMatchingSettings &mmsettings,
@@ -28,7 +28,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
 {
   if (!dataBase || !index())
     return AnimationIndex();
-  const AnimationFeatures &feature = index.get_feature();
+  goal.feature.features = index.get_feature();
   int curClip = index.get_clip_index();
   int curCadr = index.get_cadr_index();
 
@@ -39,9 +39,9 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
   if (!forceJump && optimisationSettings.trajectoryErrorToleranceTest &&
     has_goal_tags(goal.tags, clip.tags))
   {
-    const AnimationTrajectory &trajectory = clip.trajectories[nextCadr];
-    float trajectory_cost = goal_path_norma(trajectory, goal) ;
-    float rotation_cost = rotation_norma(trajectory, goal);
+    const AnimationTrajectory &trajectory = clip.features[nextCadr].trajectory;
+    float trajectory_cost = goal_path_norma(trajectory, goal.feature.trajectory) ;
+    float rotation_cost = rotation_norma(trajectory, goal.feature.trajectory);
     if (trajectory_cost < optimisationSettings.pathErrorTolerance &&
         rotation_cost < optimisationSettings.rotationErrorTolerance)
     {
@@ -62,7 +62,7 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
       continue;
     for (int nextCadr = 0, n = dataBase->clips[nextClip].duration; nextCadr < n; nextCadr++)
     {
-      MatchingScores score = get_score(clip.features[nextCadr], clip.tags, feature, clip.trajectories[nextCadr], goal, mmsettings);
+      MatchingScores score = get_score(clip.features[nextCadr], goal.feature, mmsettings);
       
       float matching = score.full_score;
       ArgMin cur = {matching, nextClip, nextCadr, score};

@@ -135,7 +135,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
   //bool onlyForward = speed.z > 0.f && abs(speed.x) < 0.1f;
   speed = glm::rotateY(speed, -wantedRotation - sidewayRotation);
 
-  auto &trajectory = animationPlayer.inputGoal.path.trajectory;
+  auto &trajectory = animationPlayer.inputGoal.feature.trajectory.trajectory;
 
   vec3 v0 = personController.desiredTrajectory[0] / settings.inertionTime; // inertion time
   v0.y = 0;

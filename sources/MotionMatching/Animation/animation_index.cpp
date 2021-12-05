@@ -89,13 +89,13 @@ AnimationCadr AnimationIndex::get_cadr(float t) const
   int nextClip = (cadr + 1 + dataBase->clips[clip].duration) % dataBase->clips[clip].duration;
   return lerped_cadr(dataBase->clips[clip].get_frame(cadr), dataBase->clips[clip].get_frame(nextClip), t);
 }
-const AnimationFeatures &AnimationIndex::get_feature() const
+const NodeFeatures &AnimationIndex::get_feature() const
 {
-  return dataBase->clips[clip].features[cadr];
+  return dataBase->clips[clip].features[cadr].features;
 }
 const AnimationTrajectory &AnimationIndex::get_trajectory() const
 {
-  return dataBase->clips[clip].trajectories[cadr];
+  return dataBase->clips[clip].features[cadr].trajectory;
 }
 bool AnimationIndex::operator==(const AnimationIndex &i2) const
 {

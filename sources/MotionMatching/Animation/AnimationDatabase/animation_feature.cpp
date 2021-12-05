@@ -16,32 +16,35 @@ std::map<std::string, int> featureMap = {
 };
 #undef FEATURE
 
-AnimationFeatures::AnimationFeatures():
+NodeFeatures::NodeFeatures():
   nodes((int)AnimationFeaturesNode::Count, vec3(NAN)), nodesVelocity((int)AnimationFeaturesNode::Count, vec3(NAN)){}
-size_t AnimationFeatures::serialize(std::ostream& os) const
+
+size_t FrameFeature::serialize(std::ostream& os) const
 {
   size_t size = 0;
-  size += write(os, nodes);
-  size += write(os, nodesVelocity);
+  size += write(os, features.nodes);
+  size += write(os, features.nodesVelocity);
+  size += write(os, trajectory.trajectory);
   return size;
 }
-size_t AnimationFeatures::deserialize(std::istream& is)
+size_t FrameFeature::deserialize(std::istream& is)
 {
   size_t size = 0;
-  size += read(is, nodes);
-  size += read(is, nodesVelocity);
+  size += read(is, features.nodes);
+  size += read(is, features.nodesVelocity);
+  size += read(is, trajectory.trajectory);
   return size;
 }
 
 
-void AnimationFeatures::set_feature(const string& name, vec3 feature)
+void NodeFeatures::set_feature(const string& name, vec3 feature)
 {
   auto it = featureMap.find(name);
   if (it != featureMap.end())
     nodes[(int)it->second] = feature;
   
 }
-float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeatures& feature2, const MotionMatchingSettings &settings)
+float pose_matching_norma(const NodeFeatures& feature1, const NodeFeatures& feature2, const MotionMatchingSettings &settings)
 {
   float pose_norma = 0.f, vel_norma = 0.f;
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
@@ -62,36 +65,34 @@ float goal_tag_norma(AnimationTags /* goal */, AnimationTags /* clips_tag */)
   return 0;
 }
 
-float rotation_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
+float rotation_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
 {
   float rotation_norma = 0.f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
   {
-    float r = abs(path.trajectory[i].rotation - goal.path.trajectory[i].rotation);
+    float r = abs(path.trajectory[i].rotation - goal.trajectory[i].rotation);
     r -= (int)(r / PITWO)*PITWO;
     r = r > PI ? PITWO - r : r;
     rotation_norma += r;
   }
   return rotation_norma;
 }
-float goal_path_norma(const AnimationTrajectory &path, const AnimationGoal &goal)
+float goal_path_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
 {
   float path_norma = 0.f;
-  float distScale = length(goal.path.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
+  float distScale = length(goal.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-    path_norma += length((path.trajectory[i].point - goal.path.trajectory[i].point));
+    path_norma += length((path.trajectory[i].point - goal.trajectory[i].point));
   return  path_norma / (0.1f + distScale);
 }
 
-MatchingScores get_score(const AnimationFeatures& feature1, AnimationTags clip_tags, 
-  const AnimationFeatures& feature2, const AnimationTrajectory &frame_trajectory, const AnimationGoal &goal,
+MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& goal_feature,
   const MotionMatchingSettings &settings)
 {
   MatchingScores score{0, 0, 0, 0, 0};
-  score.pose = pose_matching_norma(feature1, feature2, settings);
-  score.goal_path = goal_path_norma(frame_trajectory, goal) * settings.goalPathMatchingWeight;
-  score.goal_rotation = rotation_norma(frame_trajectory, goal) * settings.goalRotationMatchingWeight;
-  score.goal_tag = goal_tag_norma(goal.tags, clip_tags) * settings.goalFavourTagWeight;
+  score.pose = pose_matching_norma(clip_feature.features, goal_feature.features, settings);
+  score.goal_path = goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight;
+  score.goal_rotation = rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight;
   score.full_score = score.pose * settings.realism + (score.goal_path + score.goal_rotation);
   #define NAN_LOG(var)if (std::isnan(-var)) debug_error("NAN in %s", #var);
 

@@ -10,7 +10,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
  loopable(loopable),
  nextClip(nextClip),
  nextClipIdx(-1),
- rotatable(rotatable),features(duration), trajectories(duration)
+ rotatable(rotatable),features(duration)
 {
   debug_log("Animation %s was added, duration %d", name.c_str(), duration);
 
@@ -69,7 +69,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       if (tree.nodes[j].parent >= 0)
         nodeTransform = transfroms[tree.nodes[j].parent] * nodeTransform;
       transfroms[j] = nodeTransform;
-      features[i].set_feature(tree.nodes[j].name, nodeTransform[3]);
+      features[i].features.set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
 
@@ -78,12 +78,13 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
     int j = i == duration - 1 ? i - 1: i;
     for (int node = 0; node < (int)AnimationFeaturesNode::Count; node++)
     {
-      features[i].nodesVelocity[node] = (features[j + 1].nodes[node] - features[j].nodes[node]) * ticksPerSecond;
+      features[i].features.nodesVelocity[node] =
+        (features[j + 1].features.nodes[node] - features[j].features.nodes[node]) * ticksPerSecond;
     }
   }
   for (uint i = 0; i < duration; i++)
   {
-    trajectories[i] = get_frame_trajectory(i);
+    features[i].trajectory = get_frame_trajectory(i);
   }
 
   ground_calculate();
@@ -178,7 +179,7 @@ void AnimationClip::leg_process(int leg_index, u8 leg)
   vector<float> h(features.size());
   vector<int> g(features.size());
   for (uint i = 0; i < h.size(); i++)
-    h[i] = features[i].nodes[leg_index].y;
+    h[i] = features[i].features.nodes[leg_index].y;
 
   constexpr float ground_value = 0.04f;
   g[0] = abs(h[0]) < ground_value ? 1 : 0;
@@ -216,7 +217,6 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, hipsTranslation);
   size += write(os, hipsRotation);
   size += write(os, features);
-  size += write(os, trajectories);
   size += write(os, tags);
   size += write(os, loopable);
   size += write(os, nextClip);
@@ -235,7 +235,6 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, hipsTranslation);
   size += read(is, hipsRotation);
   size += read(is, features);
-  size += read(is, trajectories);
   size += read(is, tags);
   size += read(is, loopable);
   size += read(is, nextClip);

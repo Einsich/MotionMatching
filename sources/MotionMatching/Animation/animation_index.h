@@ -18,7 +18,7 @@ public:
   const AnimationClip &get_clip() const;
   AnimationCadr get_cadr() const;
   AnimationCadr get_cadr(float t) const;
-  const AnimationFeatures &get_feature() const;
+  const NodeFeatures &get_feature() const;
   const AnimationTrajectory &get_trajectory() const;
   static bool can_jump(const AnimationIndex &from, const AnimationIndex &to);
   bool operator==(const AnimationIndex &i2) const;
