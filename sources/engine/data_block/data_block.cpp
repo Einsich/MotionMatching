@@ -167,7 +167,7 @@ static bool parse(Stream &stream, float &value)
   return read != 0;
 }
 
-static bool parse(Stream &stream, bool &value)
+static bool parse(Stream &stream, unsigned char &value)
 {
   skip_spaces(stream);
   const char *buf = stream.data();
@@ -237,8 +237,11 @@ static bool try_parse_value(Stream &stream, DataBlock &blk, const char *varName,
   T value;
   if (parse(stream, value))
   {
-    blk.add<T>(varName, value);
-    cout << varName << ":" << varType << "=" << value << endl;
+    blk.add<T>(varName, value);/* 
+    if constexpr(std::is_same_v<T, unsigned char>)
+      cout << varName << ":" << varType << "=" << (bool)value << endl;
+    else
+      cout << varName << ":" << varType << "=" << value << endl; */
     if (read_character(stream, ';'))
       return true;
     debug_error("expects ';' after %s:%s", varName, varType);
@@ -278,10 +281,10 @@ static bool read_blk(Stream &stream, DataBlock &block);
 static bool add_block(Stream &stream, DataBlock &block, const string &varName, const string &varType)
 {
   DataBlock *nextBlock = block.addBlock(varName.c_str(), varType.c_str());
-  if (varType != "")
+  /* if (varType != "")
     printf("added block %s:%s\n", varName.c_str(), varType.c_str());
   else
-    printf("added block %s\n", varName.c_str());
+    printf("added block %s\n", varName.c_str()); */
   return read_blk(stream, *nextBlock);;
 }
 

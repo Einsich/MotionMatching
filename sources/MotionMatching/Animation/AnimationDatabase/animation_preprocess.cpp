@@ -6,6 +6,7 @@
 #include <assimp/postprocess.h>
 #include <application/time.h>
 #include "animation_database.h"
+#include <data_block/data_block.h>
 
 string normalName(const string& badName)
 {
@@ -31,75 +32,47 @@ int find_last(const std::string &s, const char *substr)
   } 
   return off == 0 ? pos : off;
 }
-void get_tag_from_name(const string &s, set<AnimationTag> &tags)
-{
 
-  #define CHECK(SUBSTR, TAG) \
-  {size_t t = s.find("_To_"), r = find_last(s, #SUBSTR);if (r < s.length() && (s.length() <= t || t < r)) tags.insert(AnimationTag::TAG);}
-  #define FIND(SUBSTR, TAG) \
-  {size_t r = s.find(#SUBSTR);if (r < s.length()) tags.insert(AnimationTag::TAG);}
-
-  CHECK(Crouch, Crouch)
-  CHECK(CrouchWalk, Crouch)
-  CHECK(Stand_Relaxed, Stay)
-  return;
-  CHECK(_Walk_, Stay)
-  CHECK(_Run_, Stay)
-  CHECK(_Jog_, Stay)
-  CHECK(Jump, Jump)
-  CHECK(Conv, Speak)
-}
 void get_tag(const string &s, set<AnimationTag> &tags)
 {
+  debug_log("tag %s", s.c_str());
   #define CHECK_TAG(TAG) if (s == #TAG) {tags.insert(AnimationTag::TAG); return;}
   CHECK_TAG(Stay)
   CHECK_TAG(Crouch)
   CHECK_TAG(Jump)
   CHECK_TAG(Idle)
 }
+
+set<AnimationTag> split(const string &s, char delim) {
+  set<AnimationTag> result;
+  stringstream ss(s);
+  string item;
+  while (getline(ss, item, delim))
+    get_tag(item, result);
+  return result;
+}
+
 struct ClipProperty
 {
   set<AnimationTag> tags;
-  bool loopable, rotatable;
+  bool loopable;
   string nextClip;
 };
 map<string, ClipProperty> read_tag_map(const string &path)
 {
   map<string, ClipProperty> propertyMap;
-  try 
+  DataBlock clips(path);
+  for (size_t i = 0, n = clips.blockCount(); i < n; i++)
   {
-    ifstream tagsFile;
-    tagsFile.exceptions(ifstream::badbit);
-    tagsFile.open(path);
-    vector<pair<string, bool>> words;
-      string s;
-    
-    auto propertyIt = propertyMap.begin();
-    while (tagsFile >> s)
+    const DataBlock *clip = clips.getBlock(i);
+    if (!clip->get<int>("unused", 0))
     {
-      if (s.substr(0, 4) == "MOB1")
-      {
-        auto emp = propertyMap.try_emplace(s);
-        if (emp.second)
-          propertyIt = emp.first;
-      }
-      else
-      {
-        if (s == "loopable")
-          propertyIt->second.loopable = true;
-        else
-        if (s == "rotatable")
-          propertyIt->second.rotatable = true;
-        if (s.substr(0, 2) == "->")
-          propertyIt->second.nextClip = s.substr(2);
-        else
-          get_tag(s, propertyIt->second.tags);
-      }
+      ClipProperty prop;
+      prop.tags = split(clip->get<string>("tags", ""), '|');
+      prop.nextClip = clip->get<string>("next", "");
+      prop.loopable = prop.nextClip == "";
+      propertyMap.try_emplace(clip->name(), prop);
     }
-  }
-  catch(ifstream::failure &e)
-  {
-    debug_error("Can't open %s", path.c_str());
   }
   return propertyMap;
 } 
@@ -152,7 +125,7 @@ void animation_preprocess(AnimationDataBase *animDatabase)
   animDatabase->clips.clear();
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-  auto tagMap = read_tag_map(project_path("AnimationTags.txt"));
+  auto tagMap = read_tag_map(project_path("AnimationTags.blk"));
 
     TimeScope scope("Animation Reading from fbx file");
     string path = project_path("Root_Motion");
@@ -195,7 +168,7 @@ void animation_preprocess(AnimationDataBase *animDatabase)
           string animName = string(animation->mName.C_Str());
           const ClipProperty &property = tagMap[animName];
           animDatabase->clips.emplace_back(duration, 30, animName,
-              animDatabase->tree, rotation, translation, property.tags, property.loopable, property.nextClip, property.rotatable);
+              animDatabase->tree, rotation, translation, property.tags, property.loopable, property.nextClip, false);
 
         }
         vector<AnimationClip> &clips = animDatabase->clips;

@@ -16,7 +16,7 @@ public:
       int, ivec2, ivec3, ivec4,
       unsigned, uvec2, uvec3, uvec4,
       float, vec2, vec3, vec4,
-      std::string, bool>;
+      std::string, unsigned char>;
       
   struct Property
   {
@@ -112,9 +112,15 @@ public:
   size_t propertiesCount() const;
   
   template<typename T>
-  const T& get(const char* name, const T &default_value) const
+  std::enable_if_t<!(std::is_same_v<T, bool>), const T&> get(const char* name, const T &default_value) const
   {
     const T* value = get_implementation<T>(name);
+    return value ? *value : default_value;
+  }
+  template<typename T>
+  std::enable_if_t<std::is_same_v<T, bool>, T> get(const char* name, const T &default_value) const
+  {
+    const T* value = (const T*)get_implementation<unsigned char>(name);
     return value ? *value : default_value;
   }
   template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>

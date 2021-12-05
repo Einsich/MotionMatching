@@ -54,6 +54,8 @@ float pose_matching_norma(const AnimationFeatures& feature1, const AnimationFeat
 }
 bool has_goal_tags(const set<AnimationTag> &goal, const set<AnimationTag> &clips_tag)
 {
+  if (goal.size() != clips_tag.size())
+    return false;
   for (AnimationTag tag1 : goal)
     if (clips_tag.find(tag1) == clips_tag.end())
       return false;
