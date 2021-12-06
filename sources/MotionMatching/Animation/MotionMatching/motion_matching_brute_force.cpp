@@ -1,24 +1,21 @@
-#include "motion_matching_brute_force.h"
+#include "motion_matching.h"
 #include "../settings.h"
-MotionMatchingBruteSolver::MotionMatchingBruteSolver(AnimationDataBasePtr dataBase):
-dataBase(dataBase)
-{
-  if (!dataBase)
-    return;
-  matchingScore.resize(dataBase->clips.size());
-  for (uint i = 0; i < matchingScore.size(); i++)
-    matchingScore[i].resize(dataBase->clips[i].duration, 0);
-}
+
 struct ArgMin
 {
   float value;
   int clip, frame;
   MatchingScores score;
 };
-ArgMin mm_min2(const ArgMin &a, const ArgMin &b) {
-    return a.value < b.value ? a : b; 
+
+ArgMin mm_min2(const ArgMin &a, const ArgMin &b)
+{
+  return a.value < b.value ? a : b; 
 }
-AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
+
+AnimationIndex solve_motion_matching(
+  bool updateScoreStatistic,
+  AnimationDataBasePtr dataBase,
   const AnimationIndex &index,
   AnimationGoal &goal,
   MatchingScores &best_score,
@@ -60,25 +57,17 @@ AnimationIndex MotionMatchingBruteSolver::solve_motion_matching(
       continue;
     if (!has_goal_tags(goal.tags, clip.tags))
       continue;
-    for (int nextCadr = 0, n = dataBase->clips[nextClip].duration; nextCadr < n; nextCadr++)
+    for (int nextCadr = 0, n = clip.duration; nextCadr < n; nextCadr++)
     {
       MatchingScores score = get_score(clip.features[nextCadr], goal.feature, mmsettings);
       
       float matching = score.full_score;
       ArgMin cur = {matching, nextClip, nextCadr, score};
       if (updateScoreStatistic)
-        matchingScore[nextClip][nextCadr] = matching;
+        dataBase->matchingScore[nextClip][nextCadr] = matching;
       best = mm_min2(best, cur);
     }
   }
   best_score = best.score;
   return AnimationIndex(dataBase, best.clip, best.frame);
-}
-const vector<vector<float>> &MotionMatchingBruteSolver::get_matching_scores() const
-{
-  return matchingScore;
-}
-AnimationDataBasePtr MotionMatchingBruteSolver::get_data_base() const
-{
-  return dataBase;
 }

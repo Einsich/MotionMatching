@@ -1,19 +1,22 @@
 #pragma once
 #include "common.h"
 #include "../animation_index.h"
-#include "motion_matching_brute_force.h"
 #include <vector>
+
 enum class MotionMatchingSolverType
 {
-  BruteForce,
-  Count
+  BruteForce
 };
+
 struct Settings;
+struct MotionMatchingSettings;
+struct MotionMatchingOptimisationSettings;
+
 class MotionMatching
 {
 public:
   AnimationDataBasePtr dataBase;
-  MotionMatchingSolverPtr solver;
+  MotionMatchingSolverType solverType;
   AnimationLerpedIndex index;
   float skip_time;
   int lod;
@@ -27,5 +30,4 @@ public:
     bool updateStatistic,
     Settings &settings);
   AnimationDataBasePtr get_data_base() const;
-  MotionMatchingSolverPtr get_solver() const;
 };

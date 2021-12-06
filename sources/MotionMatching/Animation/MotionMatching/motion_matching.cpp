@@ -3,28 +3,29 @@
 #include <map>
 #include "application/profile_tracker.h"
 
-static std::map<intptr_t, MotionMatchingSolverPtr> solvers[(int)MotionMatchingSolverType::Count];
+
+AnimationIndex solve_motion_matching(
+  bool updateScoreStatistic,
+  AnimationDataBasePtr dataBase,
+  const AnimationIndex &index,
+  AnimationGoal &goal,
+  MatchingScores &best_score,
+  Settings &settings,
+  const MotionMatchingSettings &mmsettings,
+  const MotionMatchingOptimisationSettings &optimisationSettings);
+
 
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
-dataBase(dataBase), solver(nullptr), index(index), skip_time(0), lod(0)
+dataBase(dataBase), solverType(solverType), index(index), skip_time(0), lod(0)
 {
   if (!dataBase)
     return;
-  auto &solverMap = solvers[(int)solverType];
-  intptr_t x = reinterpret_cast<intptr_t>(&(*dataBase));
-  auto it = solverMap.find(x);
-  if (it == solverMap.end())
+  
+  if (dataBase->matchingScore.empty())
   {
-    switch (solverType)
-    {
-    case MotionMatchingSolverType::BruteForce: solver = make_shared<MotionMatchingBruteSolver>(dataBase); break;
-    default:solver = nullptr; break;
-    }
-    solverMap.emplace(x, solver);
-  }
-  else
-  {
-    solver = it->second;
+    dataBase->matchingScore.resize(dataBase->clips.size());
+    for (uint i = 0; i < dataBase->matchingScore.size(); i++)
+      dataBase->matchingScore[i].resize(dataBase->clips[i].duration, 0);
   }
 }
 AnimationLerpedIndex MotionMatching::get_index() const
@@ -38,13 +39,12 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
   Settings &settings)
 {
   //PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 2000);
-  if (!solver)
-    return;
+
   AnimationIndex saveIndex = index.current_index();
   index.update(dt, settings.lerpTime);
   skip_time += dt;
 
-    AnimationIndex currentIndex = index.current_index();
+  AnimationIndex currentIndex = index.current_index();
   if (saveIndex != currentIndex)
   {
     bool lastFrames = currentIndex.get_cadr_index() + 5 >= (int)currentIndex.get_clip().duration;
@@ -54,8 +54,14 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
     {
       skip_time = 0;
       bestScore = {0,0,0,0,0};
-      solver->updateScoreStatistic = updateStatistic;
-      AnimationIndex best_index = solver->solve_motion_matching(currentIndex, goal, bestScore, settings, mmsettings, optimisationSettings);
+      AnimationIndex best_index;
+      switch (solverType)
+      {
+      case MotionMatchingSolverType::BruteForce :
+        best_index = solve_motion_matching(updateStatistic, dataBase, currentIndex, goal, bestScore, settings, mmsettings, optimisationSettings);
+        break;
+      default: break;
+      }
       
       bool can_jump = true;
       for (const AnimationIndex &index : index.get_indexes())
@@ -76,10 +82,6 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
   }
 }
 
-MotionMatchingSolverPtr MotionMatching::get_solver() const
-{
-  return solver;
-}
 AnimationDataBasePtr MotionMatching::get_data_base() const
 {
   return dataBase;

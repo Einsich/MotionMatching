@@ -17,6 +17,8 @@ public:
   )
   bool needForceReload;
   std::vector<AnimationTest> tests;
+  std::vector<std::vector<float>> matchingScore;
+
   int cadr_count() const;
   void save_runtime_parameters() const;
   void load_runtime_parameters();

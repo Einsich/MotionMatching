@@ -6,7 +6,7 @@
 #include "Animation/third_person_controller.h"
 #include <manager/type_info.h>
 
-void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteSolver* solver, const MotionMatching &mm)
+void show_scores(const AnimationDataBasePtr dataBase, const MotionMatching &mm)
 {
 
   if (!ImGui::Begin("Scores"))
@@ -15,7 +15,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatchingBruteS
     return;
   }
   const vector<AnimationClip> &animations = dataBase->clips;
-  const auto &matchingScore = solver->get_matching_scores();
+  const auto &matchingScore = dataBase->matchingScore;
   AnimationIndex cur = mm.get_index().current_index();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -125,14 +125,8 @@ SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion
     //debug_error("Hasn't motion matching realisation");
     return;
   }
-  const MotionMatchingBruteSolver *solver 
-    = dynamic_cast<MotionMatchingBruteSolver*>(animationPlayer.get_motion_matching()->get_solver().get());
-  if (!solver)
-  {
-    debug_error("Hasn't motion matching colver");
-    return;
-  }
-  AnimationDataBasePtr dataBase = solver->get_data_base();
+  
+  AnimationDataBasePtr dataBase = animationPlayer.dataBase;
   if(!dataBase)
   {
     debug_error("Hasn't database");
@@ -140,7 +134,7 @@ SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion
   }
   const MotionMatching &mm = *animationPlayer.get_motion_matching();
 
-  show_scores(dataBase, solver, mm);
+  show_scores(dataBase, mm);
 
   show_best_score(mm.bestScore, mm, animationPlayer.inputGoal.tags);
 
