@@ -9,11 +9,8 @@ namespace ecs
 {
   struct Scene
   {
-    string name;
-    filesystem::path path;
+    string path;
     EntityContainer editorScene, gameScene;
-    bool inEditor;
-    bool gamePaused;
   };
   class SceneManager
   {
@@ -21,21 +18,18 @@ namespace ecs
     typedef std::vector<SystemDescription*>::iterator SystemIterator;
     struct SystemRange { SystemIterator begin, end; };
     SystemRange logic, render, ui, menu;
-    uint currentSceneTags;
-    vector<Scene*> scenes;
-    Scene *currentScene;
+    Scene currentScene;
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
   public:
-    void save_current_scene();
-    void start(bool editor);
-    bool try_start_scene(const string &name, uint tags);
-    void swap_editor_game_scene(bool pause);
+    void restart_cur_scene();
+    void start();
+    void start_scene(const string &path, uint tags);
+    void swap_editor_game_scene();
     void update_logic();
     void update_render();
     void update_ui();
     void process_events();
     void destroy_scene();
-    void add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open);
   };
 }

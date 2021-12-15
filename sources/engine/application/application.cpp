@@ -44,16 +44,12 @@ void Application::start()
   #ifdef RELEASE
   editor = false;
   #endif
-  scene->start(editor);
+  scene->start();
   ecs::load_templates_from_blk();
   get_profiler();
   string sceneName;
-  uint tags = editor ? (uint)ecs::SystemTag::Editor : (uint)ecs::SystemTag::Game;
-
-  if (!scene->try_start_scene(metaInfo.firstScene, tags))
-  {
-    scene->try_start_scene("default", tags);
-  }
+  uint tags = editor ? ecs::SystemTag::Editor : ecs::SystemTag::Game;
+  scene->start_scene(root_path(metaInfo.firstScene), tags);
 }
 bool Application::sdl_event_handler()
 {
@@ -69,10 +65,10 @@ bool Application::sdl_event_handler()
       case SDL_KEYDOWN: 
       
       if(event.key.keysym.sym == SDLK_F2)
-        scene->swap_editor_game_scene(true);
-      else
+        scene->restart_cur_scene();
+      
       if(event.key.keysym.sym == SDLK_F3)
-        scene->swap_editor_game_scene(false);
+        scene->swap_editor_game_scene();
       
       case SDL_KEYUP: input.event_process(event.key, Time::time());
 
@@ -158,17 +154,4 @@ string root_path(const std::string &path)
 string root_path()
 {
   return Application::instance().root;
-}
-void load_scene(const string &name, bool editor)
-{
-  ecs::SceneManager &scene = *Application::instance().scene;
-  if (!scene.try_start_scene(name, editor ? (uint)ecs::SystemTag::Editor : (uint)ecs::SystemTag::Game))
-    debug_error("Can't load scene %s", name.c_str());
-}
-
-void add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open)
-{
-  if (need_to_open)
-    get_meta_info().firstScene = path.stem().string();
-  Application::instance().scene->add_open_scene(path, need_to_add, need_to_open);
 }

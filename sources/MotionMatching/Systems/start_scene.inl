@@ -32,11 +32,6 @@ EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
   load_object(settings, "man_property.bin");
 }
 
-EVENT(ecs::SystemTag::GameEditor) init_blk_scene(const ecs::OnSceneCreated &)
-{
-  ecs::create_scene(root_path("resources/MotionMatching/Scenes/test_scene.blk"), false);
-}
-
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,
   const AnimationDataBasePtr dataBase,

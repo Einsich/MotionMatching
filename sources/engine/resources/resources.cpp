@@ -47,13 +47,6 @@ void create_all_resources_from_metadata(const fs::path &path)
             it->second.createExistsAsset(path);
           }
         }
-        else
-        {
-          if (ext == ".scene")
-          {
-            add_open_scene(path);
-          }
-        }
       }
     }
   }

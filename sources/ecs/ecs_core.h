@@ -33,7 +33,7 @@ namespace ecs
     }
     void destroy_all_entities();
     void destroy_entities_from_destroy_queue(bool with_swap_last_element);
-    void replace_entity_container(EntityContainer *container);
+    void update_systems_subscribes();
     static bool allow_system_execute(uint tags, uint require_tags);
   };
   Core &core();

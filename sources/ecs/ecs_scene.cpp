@@ -9,19 +9,17 @@ void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 namespace ecs
 {
+  void load_scene(const string &path);
+  void destroy_scene();
+  void invalidate_cached_archetype();
+
   bool system_comparator(const SystemDescription *a, const SystemDescription *b)
   {
     return a->order < b->order;
   }
-  void SceneManager::start(bool editor)
+  void SceneManager::start()
   {
     create_all_resources_from_metadata();
-    if (editor)
-    {
-      scenes.emplace_back(new Scene{"default", "", {}, {}, true, false});
-      scenes.back()->editorScene.dontAddable = scenes.back()->gameScene.dontAddable = true;
-      scenes.back()->editorScene.loaded = scenes.back()->gameScene.loaded = true;
-    }
 
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
@@ -45,83 +43,46 @@ namespace ecs
   void save(std::ostream& os, const std::vector<Archetype*> &archetypes);
   void load(std::istream& is, std::vector<Archetype*> &archetypes, EntityPull &entityPull);
 
-  static void load_scene(const Scene &scene, ecs::EntityContainer &scene_container)
+  void SceneManager::restart_cur_scene()
   {
-    std::ifstream file(scene.path, ios::binary);
-    load(file, core().entityContainer->archetypes, core().entityContainer->entityPull);
-    scene_container.loaded = true;
-  }
-  bool SceneManager::try_start_scene(const string &name, uint tags)
-  {
-    for (Scene *scene : scenes)
-      if (scene->name == name)
-      {
-        currentScene = scene;
-        currentSceneTags = tags;
-        bool editor = tags & ecs::SystemTag::Editor;
-        core().currentSceneTags = tags;
-        ecs::EntityContainer &curContainer = editor ? scene->editorScene : scene->gameScene;
-        core().entityContainer = &curContainer;
-        if (!curContainer.loaded)
-          load_scene(*currentScene, curContainer);
-        send_event(OnSceneCreated());
-        return true;
-      }
-    return false;
-  }
-  
-  void create_entities_from_archetypes(const vector<Archetype *> &src);//ecs_core.cpp
-
-  void SceneManager::swap_editor_game_scene(bool pause)
-  {
-    uint newTags = currentSceneTags == (uint)ecs::SystemTag::Editor ? (uint)ecs::SystemTag::Game : (uint)ecs::SystemTag::Editor;
-    if (currentScene)
+    ecs::destroy_scene();
+    for (auto &p : ecs::SingletonTypeInfo::types())
     {
-      for (auto &p : ecs::SingletonTypeInfo::types())
-      {
-        auto &singleton = p.second;
-        singleton.constructor(singleton.getSingleton());        
-      }
-      currentScene->inEditor = newTags == (uint)ecs::SystemTag::Editor;
-      ecs::EntityContainer &curContainer = currentScene->inEditor ? currentScene->editorScene : currentScene->gameScene;
-      if (currentScene->inEditor)
-      {
-        currentScene->gamePaused = pause;
-        if (!pause)
-        {
-          process_events();
-          core().destroy_all_entities();
-        }
-        currentSceneTags = newTags;
-        core().currentSceneTags = newTags;
-        if (curContainer.loaded)
-        {
-          core().replace_entity_container(&curContainer);
-        }
-        else
-        {
-          core().entityContainer = &curContainer;
-          load_scene(*currentScene, curContainer);
-          send_event(OnSceneCreated());
-        }
-      }
-      else
-      {
-        currentSceneTags = newTags;
-        core().currentSceneTags = newTags;
-        core().replace_entity_container(&curContainer);
-        if (!currentScene->gamePaused) 
-        {       
-          create_entities_from_archetypes(currentScene->editorScene.archetypes);
-          send_event(OnSceneCreated());
-        }
-      }
+      auto &singleton = p.second;
+      //singleton.constructor(singleton.getSingleton());        
+    }
+    load_scene(currentScene.path);
+    send_event(OnSceneCreated());
+  }
+  void SceneManager::swap_editor_game_scene()
+  {
+    bool inEditor = core().currentSceneTags & ecs::SystemTag::Game;
+    uint32_t tags = core().currentSceneTags;
+    tags |= (inEditor ? ecs::SystemTag::Editor : ecs::SystemTag::Game);
+    tags &= (!inEditor ? ~ecs::SystemTag::Editor : ~ecs::SystemTag::Game);
+    invalidate_cached_archetype();
+    start_scene(currentScene.path, tags);
+  }
+  void SceneManager::start_scene(const string &path, uint newTags)
+  {
+    currentScene.path = path;
+    bool inEditor = newTags & ecs::SystemTag::Editor;
+    ecs::EntityContainer &curContainer = inEditor ? currentScene.editorScene : currentScene.gameScene;
+    core().currentSceneTags = newTags;
+    core().entityContainer = &curContainer;
+    core().update_systems_subscribes();
+    bool needRestart = (inEditor && !curContainer.loaded) || !inEditor;
+
+    if (needRestart)
+    {
+      restart_cur_scene();
+      curContainer.loaded = true;
     }
   }
   void SceneManager::update_range(const SystemRange &range)
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
-      if (Core::allow_system_execute((*it)->tags, currentSceneTags))
+      if (Core::allow_system_execute((*it)->tags, core().currentSceneTags))
       {
         ProfilerLabel label((*it)->name.c_str());
         (*it)->execute();
@@ -149,8 +110,6 @@ namespace ecs
 
   }
 
-  void load_scene(const string &path);
-  void destroy_scene();
   void SceneManager::process_events()
   {
     auto &events = core().events;
@@ -161,53 +120,21 @@ namespace ecs
     }
     core().destroy_entities_from_destroy_queue(true);
     string &sceneToLoad = core().sceneToLoad;
-    bool &reloadScene = core().reloadScene;
     if (sceneToLoad != "")
     {
-      if (reloadScene)
-        ecs::destroy_scene();
-      load_scene(sceneToLoad);
+      start_scene(sceneToLoad, core().currentSceneTags);
       sceneToLoad = "";
-      reloadScene = false;
     }
   }
   
-  void SceneManager::save_current_scene()
-  {
-    #ifndef RELEASE
-    if (currentScene && filesystem::exists(currentScene->path) && currentScene->editorScene.loaded)
-    {
-      //ofstream file (currentScene->path, ios::binary);
-      //save(file, currentScene->editorScene.archetypes);
-    }
-    #endif
-  }
   void SceneManager::destroy_scene()
   {
-    save_current_scene();
     process_events();
     core().destroy_all_entities();
-    for (Scene *scene: scenes)
-    {
-      for (Archetype *archetype : scene->gameScene.archetypes)
-        delete archetype;
-      for (Archetype *archetype : scene->editorScene.archetypes)
-        delete archetype;
-      delete scene;
-    }
+    for (Archetype *archetype : currentScene.gameScene.archetypes)
+      delete archetype;
+    for (Archetype *archetype : currentScene.editorScene.archetypes)
+      delete archetype;
     save_all_resources_to_metadata();
-  }
-  
-  void SceneManager::add_open_scene(const filesystem::path &path, bool need_to_add, bool need_to_open)
-  {
-    if (need_to_add)
-    {
-      scenes.emplace_back(new Scene{path.stem().string(), path.string(), {}, {}, false, false});
-    }
-    if (need_to_open)
-    {
-      save_current_scene();
-      try_start_scene(path.stem().string(), (uint)ecs::SystemTag::Editor);
-    }
   }
 }

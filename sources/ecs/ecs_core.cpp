@@ -65,7 +65,7 @@ namespace ecs
 
 
   void register_archetype(Archetype *archetype);
-  void Core::replace_entity_container(EntityContainer *container)
+  void Core::update_systems_subscribes()
   {
     core().events = {};
     for (QueryDescription *query: core().queries)
@@ -74,8 +74,8 @@ namespace ecs
       system->archetypes.clear();
     for (QueryDescription *system: core().event_queries)
       system->archetypes.clear();
-    entityContainer = container;
-    for (Archetype *archetype : container->archetypes)
+
+    for (Archetype *archetype : entityContainer->archetypes)
       register_archetype(archetype);
   }
 
@@ -255,81 +255,6 @@ namespace ecs
     return eid;
   }
 
-  void create_entities_from_archetypes(const vector<Archetype *> &src)
-  {
-    constexpr string_hash eidTypeHash = HashedString(nameOf<EntityId>::value);
-    constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
-    vector<int> remapArchetypes(src.size(), -1);//src index to real index
-
-      core().entityContainer->entityPull.clear();
-    int j = 0;
-    for (const Archetype *archetype : src)
-    {
-      vector<string_hash> typeHashes(archetype->components.size());
-      int i = 0;
-      for (const auto &component : archetype->components)
-        typeHashes[i++] = component.second.typeNameHash;
-
-      Archetype *found_archetype = nullptr;
-      int archetype_ind = 0;
-      for (Archetype *archetype : core().entityContainer->archetypes)
-      {
-        if (archetype->in_archetype(typeHashes))
-        {
-          found_archetype = archetype;
-          break;
-        }
-        archetype_ind++;
-      }
-      if (!found_archetype)
-      {
-        found_archetype = add_archetype(typeHashes, archetype->count, archetype->synonim);
-      }
-      assert(found_archetype->count == 0 && "need empty archetype");
-      remapArchetypes[j++] = archetype_ind;
-    }
-    
-    for (uint i = 0; i < src.size(); ++i)
-    {
-      Archetype *archetype = src[i];
-      if (remapArchetypes[i] < 0)
-        assert("Can't remap this archetype ");
-      Archetype *found_archetype = core().entityContainer->archetypes[remapArchetypes[i]];
-      
-      found_archetype->copy(archetype);
-      auto eidIt = found_archetype->components.find(eidTypeNameHash);
-      if (eidIt == found_archetype->components.end())
-        assert("need ecs::EntityId eid containner in existing archetype");
-      ComponentContainer &eidContainer = eidIt->second;
-      for (int j = 0; j < archetype->count; ++j)
-      {
-        EntityId *eid = eidContainer.get_component<EntityId>(j);
-        *eid = core().entityContainer->entityPull.create_entity(remapArchetypes[i], j);
-        debug_log("cr entity %d %d", eid->archetype_index(), eid->array_index());
-        send_event(*eid, OnEntityCreated());
-      }
-    }
-    for (Archetype *archetype :core().entityContainer->archetypes)
-    {
-      for (auto &p : archetype->components)
-        if (p.second.typeHash == eidTypeHash && p.second.typeNameHash != eidTypeNameHash)
-        {
-          for (int i = 0; i < archetype->count; ++i)
-          {
-            EntityId *eid = p.second.get_component<EntityId>(i);
-            debug_log("entity %d %d", eid->archetype_index(), eid->array_index());
-            fflush(stdout);
-            if (eid->valid())
-            {
-              int arch = remapArchetypes[eid->archetype_index()];
-              assert(arch >= 0);
-              int ind = eid->array_index();
-              *eid = *core().entityContainer->archetypes[arch]->components[eidTypeNameHash].get_component<EntityId>(ind);
-            }
-          }
-        }
-    }
-  }
   void destroy_entity(const EntityId &eid)
   {
     if (eid)

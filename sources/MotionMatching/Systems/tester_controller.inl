@@ -61,7 +61,7 @@ EVENT(ecs::SystemTag::GameEditor) start_test(
   float edge = sqrt((float)settings.testCount) * settings.testDensity;
   int maxTest = animationPlayer.dataBase->tests.size();
   animationTester.testInd = rand() % maxTest;
-  animationTester.curTime = rand_float(0, animationPlayer.dataBase->tests[animationTester.curTime].totalTime);
+  animationTester.curTime = rand_float(0, animationPlayer.dataBase->tests[animationTester.testInd].totalTime);
   animationTester.testStartTime = Time::time();
   animationTester.keyboardInd = 0;
   animationTester.mouseMoveInd = 0;

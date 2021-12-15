@@ -44,6 +44,14 @@ namespace ecs
   {
     return BlkTemplateManager::instance().find(name);
   }
+  void invalidate_cached_archetype()
+  {
+    for (Template &t : BlkTemplateManager::instance().templates)
+    {
+      t.archetype = nullptr;
+      t.containers.clear();
+    }
+  }
   template<typename T>
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
