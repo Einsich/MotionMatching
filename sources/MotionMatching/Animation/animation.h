@@ -1,6 +1,6 @@
 #pragma once
-#include "AnimationDatabase/animation_database.h"
 #include "AnimationDatabase/animation_cadr.h"
+#include "AnimationDatabase/animation_clip.h"
 
 class Animation
 {

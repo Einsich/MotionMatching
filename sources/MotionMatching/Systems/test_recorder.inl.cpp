@@ -4,7 +4,7 @@
 void recorder_ui_func();
 
 ecs::SystemDescription recorder_ui_descr("recorder_ui", {
-  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
+  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -19,7 +19,7 @@ void listener_keybord_handler(const KeyEventAnyActionKey &event);
 void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::EntityId eid);
 
 ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_keybord", {
-  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
+  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
@@ -38,7 +38,7 @@ void listener_mousemove_handler(const MouseMoveEvent &event);
 void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemove", {
-  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
+  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}

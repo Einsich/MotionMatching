@@ -1,19 +1,20 @@
 #include "start_scene.inl"
 //Code-generator production
 
-void init_anim_settings_handler(const ecs::OnSceneCreated &event);
-void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void init_anim_settings_handler(const ecs::OnEntityCreated &event);
+void init_anim_settings_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> init_anim_settings_descr("init_anim_settings", {
+ecs::EventDescription<ecs::OnEntityCreated> init_anim_settings_descr("init_anim_settings", {
+  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, init_anim_settings_handler, init_anim_settings_singl_handler, ecs::SystemTag::Game);
 
-void init_anim_settings_handler(const ecs::OnSceneCreated &event)
+void init_anim_settings_handler(const ecs::OnEntityCreated &event)
 {
   ecs::perform_event(event, init_anim_settings_descr, init_anim_settings);
 }
-void init_anim_settings_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void init_anim_settings_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
 {
   ecs::perform_event(event, init_anim_settings_descr, eid, init_anim_settings);
 }
@@ -22,7 +23,7 @@ void scene_destroy_handler(const ecs::OnEntityDestroyed &event);
 void scene_destroy_singl_handler(const ecs::OnEntityDestroyed &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityDestroyed> scene_destroy_descr("scene_destroy", {
-  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
+  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, scene_destroy_handler, scene_destroy_singl_handler, ecs::SystemTag::Game);

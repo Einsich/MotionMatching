@@ -35,7 +35,6 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
   if (!reload)
   {
     reload_tree(tree, treeSource.asset_path());
-    load_runtime_parameters();
   }
   if (needForceReload)
     animation_preprocess(*this);
@@ -50,13 +49,6 @@ bool AnimationDataBase::edit()
 
   return changeTree | needForceReload;
 }; 
-void AnimationDataBase::save_runtime_parameters() const
-{
-  save_object(tests, "AnimatuionTests.bin");
-}
-void AnimationDataBase::load_runtime_parameters()
-{
-  load_object(tests, "AnimatuionTests.bin");
-}
+
 
 ResourceRegister<AnimationDataBase> animDataBaseReg;

@@ -1,20 +1,25 @@
 #include <ecs.h>
 #include "Animation/Test/animation_tester.h"
-#include "Animation/animation_player.h"
+#include "Animation/Test/animation_test.h"
 #include <transform.h>
 #include <application/time.h>
 #include "Animation/person_controller.h"
 #include "Animation/settings.h"
 
+template<typename Callable>
+void get_tests(Callable);
+template<typename Callable>
+void get_tests2(Callable);
 
 SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
   ecs::EntityId eid,
-  AnimationTester &animationTester,
-  AnimationPlayer &animationPlayer)
+  AnimationTester &animationTester)
 {
+  QUERY()get_tests([&](const vector<AnimationTest> &tests)
+  {
     float dt = Time::delta_time();
     
-    AnimationTest &test = animationPlayer.dataBase->tests[animationTester.testInd];
+    const AnimationTest &test = tests[animationTester.testInd];
 
     animationTester.curTime += dt;
     while ((int)test.keyboardEvents.size() > animationTester.keyboardInd && test.keyboardEvents[animationTester.keyboardInd].time <= animationTester.curTime)
@@ -48,31 +53,35 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
     {
       ecs::send_event(eid, ecs::OnEntityCreated());
     }
+  });
 }
 
 EVENT(ecs::SystemTag::GameEditor) start_test(
   const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
-  const AnimationPlayer &animationPlayer,
   Transform &transform,
   PersonController &personController,
   const Settings &settings)
 {
-  float edge = sqrt((float)settings.testCount) * settings.testDensity;
-  int maxTest = animationPlayer.dataBase->tests.size();
-  animationTester.testInd = rand() % maxTest;
-  animationTester.curTime = rand_float(0, animationPlayer.dataBase->tests[animationTester.testInd].totalTime);
-  animationTester.testStartTime = Time::time();
-  animationTester.keyboardInd = 0;
-  animationTester.mouseMoveInd = 0;
-  animationTester.testInput = Input(false);
-  float x = edge * rand() / RAND_MAX;
-  float y = edge * rand() / RAND_MAX;
-  personController.set_pos_rotation(transform, vec3(x, 0, y), 0);
+  QUERY()get_tests2([&](const vector<AnimationTest> &tests)
+  {
+    float edge = sqrt((float)settings.testCount) * settings.testDensity;
+    int maxTest = tests.size();
+    animationTester.testInd = rand() % maxTest;
+    animationTester.curTime = rand_float(0, tests[animationTester.testInd].totalTime);
+    animationTester.testStartTime = Time::time();
+    animationTester.keyboardInd = 0;
+    animationTester.mouseMoveInd = 0;
+    animationTester.testInput = Input(false);
+    float x = edge * rand() / RAND_MAX;
+    float y = edge * rand() / RAND_MAX;
+    personController.set_pos_rotation(transform, vec3(x, 0, y), 0);
+  });
 }
 
 SYSTEM(ecs::SystemTag::Game) test_count(
   vector<ecs::EntityId> &testers,
+  vector<AnimationTest> &tests,
   Settings &settings)
 {
   settings.testCount = glm::clamp(settings.testCount, 0, 10000);
@@ -81,7 +90,7 @@ SYSTEM(ecs::SystemTag::Game) test_count(
   {
     testers.reserve(settings.testCount);
     const ecs::Template *testerTmpl = ecs::get_template("tester_char");
-    for (int i = 0; i < d; ++i)
+    for (int i = 0; !tests.empty() && i < d; ++i)
     {
       testers.emplace_back(ecs::create_entity(testerTmpl));
     }

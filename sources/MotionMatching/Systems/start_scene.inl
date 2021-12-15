@@ -6,6 +6,7 @@
 #include "Animation/third_person_controller.h"
 #include "Animation/person_controller.h"
 #include "Animation/Test/animation_tester.h"
+#include "Animation/Test/animation_test.h"
 #include "Animation/settings.h"
 
 #define CUSTOM_TYPE \
@@ -22,10 +23,12 @@ REG_TYPE(ThirdPersonController)
 REG_TYPE(AnimationDataBasePtr)
 
 
-EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
+EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnEntityCreated &,
+  vector<AnimationTest> &tests,
   Settings &settings,
   SettingsContainer &settingsContainer)
-{
+{  
+  load_object(tests, "AnimationTests.bin");
   load_object(settingsContainer, "settings.bin");
   settingsContainer.after_loading();
 
@@ -34,14 +37,13 @@ EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
 
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,
-  const AnimationDataBasePtr dataBase,
+  vector<AnimationTest> &tests,
   const Settings &settings,
   const SettingsContainer &settingsContainer)
 {
-  dataBase->save_runtime_parameters();
+  save_object(tests, "AnimationTests.bin");
   
   save_object(settings, "man_property.bin");
   
   save_object(settingsContainer, "settings.bin");
-  std::fflush(stdout);
 }
