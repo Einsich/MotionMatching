@@ -12,6 +12,30 @@ std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t
   }
 }
 template<typename T>
+void read(const DataBlock &blk, std::vector<T> &t)
+{
+  t.clear();
+  
+  if constexpr (DataBlock::AllowedTypes::hasType<T>())
+  {
+    constexpr size_t needType = DataBlock::AllowedTypes::getIndexOfType<T>();
+    for (size_t i = 0, n = blk.propertiesCount(); i < n; i++)
+      if (blk.getProperty(i).type == needType)
+        t.push_back(blk.get<T>(blk.getProperty(i)));
+  }
+  else
+  {
+    constexpr const string_view &typeName = nameOf<T>::value;
+    for (size_t i = 0, n = blk.blockCount(); i < n; i++)
+      if (blk.getBlock(i)->type() == typeName)
+      {
+        T &arg = t.emplace_back();
+        read(*blk.getBlock(i), arg);
+      }
+  }
+}
+
+template<typename T>
 std::enable_if_t<HasReflection<T>::value, void> read(const DataBlock &blk, T &value)
 {
   value.reflect([&](auto &arg, const char *name)
