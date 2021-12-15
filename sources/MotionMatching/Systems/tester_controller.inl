@@ -61,7 +61,7 @@ EVENT(ecs::SystemTag::GameEditor) start_test(
   float edge = sqrt((float)settings.testCount) * settings.testDensity;
   int maxTest = animationPlayer.dataBase->tests.size();
   animationTester.testInd = rand() % maxTest;
-  animationTester.curTime = 0;
+  animationTester.curTime = rand_float(0, animationPlayer.dataBase->tests[animationTester.curTime].totalTime);
   animationTester.testStartTime = Time::time();
   animationTester.keyboardInd = 0;
   animationTester.mouseMoveInd = 0;
@@ -80,10 +80,10 @@ SYSTEM(ecs::SystemTag::Game) test_count(
   if (d > 0)
   {
     testers.reserve(settings.testCount);
+    const ecs::Template *testerTmpl = ecs::get_template("tester_char");
     for (int i = 0; i < d; ++i)
     {
-      //todo fix
-      //testers.emplace_back(ecs::create_entity("anim_tester"));
+      testers.emplace_back(ecs::create_entity(testerTmpl));
     }
   }
   if (d < 0)

@@ -13,10 +13,10 @@ constexpr float lerp_strength = 4.f;
 
 vec3 get_wanted_speed(Input &input, bool &onPlace, const ControllerSettings &settings)
 {
-  float right = input.get_key(SDLK_d) - input.get_key(SDLK_a);
-  float forward = input.get_key(SDLK_w) - input.get_key(SDLK_s);
+  float right = input.get_key_impl(SDLK_d) - input.get_key_impl(SDLK_a);
+  float forward = input.get_key_impl(SDLK_w) - input.get_key_impl(SDLK_s);
   
-  float run = input.get_key(SDLK_LSHIFT);
+  float run = input.get_key_impl(SDLK_LSHIFT);
   
   
   vec3 wantedSpeed =  vec3(right, 0.f, forward);

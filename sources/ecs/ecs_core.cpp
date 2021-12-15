@@ -182,6 +182,10 @@ namespace ecs
     int index = found_archetype->count++;
     return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
   }
+  EntityId create_entity(const Template *blkTemplate)
+  {
+    return create_entity(blkTemplate, {});
+  }
 
   EntityId create_entity(const Template *blkTemplate, ComponentInitializerList &&list)
   {
