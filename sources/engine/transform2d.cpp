@@ -2,7 +2,7 @@
 #include "manager/type_info.h"
 
 REG_TYPE(Transform2D)
-EDIT_STUB(Transform2D)
+
 
 mat3 Transform2D::get_matrix() const
 {

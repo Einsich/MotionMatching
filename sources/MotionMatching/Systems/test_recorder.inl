@@ -4,7 +4,6 @@
 #include "Animation/Test/animation_test.h"
 #include <application/time.h>
 
-EDIT_STUB(AnimationTest)
 REGISTER_TYPE(AnimationTest)
 
 SYSTEM(ecs::SystemOrder::UI) recorder_ui(

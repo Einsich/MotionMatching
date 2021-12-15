@@ -2,6 +2,8 @@
 #include <ecs.h>
 #include <input.h>
 #include <application/application_data.h>
+
+bool edit_component(Camera &camera, const char *name, bool view_only);
 REGISTER_TYPE(Camera)
 REGISTER_TYPE(FreeCamera)
 REGISTER_TYPE(ArcballCamera)

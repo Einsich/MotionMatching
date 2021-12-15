@@ -11,5 +11,3 @@ using namespace ecs;
 REGISTER_TYPE(bool)
 BASE_TYPES
 
-EDIT_STUB(Tag)
-

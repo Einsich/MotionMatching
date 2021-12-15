@@ -70,7 +70,14 @@ namespace ecs
   template<typename T>
   bool template_component_edition(void *ptr, bool view_only)
   {
-    return edit_component(*((T*)ptr), nameOf<T>::value.data(), view_only);
+    if constexpr (requires(T &v) { edit_component(v, "", false); })
+    {
+      return edit_component(*((T*)ptr), nameOf<T>::value.data(), view_only);
+    }
+    else
+    {
+      return false;
+    }
   }
   
   template<typename T>

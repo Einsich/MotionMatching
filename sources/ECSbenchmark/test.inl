@@ -5,7 +5,6 @@
 #include "data_block/data_block.h"
 #include "transform.h"
 REGISTER_TYPE(Data)
-EDIT_STUB(Data)
 
 struct TestClass
 {

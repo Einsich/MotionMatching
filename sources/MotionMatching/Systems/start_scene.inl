@@ -13,7 +13,7 @@
 MACRO(PersonController)\
 MACRO(DebugArrow)
 
-#define MACRO(T) REG_TYPE(T) EDIT_STUB(T)
+#define MACRO(T) REG_TYPE(T)
 
 CUSTOM_TYPE
 

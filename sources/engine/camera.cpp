@@ -35,7 +35,6 @@ const mat4x4& Camera::get_projection() const
   return projection;
 }
 
-template<>
 bool edit_component(Camera &camera, const char *name, bool view_only)
 {
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
