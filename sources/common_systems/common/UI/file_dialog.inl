@@ -3,7 +3,6 @@
 #include <application/file_dialog.h>
 #include <application/application_data.h>
 #include <ecs_scene.h>
-#include <editor/template.h>
 #include "editor_window.h"
 
 void open_scene(const filesystem::path &path, bool need_to_add);
@@ -32,10 +31,6 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog(EditorUI &u
     if (ImGui::Button("save scene"))
     {
       Application::instance().scene->save_current_scene();
-    }
-    if (ImGui::Button("save templates"))
-    {
-      ecs::save_templates();
     }
     constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
     bool unlock = ui.windowFlags == 0;

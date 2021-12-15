@@ -1,5 +1,4 @@
 #include "archetype.h"
-#include "../editor/template.h"
 #include "serialization/serialization.h"
 #include "entity_pull.h"
 #include "../ecs_event.h"
@@ -54,14 +53,6 @@ namespace ecs
     for (uint i = 0; i < type_hashes.size(); i++)
       data[i] = components[type_hashes[i]].add_component();
     return data;
-  }
-  void Archetype::add_entity(const vector<const TemplateInfo*> &list)
-  {
-    for (const TemplateInfo *component : list)
-    {
-      components[component->type_name_hash()].add_component((const void*)component->data);
-    }
-    count++;
   }
   void Archetype::destroy_entity(int index, bool with_swap)
   {

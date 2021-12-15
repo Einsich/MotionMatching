@@ -5,7 +5,6 @@
 #include "component_instance.h"
 namespace ecs
 {
-  struct TemplateInfo;
   class Archetype
   {
   public: 
@@ -25,7 +24,6 @@ namespace ecs
     template<typename T>
     ComponentContainer *get_container(const char *name);
     vector<void*> get_entity_data(const vector<string_hash> &type_hashes);
-    void add_entity(const vector<const TemplateInfo*> &list);
     void destroy_entity(int index, bool with_swap);
     ~Archetype() = default;
     void copy(const Archetype *src);

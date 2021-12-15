@@ -82,7 +82,8 @@ SYSTEM(ecs::SystemTag::Game) test_count(
     testers.reserve(settings.testCount);
     for (int i = 0; i < d; ++i)
     {
-      testers.emplace_back(ecs::create_entity("anim_tester"));
+      //todo fix
+      //testers.emplace_back(ecs::create_entity("anim_tester"));
     }
   }
   if (d < 0)

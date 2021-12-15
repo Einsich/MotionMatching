@@ -41,7 +41,7 @@ EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
   debug_log("struct sizeof = %d", sizeof(TestClass));
   {
     TimeScope a("ecs_create");
-    const ecs::BlkTemplate *tmpl = ecs::get_template("test_template");
+    const ecs::Template *tmpl = ecs::get_template("test_template");
     for (uint i = 0; i < entityCount; i++)
     {
       ecs::ComponentInitializerList list;

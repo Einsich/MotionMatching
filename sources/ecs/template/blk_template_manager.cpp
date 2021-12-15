@@ -26,21 +26,21 @@ namespace ecs
   struct BlkTemplateManager
   {
     vector<TemplateFile> templatesFiles;
-    vector<BlkTemplate> templates;
+    vector<Template> templates;
     map<string, int> templateMap;
     static BlkTemplateManager &instance() 
     {
       static BlkTemplateManager manager;
       return manager;
     }
-    const BlkTemplate *find(const char *name)
+    const Template *find(const char *name)
     {
       auto it = templateMap.find(name);
       return it != templateMap.end() ? &templates[it->second] : nullptr;
     }
   };
 
-  const BlkTemplate* get_template(const char *name)
+  const Template* get_template(const char *name)
   {
     return BlkTemplateManager::instance().find(name);
   }
@@ -62,7 +62,7 @@ namespace ecs
         continue;
       for (const auto & entry : fs::recursive_directory_iterator(path))
       {
-        if (entry.is_regular_file() && entry.path().extension() == ".blktmpl")
+        if (entry.is_regular_file() && entry.path().extension() == ".tmpl")
         {
           string strPath = entry.path().string();
           templatesFiles.emplace_back(strPath, make_shared<DataBlock>(strPath));
@@ -149,7 +149,7 @@ namespace ecs
     templates.erase(templates.begin() + first, templates.end());
   }
 
-  static void init_templates(map<string, int> &templateMap, vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
+  static void init_templates(map<string, int> &templateMap, vector<RawTemplate> &rawTemplates, vector<Template> &templates)
   {
     templateMap.clear();
     templates.clear();
@@ -212,10 +212,10 @@ namespace ecs
 
   static void linearize_extends(
       const vector<RawTemplate> &rawTemplates,
-      vector<BlkTemplate> &templates,
+      vector<Template> &templates,
       size_t templateId)
   {
-    BlkTemplate &blkTemplate = templates[templateId];
+    Template &blkTemplate = templates[templateId];
     if (!blkTemplate.components.empty())
       return;
     
@@ -230,7 +230,7 @@ namespace ecs
 
   }
 
-  static void linearize_extends(vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
+  static void linearize_extends(vector<RawTemplate> &rawTemplates, vector<Template> &templates)
   {
     for (size_t i = 0, n = templates.size(); i < n; ++i)
     {

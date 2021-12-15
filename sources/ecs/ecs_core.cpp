@@ -3,7 +3,6 @@
 #include "ecs_event.h"
 #include "system_tag.h"
 #include "manager/system_description.h"
-#include "editor/template.h"
 #include "common.h"
 #include "manager/entity_container.h"
 #include "template/blk_template.h"
@@ -183,62 +182,8 @@ namespace ecs
     int index = found_archetype->count++;
     return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
   }
-  EntityId create_entity(const string &template_name)
-  {
-    return create_entity(template_name.c_str());
-  }
-  EntityId create_entity(const char *template_name)
-  {
-    const Template *t = TemplateManager::get_template_by_name(template_name);
-    if (!t)
-    {
-      debug_error("Doesn't exist template with name %s", template_name);
-      return EntityId();
-    }
-    return create_entity(t);
-  }
-  EntityId create_entity(const Template *t)
-  {
-    constexpr string_hash eidHash  = HashedString(nameOf<EntityId>::value);
-    static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
-    static TemplateInfo eidTemplateInfo(eidHash, eidInfo, "eid");
-    vector<const TemplateInfo*> list = linearize_field(t);
-    list.push_back(&eidTemplateInfo);
 
-    vector<string_hash> typeHashes(list.size());
-    for (uint i = 0; i < list.size(); ++i)
-      typeHashes[i] = list[i]->type_name_hash();
-
-    Archetype *found_archetype = nullptr;
-    int archetype_ind = 0;
-    for (Archetype *archetype : core().entityContainer->archetypes)
-    {
-      if (archetype->in_archetype(typeHashes))
-      {
-        found_archetype = archetype;
-        break;
-      }
-      archetype_ind++;
-    }
-    if (!found_archetype)
-    {
-      auto &fullDecr = full_description();
-      for (const TemplateInfo *t: list)
-        fullDecr.try_emplace(t->type_name_hash(), t->get_name(), t->type_hash(), t->type_name_hash());
-        
-      found_archetype = add_archetype(typeHashes, 1, t->name);
-    }
-    if (found_archetype->synonim.find(t->name) >= found_archetype->synonim.size())
-      found_archetype->synonim += "+" + t->name;
-    int index = found_archetype->count;
-    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
-    eidInfo.copy_constructor(&eid, eidTemplateInfo.data); 
-    found_archetype->add_entity(list);
-    send_event_immediate(eid, OnEntityCreated());
-    return eid;
-  }
-
-  EntityId create_entity(const BlkTemplate *blkTemplate, ComponentInitializerList &&list)
+  EntityId create_entity(const Template *blkTemplate, ComponentInitializerList &&list)
   {
     if (!blkTemplate)
       return EntityId();

@@ -8,7 +8,7 @@ EVENT() init_game(const StartGameEvent &, const SpriteFactory &sf, const ScoreBo
   int targetCount = 100 * (sb.curentLevel + 1);
   float areaRadius = 25.f;
   float minSize = 0.5f, maxSize = 1.5f;
-  const ecs::BlkTemplate *targets = ecs::get_template("targets");
+  const ecs::Template *targets = ecs::get_template("targets");
   for (int i = 0; i < targetCount; i++)
   {
     ecs::ComponentInitializerList list;
@@ -22,7 +22,7 @@ EVENT() init_game(const StartGameEvent &, const SpriteFactory &sf, const ScoreBo
                                 
     ecs::create_entity(targets, std::move(list));
   }
-  const ecs::BlkTemplate *mainHero = ecs::get_template("main_hero");
+  const ecs::Template *mainHero = ecs::get_template("main_hero");
   ecs::ComponentInitializerList list;
   list.set("sprite", sf.arrow);
   ecs::create_entity(mainHero, std::move(list));

@@ -6,7 +6,6 @@
 #include "imgui_impl_sdl.h"
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
-#include "editor/template.h"
 #include "template/blk_template.h"
 #include "system_tag.h"
 #include "ecs_scene.h"
@@ -46,7 +45,6 @@ void Application::start()
   editor = false;
   #endif
   scene->start(editor);
-  ecs::load_templates();
   ecs::load_templates_from_blk();
   get_profiler();
   string sceneName;
@@ -137,7 +135,6 @@ void Application::main_loop()
 }
 void Application::exit()
 {
-  ecs::save_templates();
   save_shader_info();
   scene->destroy_scene();
   delete scene;

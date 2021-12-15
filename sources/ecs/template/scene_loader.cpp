@@ -4,7 +4,7 @@ namespace ecs
 {
   
   void init_components_from_blk(const DataBlock *tmpl, vector<ComponentInstance> &components);
-  EntityId create_entity(const BlkTemplate *temp, ComponentInitializerList &&list);
+  EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
 
   void load_scene(const string &path)
   {
@@ -20,7 +20,7 @@ namespace ecs
         debug_error("need specify _template:t=\"template_name\"; in %d block", i);
         continue;
       }
-      const BlkTemplate *templateInst = get_template(templateName->c_str());
+      const Template *templateInst = get_template(templateName->c_str());
       if (!templateInst)
       {
         debug_error("Doesn't exist template \"%s\"", templateName->c_str());

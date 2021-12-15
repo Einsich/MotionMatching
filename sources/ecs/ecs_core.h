@@ -91,12 +91,8 @@ namespace ecs
     send_event_immediate(eid, OnEntityCreated());
     return eid;
   }
-  EntityId create_entity(const string &template_name);
-  EntityId create_entity(const char *template_name);
   struct Template;
-  EntityId create_entity(const Template *temp);
-  struct BlkTemplate;
-  EntityId create_entity(const BlkTemplate *temp, ComponentInitializerList &&list);
+  EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
   EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
 

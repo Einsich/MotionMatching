@@ -6,7 +6,7 @@
 
 namespace ecs
 {
-  struct BlkTemplate
+  struct Template
   {
     string name;
     vector<ComponentInstance> components;
@@ -14,5 +14,5 @@ namespace ecs
     mutable Archetype *archetype = nullptr;
   };
 
-  const BlkTemplate* get_template(const char *name);
+  const Template* get_template(const char *name);
 }
