@@ -120,7 +120,7 @@ public:
   }
   Asset(const DataBlock &blk) :
   asset(new AssetImplementation<T>(
-    blk.get<std::string>("path", ""), "",
+    root_path(blk.get<std::string>("path", "")), "",
     false, false, false, false, T()))
   {
     asset->name = asset->asset.asset_name(asset->path);

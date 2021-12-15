@@ -8,9 +8,7 @@ sun {
 
 sky_box {
   skyBox:SkyBox {
-    material:Asset<Material> {
-      path:t = "D:/MotionMatching/resources/MotionMatching/Material/skybox.Material";
-    }
+    material:Asset<Material> { path:t = "resources/MotionMatching/Material/skybox.Material"; }
   }
 }
 
@@ -21,30 +19,45 @@ plane {
   mesh:Asset<Mesh> {
     path:t = "plane";
   }
-  material:Asset<Material> {
-    path:t = "D:/MotionMatching/resources/MotionMatching/Material/plane.Material";
-  }
+  material:Asset<Material> { path:t = "resources/MotionMatching/Material/plane.Material"; }
 }
 
 mm_manager {
-  dataBase:Asset<AnimationDataBase> {
-    path:t = "D:/MotionMatching/resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase";
-  }
+  dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
   recordedTest:i = -1;
   recordedState:i = 0;
   recorderStartTime:f = 0;
   testers:vector<EntityId> {}
 }
 
-fps_char {
-  attachedCamera:EntityId {}
+animated_char {
+
+  mesh:Asset<Mesh> { }
+  material:Asset<Material> { path:t = "resources/MotionMatching/Material/animchar.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 2;
+    lod1:f = 10;
+    lod2:f = 50;
+    lod3:f = 400;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod0.fbx/0/MotusManLod0"; }
+    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod1.fbx/0/MotusManLod1.001"; }
+    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod2.fbx/0/MotusManLod2"; }
+    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod3.fbx/0/MotusManLod3"; }
+  }
   transform:Transform {}
+
   animationPlayer:AnimationPlayer {
-    dataBase:Asset<AnimationDataBase> {
-      path:t = "D:/MotionMatching/resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase";
-    }
+    dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
   }
   personController:PersonController { }
+}
+
+
+fps_char {
+  _extends:t = "animated_char";
+  attachedCamera:EntityId {}
   thirdPersonController:ThirdPersonController {
     minZoom:f = 0.5;
     maxZoom:f = 10;
@@ -53,11 +66,9 @@ fps_char {
     currentCameraRotation:f2 = 90, -30;
     wantedCameraRotation:f2 = 90, -30;
   }
+}
 
-  mesh:Asset<Mesh> {
-    path:t = "D:/MotionMatching/resources/MotionMatching/MotusMan_v55/Lod0.fbx/0/MotusManLod0";
-  }
-  material:Asset<Material> {
-    path:t = "D:/MotionMatching/resources/MotionMatching/Material/animchar.Material";
-  }
+tester_char {
+  _extends:t = "animated_char";
+  animationTester:AnimationTester {}
 }
