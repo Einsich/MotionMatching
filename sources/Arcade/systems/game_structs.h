@@ -1,7 +1,7 @@
 #pragma once
 #include <render/sprite.h>
 
-struct StartMenuEvent{};
+struct LoadSceneEvent{};
 
 struct StartGameEvent{};
 

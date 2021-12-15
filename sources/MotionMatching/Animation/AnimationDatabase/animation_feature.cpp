@@ -101,3 +101,13 @@ MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& g
   NAN_LOG(score.goal_rotation)
   return score;
 }
+
+float FrameMetric::distance(const FrameFeature& clip_feature, const FrameFeature &goal_feature) const
+{
+  return 
+  pose_matching_norma(clip_feature.features, goal_feature.features, settings) * settings.realism
+    +
+  goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight
+    +
+  rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight;
+}

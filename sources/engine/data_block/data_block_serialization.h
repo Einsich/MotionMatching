@@ -4,18 +4,22 @@
 
 
 template<typename T>
-std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &, T &)
+std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t)
 {
-
+  if constexpr (std::is_constructible_v<T, const DataBlock &>)
+  {
+    t = T(blk);
+  }
 }
 template<typename T>
 std::enable_if_t<HasReflection<T>::value, void> read(const DataBlock &blk, T &value)
 {
   value.reflect([&](auto &arg, const char *name)
   { 
-    if constexpr (DataBlock::AllowedTypes::hasType<T>())
+    using TT = std::remove_cvref_t<decltype(arg)>;
+    if constexpr (DataBlock::AllowedTypes::hasType<TT>())
     {
-      const auto *component = blk.get<std::remove_cvref_t<decltype(arg)>>(name);
+      const auto *component = blk.get<TT>(name);
       if (component)
         arg = *component;
     }

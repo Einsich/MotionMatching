@@ -21,6 +21,8 @@ namespace ecs
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint currentSceneTags;
+    std::string sceneToLoad;
+    bool reloadScene;
     Core();
     ~Core();
     template<typename E>
@@ -98,6 +100,8 @@ namespace ecs
   EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
 
+  //destoy current scene and load new scene from path
+  void create_scene(const string &path, bool reload = true);
 
 
   template<typename E>
@@ -283,5 +287,4 @@ namespace ecs
     perform_query<Args...>(descr, eid, [&](Args...args){function(event, args...);});
   }
   void system_statistic();
-  void destroy_scene();
 }

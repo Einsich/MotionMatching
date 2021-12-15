@@ -16,7 +16,7 @@ public:
       int, ivec2, ivec3, ivec4,
       unsigned, uvec2, uvec3, uvec4,
       float, vec2, vec3, vec4,
-      std::string, unsigned char>;
+      std::string, bool>;
       
   struct Property
   {
@@ -33,10 +33,13 @@ private:
   };
   template<typename T>
   struct PropertiesTuple ;
+
+  template<typename T> struct type_trait { typedef T type; };
+  template<> struct type_trait<bool> { typedef uint8_t type; };
   template<template <typename...> class Tuple, typename ...Args>
   struct PropertiesTuple<Tuple<Args...>> 
   {
-    std::tuple<std::vector<Args>...> fields;
+    std::tuple<std::vector<typename type_trait<Args>::type>...> fields;
     std::array<std::vector<int>, sizeof...(Args)> indices;
   };
   std::string blockName, blockType;
@@ -64,7 +67,7 @@ private:
     uint32_t index;
     if (find_implementation<T>(name, index))
     {
-      return &std::get<N>(typeList.fields)[index];
+      return (const T*)(&std::get<N>(typeList.fields)[index]);
     }
     return nullptr;
   }
@@ -74,14 +77,14 @@ private:
     uint32_t index;
     if (find_implementation<T>(name, index))
     {
-      return &std::get<N>(typeList.fields)[index];
+      return (T*)(&std::get<N>(typeList.fields)[index]);
     }
     return nullptr;
   }
   template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>
   void add_implementation(const char *name, const T &value)
   {
-    std::vector<T> &fieldsWithT = std::get<N>(typeList.fields);
+    std::vector<typename type_trait<T>::type> &fieldsWithT = std::get<N>(typeList.fields);
     std::vector<int> &indicesWithT = std::get<N>(typeList.indices);
     int index = fieldsWithT.size();
     fieldsWithT.emplace_back(value);
@@ -92,10 +95,10 @@ private:
 
 public:
   DataBlock() = default;
-  DataBlock(const char *name, const char *type);
-  DataBlock(const std::string &path);
-  DataBlock(const char *path);
-  DataBlock(std::ifstream &stream);
+  explicit DataBlock(const char *name, const char *type);
+  explicit DataBlock(const std::string &path);
+  explicit DataBlock(const char *path);
+  explicit DataBlock(std::ifstream &stream);
 
   const std::string& name() const;
   const std::string& type() const;
@@ -112,15 +115,15 @@ public:
   size_t propertiesCount() const;
   
   template<typename T>
-  std::enable_if_t<!(std::is_same_v<T, bool>), const T&> get(const char* name, const T &default_value) const
+  std::enable_if_t<!(sizeof(T) <= sizeof(size_t)), const T&> get(const char* name, const T &default_value) const
   {
     const T* value = get_implementation<T>(name);
     return value ? *value : default_value;
   }
   template<typename T>
-  std::enable_if_t<std::is_same_v<T, bool>, T> get(const char* name, const T &default_value) const
+  std::enable_if_t<sizeof(T) <= sizeof(size_t), T> get(const char* name, const T &default_value) const
   {
-    const T* value = (const T*)get_implementation<unsigned char>(name);
+    const T* value = (const T*)get_implementation<T>(name);
     return value ? *value : default_value;
   }
   template<typename T, size_t N = AllowedTypes::getIndexOfType<T>()>

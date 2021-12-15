@@ -5,22 +5,23 @@
 #include <application/application_data.h>
 #include "game_structs.h"
 
-EVENT() init_menu(const StartMenuEvent &, WorldRenderer &wr)
+EVENT() setup_camera(
+  const ecs::OnEntityCreated &,
+  mat3 &cameraProjection,
+  vec3 &zoom,
+  Transform2D &transform,
+  WorldRenderer &wr)
 {
   //camera creation
   Resolution r = Application::get_context().get_resolution();
   wr.resolution = vec2(r.width, r.height);
   float orthoScale = 1.f/100.f;//100 pixel per unit
-  mat3 projection(0.f);
-  projection[0][0] = 1.f / r.width;
-  projection[1][1] = 1.f / r.height;
-  
-  ecs::create_entity<mat3, vec3, Transform2D>(
-    {"cameraProjection", projection},
-    {"zoom", vec3(orthoScale * 0.5f, orthoScale * 10.f, 1/20.f)},
-    {"transform", Transform2D(vec2(0), vec2(orthoScale))}
-  );
-  ecs::create_entity<ecs::Tag>({"startGameButton", {}});
+  cameraProjection = mat3(0.f);
+  cameraProjection[0][0] = 1.f / r.width;
+  cameraProjection[1][1] = 1.f / r.height;
+
+  zoom = vec3(orthoScale * 0.5f, orthoScale * 10.f, 1/20.f);
+  transform = Transform2D(vec2(0), vec2(orthoScale));
 }
 
 //update menu
@@ -48,8 +49,7 @@ SYSTEM(ecs::SystemOrder::UI) exit_menu_button(bool isWinner, int killsCount, Sco
     ImGui::Text("You win the game, %d kills", killsCount);
     if (ImGui::Button("Exit menu"))
     {
-      ecs::destroy_scene();
-      ecs::send_event<StartMenuEvent>(StartMenuEvent());
+      ecs::send_event<LoadSceneEvent>(LoadSceneEvent());
       sb.curentLevel ++;
       sb.kills.push_back(killsCount);
     }

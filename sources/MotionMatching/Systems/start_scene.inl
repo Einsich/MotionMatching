@@ -1,25 +1,12 @@
 #include <ecs.h>
-#include <camera.h>
-#include <assimp/scene.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <application/application.h>
-#include <render/texture/textures.h>
-#include <render/material.h>
-#include <render/skybox.h>
 #include <render/debug_arrow.h>
+#include <resources/resource_registration.h>
 #include "Animation/AnimationDatabase/animation_database.h"
-#include <render/mesh_render.h>
-#include "Animation/AnimationDatabase/animation_preprocess.h"
 #include "Animation/animation_player.h"
 #include "Animation/third_person_controller.h"
 #include "Animation/person_controller.h"
-
 #include "Animation/Test/animation_tester.h"
-#include <input.h>
 #include "Animation/settings.h"
-#include <resources/resources.h>
-#include <imgui.h>
 
 #define CUSTOM_TYPE \
 MACRO(PersonController)\
@@ -34,12 +21,6 @@ REG_TYPE(AnimationTester)
 REG_TYPE(ThirdPersonController)
 REG_TYPE(AnimationDataBasePtr)
 
-void write_tree(aiNode* root, int d = 1)
-{
-  debug_log("%*c%s",d, ' ', root->mName.C_Str());
-  for (int i = 0, n = root->mNumChildren; i < n; i++)
-    write_tree(root->mChildren[i], d + 1);
-}
 
 EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
   Settings &settings,
@@ -51,6 +32,10 @@ EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnSceneCreated &,
   load_object(settings, "man_property.bin");
 }
 
+EVENT(ecs::SystemTag::GameEditor) init_blk_scene(const ecs::OnSceneCreated &)
+{
+  ecs::create_scene(root_path("resources/MotionMatching/Scenes/test_scene.blk"), false);
+}
 
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,

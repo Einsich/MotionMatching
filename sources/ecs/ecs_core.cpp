@@ -14,6 +14,7 @@ namespace ecs
   Core::Core()
   {
     entityContainer = new EntityContainer();
+    sceneToLoad = "";
   }
   
   Core::~Core()
@@ -418,6 +419,11 @@ namespace ecs
   {    
     core().destroy_all_entities();
     core().events = {};
+  }
+  void create_scene(const string &path, bool reload)
+  {
+    core().sceneToLoad = path;
+    core().reloadScene = reload;
   }
 }
 

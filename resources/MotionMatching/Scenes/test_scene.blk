@@ -1,0 +1,20 @@
+
+entity {
+  _template:t="sun";
+}
+
+entity {
+  _template:t="sky_box";
+}
+
+entity {
+  _template:t="plane";
+}
+
+entity {
+  _template:t="mm_manager";
+}
+
+entity {
+  _template:t="fps_char";
+}

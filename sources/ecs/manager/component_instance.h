@@ -44,7 +44,7 @@ private:
     instanceData(typeInfo.sizeOf), typeInfo(&typeInfo), name(name)
     , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
     {
-      typeInfo.constructor(instanceData.data());
+      
     }
     template<typename T, typename TT = std::remove_cvref_t<T>>
     void update(const T &instance)

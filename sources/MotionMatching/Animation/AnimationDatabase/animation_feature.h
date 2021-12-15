@@ -5,6 +5,7 @@
 #include "3dmath.h"
 #include "../animation_tag.h"
 #include "serialization/serialization.h"
+#include "../settings.h"
 
 class NodeFeatures 
 {
@@ -62,3 +63,10 @@ float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, 
 MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature &goal_feature, const MotionMatchingSettings &settings);
 
 bool has_goal_tags(AnimationTags goal, AnimationTags clips_tag);
+
+struct FrameMetric
+{
+  MotionMatchingSettings settings;
+  FrameMetric(const MotionMatchingSettings &settings):settings(settings){}
+  float distance(const FrameFeature& clip_feature, const FrameFeature &goal_feature) const;
+};

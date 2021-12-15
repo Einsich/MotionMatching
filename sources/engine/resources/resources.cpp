@@ -63,7 +63,7 @@ void create_all_resources_from_metadata(const fs::path &path)
     auto &res = p.second.resources;
     for (auto it = res.begin(), end = res.end(); it != end;)
     {
-      (it->second && it->second.asset->uniqueId != "") ? ++it : res.erase(it++);
+      (it->second && it->second.asset->name != "") ? ++it : res.erase(it++);
     }
   }
 }

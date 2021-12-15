@@ -1,0 +1,8 @@
+
+entity {
+  _template:t="main_camera";
+}
+
+entity {
+  _template:t="start_game_button";
+}

@@ -85,9 +85,17 @@ namespace ecs
     return read(is, *((T*)ptr));
   }
   template<typename T>
-  void template_blk_reader(const DataBlock &blk, void *ptr)
+  void template_blk_constructor(const DataBlock &blk, void *ptr)
   {
-    return read(blk, *((T*)ptr));
+    if constexpr (std::is_constructible_v<T, const DataBlock &>)
+    {
+      new (ptr) T(blk);
+    }
+    else
+    {
+      new (ptr) T();
+      read(blk, *((T*)ptr));
+    }
   }
   template<typename T>
   void* template_singleton_instance()
@@ -115,7 +123,7 @@ namespace ecs
         ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
         ecs::template_destructor<T>,
         ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>,
-        ecs::template_blk_reader<T>});
+        ecs::template_blk_constructor<T>});
     }
     return RegisterTypeInfoRT();
   }

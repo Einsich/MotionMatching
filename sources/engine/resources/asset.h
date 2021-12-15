@@ -8,6 +8,8 @@
 #include <filesystem>
 #include "manager/compile_time_string.h"
 #include "serialization/serialization.h"
+#include "data_block/data_block.h"
+
 class IAsset
 {
 public:
@@ -38,7 +40,7 @@ template<typename T>
 class Asset;
 
 template<typename T>
-Asset<T> create_asset_by_id(const string &uniqueId);
+Asset<T> create_asset_by_id(const string &name);
 
 template<typename T>
 bool register_asset(const string &assetName, const Asset<T> &asset);
@@ -56,20 +58,20 @@ template<typename T>
 struct AssetImplementation
 {
   filesystem::path path;
-  string name, uniqueId;
+  string name;
   bool loaded, edited, isCopy, userPathUsage;
   T asset;
   AssetImplementation() = default;
-  AssetImplementation(const filesystem::path &path, const string &name, const string &uniqueId,
+  AssetImplementation(const filesystem::path &path, const string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage, const T &asset):
-  path(path), name(name), uniqueId(uniqueId), 
+  path(path), name(name),
   loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
   asset(asset)
   {    }
 template<typename ...Args>
-  AssetImplementation(const filesystem::path &path, const string &name, const string &uniqueId,
+  AssetImplementation(const filesystem::path &path, const string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage,  Args &&...args):
-  path(path), name(name), uniqueId(uniqueId), 
+  path(path), name(name), 
   loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
   asset(args...)
   {    }
@@ -109,22 +111,30 @@ public:
   
   Asset(const filesystem::path &path_or_name) :
   asset(new AssetImplementation<T>(
-    path_or_name, "", "",
+    path_or_name, "",
     false, false, false, true, T()))
   {
 
-    asset->uniqueId = asset->name = asset->asset.asset_name(path_or_name);
-    register_asset(asset->uniqueId, *this);
+    asset->name = asset->asset.asset_name(path_or_name);
+    register_asset(asset->name, *this);
+  }
+  Asset(const DataBlock &blk) :
+  asset(new AssetImplementation<T>(
+    blk.get<std::string>("path", ""), "",
+    false, false, false, false, T()))
+  {
+    asset->name = asset->asset.asset_name(asset->path);
+    *this = create_asset_by_id<T>(asset->name);
   }
   template<typename ...Args>
   Asset(const filesystem::path &path_or_name, Args &&...args) :
   asset(new AssetImplementation<T>(
-    path_or_name, "", "",
+    path_or_name, "",
     true, false, false, true, args...))
   {
 
-    asset->uniqueId = asset->name = asset->asset.asset_name(path_or_name);
-    register_asset(asset->uniqueId, *this);
+    asset->name = asset->asset.asset_name(path_or_name);
+    register_asset(asset->name, *this);
   }
   template<typename U>
   operator Asset<U>() const
@@ -133,7 +143,7 @@ public:
   }
   explicit operator bool() const
   {
-    return asset != nullptr && asset->uniqueId != "";
+    return asset != nullptr && asset->name != "";
   }
   T* operator->()
   {
@@ -171,7 +181,7 @@ public:
   {
     if (asset)
     {
-      write(file, asset->uniqueId);
+      write(file, asset->name);
       write(file, asset->asset);
     }
   }
@@ -185,7 +195,7 @@ public:
         ofstream file(asset->path, ios::binary);
         if (!file.fail())
         {
-          write(file, asset->uniqueId);
+          write(file, asset->name);
           write(file, asset->asset);
         }
       }
@@ -221,14 +231,14 @@ public:
   }
   virtual size_t serialize(std::ostream& os) const override
   {
-    return write(os, asset ? asset->uniqueId : "null");
+    return write(os, asset ? asset->name : "null");
   }
   virtual size_t deserialize(std::istream& is) override
   {
-    string uniqueId;
-    size_t size = read(is, uniqueId);
-    if (uniqueId != "null" && uniqueId != "")
-      *this = create_asset_by_id<T>(uniqueId);
+    string name;
+    size_t size = read(is, name);
+    if (name != "null" && name != "")
+      *this = create_asset_by_id<T>(name);
     else 
       *this = Asset<T>();
     return size;

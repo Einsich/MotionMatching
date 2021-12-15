@@ -148,6 +148,9 @@ namespace ecs
     }
 
   }
+
+  void load_scene(const string &path);
+  void destroy_scene();
   void SceneManager::process_events()
   {
     auto &events = core().events;
@@ -157,6 +160,16 @@ namespace ecs
       events.pop();
     }
     core().destroy_entities_from_destroy_queue(true);
+    string &sceneToLoad = core().sceneToLoad;
+    bool &reloadScene = core().reloadScene;
+    if (sceneToLoad != "")
+    {
+      if (reloadScene)
+        ecs::destroy_scene();
+      load_scene(sceneToLoad);
+      sceneToLoad = "";
+      reloadScene = false;
+    }
   }
   
   void SceneManager::save_current_scene()
@@ -164,8 +177,8 @@ namespace ecs
     #ifndef RELEASE
     if (currentScene && filesystem::exists(currentScene->path) && currentScene->editorScene.loaded)
     {
-      ofstream file (currentScene->path, ios::binary);
-      save(file, currentScene->editorScene.archetypes);
+      //ofstream file (currentScene->path, ios::binary);
+      //save(file, currentScene->editorScene.archetypes);
     }
     #endif
   }

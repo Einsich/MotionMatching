@@ -2,6 +2,7 @@
 
 namespace ecs
 {
+  // send after creating scene
   struct OnSceneCreated
   {
 

@@ -22,3 +22,13 @@ main_hero {
   isWinner:b = false;
   mainHero:Tag {}
 }
+
+main_camera {
+  cameraProjection:mat3 {}
+  zoom:f3 = 0,0,0;
+  transform:Transform2D {}
+}
+
+start_game_button {
+  startGameButton:Tag {}
+}

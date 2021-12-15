@@ -67,6 +67,17 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
   const vector<Asset<Mesh>> *lods_meshes,
   AnimationPlayer &animationPlayer)
 {
+   if (animationPlayer.dataBase)
+  {
+    animationPlayer.dataBase.load();
+    animationPlayer.index = AnimationLerpedIndex(animationPlayer.dataBase, animationPlayer.clip, animationPlayer.frame);
+    if (animationPlayer.index)
+      animationPlayer.currentCadr = AnimationCadr(animationPlayer.index.get_lerped_cadr());
+    animationPlayer.tree = AnimationTree(&animationPlayer.dataBase->tree);
+    animationPlayer.motionMatching = MotionMatching(animationPlayer.dataBase, animationPlayer.index, MotionMatchingSolverType::BruteForce);
+  }
+  else
+    return;
   AnimationTree &tree = animationPlayer.tree;
   tree.set_cadr(animationPlayer.currentCadr);
   tree.calculate_bone_transforms();

@@ -27,20 +27,23 @@ void exit_menu_button_func()
   ecs::perform_system(exit_menu_button_descr, exit_menu_button);
 }
 
-void init_menu_handler(const StartMenuEvent &event);
-void init_menu_singl_handler(const StartMenuEvent &event, ecs::EntityId eid);
+void setup_camera_handler(const ecs::OnEntityCreated &event);
+void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
 
-ecs::EventDescription<StartMenuEvent> init_menu_descr("init_menu", {
+ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
+  {ecs::get_type_description<mat3>("cameraProjection"), false},
+  {ecs::get_type_description<vec3>("zoom"), false},
+  {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, init_menu_handler, init_menu_singl_handler, ecs::SystemTag::Game);
+}, setup_camera_handler, setup_camera_singl_handler, ecs::SystemTag::Game);
 
-void init_menu_handler(const StartMenuEvent &event)
+void setup_camera_handler(const ecs::OnEntityCreated &event)
 {
-  ecs::perform_event(event, init_menu_descr, init_menu);
+  ecs::perform_event(event, setup_camera_descr, setup_camera);
 }
-void init_menu_singl_handler(const StartMenuEvent &event, ecs::EntityId eid)
+void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, init_menu_descr, eid, init_menu);
+  ecs::perform_event(event, setup_camera_descr, eid, setup_camera);
 }
 
 

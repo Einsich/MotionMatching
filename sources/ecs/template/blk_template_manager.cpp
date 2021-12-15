@@ -45,16 +45,15 @@ namespace ecs
     return BlkTemplateManager::instance().find(name);
   }
   template<typename T>
-  ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
+  static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
     constexpr string_hash hash = HashedString(nameOf<T>::value);
     return ComponentInstance(ecs::TypeInfo::types()[hash], property.name, blk.get<T>(property));
   }
-
   GET_FUNCTIONS(instantiate, create_instance)
 
 
-  void collect_template_files(vector<TemplateFile> &templatesFiles)
+  static void collect_template_files(vector<TemplateFile> &templatesFiles)
   {
     templatesFiles.clear();
     for (const auto &path : Application::instance().resourcesPaths)
@@ -72,7 +71,7 @@ namespace ecs
     }
   }
 
-  void fill_raw_template(const vector<TemplateFile> &templateFiles, vector<RawTemplate> &rawTemplates)
+  static void fill_raw_template(const vector<TemplateFile> &templateFiles, vector<RawTemplate> &rawTemplates)
   {
     for (const TemplateFile &file : templateFiles)
     {
@@ -101,7 +100,7 @@ namespace ecs
     NOT_VERIFIED
   };
 
-  bool validate_template(const vector<RawTemplate> &templates, size_t templateId, vector<int> &status)
+  static bool validate_template(const vector<RawTemplate> &templates, size_t templateId, vector<int> &status)
   {
     if (status[templateId] == VERIFIED)
       return true;
@@ -126,7 +125,7 @@ namespace ecs
     return true;
   }
 
-  void validate_templates(vector<RawTemplate> &templates)
+  static void validate_templates(vector<RawTemplate> &templates)
   {
     vector<int> status(templates.size(), NOT_VISITED);
     for (size_t i = 0, n = templates.size(); i < n; ++i)
@@ -150,7 +149,7 @@ namespace ecs
     templates.erase(templates.begin() + first, templates.end());
   }
 
-  void init_templates(map<string, int> &templateMap, vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
+  static void init_templates(map<string, int> &templateMap, vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
   {
     templateMap.clear();
     templates.clear();
@@ -170,14 +169,13 @@ namespace ecs
     }
   }
 
-  void init_components(const RawTemplate &rawTemplate, vector<ComponentInstance> &components)
+  void init_components_from_blk(const DataBlock *tmpl, vector<ComponentInstance> &components)
   {
     const auto &typeMap = ecs::TypeInfo::types();
-    const DataBlock *tmpl = rawTemplate.blk;
     for (size_t i = 0, n = tmpl->propertiesCount(); i < n; i++)
     {
       const DataBlock::Property &property = tmpl->getProperty(i);
-      if (property.name != "_extends")
+      if (property.name != "_extends" && property.name != "_template")
       {
         components.emplace_back(instantiate[property.type](*tmpl, property));
       }
@@ -190,7 +188,7 @@ namespace ecs
       if (it != typeMap.end())
       {
         const ecs::TypeInfo &typeInfo = it->second;
-        components.emplace_back(ComponentInstance(typeInfo, property->name()));
+        components.emplace_back(typeInfo, property->name());
         typeInfo.blkReader(*property, components.back().get_data());
       }
       else
@@ -198,8 +196,13 @@ namespace ecs
         debug_error("unknown type %s:%s", property->name().c_str(),  property->type().c_str());
       }
     }
-    //todo : warning if there are fields in .tmpl file
+  }
+
+  static void init_components(const RawTemplate &rawTemplate, vector<ComponentInstance> &components)
+  {
+    init_components_from_blk(rawTemplate.blk, components);
     
+    const auto &typeMap = ecs::TypeInfo::types();
     auto it = typeMap.find(HashedString("EntityId"));
     assert(it != typeMap.end());//we should know EntityId
     components.emplace_back(ComponentInstance(it->second, "eid"));
@@ -207,7 +210,7 @@ namespace ecs
 
 
 
-  void linearize_extends(
+  static void linearize_extends(
       const vector<RawTemplate> &rawTemplates,
       vector<BlkTemplate> &templates,
       size_t templateId)
@@ -227,7 +230,7 @@ namespace ecs
 
   }
 
-  void linearize_extends(vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
+  static void linearize_extends(vector<RawTemplate> &rawTemplates, vector<BlkTemplate> &templates)
   {
     for (size_t i = 0, n = templates.size(); i < n; ++i)
     {

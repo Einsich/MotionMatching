@@ -1,0 +1,63 @@
+sun {
+  directionalLight:DirectionLight {
+    lightDirection:f3 = 0, -1, 0;
+    lightColor:f3 = 1, 1, 1;
+    ambient:f3 = 0.2, 0.2, 0.2;
+  }
+}
+
+sky_box {
+  skyBox:SkyBox {
+    material:Asset<Material> {
+      path:t = "D:/MotionMatching/resources/MotionMatching/Material/skybox.Material";
+    }
+  }
+}
+
+plane {
+  transform:Transform {
+    scale:f3 = 100, 1, 100;
+  }
+  mesh:Asset<Mesh> {
+    path:t = "plane";
+  }
+  material:Asset<Material> {
+    path:t = "D:/MotionMatching/resources/MotionMatching/Material/plane.Material";
+  }
+}
+
+mm_manager {
+  dataBase:Asset<AnimationDataBase> {
+    path:t = "D:/MotionMatching/resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase";
+  }
+  recordedTest:i = -1;
+  recordedState:i = 0;
+  recorderStartTime:f = 0;
+  testers:vector<EntityId> {}
+}
+
+fps_char {
+  attachedCamera:EntityId {}
+  transform:Transform {}
+  animationPlayer:AnimationPlayer {
+    dataBase:Asset<AnimationDataBase> {
+      path:t = "D:/MotionMatching/resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase";
+    }
+  }
+  personController:PersonController { }
+  thirdPersonController:ThirdPersonController {
+    minZoom:f = 0.5;
+    maxZoom:f = 10;
+    zoomStrength:f = 2.3;
+    lerpStrength:f = 3.6;
+    currentCameraRotation:f2 = 90, -30;
+    wantedCameraRotation:f2 = 90, -30;
+  }
+
+  mesh:Asset<Mesh> {
+    path:t = "D:/MotionMatching/resources/MotionMatching/MotusMan_v55/Lod0.fbx/0/MotusManLod0";
+  }
+  material:Asset<Material> {
+    path:t = "D:/MotionMatching/resources/MotionMatching/Material/animchar.Material";
+  }
+}

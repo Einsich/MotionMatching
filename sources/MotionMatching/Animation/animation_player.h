@@ -9,11 +9,12 @@ enum class AnimationPlayerType
   AnimationPlayer
 };
 class Transform;
-class AnimationPlayer final : ISerializable
+class AnimationPlayer
 {
   public:
+  int clip = 0, frame = 0;
   AnimationPlayerType playerType;
-  float speed;
+  float speed = 1;
   AnimationLerpedIndex index;
   MotionMatching motionMatching;
   AnimationTree tree;
@@ -32,7 +33,9 @@ class AnimationPlayer final : ISerializable
   vec3 rootDeltaTranslation = vec3(0.f);
   float rootDeltaRotation = 0;
   AnimationGoal inputGoal;
-  AnimationDataBasePtr dataBase;
+  REFLECT(AnimationPlayer,
+  (AnimationDataBasePtr) (dataBase)
+  );
   AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType);
   AnimationPlayer() = default;
 
@@ -41,6 +44,4 @@ class AnimationPlayer final : ISerializable
   const MotionMatching *get_motion_matching() const;
   AnimationLerpedIndex get_index() const;
 
-  virtual size_t serialize(std::ostream& os) const override;
-  virtual size_t deserialize(std::istream& is) override; 
 };

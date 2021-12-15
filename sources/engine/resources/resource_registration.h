@@ -19,28 +19,20 @@ Asset<T> create_new_asset(const filesystem::path &path)
     ofstream file(pathToAsset, ios::binary);//create file
   }
   ifstream file(pathToAsset, ios::binary);
-  if (!file.fail())
-  {
-    int seed = rand();
-    asset->uniqueId = assetName + "_" + to_string(seed);
-  }
-  else
+  if (file.fail())
   {
     debug_error("file %s should exists when create asset", pathToAsset.string().c_str());
     delete asset;
     return Asset<T>();
   }
-  
-  const string &assetId = asset->uniqueId;
- 
-  auto it = resourcesMap.resources.find(assetId);
+  auto it = resourcesMap.resources.find(assetName);
 
   asset->userPathUsage = user_path_usage;
 
   if (it == resourcesMap.resources.end())
   {
     Asset<T> asset_(asset);
-    return resourcesMap.resources.try_emplace(assetId, asset_).first->second;
+    return resourcesMap.resources.try_emplace(assetName, asset_).first->second;
   }
   else if (!it->second)
   {
@@ -72,31 +64,31 @@ Asset<T> create_exists_asset(const filesystem::path &path)
   const filesystem::path &pathToAsset = meta_data_asset ? path.string() + ".meta" : path;
 
   ifstream file(pathToAsset, ios::binary);
-  string assetId;
+  string name;
   if (!file.fail())
   {
-    read(file, assetId);
+    read(file, name);
   }
   else
   {
     debug_error("can't open file %s when load exists asset", pathToAsset.string().c_str());
     return Asset<T>();
   }
+  name = path.stem().string();
  
-  auto it = resourcesMap.resources.find(assetId);
+  auto it = resourcesMap.resources.find(name);
 
   if (it == resourcesMap.resources.end())
   {
     AssetImplementation<T> *asset = new AssetImplementation<T>();
 
     asset->path = pathToAsset;
-    asset->uniqueId = assetId;
     asset->name = asset->asset.asset_name(pathToAsset);
     asset->userPathUsage = user_path_usage;
     read(file, asset->asset);
     asset->asset.after_load();
     Asset<T> asset_(asset);
-    return resourcesMap.resources.try_emplace(assetId, asset_).first->second;
+    return resourcesMap.resources.try_emplace(asset->name, asset_).first->second;
   }
   else
   {
@@ -104,7 +96,6 @@ Asset<T> create_exists_asset(const filesystem::path &path)
     if (!it->second)
     {
       asset.asset->path = pathToAsset;
-      asset.asset->uniqueId = assetId;
       asset.asset->name = asset.asset->asset.asset_name(pathToAsset);
       asset.asset->userPathUsage = user_path_usage;
       read(file, asset.asset->asset);
@@ -138,16 +129,16 @@ bool register_asset(const string &assetName, const Asset<T> &asset)
 }
 
 template<typename T>
-Asset<T> create_asset_by_id(const string &uniqueId)
+Asset<T> create_asset_by_id(const string &name)
 {
   constexpr const string_view &typeName = nameOf<T>::value;
   auto &resourcesMap = Resources::instance().assets[typeName];
-  auto it = resourcesMap.resources.find(uniqueId);
+  auto it = resourcesMap.resources.find(name);
   if (it == resourcesMap.resources.end())
   {
     Asset<T> asset(new AssetImplementation<T>());
 
-    return resourcesMap.resources.try_emplace(uniqueId, asset).first->second;
+    return resourcesMap.resources.try_emplace(name, asset).first->second;
   }
   return it->second;
 }

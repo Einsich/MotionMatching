@@ -109,10 +109,10 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
   }
 }
 
-void animation_preprocess(AnimationDataBase *animDatabase)
+void animation_preprocess(AnimationDataBase &animDatabase)
 {
   Assimp::Importer importer;
-  animDatabase->clips.clear();
+  animDatabase.clips.clear();
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
   auto tagMap = read_tag_map(project_path("AnimationTags.blk"));
@@ -157,11 +157,11 @@ void animation_preprocess(AnimationDataBase *animDatabase)
           }
           string animName = string(animation->mName.C_Str());
           const ClipProperty &property = tagMap[animName];
-          animDatabase->clips.emplace_back(duration, 30, animName,
-              animDatabase->tree, rotation, translation, property.tags, property.loopable, property.nextClip, false);
+          animDatabase.clips.emplace_back(duration, 30, animName,
+              animDatabase.tree, rotation, translation, property.tags, property.loopable, property.nextClip, false);
 
         }
-        vector<AnimationClip> &clips = animDatabase->clips;
+        vector<AnimationClip> &clips = animDatabase.clips;
         for (uint i = 0; i < clips.size(); ++i)
         {
           auto it = std::find_if(clips.begin(), clips.end(), [&](const AnimationClip &clip)->bool{return clips[i].nextClip == clip.name;});
@@ -172,10 +172,5 @@ void animation_preprocess(AnimationDataBase *animDatabase)
       }
     }
 
-  //for (const AnimationClip &animation : animDatabase->clips)
-  //  debug_log("In animation %s have %d cadres:", animation.name.c_str(), animation.duration);
-  //debug_log("Animation at all: %d", animDatabase->clips.size());
 
-   
-  //print_tree(animDatabase->tree, 0, 0);
 }

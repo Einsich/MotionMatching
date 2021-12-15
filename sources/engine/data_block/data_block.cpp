@@ -1,4 +1,5 @@
 #include "data_block.h"
+#include <filesystem>
 #include <fstream>
 #include <ostream>
 #include <istream>
@@ -79,6 +80,10 @@ static bool is_name_character(char c)
 {
   return is_character(c) || is_digit(c) || c == '_';
 }
+static bool is_type_character(char c)
+{
+  return is_character(c) || is_digit(c) || c == '_' || c == '<' || c == '>';
+}
 
 
 static void skip_spaces(Stream &stream)
@@ -105,6 +110,19 @@ static bool read_var(Stream &stream, string &var)
   return true;
 }
 
+static bool read_type(Stream &stream, string &type)
+{
+  type.clear();
+  skip_spaces(stream);
+  for (int ci; (ci = stream.peek()) != EOF; stream.get())
+  {
+    char c = ci;
+    if (!is_type_character(c))
+      return true;
+    type += (char)c;
+  }
+  return true;
+}
 static bool read_character(Stream &stream, char character)
 {
   skip_spaces(stream);
@@ -167,7 +185,7 @@ static bool parse(Stream &stream, float &value)
   return read != 0;
 }
 
-static bool parse(Stream &stream, unsigned char &value)
+static bool parse(Stream &stream, bool &value)
 {
   skip_spaces(stream);
   const char *buf = stream.data();
@@ -306,7 +324,7 @@ static bool read_blk(Stream &stream, DataBlock &block)
     {
       if (read_character(stream, ':'))
       {
-        if (read_var(stream, varType))
+        if (read_type(stream, varType))
         {
           if (read_character(stream, '='))
           {
@@ -351,6 +369,11 @@ DataBlock::DataBlock(const char *name, const char *type):
 }
 DataBlock::DataBlock(const std::string &path)
 {
+  if (!filesystem::exists(path))
+  {
+    debug_error("don't exist file %s", path.c_str());
+    return;
+  }
   std::ifstream stream(path);
   Stream in_stream(stream);
   read_blk(in_stream, *this);

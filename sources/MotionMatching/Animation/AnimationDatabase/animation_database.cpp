@@ -4,7 +4,7 @@
 #include <component_editor.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include "animation_preprocess.h"
+
 
 int AnimationDataBase::cadr_count() const
 {
@@ -27,6 +27,9 @@ void reload_tree(AnimationTreeData &tree, const filesystem::path &path)
   if (scene && scene->mRootNode && scene->mRootNode->mChildren[0])
     tree = AnimationTreeData(scene->mRootNode->mChildren[0]);
 }
+
+void animation_preprocess(AnimationDataBase &data_base);
+
 void AnimationDataBase::load(const filesystem::path &, bool reload)
 {
   if (!reload)
@@ -35,7 +38,7 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
     load_runtime_parameters();
   }
   if (needForceReload)
-    animation_preprocess(this);
+    animation_preprocess(*this);
 
 }
 bool AnimationDataBase::edit()
