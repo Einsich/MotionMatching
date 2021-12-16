@@ -10,7 +10,7 @@ public:
   bool valid() const;
   operator bool() const;
   void set_index(int clip, int cadr);
-  void increase_cadr();
+  void increase_frame();
   bool operator()() const;
   bool last_cadr() const;
   int get_clip_index() const;

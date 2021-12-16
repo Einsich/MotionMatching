@@ -115,9 +115,10 @@ SYSTEM(ecs::SystemOrder::UI) briefing_ui()
 
 SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
   const AnimationPlayer &animationPlayer,
-  const Settings &settings)
+  const Settings &settings,
+  bool &updateMMStatistic)
 {
-
+  updateMMStatistic = false;
   if (!settings.MatchingStatistic)
     return;
   if (!animationPlayer.get_motion_matching())
@@ -137,8 +138,9 @@ SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion
   show_scores(dataBase, mm);
 
   show_best_score(mm.bestScore, mm, animationPlayer.inputGoal.tags);
-
+  updateMMStatistic = true;
 }
+
 SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) current_anim_index(
   const AnimationPlayer &animationPlayer)
 {

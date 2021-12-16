@@ -15,9 +15,9 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
   Asset<Material> &material,
-  ThirdPersonController *thirdPersonController,
   int *mmIndex,
   int *mmOptimisationIndex,
+  bool updateMMStatistic,
   Settings &settings,
   SettingsContainer &settingsContainer,
   const MainCamera &mainCamera)
@@ -44,7 +44,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     //static int i = 0;
     //ProfilerLabel motion_matching("motion_matching" + to_string(i));
     //i = (i + 1) % (settings.testCount + 1);
-    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, mmsettings, OptimisationSettings, thirdPersonController != nullptr, settings);
+    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, mmsettings, OptimisationSettings, updateMMStatistic, settings);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }
   if (animationPlayer.playerType == AnimationPlayerType::AnimationPlayer)

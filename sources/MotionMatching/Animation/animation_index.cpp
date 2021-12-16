@@ -29,17 +29,17 @@ void AnimationIndex::set_index(int clip, int cadr)
     }      
   }
 }
-void AnimationIndex::increase_cadr()
+void AnimationIndex::increase_frame()
 {
   if (valid())
   {
     cadr++;
-    if (cadr >= (int)dataBase->clips[clip].duration)
+    const AnimationClip &animClip = dataBase->clips[clip];
+    if (cadr >= (int)animClip.duration)
     {
-      //if (dataBase->clips[clip].loopable)
-        cadr = 0;
-      //else
-      //  --cadr;      
+      cadr = 0;
+      if (!animClip.loopable && animClip.nextClipIdx >= 0)
+        clip = dataBase->clips[clip].nextClipIdx;
     }
   }
 }
@@ -86,8 +86,11 @@ AnimationCadr AnimationIndex::get_cadr() const
 }
 AnimationCadr AnimationIndex::get_cadr(float t) const
 {
-  int nextClip = (cadr + 1 + dataBase->clips[clip].duration) % dataBase->clips[clip].duration;
-  return lerped_cadr(dataBase->clips[clip].get_frame(cadr), dataBase->clips[clip].get_frame(nextClip), t);
+  const AnimationClip &animClip = dataBase->clips[clip];
+  bool nextPlay = (uint)(cadr + 1) >= animClip.duration;
+  const AnimationClip &nextClip = nextPlay && animClip.nextClipIdx >= 0 ? dataBase->clips[animClip.nextClipIdx] : animClip;
+  int nextFrame = nextPlay ? 0 : cadr + 1; 
+  return lerped_cadr(dataBase->clips[clip].get_frame(cadr), nextClip.get_frame(nextFrame), t);
 }
 const NodeFeatures &AnimationIndex::get_feature() const
 {
@@ -158,7 +161,7 @@ void AnimationLerpedIndex::update(float dt, float lerpTime)
   {
     if (indexesT[i] >= 1.f)
     {
-      indexes[i].increase_cadr();
+      indexes[i].increase_frame();
       indexesT[i] -= (int)indexesT[i];
     }
   }

@@ -50,8 +50,7 @@ float pose_matching_norma(const NodeFeatures& feature1, const NodeFeatures& feat
   for (int i = 0; i < (int)AnimationFeaturesNode::Count; i++)
   {
     pose_norma += settings.nodeWeights[i] * length(feature1.nodes[i] - feature2.nodes[i]);
-    if (settings.velocityMatching)
-      vel_norma += settings.velocitiesWeights[i] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]);
+    vel_norma += settings.velocityMatching ? settings.velocitiesWeights[i] * length(feature1.nodesVelocity[i] - feature2.nodesVelocity[i]) : 0.f;
   }
   return settings.poseMatchingWeight * pose_norma + settings.velocityMatchingWeight * vel_norma;
 }
@@ -96,9 +95,9 @@ MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& g
   score.full_score = score.pose * settings.realism + (score.goal_path + score.goal_rotation);
   #define NAN_LOG(var)if (std::isnan(-var)) debug_error("NAN in %s", #var);
 
-  NAN_LOG(score.pose)
-  NAN_LOG(score.goal_path)
-  NAN_LOG(score.goal_rotation)
+  //NAN_LOG(score.pose)
+  //NAN_LOG(score.goal_path)
+  //NAN_LOG(score.goal_rotation)
   return score;
 }
 

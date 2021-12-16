@@ -5,15 +5,17 @@
 
 
 AnimationIndex solve_motion_matching(
-  bool updateScoreStatistic,
   AnimationDataBasePtr dataBase,
   const AnimationIndex &index,
-  AnimationGoal &goal,
+  const AnimationGoal &goal,
   MatchingScores &best_score,
-  Settings &settings,
-  const MotionMatchingSettings &mmsettings,
-  const MotionMatchingOptimisationSettings &optimisationSettings);
+  const MotionMatchingSettings &mmsettings);
 
+void get_motion_matching_statistic(
+  AnimationDataBasePtr dataBase,
+  const AnimationIndex &index,
+  const AnimationGoal &goal,
+  const MotionMatchingSettings &mmsettings);
 
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
 dataBase(dataBase), solverType(solverType), index(index), skip_time(0), lod(0)
@@ -32,6 +34,21 @@ AnimationLerpedIndex MotionMatching::get_index() const
 {
   return index;
 }
+
+static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal &goal, float pathErrorTolerance, float rotationErrorTolerance)
+{
+  const AnimationClip &clip = index.get_clip();
+  int frame = index.get_cadr_index();
+  if (has_goal_tags(goal.tags, clip.tags))
+  {
+    const AnimationTrajectory &trajectory = clip.features[frame].trajectory;
+    float trajectory_cost = goal_path_norma(trajectory, goal.feature.trajectory);
+    float rotation_cost = rotation_norma(trajectory, goal.feature.trajectory);
+    return trajectory_cost < pathErrorTolerance && rotation_cost < rotationErrorTolerance;
+  }
+  return false;
+}
+
 void MotionMatching::update(float dt, AnimationGoal &goal,
   const MotionMatchingSettings &mmsettings,
   const MotionMatchingOptimisationSettings &optimisationSettings,
@@ -47,18 +64,29 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
   AnimationIndex currentIndex = index.current_index();
   if (saveIndex != currentIndex)
   {
-    bool lastFrames = currentIndex.get_cadr_index() + 5 >= (int)currentIndex.get_clip().duration;
-    bool forceJump = lastFrames && !currentIndex.get_clip().loopable;
+    settings.MMCount++;
     lod = optimisationSettings.lodOptimisation ? lod : 0;
-    if (forceJump || skip_time >= optimisationSettings.lodSkipSeconds[lod])
+    float lodSkipTime = optimisationSettings.lodSkipSeconds[lod];
+    if (skip_time >= lodSkipTime)
     {
-      skip_time = 0;
+      skip_time -= lodSkipTime;
+      if (optimisationSettings.trajectoryErrorToleranceTest &&
+          trajection_tolerance_test(currentIndex, goal, optimisationSettings.pathErrorTolerance, optimisationSettings.rotationErrorTolerance))
+      {
+        settings.earlyTestMMCount++;
+        return;
+      }
+      goal.feature.features = currentIndex.get_feature();
+      if (updateStatistic)
+      {
+        get_motion_matching_statistic(dataBase, currentIndex, goal, mmsettings);
+      }
       bestScore = {0,0,0,0,0};
       AnimationIndex best_index;
       switch (solverType)
       {
       case MotionMatchingSolverType::BruteForce :
-        best_index = solve_motion_matching(updateStatistic, dataBase, currentIndex, goal, bestScore, settings, mmsettings, optimisationSettings);
+        best_index = solve_motion_matching(dataBase, currentIndex, goal, bestScore, mmsettings);
         break;
       default: break;
       }
@@ -69,14 +97,6 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
       if (can_jump)
       {
         index.play_lerped(best_index, settings.maxLerpIndex);
-      }
-      else
-      {
-        if (forceJump && currentIndex.get_clip().nextClipIdx >= 0)
-        {
-          best_index.set_index(currentIndex.get_clip().nextClipIdx, 0);
-          index.play_lerped(best_index, settings.maxLerpIndex);
-        }
       }
     }
   }

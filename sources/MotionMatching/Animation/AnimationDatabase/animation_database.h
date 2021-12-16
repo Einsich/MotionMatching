@@ -17,7 +17,7 @@ public:
   )
   bool needForceReload;
   std::vector<std::vector<float>> matchingScore;
-  std::vector<VPTree<FrameFeature, FrameMetric>> vpTrees;
+  std::vector<VPTree> vpTrees;
 
   int cadr_count() const;
   virtual void load(const filesystem::path &path, bool reload) override;
