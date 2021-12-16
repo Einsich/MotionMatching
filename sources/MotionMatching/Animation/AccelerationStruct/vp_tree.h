@@ -7,14 +7,12 @@ struct VPTree
   struct Node
   {
     const T *p;
+    uint clip, frame;
     float bound;
   }; 
-  std::vector<const T*> points; 
+  AnimationTags tag;
+  std::vector<Node> points; 
   std::function<float(const T&, const T&)> norma;
-  VPTree(std::vector<const T*> &&points, std::function<float(const T&, const T&)> &&norma):
-    points(points), norma(norma)
-  {
-
-  }
-
+  VPTree(AnimationTags tag, std::vector<Node> &&points, std::function<float(const T&, const T&)> &&norma);
+  std::pair<uint, uint> find_closect(const T &point) const;
 };

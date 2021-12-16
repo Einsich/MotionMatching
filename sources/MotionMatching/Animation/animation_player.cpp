@@ -3,17 +3,6 @@
 #include <component_editor.h>
 #include <resources/resources.h>
 
-AnimationPlayer::AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType):
-playerType(playerType), speed(1.f),
-index(dataBase, 0, 0), 
-motionMatching(dataBase, index, MotionMatchingSolverType::BruteForce),
-tree(&dataBase->tree), 
-currentCadr(index.get_lerped_cadr()),
-dataBase(dataBase)
-{
-}
-
-
 void AnimationPlayer::set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, vec3 norm, const char *foot_name, const char *toe_name)
 {
 

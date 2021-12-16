@@ -39,6 +39,10 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
   if (needForceReload)
     animation_preprocess(*this);
 
+  if (needForceReload || !reload)
+  {
+    create_vp_trees();    
+  }
 }
 bool AnimationDataBase::edit()
 {
@@ -50,5 +54,39 @@ bool AnimationDataBase::edit()
   return changeTree | needForceReload;
 }; 
 
+void AnimationDataBase::create_vp_trees()
+{
+  vpTrees.clear();
+  map<Tag, size_t> tagMap;
+  vector<vector<VPTree::Node>> nodes;
+  vector<AnimationTags> treeTags;
+  for (const AnimationClip &clip : clips)
+  {
+    auto it = tagMap.find(clip.tags.tags);
+    if (it == tagMap.end())
+    {
+      tagMap.try_emplace(clip.tags.tags, tagMap.size());
+      treeTags.emplace_back(clip.tags);
+    }
+  }
+  nodes.resize(tagMap.size());
+  for (uint i = 0; i < clips.size(); i++)
+  {
+    size_t j = tagMap[clips[i].tags.tags];
+    for (uint k = 0; k < clips[i].features.size(); k++)
+      nodes[j].emplace_back(VPTree::Node{&clips[i].features[k], i, k, 0.f});
+  }
+  vpTrees.reserve(nodes.size());
+  
+  for (uint i = 0; i < nodes.size(); i++)
+    vpTrees.emplace_back(
+      treeTags[i],
+      std::move(nodes[i]),
+        [&](const FrameFeature &a, const FrameFeature &b)
+      {
+        return get_score(a, b, ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second).full_score;
+      }
+    );
+}
 
 ResourceRegister<AnimationDataBase> animDataBaseReg;

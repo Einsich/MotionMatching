@@ -9,6 +9,7 @@
 
 class AnimationDataBase : public  IAsset
 {
+  void create_vp_trees();
 public:
   AnimationTreeData tree;
   REFLECT(AnimationDataBase,
@@ -17,6 +18,7 @@ public:
   )
   bool needForceReload;
   std::vector<std::vector<float>> matchingScore;
+
   std::vector<VPTree> vpTrees;
 
   int cadr_count() const;

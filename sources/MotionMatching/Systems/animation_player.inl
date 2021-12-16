@@ -74,7 +74,7 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
     if (animationPlayer.index)
       animationPlayer.currentCadr = AnimationCadr(animationPlayer.index.get_lerped_cadr());
     animationPlayer.tree = AnimationTree(&animationPlayer.dataBase->tree);
-    animationPlayer.motionMatching = MotionMatching(animationPlayer.dataBase, animationPlayer.index, MotionMatchingSolverType::BruteForce);
+    animationPlayer.motionMatching = MotionMatching(animationPlayer.dataBase, animationPlayer.index, MotionMatchingSolverType::VP_Tree);
   }
   else
     return;

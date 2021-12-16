@@ -36,7 +36,6 @@ class AnimationPlayer
   REFLECT(AnimationPlayer,
   (AnimationDataBasePtr) (dataBase)
   );
-  AnimationPlayer(AnimationDataBasePtr dataBase, AnimationPlayerType playerType);
   AnimationPlayer() = default;
 
   void animation_selector(const KeyEventAnyActionKey &event);

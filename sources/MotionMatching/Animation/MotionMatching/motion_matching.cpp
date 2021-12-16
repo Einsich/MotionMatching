@@ -17,6 +17,10 @@ void get_motion_matching_statistic(
   const AnimationGoal &goal,
   const MotionMatchingSettings &mmsettings);
 
+
+AnimationIndex solve_motion_matching_vp_tree(
+  AnimationDataBasePtr dataBase,
+  const AnimationGoal &goal);
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
 dataBase(dataBase), solverType(solverType), index(index), skip_time(0), lod(0)
 {
@@ -87,6 +91,9 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
       {
       case MotionMatchingSolverType::BruteForce :
         best_index = solve_motion_matching(dataBase, currentIndex, goal, bestScore, mmsettings);
+        break;
+      case MotionMatchingSolverType::VP_Tree :
+        best_index = solve_motion_matching_vp_tree(dataBase, goal);
         break;
       default: break;
       }
