@@ -57,6 +57,8 @@ bool AnimationDataBase::edit()
 void AnimationDataBase::create_vp_trees()
 {
   vpTrees.clear();
+  if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())
+    return;
   map<Tag, size_t> tagMap;
   vector<vector<VPTree::Node>> nodes;
   vector<AnimationTags> treeTags;

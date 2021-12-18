@@ -135,6 +135,11 @@ void animation_preprocess(AnimationDataBase &animDatabase)
         {
 
           const aiAnimation* animation = scene->mAnimations[animInd];
+          string animName = string(animation->mName.C_Str());
+          auto it = tagMap.find(animName);
+          if (it == tagMap.end())
+            continue;
+          const ClipProperty &property = it->second;
           float maxTime = animation->mDuration / animation->mTicksPerSecond;
           uint duration = (uint)(maxTime * 30.f);
            //   debug_log("dur = %f", animation->mDuration);
@@ -155,8 +160,6 @@ void animation_preprocess(AnimationDataBase &animDatabase)
             remove_reusing(rotation[name], duration, maxTime, animNode->mNumRotationKeys, rotf);
             
           }
-          string animName = string(animation->mName.C_Str());
-          const ClipProperty &property = tagMap[animName];
           animDatabase.clips.emplace_back(duration, 30, animName,
               animDatabase.tree, rotation, translation, property.tags, property.loopable, property.nextClip, false);
 

@@ -28,10 +28,13 @@ void ProfileTracker::stop()
 
   os << "frame;time;average\n";
   double sum = 0;
+  os << 0 << ";" << 0.005f << ";" << 0.f << '\n';
   for (size_t i = 0; i < times.size(); i++)
   {
+    if (times[i] >= 0.005f)
+      times[i] = 0.005f;
     sum += times[i];
-    os << i+1 << ";" << times[i] << ";" << sum / (i+1) << endl;
+    os << i+1 << ";" << times[i] << ";" << sum / (i+1) << '\n';
   }
   os.close();
   debug_log("ProfileTrack wrote to %s", path.c_str());
