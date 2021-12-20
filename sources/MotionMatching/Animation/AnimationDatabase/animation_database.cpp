@@ -76,7 +76,7 @@ void AnimationDataBase::create_vp_trees()
   {
     size_t j = tagMap[clips[i].tags.tags];
     for (uint k = 0; k < clips[i].features.size(); k++)
-      nodes[j].emplace_back(VPTree::Node{&clips[i].features[k], i, k, 0.f});
+      nodes[j].emplace_back(VPTree::Node{&clips[i].features[k], i, k, 0.f, 0.f});
   }
   vpTrees.reserve(nodes.size());
   

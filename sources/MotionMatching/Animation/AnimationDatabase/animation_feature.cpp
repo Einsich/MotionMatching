@@ -79,7 +79,7 @@ float rotation_norma(const AnimationTrajectory &path, const AnimationTrajectory 
 float goal_path_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
 {
   float path_norma = 0.f;
-  float distScale = length(goal.trajectory[(int)AnimationTrajectory::PathLength - 1].point);
+  float distScale = length(goal.trajectory.back().point + path.trajectory.back().point) * 0.5f;
   for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
     path_norma += length((path.trajectory[i].point - goal.trajectory[i].point));
   return  path_norma / (0.1f + distScale);

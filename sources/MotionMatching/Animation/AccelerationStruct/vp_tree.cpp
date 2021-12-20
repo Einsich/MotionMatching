@@ -14,6 +14,7 @@ static float sort_with_metric(It begin, It end, const std::function<float(const 
   float distToLeft = norma(*(begin + leftCount)->p, *begin->p);
   float distToRight = leftCount < count ? norma(*(begin + leftCount+1)->p, *begin->p) : distToLeft + 1.f;
   begin->bound = (distToLeft + distToRight) * 0.5f;
+  begin->nearestNeighbor = norma(*(begin + 1)->p, *begin->p);
   ++begin;
   sort_with_metric(begin, begin + leftCount,  norma);
   if (leftCount < count)
@@ -41,7 +42,7 @@ static bool find_closect(It begin, It end, It &out, int &counter, const VPTree::
     out = begin;
     search_radius = rootNorma;
   }
-  if (dist == 1)
+  if (dist == 1 || rootNorma < begin->nearestNeighbor * 0.5)
     return hasRoot;
 
   size_t count = dist - 1;
@@ -67,7 +68,7 @@ static bool find_closect(It begin, It end, It &out, int &counter, const VPTree::
       }
       else
       {
-        //if (begin->bound + search_radius < rootNorma)
+        if (rootNorma - search_radius < begin->bound)
         {
           find_closect(leftBegin + leftCount, end, out, counter, point, search_radius, norma); 
         }

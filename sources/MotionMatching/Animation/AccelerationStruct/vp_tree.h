@@ -9,6 +9,7 @@ struct VPTree
     const T *p;
     uint clip, frame;
     float bound;
+    float nearestNeighbor;
   }; 
   AnimationTags tag;
   std::vector<Node> points;
