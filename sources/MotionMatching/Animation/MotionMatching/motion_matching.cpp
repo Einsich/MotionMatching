@@ -60,7 +60,7 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
   bool updateStatistic,
   Settings &settings)
 {
-  PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 5000);
+  //PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 5000);
 
   AnimationIndex saveIndex = index.current_index();
   index.update(dt, settings.lerpTime);
