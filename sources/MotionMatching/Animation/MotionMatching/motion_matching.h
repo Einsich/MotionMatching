@@ -17,15 +17,14 @@ class MotionMatching
 {
 public:
   AnimationDataBasePtr dataBase;
-  MotionMatchingSolverType solverType;
   AnimationLerpedIndex index;
   float skip_time;
   int lod;
   MatchingScores bestScore;
-  MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType);
+  MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index);
   MotionMatching() = default;
   AnimationLerpedIndex get_index() const;
-  void update(float dt, AnimationGoal &goal,
+  void update(float dt, MotionMatchingSolverType solver_type, AnimationGoal &goal,
     const MotionMatchingSettings &mmsettings,
     const MotionMatchingOptimisationSettings &optimisationSettings,
     bool updateStatistic,

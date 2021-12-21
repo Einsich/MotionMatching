@@ -18,6 +18,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   int *mmIndex,
   int *mmOptimisationIndex,
   bool updateMMStatistic,
+  int motionMatchingSolver,
   Settings &settings,
   SettingsContainer &settingsContainer,
   const MainCamera &mainCamera)
@@ -44,7 +45,8 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
     //static int i = 0;
     //ProfilerLabel motion_matching("motion_matching" + to_string(i));
     //i = (i + 1) % (settings.testCount + 1);
-    animationPlayer.motionMatching.update(dt, animationPlayer.inputGoal, mmsettings, OptimisationSettings, updateMMStatistic, settings);
+    animationPlayer.motionMatching.update(dt, (MotionMatchingSolverType)motionMatchingSolver, animationPlayer.inputGoal,
+        mmsettings, OptimisationSettings, updateMMStatistic, settings);
     animationPlayer.index = animationPlayer.motionMatching.get_index();
   }
   if (animationPlayer.playerType == AnimationPlayerType::AnimationPlayer)
@@ -75,7 +77,7 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
       animationPlayer.currentCadr = AnimationCadr(animationPlayer.index.get_lerped_cadr());
     animationPlayer.tree = AnimationTree(&animationPlayer.dataBase->tree);
     animationPlayer.motionMatching = 
-      MotionMatching(animationPlayer.dataBase, animationPlayer.index, MotionMatchingSolverType::VP_Tree);
+      MotionMatching(animationPlayer.dataBase, animationPlayer.index);
   }
   else
     return;

@@ -21,8 +21,8 @@ void get_motion_matching_statistic(
 AnimationIndex solve_motion_matching_vp_tree(
   AnimationDataBasePtr dataBase,
   const AnimationGoal &goal);
-MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index, MotionMatchingSolverType solverType):
-dataBase(dataBase), solverType(solverType), index(index), skip_time(0), lod(0)
+MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index):
+dataBase(dataBase), index(index), skip_time(0), lod(0)
 {
   if (!dataBase)
     return;
@@ -53,7 +53,7 @@ static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal 
   return false;
 }
 
-void MotionMatching::update(float dt, AnimationGoal &goal,
+void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, AnimationGoal &goal,
   const MotionMatchingSettings &mmsettings,
   const MotionMatchingOptimisationSettings &optimisationSettings,
   bool updateStatistic,
@@ -87,15 +87,15 @@ void MotionMatching::update(float dt, AnimationGoal &goal,
       }
       bestScore = {0,0,0,0,0};
       AnimationIndex best_index;
-      switch (solverType)
+      switch (solver_type)
       {
+      default: 
       case MotionMatchingSolverType::BruteForce :
         best_index = solve_motion_matching(dataBase, currentIndex, goal, bestScore, mmsettings);
         break;
       case MotionMatchingSolverType::VP_Tree :
         best_index = solve_motion_matching_vp_tree(dataBase, goal);
         break;
-      default: break;
       }
       
       bool can_jump = true;
