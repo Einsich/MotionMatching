@@ -30,63 +30,87 @@ VPTree::VPTree(AnimationTags tag, std::vector<Node> &&points, std::function<floa
 }
 
 template<typename It>
-static bool find_closect(It begin, It end, It &out, int &counter, const VPTree::T &point, float &search_radius,
-    const std::function<float(const VPTree::T&, const VPTree::T&)> &norma)
+struct Solver
 {
-  size_t dist = end - begin;
-  float rootNorma = norma(*begin->p, point);
-  bool hasRoot = rootNorma < search_radius;
-  counter++;
-  if (hasRoot)
-  {
-    out = begin;
-    search_radius = rootNorma;
-  }
-  if (dist == 1 || rootNorma < begin->nearestNeighbor * 0.5)
-    return hasRoot;
+  It begin, end, out;
+  const VPTree::T &point;
+  float search_radius;
+  float tolerance_erorr;
+  int counter;
+  const std::function<float(const VPTree::T&, const VPTree::T&)> &norma;
+  Solver(It begin, It end, const VPTree::T &point,
+      float tolerance_erorr,
+      const std::function<float(const VPTree::T&, const VPTree::T&)> &norma)
+  : begin(begin), end(end), out(end),
+   point(point), search_radius(0), tolerance_erorr(tolerance_erorr), counter(0), norma(norma)
+  {}
 
-  size_t count = dist - 1;
-  size_t leftCount = (count + 1) >> 1u;
-  It leftBegin = begin + 1;
-  bool childSearch = false;
-
-  if (rootNorma + search_radius < begin->bound || leftCount == count)
+  bool find_closect(It &out, int &counter, float &search_radius)
   {
-    childSearch = find_closect(leftBegin, leftBegin + leftCount, out, counter, point, search_radius, norma);
+    this->search_radius = search_radius;
+    bool result = find_closect(begin, end);
+    out = this->out;
+    counter = this->counter;
+    search_radius = this->search_radius;
+    return result;
   }
-  else
+private:
+  bool find_closect(It begin, It end)
   {
-    if (begin->bound + search_radius < rootNorma)
+    if (search_radius <= 0)
+      return false;
+    size_t dist = end - begin;
+    float rootNorma = norma(*begin->p, point);
+    bool hasRoot = rootNorma < search_radius;
+    counter++;
+    if (hasRoot)
     {
-      childSearch = find_closect(leftBegin + leftCount, end, out, counter, point, search_radius, norma);
+      out = begin;
+      search_radius = rootNorma;
+      if (rootNorma < tolerance_erorr)
+      {
+        search_radius = 0;
+        return true;
+      }
+    }
+    if (dist == 1 || rootNorma < begin->nearestNeighbor * 0.5)
+      return hasRoot;
+
+    size_t count = dist - 1;
+    size_t leftCount = (count + 1) >> 1u;
+    It leftBegin = begin + 1;
+    bool childSearch = false;
+
+    if (rootNorma + search_radius < begin->bound || leftCount == count)
+    {
+      childSearch = find_closect(leftBegin, leftBegin + leftCount);
     }
     else
     {
-      if (!find_closect(leftBegin, leftBegin + leftCount, out, counter, point, search_radius, norma))
+      if (begin->bound + search_radius < rootNorma)
       {
-        childSearch = find_closect(leftBegin + leftCount, end, out, counter, point, search_radius, norma);
+        childSearch = find_closect(leftBegin + leftCount, end);
       }
       else
       {
-        if (rootNorma - search_radius < begin->bound)
-        {
-          find_closect(leftBegin + leftCount, end, out, counter, point, search_radius, norma); 
-        }
-        childSearch = true;
+        bool leftSearch = find_closect(leftBegin, leftBegin + leftCount);
+        childSearch = (!leftSearch && find_closect(leftBegin + leftCount, end)) ||
+            (leftSearch && rootNorma + search_radius >= begin->bound && find_closect(leftBegin + leftCount, end));
       }
     }
+    return hasRoot || childSearch;
   }
-  return hasRoot || childSearch;
-}
+};
 
-std::pair<uint, uint> VPTree::find_closect(const T &point) const
+std::pair<uint, uint> VPTree::find_closect(const T &point, float tolerance_erorr) const
 {
   float searchRadius = 100000.f;//glm::max(maxRadius, 100.f);
   auto out = points.cend();
   int counter = 0;
   static uint64_t count = 0, sum = 0, sumX = 0;
   count++;
-  if (::find_closect(points.cbegin(), points.cend(), out, counter, point, searchRadius, norma))
+  Solver solver(points.cbegin(), points.cend(), point, tolerance_erorr, norma);
+  if (solver.find_closect(out, counter, searchRadius))
   {
     sum += counter;
     sumX += points.size();
@@ -106,8 +130,9 @@ std::pair<uint, uint> VPTree::find_closect(const T &point) const
       bestInd = nextFrame;
     }
   }
-  debug_log("vp tree solution  = %f [%d]", searchRadius, out - points.cbegin());
-  debug_log("brute force solution = %f [%d]", norma(*points[bestInd].p, point), bestInd);
+  float error = glm::abs(searchRadius - norma(*points[bestInd].p, point));
+  if (error > 0.1f)
+    debug_log("error %f vp tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
 
   return {points[bestInd].clip, points[bestInd].frame};
 }

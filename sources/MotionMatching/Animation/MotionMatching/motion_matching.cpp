@@ -20,7 +20,8 @@ void get_motion_matching_statistic(
 
 AnimationIndex solve_motion_matching_vp_tree(
   AnimationDataBasePtr dataBase,
-  const AnimationGoal &goal);
+  const AnimationGoal &goal,
+  float tolerance_erorr);
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index):
 dataBase(dataBase), index(index), skip_time(0), lod(0)
 {
@@ -59,7 +60,7 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
   bool updateStatistic,
   Settings &settings)
 {
-  //PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 5000);
+  PROFILE_TRACK(project_path("profile/brute_forse/perf.csv"), 5000);
 
   AnimationIndex saveIndex = index.current_index();
   index.update(dt, settings.lerpTime);
@@ -94,7 +95,7 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
         best_index = solve_motion_matching(dataBase, currentIndex, goal, bestScore, mmsettings);
         break;
       case MotionMatchingSolverType::VP_Tree :
-        best_index = solve_motion_matching_vp_tree(dataBase, goal);
+        best_index = solve_motion_matching_vp_tree(dataBase, goal, optimisationSettings.vpTreeErrorTolerance);
         break;
       }
       

@@ -88,6 +88,7 @@ struct MotionMatchingOptimisationSettings
     (bool)  (trajectoryErrorToleranceTest),
     (float) (pathErrorTolerance),
     (float) (rotationErrorTolerance),
+    (float) (vpTreeErrorTolerance),
     (bool)  (lodOptimisation),
     (vec3)  (lodDistances),
     (vec4)  (lodSkipSeconds)
