@@ -10,9 +10,8 @@ struct ApplicationMetaInfo
     (string) (firstScene),
     (bool) (startGame),
     (vector<string>) (shadersPaths),
-    (vector<string>) (resourcesPaths)
+    (vector<string>) (resourcesPaths),
+    (vector<string>) (templatePaths)
   )
+  ApplicationMetaInfo(const string &path);
 };
-
-void load_meta_info(const string &path);
-ApplicationMetaInfo &get_meta_info();

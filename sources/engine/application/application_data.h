@@ -18,7 +18,7 @@ private:
 public:
   ecs::SceneManager *scene;
   string root, projectPath;
-  vector<filesystem::path> resourcesPaths, shadersPaths;
+  vector<filesystem::path> resourcesPaths, shadersPaths, templatePaths;
   Application(const string &window_name, const string &project_path, int width, int height, bool full_screen = false);
   bool sdl_event_handler();
   void start();

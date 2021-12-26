@@ -64,13 +64,13 @@ namespace ecs
   static void collect_template_files(vector<TemplateFile> &templatesFiles)
   {
     templatesFiles.clear();
-    for (const auto &path : Application::instance().resourcesPaths)
+    for (const auto &path : Application::instance().templatePaths)
     {
       if (!fs::exists(path))
         continue;
       for (const auto & entry : fs::recursive_directory_iterator(path))
       {
-        if (entry.is_regular_file() && entry.path().extension() == ".tmpl")
+        if (entry.is_regular_file() && entry.path().extension() == ".blk")
         {
           string strPath = entry.path().string();
           templatesFiles.emplace_back(strPath, make_shared<DataBlock>(strPath));

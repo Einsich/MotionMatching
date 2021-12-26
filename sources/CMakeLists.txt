@@ -57,8 +57,8 @@ if(${is3DApplication} GREATER -1)
 endif()
 
 
-
-foreach(DEPENDENCY ${DEPENDENCIES})
+set(INCLUDES 3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;)
+foreach(DEPENDENCY ${INCLUDES})
   include_directories(${CMAKE_SOURCE_DIR}/${DEPENDENCY})
 endforeach()
 

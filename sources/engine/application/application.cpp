@@ -34,10 +34,10 @@ static void copy_paths(const string &root, const vector<string> &src, vector<fil
 
 void Application::start()
 {
-  load_meta_info(projectPath + "/project.config");
-  ApplicationMetaInfo &metaInfo = get_meta_info();
+  ApplicationMetaInfo metaInfo(projectPath + "/project.config");
   copy_paths(root, metaInfo.shadersPaths, shadersPaths);
   copy_paths(root, metaInfo.resourcesPaths, resourcesPaths);
+  copy_paths(root, metaInfo.templatePaths, templatePaths);
   compile_shaders();
   bool editor = !metaInfo.startGame;
   
