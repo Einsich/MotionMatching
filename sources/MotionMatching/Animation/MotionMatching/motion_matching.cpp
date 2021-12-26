@@ -65,7 +65,9 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
   AnimationIndex saveIndex = index.current_index();
   index.update(dt, settings.lerpTime);
   skip_time += dt;
-
+  static vector<ProfileTracker> trackers(4, ProfileTracker(project_path("profile/brute_forse/perf.csv"), 1500));
+  
+  ProfileTrack track(trackers[goal.tags.tags]);
   AnimationIndex currentIndex = index.current_index();
   if (saveIndex != currentIndex)
   {

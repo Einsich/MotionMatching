@@ -50,7 +50,6 @@ void ProfileTracker::stop()
     os << "time;count\n";
     constexpr int BinsCount = 500;
     vector<int> histogramm(BinsCount, 0);
-    os << maxMsTime << ";" << 0 << '\n';
     for (size_t i = 0; i < times.size(); i++)
     {
       int binInd = (times[i] / maxMsTime) * BinsCount;
@@ -60,11 +59,8 @@ void ProfileTracker::stop()
 
     for (size_t i = 0; i < BinsCount; i++)
     {
-      if (histogramm[i] > 0)
-      {
-        float time = maxMsTime * i / BinsCount;
-        os << time << ";" << histogramm[i] << '\n';
-      }
+      float time = maxMsTime * i / BinsCount;
+      os << time << ";" << histogramm[i] << '\n';
     }
   }
   debug_log("ProfileTrack wrote to %s", path.c_str());
