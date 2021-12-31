@@ -1,9 +1,9 @@
 #pragma once
-constexpr uint entityCount = 3000;
-constexpr uint dagorEntityCount = 0;
+constexpr uint entityCount = 30000;
+constexpr uint dagorEntityCount = 30000;
 
 
 struct Data
 {
-  char data[1<<1]; 
+  //char data[1<<1]; 
 };
