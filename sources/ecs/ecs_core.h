@@ -143,26 +143,26 @@ namespace ecs
 
 
   template<std::size_t... Is, std::size_t N>
-  std::array<char*, N> copy_data_pointer_impl(uint binIndex,
+  std::array<char*__restrict, N> copy_data_pointer_impl(uint binIndex,
     const std::array<vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
   {
-    return std::array<char*, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
+    return std::array<char*__restrict, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
   }
 
   template<std::size_t N, std::size_t... Is>
-  std::array<char*, N> data_pointer(uint binIndex, uint inBinIndex,
+  std::array<char*__restrict, N> data_pointer(uint binIndex, uint inBinIndex,
     const SystemCashedArchetype &archetype, std::index_sequence<Is...>)
   {
-    return std::array<char*, N> {
+    return std::array<char*__restrict, N> {
       (archetype.containers[Is] ?
       ((char*)(archetype.containers[Is]->data[binIndex]) + archetype.containers[Is]->sizeOf * inBinIndex)
       : nullptr)...};
   }
   
   template<typename ...Args, std::size_t N, std::size_t... Is>
-  void update_data_pointer_impl(std::array<char *, N> &pointers, std::index_sequence<Is...>)
+  void update_data_pointer_impl(std::array<char*__restrict, N> &pointers, std::index_sequence<Is...>)
   {
-    std::array<char*, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_pointer_t<std::remove_cvref_t<Args>>) : pointers[Is])...};
+    std::array<char*__restrict, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_pointer_t<std::remove_cvref_t<Args>>) : pointers[Is])...};
     (void)dummy;
   }
   template<uint I, typename R, typename T>
@@ -188,7 +188,7 @@ namespace ecs
   }
   
   template<typename ...Args, typename Callable, std::size_t... Is, std::size_t N>
-  void perform_query_impl(const std::array<char *, N> &pointers, Callable function, std::index_sequence<Is...>)
+  void perform_query_impl(const std::array<char*__restrict, N> &pointers, Callable function, std::index_sequence<Is...>)
   {
     function(get_smart_component<Is, Args>((std::remove_pointer_t<std::remove_cvref_t<Args>>*)pointers[Is])...);
   }
