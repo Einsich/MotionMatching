@@ -4,7 +4,7 @@
 #include "Animation/Test/animation_test.h"
 #include <application/time.h>
 
-REGISTER_TYPE(AnimationTest)
+ECS_DECLARE_TYPE_EXT(AnimationTest)
 
 SYSTEM(ecs::SystemOrder::UI) recorder_ui(
   vector<AnimationTest> &tests,

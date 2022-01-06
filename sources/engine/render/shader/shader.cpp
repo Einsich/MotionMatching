@@ -2,6 +2,9 @@
 #include <iostream>
 #include <map>
 #include "shader_gen.h"
+#include "manager/type_info.h"
+
+ECS_DECLARE_TYPE(Shader)
 
 struct ShaderInfo
 {

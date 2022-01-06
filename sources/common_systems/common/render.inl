@@ -12,9 +12,9 @@
 #include "resources/resources.h"
 #include <imgui.h>
 
-REGISTER_TYPE_NAMED(Asset<Mesh>, mesh)
-REGISTER_TYPE_NAMED(Asset<Texture2D>, Texture2D)
-REGISTER_TYPE_NAMED(Asset<Material>, material)
+ECS_DECLARE_NAMED_TYPE_EXT(Asset<Mesh>, Mesh)
+ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2D>, Texture2D)
+ECS_DECLARE_NAMED_TYPE_EXT(Asset<Material>, Material)
 
 EVENT(ecs::SystemTag::GameEditor) add_global_uniform(const ecs::OnSceneCreated &)
 {

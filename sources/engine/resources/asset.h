@@ -118,6 +118,13 @@ public:
     asset->name = asset->asset.asset_name(path_or_name);
     register_asset(asset->name, *this);
   }
+    Asset(const T &instance) :
+    asset(new AssetImplementation<T>(
+    "", "",
+    true, false, false, true, instance))
+  {
+
+  }
   Asset(const DataBlock &blk) :
   asset(new AssetImplementation<T>(
     root_path(blk.get<std::string>("path", "")), "",

@@ -139,13 +139,20 @@
           "name":"Arcade",
           "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
         }
+      },
+      {
+        "name": "Territorio",
+        "value":{
+          "name":"Territorio",
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+        }
       }
     ]
   },
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "MotionMatching",
+      "name": "Territorio",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },

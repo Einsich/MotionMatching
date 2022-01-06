@@ -13,14 +13,14 @@
 MACRO(PersonController)\
 MACRO(DebugArrow)
 
-#define MACRO(T) REG_TYPE(T)
+#define MACRO(T) ECS_DECLARE_TYPE(T)
 
 CUSTOM_TYPE
 
-REG_TYPE(AnimationPlayer)
-REG_TYPE(AnimationTester)
-REG_TYPE(ThirdPersonController)
-REG_TYPE(AnimationDataBasePtr)
+ECS_DECLARE_TYPE(AnimationPlayer)
+ECS_DECLARE_TYPE(AnimationTester)
+ECS_DECLARE_TYPE(ThirdPersonController)
+ECS_DECLARE_TYPE(AnimationDataBasePtr)
 
 
 EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnEntityCreated &,

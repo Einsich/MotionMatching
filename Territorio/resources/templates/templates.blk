@@ -1,0 +1,69 @@
+
+2d_camera {
+  cameraProjection:mat3{ }
+  zoom:f3=0,0,0;
+  pixelPerUnit:f=1000;
+  minZoom:f=0.1;
+  maxZoom:f=10;
+  curZoom:f=0.05;
+  zoomStrength:f=0.2;
+  transform:Transform2D{ }
+  targetTransform:Transform2D{ }
+  lerpStrength:f=20.0;
+  cameraLocked:b=true;
+}
+
+map {
+  width:i=128;
+  height:i=128;
+  //need to add all maps
+  mapTexture:Asset<Texture2D>{ } 
+  borderTexture:Asset<Texture2D>{ } 
+  mapShader:Shader { }
+  map_arrays:MapArrays{ }
+  land_colors:vector<vec3>{ }
+  mapWasChanged:b=false;
+  botsCount:i=10;
+  updateTime:f=0;
+  updatePeriod:f=0.25;
+
+  forceFromCell:f=0.1;
+  forceFromPeople:f=0.05;
+  maxForceFromCell:f=0.2; 
+  gameStarted:b=false;
+  needUpdateBorder:b=false;
+}
+
+land {
+  landIndex:u=-1;
+  forces:u=0;
+  landCount:i=0;
+}
+
+playable_land {
+  _extends:t="land";
+  startForces:u=88;
+  spawnPoint:i2=0,0;
+  invasions:vector<Invasion>{ }
+  neighbors:vector<EntityId>{ }
+  neighborsIdx:vector<uint>{ }
+  isPlayableLand:Tag{ }
+  invasion_weight:f=0.23;
+
+}
+
+player {
+  _extends:t="playable_land";
+  isPlayer:Tag { }
+}
+
+bot {
+  _extends:t="playable_land";
+  invasionPeriod:f=1;
+  invasionTime:f=0;
+  isBot:Tag { }
+}
+
+player_spawning {
+  player_spawning:Tag { }
+}

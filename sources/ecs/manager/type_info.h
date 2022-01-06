@@ -134,18 +134,42 @@ namespace ecs
     }
     return RegisterTypeInfoRT();
   }
-  #define REG_TYPE_BASE(T, NAME) \
+  template<typename T>
+  RegisterTypeInfoRT register_type(const string_view &name)
+  {
+    string_hash hash = HashedString(name);
+    
+    if constexpr (is_singleton<T>::value)
+    {
+      SingletonTypeInfo::types().try_emplace(
+        hash, SingletonTypeInfo{{hash, string(name), sizeof(T), 
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
+        ecs::template_destructor<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>},
+        template_singleton_instance<T>});
+    }
+    else
+    {
+      TypeInfo::types().try_emplace(
+        hash, TypeInfo{hash, string(name), sizeof(T), 
+        ecs::template_constructor<T>, ecs::template_copy_constructor<T>, ecs::template_move_constructor<T>,
+        ecs::template_destructor<T>,
+        ecs::template_component_edition<T>, ecs::template_serializer<T>, ecs::template_deserializer<T>,
+        ecs::template_blk_constructor<T>});
+    }
+    return RegisterTypeInfoRT();
+  }
+  #define ECS_DECLARE_TYPE_BASE(T, NAME) \
   static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type<T>();
-  #define REG_TYPE_BASE(T, NAME) \
+  #define ECS_DECLARE_NAMED_TYPE_BASE(T, NAME) \
   static ecs::RegisterTypeInfoRT  NAME ##_register = ecs::register_type<T>();
   
-  #define REG_TYPE(T) REG_TYPE_BASE(T, type_##T)
-  #define REG_VEC_TYPE(T) REG_TYPE_BASE(std::vector<T>, vec_##T)
+  #define ECS_DECLARE_TYPE(T) ECS_DECLARE_TYPE_BASE(T, type_##T)
+  #define ECS_DECLARE_VECTOR_TYPE(T) ECS_DECLARE_TYPE_BASE(std::vector<T>, vec_##T)
 
-  #define REGISTER_TYPE(T) REG_TYPE(T) REG_VEC_TYPE(T) 
+  #define ECS_DECLARE_NAMED_TYPE(T, name) ECS_DECLARE_NAMED_TYPE_BASE(T, name)
+  #define ECS_DECLARE_VECTOR_NAMED_TYPE(T, name) ECS_DECLARE_NAMED_TYPE_BASE(std::vector<T>, vec##name) 
 
-  #define REG_TYPE_NAMED(T, name) REG_TYPE_BASE(T, name)
-  #define REG_VEC_TYPE_NAMED(T, name) REG_TYPE_BASE(std::vector<T>, name)
-
-  #define REGISTER_TYPE_NAMED(T, name) REG_TYPE_NAMED(T, name) REG_VEC_TYPE_NAMED(T, vec##name) 
+  #define ECS_DECLARE_TYPE_EXT(T) ECS_DECLARE_TYPE(T) ECS_DECLARE_VECTOR_TYPE(T) 
+  #define ECS_DECLARE_NAMED_TYPE_EXT(T, name) ECS_DECLARE_NAMED_TYPE(T, name) ECS_DECLARE_VECTOR_NAMED_TYPE(T, name) 
 }

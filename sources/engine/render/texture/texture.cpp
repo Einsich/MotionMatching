@@ -74,14 +74,9 @@ GLenum Texture::get_internal_format(TextureColorFormat colorFormat, TextureForma
  {
   case R: switch (textureFormat)
   {
-    case UnsignedByte:  return GL_R8UI; break;
-    case Byte:          return GL_R8I; break;
-    case UnsignedShort: return GL_R16UI; break;
-    case Short:         return GL_R16I; break;
-    case UnsignedInt:   return GL_R32UI; break;
-    case Int:           return GL_R32I; break;
     case HalfFloat:     return GL_R16F; break;
     case Float:         return GL_R32F; break;
+    default:break;
   }break;
   case RG: switch (textureFormat)
   {
@@ -115,6 +110,16 @@ GLenum Texture::get_internal_format(TextureColorFormat colorFormat, TextureForma
     case Int:           return GL_RGBA32I; break;
     case HalfFloat:     return GL_RGBA16F; break;
     case Float:         return GL_RGBA32F; break;
+  }break;
+  case RI: switch (textureFormat)
+  {
+    case UnsignedByte:  return GL_R8UI; break;
+    case Byte:          return GL_R8I; break;
+    case UnsignedShort: return GL_R16UI; break;
+    case Short:         return GL_R16I; break;
+    case UnsignedInt:   return GL_R32UI; break;
+    case Int:           return GL_R32I; break;
+    default:break;
   }break;
   default:return colorFormat; break;
  }

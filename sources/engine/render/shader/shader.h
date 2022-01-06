@@ -69,9 +69,19 @@ public:
 	{
 		glUniform3fv(glGetUniformLocation(get_shader_program(), name), 1, glm::value_ptr(v));
   }
+	void set_vec3(const char*name, const vector<vec3> &v) const
+	{
+		if (!v.empty())
+			glUniform3fv(glGetUniformLocation(get_shader_program(), name), v.size(), glm::value_ptr(v[0]));
+  }
 	void set_vec3(int uniform_location, const vec3 &v) const
 	{
 		glUniform3fv(uniform_location, 1, glm::value_ptr(v));
+  }
+	void set_vec3(int uniform_location, const vector<vec3> &v) const
+	{
+		if (!v.empty())
+			glUniform3fv(uniform_location, v.size(), glm::value_ptr(v[0]));
   }
 
 	void set_vec4(const char*name, const vec4 &v) const

@@ -2,7 +2,7 @@
 #include "manager/type_info.h"
 #include "skybox.h"
 
-REGISTER_TYPE(SkyBox)
+ECS_DECLARE_TYPE_EXT(SkyBox)
 
 SkyBox::SkyBox()
 {

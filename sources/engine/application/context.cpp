@@ -49,7 +49,7 @@ Context::Context(string window_name, int width, int height, bool full_screen)
 
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL3_Init(glsl_version);
-  
+  SDL_GL_GetDrawableSize(window, &resolution.width, &resolution.height);
   glEnable              ( GL_DEBUG_OUTPUT );
 }
 void Context::start_imgui()

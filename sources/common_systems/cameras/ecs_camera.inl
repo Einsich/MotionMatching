@@ -4,9 +4,9 @@
 #include <application/application_data.h>
 
 bool edit_component(Camera &camera, const char *name, bool view_only);
-REGISTER_TYPE(Camera)
-REGISTER_TYPE(FreeCamera)
-REGISTER_TYPE(ArcballCamera)
+ECS_DECLARE_TYPE_EXT(Camera)
+ECS_DECLARE_TYPE_EXT(FreeCamera)
+ECS_DECLARE_TYPE_EXT(ArcballCamera)
 // CameraManager
 
 template<typename Callable>

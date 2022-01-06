@@ -155,3 +155,10 @@ string root_path()
 {
   return Application::instance().root;
 }
+
+
+std::pair<int,int> get_resolution()
+{
+  Resolution r = Application::get_context().get_resolution();
+  return {r.width, r.height};
+}

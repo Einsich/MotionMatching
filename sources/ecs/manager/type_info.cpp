@@ -6,8 +6,8 @@
 using namespace std;
 using namespace ecs;
 
-#define MACRO(T, N) REGISTER_TYPE(T)
+#define MACRO(T, N) ECS_DECLARE_TYPE_EXT(T)
 
-REGISTER_TYPE(bool)
+ECS_DECLARE_TYPE_EXT(bool)
 BASE_TYPES
 

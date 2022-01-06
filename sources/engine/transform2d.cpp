@@ -1,7 +1,7 @@
 #include "transform2d.h"
 #include "manager/type_info.h"
 
-REG_TYPE(Transform2D)
+ECS_DECLARE_TYPE(Transform2D)
 
 
 mat3 Transform2D::get_matrix() const

@@ -97,6 +97,7 @@ class Input
 
   bool eventable = true;
 public:
+  bool mouseOverUI;
   Input(bool eventable) : eventable(eventable){}
   Input() = default;
   static Input& input();

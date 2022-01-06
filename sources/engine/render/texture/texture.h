@@ -14,7 +14,8 @@ enum TextureColorFormat
   RGB = GL_RGB,
   RGBA = GL_RGBA,
   Depth = GL_DEPTH_COMPONENT,
-  DepthStencil = GL_DEPTH_STENCIL
+  DepthStencil = GL_DEPTH_STENCIL,
+  RI = GL_RED_INTEGER
 };
 enum TextureFormat
 {

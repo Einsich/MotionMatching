@@ -1,0 +1,11 @@
+entity {
+  _template:t="2d_camera";
+}
+
+entity {
+  _template:t="map";
+}
+
+entity {
+  _template:t="player_spawning";
+}
