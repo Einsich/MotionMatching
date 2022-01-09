@@ -6,7 +6,7 @@ struct Instance
     #endif
     mat4 Model;
 };
-layout(packed, binding = 1) readonly buffer InstanceData 
+layout(std430, binding = 1) readonly buffer InstanceData 
 {
     Instance instances[];
 };
