@@ -6,7 +6,8 @@
 enum class MotionMatchingSolverType
 {
   BruteForce,
-  VP_Tree
+  VPTree,
+  CoverTree,
 };
 
 struct Settings;

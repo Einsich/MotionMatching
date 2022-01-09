@@ -22,6 +22,12 @@ AnimationIndex solve_motion_matching_vp_tree(
   AnimationDataBasePtr dataBase,
   const AnimationGoal &goal,
   float tolerance_erorr);
+  
+AnimationIndex solve_motion_matching_cover_tree(
+  AnimationDataBasePtr dataBase,
+  const AnimationGoal &goal,
+  float tolerance_erorr);
+
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index):
 dataBase(dataBase), index(index), skip_time(0), lod(0)
 {
@@ -65,9 +71,9 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
   AnimationIndex saveIndex = index.current_index();
   index.update(dt, settings.lerpTime);
   skip_time += dt;
-  static vector<ProfileTracker> trackers(4, ProfileTracker(project_path("profile/brute_forse/perf.csv"), 1500));
-  
-  ProfileTrack track(trackers[goal.tags.tags]);
+  //static vector<ProfileTracker> trackers(4, ProfileTracker(project_path("profile/vp_tree/perf.csv"), 1500));
+  //ProfileTrack track(trackers[goal.tags.tags]);
+
   AnimationIndex currentIndex = index.current_index();
   if (saveIndex != currentIndex)
   {
@@ -96,8 +102,11 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
       case MotionMatchingSolverType::BruteForce :
         best_index = solve_motion_matching(dataBase, currentIndex, goal, bestScore, mmsettings);
         break;
-      case MotionMatchingSolverType::VP_Tree :
+      case MotionMatchingSolverType::VPTree :
         best_index = solve_motion_matching_vp_tree(dataBase, goal, optimisationSettings.vpTreeErrorTolerance);
+        break;
+      case MotionMatchingSolverType::CoverTree :
+        best_index = solve_motion_matching_cover_tree(dataBase, goal, optimisationSettings.vpTreeErrorTolerance);
         break;
       }
       

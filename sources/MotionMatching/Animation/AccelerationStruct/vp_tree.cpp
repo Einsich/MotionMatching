@@ -102,14 +102,14 @@ private:
   }
 };
 
-std::pair<uint, uint> VPTree::find_closect(const T &point, float tolerance_erorr) const
+std::pair<uint, uint> VPTree::find_closect(const T &point, float tolerance_error) const
 {
   float searchRadius = 100000.f;//glm::max(maxRadius, 100.f);
   auto out = points.cend();
   int counter = 0;
   static uint64_t count = 0, sum = 0, sumX = 0;
   count++;
-  Solver solver(points.cbegin(), points.cend(), point, tolerance_erorr, norma);
+  Solver solver(points.cbegin(), points.cend(), point, tolerance_error, norma);
   if (solver.find_closect(out, counter, searchRadius))
   {
     sum += counter;

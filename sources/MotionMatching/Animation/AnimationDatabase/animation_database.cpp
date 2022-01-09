@@ -41,7 +41,7 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
 
   if (needForceReload || !reload)
   {
-    create_vp_trees();    
+    acceleration_structs();    
   }
 }
 bool AnimationDataBase::edit()
@@ -54,13 +54,13 @@ bool AnimationDataBase::edit()
   return changeTree | needForceReload;
 }; 
 
-void AnimationDataBase::create_vp_trees()
+void AnimationDataBase::acceleration_structs()
 {
   vpTrees.clear();
+  coverTrees.clear();
   if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())
     return;
   map<Tag, size_t> tagMap;
-  vector<vector<VPTree::Node>> nodes;
   vector<AnimationTags> treeTags;
   for (const AnimationClip &clip : clips)
   {
@@ -71,24 +71,28 @@ void AnimationDataBase::create_vp_trees()
       treeTags.emplace_back(clip.tags);
     }
   }
-  nodes.resize(tagMap.size());
+  vector<vector<VPTree::Node>> nodes(tagMap.size());
+  vector<vector<CoverTree::Node>> nodes2(tagMap.size());
+
   for (uint i = 0; i < clips.size(); i++)
   {
     size_t j = tagMap[clips[i].tags.tags];
     for (uint k = 0; k < clips[i].features.size(); k++)
+    {
       nodes[j].emplace_back(VPTree::Node{&clips[i].features[k], i, k, 0.f, 0.f});
+      nodes2[j].emplace_back(CoverTree::Node{{}, &clips[i].features[k], i, k, 0.f, 0.f});
+    }
   }
   vpTrees.reserve(nodes.size());
-  
+  auto f = [&](const FrameFeature &a, const FrameFeature &b)
+  {
+    return get_score(a, b, ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second).full_score;
+  };
   for (uint i = 0; i < nodes.size(); i++)
-    vpTrees.emplace_back(
-      treeTags[i],
-      std::move(nodes[i]),
-        [&](const FrameFeature &a, const FrameFeature &b)
-      {
-        return get_score(a, b, ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second).full_score;
-      }
-    );
+  {
+    vpTrees.emplace_back(treeTags[i], std::move(nodes[i]), f);
+    coverTrees.emplace_back( treeTags[i], std::move(nodes2[i]), f);
+  }
 }
 
 ResourceRegister<AnimationDataBase> animDataBaseReg;

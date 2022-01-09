@@ -54,7 +54,7 @@ animated_char {
   }
   personController:PersonController { }
   updateMMStatistic:b = false;
-  motionMatchingSolver:i=1;
+  motionMatchingSolver:i=2;
 }
 
 
