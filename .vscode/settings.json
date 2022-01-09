@@ -150,9 +150,9 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "dev",
     "Project": {
-      "name": "Territorio",
+      "name": "MotionMatching",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },
