@@ -46,8 +46,8 @@ namespace ecs
     EventHandler eventHandler;
     SingleEventHandler singleEventHandler;
     uint tags;
-    EventDescription(const char *name, const std::vector<FunctionArgument> &args, EventHandler eventHandler, SingleEventHandler singleEventHandler, uint tags):
-      QueryDescription(name, args, false), eventHandler(eventHandler), singleEventHandler(singleEventHandler), tags(tags)
+    EventDescription(const char *name, std::vector<FunctionArgument> &&args, EventHandler eventHandler, SingleEventHandler singleEventHandler, uint tags):
+      QueryDescription(name, std::move(args), false), eventHandler(eventHandler), singleEventHandler(singleEventHandler), tags(tags)
     {
       core().events_handler<E>().push_back(this);
       core().event_queries.push_back((QueryDescription*)this);

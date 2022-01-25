@@ -7,7 +7,9 @@ ecs::SystemDescription camera_lerp_descr("camera_lerp", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<float>("lerpStrength"), false}
-}, camera_lerp_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
+}, camera_lerp_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+{},
+{});
 
 void camera_lerp_func()
 {

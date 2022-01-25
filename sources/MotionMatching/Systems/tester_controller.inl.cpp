@@ -30,7 +30,9 @@ void tester_update_func();
 ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<AnimationTester>("animationTester"), false}
-}, tester_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, tester_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void tester_update_func()
 {
@@ -43,7 +45,9 @@ ecs::SystemDescription test_count_descr("test_count", {
   {ecs::get_type_description<vector<ecs::EntityId>>("testers"), false},
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, test_count_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
+}, test_count_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+{},
+{});
 
 void test_count_func()
 {

@@ -18,6 +18,47 @@
         },
         {
             "type": "shell",
+            "label": "ecs code generation - all projects",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "${workspaceFolder}/ECSCodeGen/ECSCodeGen.exe",
+            "args": [
+                "${workspaceFolder}/sources/common_systems",
+                "${workspaceFolder}/sources/ECSbenchmark",
+                "${workspaceFolder}/sources/MotionMatching",
+                "${workspaceFolder}/sources/Arcade",
+                "${workspaceFolder}/sources/Territorio",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build ecs code generator",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./Tools/build_script.sh",
+            "args": [
+                "ECSCodeGen",
+                "rel",
+                "\"\"",
+                "yes",
+                "no"
+            ],
+            "windows": {
+                "command": "Tools\\build_script.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
             "label": "Build and configure project",
             "options": {
                 "cwd": "${workspaceFolder}"

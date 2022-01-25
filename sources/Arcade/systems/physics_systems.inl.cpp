@@ -22,7 +22,9 @@ ecs::SystemDescription move_all_entity_with_velocity_descr("move_all_entity_with
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec2>("velocity"), false},
   {ecs::get_type_description<float>("rotationVelocity"), true}
-}, move_all_entity_with_velocity_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game);
+}, move_all_entity_with_velocity_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
+{},
+{});
 
 void move_all_entity_with_velocity_func()
 {
@@ -35,7 +37,9 @@ ecs::SystemDescription collision_detection_descr("collision_detection", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("bullet"), false}
-}, collision_detection_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, collision_detection_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void collision_detection_func()
 {

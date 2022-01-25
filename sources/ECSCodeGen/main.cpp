@@ -28,6 +28,7 @@ struct ParserSystemDescription
   std::string tags;
   std::vector<ParserFunctionArgument> args;
   std::vector<ParserFunctionArgument> req_args;
+  std::vector<std::string> before, after;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
 #define NAME_SYM "a-zA-Z0-9_"
@@ -156,6 +157,8 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
   std::string row_args = args_range.str();
   auto matched_args = get_matches(row_args, sys_definition_regex);
   std::vector<std::string> tags;
+  constexpr int before = sizeof("before::") - 1;
+  constexpr int after = sizeof("after::") - 1;
   for (const std::string &arg : matched_args)
   {
     if (arg.find("SystemOrder") != std::string::npos)
@@ -163,9 +166,16 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
     else
     if (arg.find("SystemTag") != std::string::npos)
       tags.push_back(arg);
-    else 
+    else
     {
-      parserDescr.req_args.push_back(clear_arg(arg));
+      size_t p1 = arg.find("before::");
+      size_t p2 = arg.find("after::");
+      if (p1 != std::string::npos)
+        parserDescr.before.emplace_back(arg.substr(p1 + before, arg.size() - p1 - before));
+      else if (p2 != std::string::npos)
+        parserDescr.after.emplace_back(arg.substr(p2 + after, arg.size() - p2 - after));
+      else
+        parserDescr.req_args.push_back(clear_arg(arg));
     }
   }
   if (tags.empty())
@@ -243,6 +253,21 @@ void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
     outFile << buffer;
   }
 }
+
+
+void fill_array(std::ofstream &outFile, const std::vector<std::string> &args)
+{
+  outFile << "{";
+  for (uint i = 0; i < args.size(); i++)
+  {
+    auto& arg  = args[i];
+    snprintf(buffer, bufferSize,
+    "\"%s\"%s",arg.c_str(), i + 1 == (uint)args.size() ? "" : ", ");
+    outFile << buffer;
+  }
+  outFile << "}";
+}
+
 void pass_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, bool event = false)
 {
   int i0 = event ? 1 : 0;
@@ -368,8 +393,13 @@ void process_inl_file(const fs::path& path)
     fill_arguments(outFile, system.args, system.req_args);
   
     write(outFile,
-    "}, %s, %s, %s);\n\n", sys_func.c_str(), system.order.c_str(), system.tags.c_str());
+    "}, %s, %s, %s,\n", sys_func.c_str(), system.order.c_str(), system.tags.c_str());
 
+    fill_array(outFile, system.before);
+    write(outFile, ",\n");
+    fill_array(outFile, system.after);
+    write(outFile, ");\n\n");
+  
     write(outFile,
     "void %s()\n"
     "{\n"

@@ -7,7 +7,9 @@ ecs::SystemDescription controll_targets_descr("controll_targets", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec2>("velocity"), false},
   {ecs::get_type_description<ecs::Tag>("target"), false}
-}, controll_targets_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, controll_targets_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void controll_targets_func()
 {
@@ -21,7 +23,9 @@ ecs::SystemDescription destroy_old_bullets_descr("destroy_old_bullets", {
   {ecs::get_type_description<float>("creationTime"), false},
   {ecs::get_type_description<float>("lifeTime"), false},
   {ecs::get_type_description<ecs::Tag>("bullet"), false}
-}, destroy_old_bullets_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game);
+}, destroy_old_bullets_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
+{},
+{});
 
 void destroy_old_bullets_func()
 {
@@ -35,7 +39,9 @@ ecs::SystemDescription move_hero_descr("move_hero", {
   {ecs::get_type_description<vec2>("velocity"), false},
   {ecs::get_type_description<bool>("isWinner"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, move_hero_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
+}, move_hero_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+{},
+{});
 
 void move_hero_func()
 {

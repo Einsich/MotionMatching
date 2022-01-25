@@ -31,7 +31,9 @@ ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
   {ecs::get_type_description<float>("invasion_weight"), false},
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
-}, change_invasion_weight_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, change_invasion_weight_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void change_invasion_weight_func()
 {
@@ -41,7 +43,9 @@ void change_invasion_weight_func()
 void check_mouse_over_ui_func();
 
 ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
-}, check_mouse_over_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, check_mouse_over_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void check_mouse_over_ui_func()
 {

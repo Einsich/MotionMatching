@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(${MODULE_NAME})
-
+message(${MODULE_PATH})
 file(GLOB_RECURSE MODULE_SOURCES ${MODULE_PATH}/*.cpp)
 file(GLOB_RECURSE MODULE_C_SOURCES ${MODULE_PATH}/*.c)
 

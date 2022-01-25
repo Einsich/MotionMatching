@@ -16,14 +16,24 @@ struct DagorTestEntity
   DagorTestEntity(int i) : iv(i), p(rand_vec3()), v(rand_vec3()), ivCopy(i){}
 };
 
+struct TinyEntity
+{
+  vec3 P, V;
+  //virtual void update(float dt){ P += dt*V;}
+  TinyEntity() : P(rand_vec3()), V(rand_vec3()){}
+};
+
 static vector<DagorTestEntity> list0;
 static vector<DagorTestEntity*> list1;
 static vector<DagorTestEntity*> list2;
+static vector<TinyEntity> tinyList0;
+
+static vector<vec3> pData;
+static vector<vec3> vData;
 
 volatile int cache0 = 0;
 void prune_cache()
 {
-  return;
   static vector<int> memory;
   if (!memory.size())
     memory.resize(1<<20, 1);
@@ -65,6 +75,30 @@ EVENT(ecs::SystemTag::GameEditor) dag_init(const ecs::OnSceneCreated &)
     for (uint i = 0; i < dagorEntityCount; i++)
     {
       list2.emplace_back(new DagorTestEntity(i));
+    }
+  }
+  uint tinyCount = dagorEntityCount*10;
+  {
+    TimeScope b("tiny_structs_creation");
+    for (uint i = 0; i < tinyCount; i++)
+      tinyList0.emplace_back();
+  }
+  {
+    TimeScope b("tiny_SoA_creation");
+    for (uint i = 0; i < tinyCount; i++)
+    {
+      pData.emplace_back(rand_vec3());
+      vData.emplace_back(rand_vec3());
+    }
+  }
+  {
+    TimeScope a("tiny_structs_ecs_creation");
+    for (uint i = 0; i < tinyCount; i++)
+    {
+      ecs::create_entity<vec3, vec3>(
+        {"P", rand_vec3()},
+        {"V", rand_vec3()}
+      );
     }
   }
   fflush(stdout);
@@ -122,4 +156,36 @@ SYSTEM(ecs::SystemTag::GameEditor) dag_vector_pointers_virtual_update()
 SYSTEM(ecs::SystemTag::GameEditor) prune_cache3()
 {
   prune_cache();
+}
+
+
+SYSTEM(ecs::SystemTag::GameEditor) tiny_ecs_update(vec3 &P, const vec3 &V)
+{
+  process(Time::delta_time(), P, V);
+}
+
+SYSTEM(ecs::SystemTag::GameEditor) prune_cache4()
+{
+  prune_cache();
+}
+
+SYSTEM(ecs::SystemTag::GameEditor) tiny_soa_structs_update()
+{
+  for (uint i = 0, n = vData.size(); i < n; i++)
+  {
+    process(Time::delta_time(), pData[i], vData[i]);
+  }
+}
+
+SYSTEM(ecs::SystemTag::GameEditor) prune_cache5()
+{
+  prune_cache();
+}
+
+SYSTEM(ecs::SystemTag::GameEditor) tiny_vector_structs_update()
+{
+  for (TinyEntity &entity : tinyList0)
+  {
+    process(Time::delta_time(), entity.P, entity.V);
+  }
 }

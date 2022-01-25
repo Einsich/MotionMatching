@@ -21,7 +21,9 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<Transform2D>("transform"), false}
-}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game);
+}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
+{},
+{});
 
 void render_scene_func()
 {

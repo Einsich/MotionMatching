@@ -8,7 +8,9 @@ ecs::SystemDescription recorder_ui_descr("recorder_ui", {
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
-}, recorder_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, recorder_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void recorder_ui_func()
 {

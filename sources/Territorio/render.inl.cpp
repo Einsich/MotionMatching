@@ -35,7 +35,9 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game);
+}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
+{},
+{});
 
 void render_scene_func()
 {
@@ -48,7 +50,9 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
-}, update_map_textures_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
+}, update_map_textures_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+{},
+{});
 
 void update_map_textures_func()
 {

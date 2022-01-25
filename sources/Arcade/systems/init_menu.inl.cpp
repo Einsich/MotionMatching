@@ -7,7 +7,9 @@ ecs::SystemDescription start_game_button_descr("start_game_button", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ScoreBoard>("sb"), false},
   {ecs::get_type_description<ecs::Tag>("startGameButton"), false}
-}, start_game_button_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, start_game_button_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void start_game_button_func()
 {
@@ -20,7 +22,9 @@ ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
   {ecs::get_type_description<bool>("isWinner"), false},
   {ecs::get_type_description<int>("killsCount"), false},
   {ecs::get_type_description<ScoreBoard>("sb"), false}
-}, exit_menu_button_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, exit_menu_button_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void exit_menu_button_func()
 {

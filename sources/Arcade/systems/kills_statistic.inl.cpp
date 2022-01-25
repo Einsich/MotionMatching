@@ -17,7 +17,9 @@ void show_kill_stat_func();
 
 ecs::SystemDescription show_kill_stat_descr("show_kill_stat", {
   {ecs::get_type_description<int>("killsCount"), false}
-}, show_kill_stat_func, ecs::SystemOrder::UI, ecs::SystemTag::Game);
+}, show_kill_stat_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+{},
+{});
 
 void show_kill_stat_func()
 {
@@ -29,7 +31,9 @@ void check_winner_func();
 ecs::SystemDescription check_winner_descr("check_winner", {
   {ecs::get_type_description<bool>("isWinner"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, check_winner_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, check_winner_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void check_winner_func()
 {

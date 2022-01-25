@@ -19,7 +19,9 @@ ecs::SystemDescription third_peson_controller_update_descr("third_peson_controll
   {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
-}, third_peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, third_peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void third_peson_controller_update_func()
 {

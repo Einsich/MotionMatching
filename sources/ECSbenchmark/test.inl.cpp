@@ -8,7 +8,9 @@ ecs::SystemDescription ecs_update_descr("ecs_update", {
   {ecs::get_type_description<vec3>("vel"), false},
   {ecs::get_type_description<vec3>("center"), false},
   {ecs::get_type_description<float>("m"), false}
-}, ecs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor);
+}, ecs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+{},
+{});
 
 void ecs_update_func()
 {
@@ -18,7 +20,9 @@ void ecs_update_func()
 void vector_structs_update_func();
 
 ecs::SystemDescription vector_structs_update_descr("vector_structs_update", {
-}, vector_structs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor);
+}, vector_structs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+{},
+{});
 
 void vector_structs_update_func()
 {
@@ -28,7 +32,9 @@ void vector_structs_update_func()
 void vector_pointers_update_func();
 
 ecs::SystemDescription vector_pointers_update_descr("vector_pointers_update", {
-}, vector_pointers_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor);
+}, vector_pointers_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+{},
+{});
 
 void vector_pointers_update_func()
 {

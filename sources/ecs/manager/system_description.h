@@ -25,14 +25,16 @@ namespace ecs
     void (*function)();
     bool withArgs;
     uint realArgs;
-    QueryDescription(const char *name, const std::vector<FunctionArgument> &args, bool query = true);
+    QueryDescription(const char *name, std::vector<FunctionArgument> &&args, bool query = true);
   };
   struct SystemDescription : QueryDescription
   {
     void (*function)();
     int order;
     uint tags;
-    SystemDescription(const char *name, const std::vector<FunctionArgument> &args, void (*function_pointer)(), int order, uint tags);
+    std::vector<std::string> before, after;
+    SystemDescription(const char *name, std::vector<FunctionArgument> &&args, void (*function_pointer)(), int order, uint tags,
+        std::vector<std::string> &&before, std::vector<std::string> &&after);
     void execute();
   };
 }

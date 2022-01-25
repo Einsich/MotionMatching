@@ -14,7 +14,9 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false},
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
-}, animation_player_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, animation_player_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void animation_player_update_func()
 {

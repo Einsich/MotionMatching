@@ -94,7 +94,9 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
   {ecs::get_type_description<uint>("forces"), false}
-}, update_bot_invasions_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game);
+}, update_bot_invasions_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+{},
+{});
 
 void update_bot_invasions_func()
 {
@@ -113,7 +115,9 @@ ecs::SystemDescription map_update_descr("map_update", {
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false},
   {ecs::get_type_description<bool>("gameStarted"), false}
-}, map_update_func, ecs::SystemOrder::LOGIC+2, ecs::SystemTag::Game);
+}, map_update_func, ecs::SystemOrder::LOGIC+2, ecs::SystemTag::Game,
+{},
+{});
 
 void map_update_func()
 {
@@ -125,7 +129,9 @@ void border_update_func();
 ecs::SystemDescription border_update_descr("border_update", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
-}, border_update_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game);
+}, border_update_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
+{},
+{});
 
 void border_update_func()
 {

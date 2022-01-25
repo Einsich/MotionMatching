@@ -10,7 +10,9 @@ ecs::SystemDescription peson_controller_update_descr("peson_controller_update", 
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<int>("controllerIndex"), true},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game);
+}, peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+{},
+{});
 
 void peson_controller_update_func()
 {

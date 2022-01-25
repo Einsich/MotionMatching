@@ -19,7 +19,9 @@ void update_camera_pos_before_render_func();
 ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, update_camera_pos_before_render_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::Game);
+}, update_camera_pos_before_render_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::Game,
+{},
+{});
 
 void update_camera_pos_before_render_func()
 {

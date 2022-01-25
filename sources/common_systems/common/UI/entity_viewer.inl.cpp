@@ -5,7 +5,9 @@ void entity_viewer_func();
 
 ecs::SystemDescription entity_viewer_descr("entity_viewer", {
   {ecs::get_type_description<EditorUI>("ui"), false}
-}, entity_viewer_func, ecs::SystemOrder::UI, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug);
+}, entity_viewer_func, ecs::SystemOrder::UI, ecs::SystemTag::GameEditor|ecs::SystemTag::Debug,
+{},
+{});
 
 void entity_viewer_func()
 {
