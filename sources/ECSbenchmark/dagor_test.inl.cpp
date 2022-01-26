@@ -161,6 +161,18 @@ void tiny_vector_structs_update_func()
   ecs::perform_system(tiny_vector_structs_update_descr, tiny_vector_structs_update);
 }
 
+void prune_cache6_func();
+
+ecs::SystemDescription prune_cache6_descr("prune_cache6", {
+}, prune_cache6_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+{},
+{});
+
+void prune_cache6_func()
+{
+  ecs::perform_system(prune_cache6_descr, prune_cache6);
+}
+
 void dag_init_handler(const ecs::OnSceneCreated &event);
 void dag_init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
 

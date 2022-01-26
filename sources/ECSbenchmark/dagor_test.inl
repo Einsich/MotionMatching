@@ -34,6 +34,7 @@ static vector<vec3> vData;
 volatile int cache0 = 0;
 void prune_cache()
 {
+  return;
   static vector<int> memory;
   if (!memory.size())
     memory.resize(1<<20, 1);
@@ -102,6 +103,45 @@ EVENT(ecs::SystemTag::GameEditor) dag_init(const ecs::OnSceneCreated &)
     }
   }
   fflush(stdout);
+  auto t1 = std::thread([&]()
+  {
+    int a = 1;
+    while(1)
+    {
+      a++;
+    };
+  });
+  
+  auto t2 = std::thread([&]()
+  {
+    int a = 1;
+    while(1)
+    {
+      a++;
+    };
+  });
+  
+  auto t3 = std::thread([&]()
+  {
+    int a = 1;
+    while(1)
+    {
+      a++;
+    };
+  });
+  
+  auto t4 = std::thread([&]()
+  {
+    int a = 1;
+    while(1)
+    {
+      a++;
+    };
+  });
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
 }
 
 static void process(float dt, vec3 &pos, const vec3 &vel)
@@ -188,4 +228,42 @@ SYSTEM(ecs::SystemTag::GameEditor) tiny_vector_structs_update()
   {
     process(Time::delta_time(), entity.P, entity.V);
   }
+}
+
+SYSTEM(ecs::SystemTag::GameEditor) prune_cache6()
+{
+  prune_cache();
+}
+
+void dag_ecs_update_func();
+void dag_vector_structs_update_func();
+void dag_vector_pointers_update_func();
+void dag_vector_pointers_virtual_update_func();
+void tiny_ecs_update_func();
+void tiny_soa_structs_update_func();
+void tiny_vector_structs_update_func();
+
+
+void tiny_vector_and_soa_update()
+{
+  auto handle = std::thread([]()
+  {
+    dag_vector_structs_update_func();
+  });
+
+  auto handle1 = std::thread([&]()
+  {
+    dag_vector_pointers_update_func();
+    tiny_ecs_update_func();
+  });
+  auto handle2 = std::thread([&]()
+  {
+    tiny_vector_structs_update_func();
+    tiny_soa_structs_update_func();
+  });
+  dag_ecs_update_func();
+  dag_vector_pointers_virtual_update_func();
+  handle.join();
+  handle1.join();
+  handle2.join();
 }
