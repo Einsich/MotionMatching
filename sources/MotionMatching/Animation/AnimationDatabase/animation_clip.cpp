@@ -41,14 +41,16 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       if (node.name == hips)
       {
         vec3 translation = channels[j].get_translation(i);
-        nodeTranslation = vec3(0, translation.y, 0);
         if (idle && !crouch)
         {
-          hipsTranslation[i] = nodeTranslation;
+          hipsTranslation[i] = vec3(0);
           nodeTranslation = translation;
         }
         else
-          hipsTranslation[i] = translation;
+        {
+          hipsTranslation[i] = vec3(translation.x, 0, translation.z);
+          nodeTranslation = vec3(0, translation.y, 0);
+        }
         channels[j].get_translation(i) = nodeTranslation;
       
         mat4 m = toMat4(rotation);

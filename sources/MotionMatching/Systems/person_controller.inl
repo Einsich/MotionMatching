@@ -125,12 +125,6 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
     personController.realRotation = nextLerpRotation;
   }
 
-  float h = settings.hipsHeightStand;
-  if (personController.crouching)
-  {
-    h = animationPlayer.inputGoal.tags.contains("Idle") ?
-        settings.hipsHeightCrouchIdle : settings.hipsHeightCrouch;
-  }
   
   //bool onlyForward = speed.z > 0.f && abs(speed.x) < 0.1f;
   speed = glm::rotateY(speed, -wantedRotation - sidewayRotation);
@@ -139,7 +133,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) peson_controller_update(
 
   vec3 v0 = personController.desiredTrajectory[0] / settings.inertionTime; // inertion time
   v0.y = 0;
-  vec3 prevDesiredPoint = vec3(0, h, 0);
+  vec3 prevDesiredPoint = vec3(0);
   float onPlaceError = 0;
    vec3 desiredSpeed = v0;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
