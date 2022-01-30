@@ -1,0 +1,309 @@
+Stand_Relaxed_Idle - Stand Relaxed loop
+Stand_Relaxed_Idle_v2 - Stand Relaxed, more motion, loop
+Stand_Rlx_Turn_In_Place_L_Loop - Stand Relaxed in-place turn left 45 Loop
+Stand_Rlx_Turn_In_Place_R_Loop - Stand Relaxed in-place turn right 45 Loop
+Stand_Relaxed_L_45 - Stand Relaxed in-place turn left 45
+Stand_Relaxed_L_90 - Stand Relaxed in-place turn left 90
+Stand_Relaxed_L_135 - Stand Relaxed in-place turn left 135
+Stand_Relaxed_L_180 - Stand Relaxed in-place turn left 180
+Stand_Relaxed_R_45 - Stand Relaxed in-place turn right 45
+Stand_Relaxed_R_90 - Stand Relaxed in-place turn right 90
+Stand_Relaxed_R_135 - Stand Relaxed in-place turn right 135
+Stand_Relaxed_R_180 - Stand Relaxed in-place turn right 180
+Stand_Relaxed_Jump - Stand Relaxed jump in-place
+Stand_Relaxed_Jump_F - Stand Relaxed jump forward
+Stand_Relaxed_Jump_B - Stand Relaxed jump backward
+Stand_Relaxed_Jump_L - Stand Relaxed jump left
+Stand_Relaxed_Jump_R - Stand Relaxed jump right
+Stand_Relaxed_Hop - Stand Relaxed hop in-place
+Stand_Relaxed_Hop_F - Stand Relaxed hop forward
+Stand_Relaxed_Hop_B - Stand Relaxed hop backward
+Stand_Relaxed_Hop_L - Stand Relaxed hop left
+Stand_Relaxed_Hop_R - Stand Relaxed hop right
+Stand_Relaxed_Fgt_v1 - Stand Relaxed waiting
+Stand_Relaxed_Fgt_v2 - Stand Relaxed waiting
+Stand_Relaxed_Fgt_v3 - Stand Relaxed waiting
+Stand_Relaxed_Fgt_v4 - Stand Relaxed waiting
+Stand_Relaxed_Conv_v1 - Stand Relaxed conversation
+Stand_Relaxed_Conv_v2 - Stand Relaxed conversation
+Stand_Relaxed_Conv_v3 - Stand Relaxed conversation
+Stand_Relaxed_Conv_v4 - Stand Relaxed conversation
+Stand_Relaxed_Death_B - Stand Relaxed death fall backward
+Stand_Relaxed_Death_F - Stand Relaxed death fall forwards
+Stand_Relaxed_Death_L - Stand Relaxed death fall left
+Stand_Relaxed_Death_R - Stand Relaxed death fall right
+Stand_Relaxed_To_Walk_L45_Fwd - Stand relax to turn left at 45 degrees and walk forward
+Stand_Relaxed_To_Walk_L90_Fwd - Stand relax to turn left at 90 degrees and walk forward
+Stand_Relaxed_To_Walk_L135_Fwd - Stand relax to turn left at 135 degrees and walk forward
+Stand_Relaxed_To_Walk_L180_Fwd - Stand relax to turn left at 180 degrees and walk forward
+Stand_Relaxed_To_Walk_R45_Fwd - Stand relax to turn right at 45 degrees and walk forward
+Stand_Relaxed_To_Walk_R90_Fwd - Stand relax to turn right at 90 degrees and walk forward
+Stand_Relaxed_To_Walk_R135_Fwd - Stand relax to turn right at 135 degrees and walk forward
+Stand_Relaxed_To_Walk_R180_Fwd - Stand relax to turn right at 180 degrees and walk forward
+Stand_Relaxed_To_Jog_L45_Fwd - Stand relax to turn left at 45 degrees and jog forward
+Stand_Relaxed_To_Jog_L90_Fwd - Stand relax to turn left at 90 degrees and jog forward
+Stand_Relaxed_To_Jog_L135_Fwd - Stand relax to turn left at 135 degrees and jog forward
+Stand_Relaxed_To_Jog_L180_Fwd - Stand relax to turn left at 180 degrees and jog forward
+Stand_Relaxed_To_Jog_R45_Fwd - Stand relax to turn right at 45 degrees and jog forward
+Stand_Relaxed_To_Jog_R90_Fwd - Stand relax to turn right at 90 degrees and jog forward
+Stand_Relaxed_To_Jog_R135_Fwd - Stand relax to turn right at 135 degrees and jog forward
+Stand_Relaxed_To_Jog_R180_Fwd - Stand relax to turn right at 180 degrees and jog forward
+Stand_Relaxed_To_Run_L45_Fwd - Stand relax to turn left at 45 degrees and run forward
+Stand_Relaxed_To_Run_L90_Fwd - Stand relax to turn left at 90 degrees and run forward
+Stand_Relaxed_To_Run_L135_Fwd - Stand relax to turn left at 135 degrees and run forward
+Stand_Relaxed_To_Run_L180_Fwd - Stand relax to turn left at 180 degrees and run forward
+Stand_Relaxed_To_Run_R45_Fwd - Stand relax to turn right at 45 degrees and run forward
+Stand_Relaxed_To_Run_R90_Fwd - Stand relax to turn right at 90 degrees and run forward
+Stand_Relaxed_To_Run_R135_Fwd - Stand relax to turn right at 135 degrees and run forward
+Stand_Relaxed_To_Run_R180_Fwd - Stand relax to turn right at 180 degrees and run forward
+Stand_Relaxed_To_Run_F - Stand Relaxed to Run Forward
+Stand_Relaxed_To_Run_L - Stand Relaxed to Run Left strafe
+Stand_Relaxed_To_Run_R - Stand Relaxed to Run Right strafe
+Stand_Relaxed_To_Crouch - Stand Relaxed to Crouch
+Stand_Relaxed_To_Walk_F - Stand Relaxed to Walk Forward
+Stand_Relaxed_To_Walk_B - Stand Relaxed to Walk Backward
+Stand_Relaxed_To_Walk_L - Stand Relaxed to Walk Left strafe
+Stand_Relaxed_To_Walk_R - Stand Relaxed to Walk Right strafe
+Stand_Relaxed_To_Jog_F - Stand to Jog Forward
+Stand_Relaxed_To_Jog_L - Stand to Jog Left strafe
+Stand_Relaxed_To_Jog_R - Stand to Jog Right strafe
+Stand_Relaxed_To_Jog_B - Stand to Jog Backward
+AIM OFFSETSStand_Relaxed_Look_Center - Stand Relaxed look forward, aim offset pose
+Stand_Relaxed_Look_D90 - Stand Relaxed look down 90, aim offset pose
+Stand_Relaxed_Look_L90 - Stand Relaxed look left 90, aim offset pose
+Stand_Relaxed_Look_LD45 - Stand Relaxed look left and down 45, aim offset pose
+Stand_Relaxed_Look_LU45 - Stand Relaxed look left and up 45, aim offset pose
+Stand_Relaxed_Look_R90 - Stand Relaxed look right 90, aim offset pose
+Stand_Relaxed_Look_RD45 - Stand Relaxed look right and down 45, aim offset pose
+Stand_Relaxed_Look_RU45 - Stand Relaxed look right and up 45, aim offset pose
+Stand_Relaxed_Look_U90 - Stand Relaxed look up 90, aim offset pose
+Crouch_Look_Center - Crouch look forward, aim offset pose
+Crouch_Look_D90 - Crouch look down 90, aim offset pose
+Crouch_Look_L90 - Crouch look left 90, aim offset pose
+Crouch_Look_LD45 - Crouch look left and down 45, aim offset pose
+Crouch_Look_LU45 - Crouch look left and up 45, aim offset pose
+Crouch_Look_R90 - Crouch look right 90, aim offset pose
+Crouch_Look_RD45 - Crouch look right and down 45, aim offset pose
+Crouch_Look_RU45 - Crouch look right and up 45, aim offset pose
+Crouch_Look_U90 - Crouch look up 90, aim offset pose
+WALKS, TURNS, JUMPS, TRANSITIONS
+Walk_F_Loop - Walk Forward loop
+Walk_B_Loop - Walk Backward loop
+Walk_L_Loop - Walk Left Strafe loop
+Walk_R_Loop - Walk Right Strafe loop
+Walk_L_BkPd_Loop - Walk Left Strafe Backpedal loop
+Walk_R_BkPd_Loop - Walk Right Strafe Backpedal loop
+Walk_BL_BkPd_Loop - Walk Strafe 135 back and left backpedal loop
+Walk_BR_BkPd_Loop - Walk Strafe 135 back and right backpedal loop
+Walk_FL_Loop - Walk Strafe 45 forward and left loop
+Walk_FR_Loop - Walk Strafe 45 forward and right loop
+Walk_L_CIR_Loop - Walk Left Circle
+Walk_R_CIR_Loop - Walk Right Circle
+Walk_L_90 - Walk Forward, turn left 90
+Walk_R_90 - Walk Forward, turn right 90
+Walk_L_180 - Walk Forward, turn left 180
+Walk_R_180 - Walk Forward, turn right 180
+Walk_F_Jump - Walk Forward jump
+Walk_F_Jump_LU - Walk Forward jump left foot up, end is frame 18 of Walk_F cycle
+Walk_F_Jump_RU - Walk Forward jump right foot up, end is frame 0 of Walk_F cycle
+Walk_L_Jump - Walk Left Strafe jump
+Walk_L_Jump_LU - Walk Left Strafe jump left foot up, end is frame 18 of Walk_L cycle
+Walk_L_Jump_RU - Walk Left Strafe jump right foot up, end is frame 0 of Walk_L cycle
+Walk_R_Jump - Walk Right Strafe jump
+Walk_R_Jump_LU - Walk Right Strafe jump left foot up, end is frame 18 of Walk_R cycle
+Walk_R_Jump_RU - Walk Right Strafe jump right foot up, end is frame 0 of Walk_R cycle
+Walk_B_Jump - Walk Backward jump
+Walk_B_Jump_LU - Walk Forward jump left foot up, end is frame 18 of Walk_B cycle
+Walk_B_Jump_RU - Walk Backward jump right foot up, end is frame 0 of Walk_B cycle
+Walk_F_To_Stand_Relaxed - Walk Forward, transition to Stand Relaxed, long version
+Walk_F_To_Stand_Relaxed_LU - Walk Forward, transition left foot up to Stand Relaxed
+Walk_F_To_Stand_Relaxed_RU - Walk Forward, transition right foot up to Stand Relaxed
+Walk_B_To_Stand_Relaxed - Walk Backward transition to Stand Relaxed, long version
+Walk_B_To_Stand_Relaxed_LU - Walk Backward, transition left foot up to Stand Relaxed
+Walk_B_To_Stand_Relaxed_RU - Walk Backward, transition right foot up to Stand Relaxed
+Walk_L_To_Stand_Relaxed - Walk Left Strafe, transition to Stand Relaxed, long version
+Walk_L_To_Stand_Relaxed_LU - Walk Left Strafe, transition left foot up to Stand Relaxed
+Walk_L_To_Stand_Relaxed_RU - Walk Left Strafe, transition right foot up to Stand Relaxed
+Walk_R_To_Stand_Relaxed - Walk Right Strafe, transition to Stand Relaxed, long version
+Walk_R_To_Stand_Relaxed_LU - Walk Right Strafe, transition left foot up to Stand Relaxed
+Walk_R_To_Stand_Relaxed_RU - Walk Right Strafe, transition right foot up to Stand Relaxed
+CROUCH, TURNS, CROUCH WALKS, TRANSITION
+Crouch_Idle - Crouch loop
+Crouch_Idle_V2 - Crouch, more motion, loop
+Crouch_Rlx_Turn_In_Place_L_Loop - Crouch in-place turn left 45 Loop
+Crouch_Rlx_Turn_In_Place_R_Loop - Crouch in-place turn left 90 Loop
+Crouch_L_45 - Crouch in-place turn left 45
+Crouch_L_90 - Crouch in-place turn left 90
+Crouch_L_135 - Crouch in-place turn left 135
+Crouch_L_180 - Crouch in-place turn left 180
+Crouch_R_45 - Crouch in-place turn right 45
+Crouch_R_90 - Crouch in-place turn right 90
+Crouch_R_135 - Crouch in-place turn right 135
+Crouch_R_180 - Crouch in-place turn right 180
+CrouchWalk_F_Loop - CrouchWalk Forward loop
+CrouchWalk_B_Loop - CrouchWalk Backward loop
+CrouchWalk_L_Loop - CrouchWalk Left loop
+CrouchWalk_R_Loop - CrouchWalk Right loop
+CrouchWalk_L_BkPd_Loop - CrouchWalk Left Backpedal loop
+CrouchWalk_L_CIR_Loop - CrouchWalk Left Circle
+CrouchWalk_R_CIR_Loop - CrouchWalk Right Circle
+CrouchWalk_R_BkPd_Loop - CrouchWalk Right Backpedal loop
+CrouchWalk_BL_BkPd_Loop - CrouchWalk Strafe 135 back and left backpedal loop
+CrouchWalk_BR_BkPd_Loop - CrouchWalk Strafe 135 back and right backpedal loop
+CrouchWalk_FL_Loop - CrouchWalk Strafe 45 forward and left loop
+CrouchWalk_FR_Loop - CrouchWalk Strafe 45 forward and right loop
+Crouch_To_Stand_Relaxed - Crouch to Stand Relaxed 
+Crouch_To_CrouchWalk_F - Crouch, transition to Crouchwalk Forward
+Crouch_To_CrouchWalk_B - Crouch, transition to Crouchwalk Backward
+Crouch_To_CrouchWalk_L - Crouch, transition to Crouchwalk Left Strafe
+Crouch_To_CrouchWalk_R - Crouch, transition to Crouchwalk Right Strafe
+CrouchWalk_F_To_Crouch - Crouchwalk Forward, transition to Crouch, long version
+CrouchWalk_F_To_Crouch_LU - Crouchwalk Forward, transition left foot up to Crouch
+CrouchWalk_F_To_Crouch_RU - Crouchwalk Forward, transition right foot up to Crouch
+CrouchWalk_B_To_Crouch - Crouchwalk Backward transition to Crouch, long version
+CrouchWalk_B_To_Crouch_LU - Crouchwalk Backward, transition left foot up to Crouch
+CrouchWalk_B_To_Crouch_RU - Crouchwalk Backward, transition right foot up to Crouch
+CrouchWalk_L_To_Crouch - Crouchwalk Left Strafe, transition to Crouch, long version
+CrouchWalk_L_To_Crouch_LU - Crouchwalk Left Strafe, transition left foot up to Crouch
+CrouchWalk_L_To_Crouch_RU - Crouchwalk Left Strafe, transition right foot up to Crouch
+CrouchWalk_R_To_Crouch - Crouchwalk Right Strafe, transition to Crouch, long version
+CrouchWalk_R_To_Crouch_LU - Crouchwalk Right Strafe, transition left foot up to Crouch
+CrouchWalk_R_To_Crouch_RU - Crouchwalk Right Strafe, transition right foot up to Crouch
+Crouch_To_CrouchWalk_L45_Fwd - Crouch to turn left 45 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_L90_Fwd - Crouch to turn left 90 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_L135_Fwd - Crouch to turn left 135 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_L180_Fwd - Crouch to turn left 180 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_R45_Fwd - Crouch to turn right 45 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_R90_Fwd - Crouch to turn right 90 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_R135_Fwd - Crouch to turn right 135 degree and CrouchWalk forward
+Crouch_To_CrouchWalk_R180_Fwd - Crouch to turn right 180 degree and CrouchWalk forward
+JOGS, TURNS, JUMPS, TRANSITIONS
+Jog_F_Loop - Jog Forward loop
+Jog_B_Loop - Jog Backward loop
+Jog_L_Loop - Jog Left Strafe loop
+Jog_R_Loop - Jog Right Strafe loop
+Jog_L_BkPd_Loop - Jog Left Strafe Backpedal loop
+Jog_R_BkPd_Loop - Jog Right Strafe Backpedal loop
+Jog_BL_BkPd_Loop - Jog Strafe 135 back and left backpedal loop
+Jog_BR_BkPd_Loop - Jog Strafe 135 back and right backpedal loop
+Jog_FL_Loop - Jog Strafe 45 forward and left loop
+Jog_FR_Loop - Jog Strafe 45 forward and right loop
+Jog_L_CIR_Loop - Jog Left Circle
+Jog_R_CIR_Loop - Jog Right Circle
+Jog_L_90 - Jog Forward, turn left 90
+Jog_R_90 - Jog Forward, turn right 90
+Jog_L_180 - Jog Forward, turn left 180
+Jog_R_180 - Jog Forward, turn right 180
+Jog_F_Jump - Jog Forward jump
+Jog_F_Jump_LU - Jog Forward jump left foot up, end is frame 11 of Jog_F cycle
+Jog_F_Jump_RU - Jog Forward jump right foot up, end is frame 0 of Jog_F cycle
+Jog_L_Jump - Jog Left Strafe jump
+Jog_L_Jump_LU - Jog Left Strafe jump left foot up, end is frame 12 of Jog_L cycle
+Jog_L_Jump_RU - Jog Left Strafe jump right foot up, end is frame 0 of Jog_L cycle
+Jog_R_Jump - Jog Right Strafe jump
+Jog_R_Jump_LU - Jog Right Strafe jump left foot up, end is frame 12 of Jog_R cycle
+Jog_R_Jump_RU - Jog Right Strafe jump right foot up, end is frame 0 of Jog_R cycle
+Jog_F_To_Stand_Relaxed - Jog Forward, transition to Stand Relaxed, long version
+Jog_F_To_Stand_Relaxed_LU - Jog Forward, transition left foot up to Stand Relaxed
+Jog_F_To_Stand_Relaxed_RU - Jog Forward, transition right foot up to Stand Relaxed
+Jog_B_To_Stand_Relaxed - Jog Backward transition to Stand Relaxed, long version
+Jog_B_To_Stand_Relaxed_LU - Jog Backward, transition left foot up to Stand Relaxed
+Jog_B_To_Stand_Relaxed_RU - Jog Backward, transition right foot up to Stand Relaxed
+Jog_L_To_Stand_Relaxed - Jog Left Strafe, transition to Stand Relaxed, long version
+Jog_L_To_Stand_Relaxed_LU - Jog Left Strafe, transition left foot up to Stand Relaxed
+Jog_L_To_Stand_Relaxed_RU - Jog Left Strafe, transition right foot up to Stand Relaxed
+Jog_R_To_Stand_Relaxed - Jog Right Strafe, transition to Stand Relaxed, long version
+Jog_R_To_Stand_Relaxed_LU - Jog Right Strafe, transition left foot up to Stand Relaxed
+Jog_R_To_Stand_Relaxed_RU - Jog Right Strafe, transition right foot up to Stand Relaxed
+RUNS, TURNS, JUMPS, TRANSITIONS
+Run_F_Loop - Run Forward loop
+Run_L_Loop - Run Left Strafe loop
+Run_R_Loop - Run Right Strafe loop
+Run_L_CIR_Loop - Run Left Circle
+Run_R_CIR_Loop - Run Right Circle
+Run_L_90 - Run Forward, turn left 90
+Run_R_90 - Run Forward, turn right 90
+Run_L_180 - Run Forward, turn left 180
+Run_R_180 - Run Forward, turn right 180
+Run_F_Jump - Run Forward jump
+Run_F_Jump_LU - Run Forward jump left foot up, end is frame 9 of Run_F cycle
+Run_F_Jump_RU - Run Forward jump right foot up
+Run_L_Jump_LU - Run Left, jump left foot up
+Run_L_Jump_RU - Run Left, jump right foot up
+Run_R_Jump_LU - Run Right, jump left foot up
+Run_R_Jump_RU - Run Right, jump right foot up
+Run_FL_Loop - Run Strafe 45 forward and left loop
+Run_FR_Loop - Run Strafe 45 forward and right loop
+Run_F_To_Stand_Relaxed - Run Forward, transition to Stand Relaxed
+Run_F_To_Stand_Relaxed_LU - Run Forward, transition left foot up to Stand Relaxed
+Run_F_To_Stand_Relaxed_RU - Run Forward, transition right foot up to Stand Relaxed
+Run_L_To_Stand_Relaxed - Run Left Strafe, transition to Stand Relaxed, long version
+Run_L_To_Stand_Relaxed_LU - Run Left Strafe, transition left foot up to Stand Relaxed
+Run_L_To_Stand_Relaxed_RU - Run Left Strafe, transition right foot up to Stand Relaxed
+Run_R_To_Stand_Relaxed - Run Right Strafe, transition to Stand Relaxed, long version
+Run_R_To_Stand_Relaxed_LU - Run Right Strafe, transition left foot up to Stand Relaxed
+Run_R_To_Stand_Relaxed_RU - Run Right Strafe, transition right foot up to Stand Relaxed
+SPLIT JUMPS
+Jog_F_Jump_LU_ Air_IPC - Loop while in Air
+Jog_F_Jump_LU_Land_IPC - Left Up Jump Landing
+Jog_F_Jump_LU_Start_IPC - Left Up Jump Start
+Jog_F_Jump_RU_Air_IPC - Loop while in Air
+Jog_F_Jump_RU_Land_IPC - Right Up Jump Landing
+Jog_F_Jump_RU_Start_IPC - Right Up Jump Start
+Jog_L_Jump_LU_Air_IPC - Loop while in Air
+Jog_L_Jump_LU_Land_IPC - Left Up Jump Landing
+Jog_L_Jump_LU_Start_IPC - Left Up Jump Start
+Jog_L_Jump_RU_Air_IPC - Loop while in Air
+Jog_L_Jump_RU_Land_IPC - Right Up Jump Landing
+Jog_L_Jump_RU_Start_IPC - Right Up Jump Start
+Jog_R_Jump_LU_Air_IPC - Loop while in Air
+Jog_R_Jump_LU_Land_IPC - Left Up Jump Landing
+Jog_R_Jump_LU_Start_IPC - Left Up Jump Start
+Jog_R_Jump_RU_Air_IPC - Loop while in Air
+Jog_R_Jump_RU_Land_IPC - Right Up Jump Landing
+Jog_R_Jump_RU_Start_IPC - Right Up Jump Start
+Run_F_Jump_LU_Air_IPC - Loop while in Air
+Run_F_Jump_LU_Land_IPC - Left Up Jump Landing
+Run_F_Jump_LU_Start_IPC - Left Up Jump Start
+Run_F_Jump_RU_Air_IPC - Loop while in Air
+Run_F_Jump_RU_Land_IPC - Right Up Jump Landing
+Run_F_Jump_RU_Start_IPC - Right Up Jump Start
+Run_L_Jump_LU_Air_IPC - Loop while in Air
+Run_L_Jump_LU_Land_IPC - Left Up Jump Landing
+Run_L_Jump_LU_Start_IPC - Left Up Jump Start
+Run_L_Jump_RU_Air_IPC - Loop while in Air
+Run_L_Jump_RU_Land_IPC - Right Up Jump Landing
+Run_L_Jump_RU_Start_IPC - Right Up Jump Start
+Run_R_Jump_LU_Air_IPC - Loop while in Air
+Run_R_Jump_LU_Land_IPC - Left Up Jump Landing
+Run_R_Jump_LU_Start_IPC - Left Up Jump Start
+Run_R_Jump_RU_Air_IPC - Loop while in Air
+Run_R_Jump_RU_Land_IPC - Right Up Jump Landing
+Run_R_Jump_RU_Start_IPC - Right Up Jump Start
+Stand_Relaxed_Jump_Air_IPC - Loop while in Air
+Stand_Relaxed_Jump_Land_IPC - Jump Landing
+Stand_Relaxed_Jump_Start_IPC - Jump Start
+Walk_B_Jump_LU_Air_IPC - Loop while in Air
+Walk_B_Jump_LU_Land_IPC - Left Up Jump Landing
+Walk_B_Jump_LU_Start_IPC - Left Up Jump Start
+Walk_B_Jump_RU_Air_IPC - Loop while in Air
+Walk_B_Jump_RU_Land_IPC - Right Up Jump Landing
+Walk_B_Jump_RU_Start_IPC - Right Up Jump Start
+Walk_F_Jump_LU_Air_IPC - Loop while in Air
+Walk_F_Jump_LU_Land_IPC - Left Up Jump Landing
+Walk_F_Jump_LU_Start_IPC - Left Up Jump Start
+Walk_F_Jump_RU_Air_IPC - Loop while in Air
+Walk_F_Jump_RU_Land_IPC - Right Up Jump Landing
+Walk_F_Jump_RU_Start_IPC - Right Up Jump Start
+Walk_L_Jump_LU_Air_IPC - Loop while in Air
+Walk_L_Jump_LU_Land_IPC - Left Up Jump Landing
+Walk_L_Jump_LU_Start_IPC - Left Up Jump Start
+Walk_L_Jump_RU_Air_IPC - Loop while in Air
+Walk_L_Jump_RU_Land_IPC - Right Up Jump Landing
+Walk_L_Jump_RU_Start_IPC - Right Up Jump Start
+Walk_R_Jump_LU_Air_IPC - Loop while in Air
+Walk_R_Jump_LU_Land_IPC - Left Up Jump Landing
+Walk_R_Jump_LU_Start_IPC - Left Up Jump Start
+Walk_R_Jump_RU_Air_IPC - Loop while in Air
+Walk_R_Jump_RU_Land_IPC - Right Up Jump Landing
+Walk_R_Jump_RU_Start_IPC - Right Up Jump Start

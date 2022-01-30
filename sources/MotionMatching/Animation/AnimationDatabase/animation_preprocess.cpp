@@ -115,18 +115,16 @@ void animation_preprocess(AnimationDataBase &animDatabase)
   animDatabase.clips.clear();
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-  auto tagMap = read_tag_map(project_path("AnimationTags.blk"));
 
     TimeScope scope("Animation Reading from fbx file");
-    string path = project_path("Root_Motion");
-    uintmax_t animation_size = 0;
+    string path = project_path("Animation/Root_Motion");
     
-    for (const auto & entry : fs::directory_iterator(path))
+    for (const auto & entry : read_tag_map(project_path("AnimationTags.blk")))
     {
-      if (entry.is_regular_file() && entry.path().extension() == ".fbx")
+      const string& nextPath = path + "/" + entry.first + ".fbx";
+
+      if (fs::exists(nextPath))
       {
-        animation_size += entry.file_size();
-        const string& nextPath = entry.path().string();
         importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
         importer.ReadFile(nextPath, aiProcess_GlobalScale);
         const aiScene* scene = importer.GetScene();
@@ -136,10 +134,7 @@ void animation_preprocess(AnimationDataBase &animDatabase)
 
           const aiAnimation* animation = scene->mAnimations[animInd];
           string animName = string(animation->mName.C_Str());
-          auto it = tagMap.find(animName);
-          if (it == tagMap.end())
-            continue;
-          const ClipProperty &property = it->second;
+          const ClipProperty &property = entry.second;
           float maxTime = animation->mDuration / animation->mTicksPerSecond;
           uint duration = (uint)(maxTime * 30.f);
            //   debug_log("dur = %f", animation->mDuration);
