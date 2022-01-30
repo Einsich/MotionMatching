@@ -62,11 +62,11 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
       return;
   }
   
-  TimeScope scope("Creating acceleration structs");
   vpTrees.clear();
   coverTrees.clear();
   if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())
     return;
+  TimeScope scope("Creating acceleration structs");
   map<Tag, size_t> tagMap;
   vector<AnimationTags> treeTags;
   for (const AnimationClip &clip : clips)

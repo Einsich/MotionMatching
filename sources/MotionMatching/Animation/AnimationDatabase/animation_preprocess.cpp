@@ -87,18 +87,23 @@ void remove_reusing(vector<T> & result, uint duration, float max_time, uint n, f
 {
   if (result.size() == duration)
     return;
-  if (n == 1 || duration + 1 != n)
+  if (n == 1)
   {
     result = {get_next(0).second};
     return;
   }
-  vector<pair<float, T>> bisearchList(n + 1);
+  if (n == duration)
+  {
+    result.resize(duration);
+    for (uint i = 0; i < n; ++i)
+      result[i] = get_next(i).second;
+    return;
+  }
+  vector<pair<float, T>> bisearchList(n);
   result.resize(duration);
   for (uint i = 0; i < n; ++i)
     bisearchList[i] = get_next(i);
-  bisearchList.back() = make_pair(max_time, bisearchList[n-1].second);
 
-  //debug_log("t0 = %f, tn = %f", bisearchList[0].first, bisearchList[bisearchList.size() - 1].first);
   float dt = max_time / duration;
   for (uint i = 0; i < duration; ++i)
   {
@@ -136,8 +141,8 @@ void animation_preprocess(AnimationDataBase &animDatabase)
           string animName = string(animation->mName.C_Str());
           const ClipProperty &property = entry.second;
           float maxTime = animation->mDuration / animation->mTicksPerSecond;
-          uint duration = (uint)(maxTime * 30.f);
-           //   debug_log("dur = %f", animation->mDuration);
+          uint duration = animation->mDuration+1;
+          uint ticksPerSecond = animation->mTicksPerSecond;
 
           map<string, vector<quat>> rotation;
           map<string, vector<vec3>> translation;
@@ -155,7 +160,7 @@ void animation_preprocess(AnimationDataBase &animDatabase)
             remove_reusing(rotation[name], duration, maxTime, animNode->mNumRotationKeys, rotf);
             
           }
-          animDatabase.clips.emplace_back(duration, 30, animName,
+          animDatabase.clips.emplace_back(duration, ticksPerSecond, animName,
               animDatabase.tree, rotation, translation, property.tags, property.loopable, property.nextClip, false);
 
         }
