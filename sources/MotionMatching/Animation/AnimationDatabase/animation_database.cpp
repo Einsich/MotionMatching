@@ -4,7 +4,7 @@
 #include <component_editor.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-
+#include <application/time.h>
 
 int AnimationDataBase::cadr_count() const
 {
@@ -54,8 +54,15 @@ bool AnimationDataBase::edit()
   return changeTree | needForceReload;
 }; 
 
-void AnimationDataBase::acceleration_structs()
+void AnimationDataBase::acceleration_structs(bool check_existance)
 {
+  if (check_existance)
+  {
+    if (!vpTrees.empty() && !coverTrees.empty())
+      return;
+  }
+  
+  TimeScope scope("Creating acceleration structs");
   vpTrees.clear();
   coverTrees.clear();
   if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())

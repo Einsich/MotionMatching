@@ -10,13 +10,13 @@
 
 class AnimationDataBase : public  IAsset
 {
-  void acceleration_structs();
 public:
   AnimationTreeData tree;
   REFLECT(AnimationDataBase,
     (vector<AnimationClip>) (clips),
     (Asset<FBXMeta>) (treeSource)
   )
+  void acceleration_structs(bool check_existance = false);
   bool needForceReload;
   std::vector<std::vector<float>> matchingScore;
 

@@ -24,6 +24,7 @@ ECS_DECLARE_TYPE(AnimationDataBasePtr)
 
 
 EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnEntityCreated &,
+  AnimationDataBasePtr dataBase,
   vector<AnimationTest> &tests,
   Settings &settings,
   SettingsContainer &settingsContainer)
@@ -33,6 +34,7 @@ EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnEntityCreated &,
   settingsContainer.after_loading();
 
   load_object(settings, "man_property.bin");
+  dataBase->acceleration_structs(true);
 }
 
 EVENT() scene_destroy(
