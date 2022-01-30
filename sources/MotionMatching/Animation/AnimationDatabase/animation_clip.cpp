@@ -4,7 +4,10 @@
 AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
  const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, AnimationTags tags,
  bool loopable, string nextClip, bool rotatable):
- hipsTranslation(duration), hipsRotation(duration),
+ hipsTranslation(duration), 
+ hipsVelocity(duration), 
+ hipsRotation(duration),
+ hipsAngularVelocity(duration),
  duration(duration), ticksPerSecond(ticksPerSecond), 
  name(name), tags(tags), 
  loopable(loopable),
@@ -74,6 +77,22 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
       features[i].features.set_feature(tree.nodes[j].name, nodeTransform[3]);
     }    
   }
+  for (uint i = 0; i < duration; i++)
+  {
+    hipsVelocity[i] = i+1 < duration ?
+        (hipsTranslation[i+1] - hipsTranslation[i]) * ticksPerSecond
+        : hipsVelocity[i-1];
+    if (i+1 < duration)
+    {
+      float dr = hipsRotation[i+1] - hipsRotation[i];
+      dr -= (int)(dr / PITWO)*PITWO;
+      float r = abs(dr);
+      r = r > PI ? PITWO - r : r;
+      hipsAngularVelocity[i] = r * sign(dr) * ticksPerSecond;
+    }
+    else
+      hipsAngularVelocity[i] = hipsAngularVelocity[i-1];
+  }
 
   for (uint i = 0; i < duration; i++)
   {
@@ -113,16 +132,8 @@ AnimationCadr AnimationClip::get_frame(uint i) const
   frame.nodeTranslation = channels[hipsChannelIndex].get_translation_c(i);
   
   quat q0 = quat(vec3(0, -get_root_rotation(i), 0));
-  frame.rootRotationDelta = get_root_rotation(i + 1) - get_root_rotation(i);
-  if ((frame.rootRotationDelta) > PI)
-  {
-    frame.rootRotationDelta -= 2 * PI;
-  }
-  if ((frame.rootRotationDelta) < -PI)
-  {
-    frame.rootRotationDelta += 2 * PI;
-  }
-  frame.rootTranslationDelta = q0 * (get_root_traslation(i + 1) - get_root_traslation(i));
+  frame.rootAngularVelocity = hipsAngularVelocity[i];
+  frame.rootLinearVelocity = q0 * hipsVelocity[i];
   return frame;
 }
 
@@ -138,6 +149,9 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
   for (uint j = 0; j < AnimationTrajectory::PathLength; j++)
   {
     uint next = frame + (uint)(AnimationTrajectory::timeDelays[j] * ticksPerSecond);
+    uint nextM = next % duration;
+    pathFeature.trajectory[j].velocity = q1*hipsVelocity[nextM];
+    pathFeature.trajectory[j].angularVelocity = hipsAngularVelocity[nextM];
     if (loopable)
     {
       if (next < duration)
@@ -217,7 +231,9 @@ size_t AnimationClip::serialize(std::ostream& os) const
   size += write(os, name);
   size += write(os, channels);
   size += write(os, hipsTranslation);
+  size += write(os, hipsVelocity);
   size += write(os, hipsRotation);
+  size += write(os, hipsAngularVelocity);
   size += write(os, features);
   size += write(os, tags);
   size += write(os, loopable);
@@ -235,7 +251,9 @@ size_t AnimationClip::deserialize(std::istream& is)
   size += read(is, name);
   size += read(is, channels);
   size += read(is, hipsTranslation);
+  size += read(is, hipsVelocity);
   size += read(is, hipsRotation);
+  size += read(is, hipsAngularVelocity);
   size += read(is, features);
   size += read(is, tags);
   size += read(is, loopable);

@@ -9,8 +9,8 @@ class AnimationCadr final : public ISerializable
 public:
   AnimationCadr()=default;
   ~AnimationCadr()=default;
-  vec3 rootTranslationDelta;
-  float rootRotationDelta;
+  vec3 rootLinearVelocity;
+  float rootAngularVelocity;
 
   vec3 nodeTranslation;
   vector<quat> nodeRotation;

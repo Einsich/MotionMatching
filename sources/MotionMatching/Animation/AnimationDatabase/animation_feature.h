@@ -18,8 +18,8 @@ public:
 
 struct TrajectoryPoint
 {
-  vec3 point;
-  float rotation;
+  vec3 point, velocity;
+  float rotation, angularVelocity;
 };
 
 class AnimationTrajectory
@@ -47,7 +47,7 @@ struct AnimationGoal
 
 struct MatchingScores
 {
-  float pose, goal_tag, goal_rotation, goal_path;
+  float pose, goal_tag, goal_rotation, goal_path, trajectory_v, trajectory_w;
   float full_score;
 };
 struct MotionMatchingSettings;

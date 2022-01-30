@@ -84,7 +84,20 @@ float goal_path_norma(const AnimationTrajectory &path, const AnimationTrajectory
     path_norma += length((path.trajectory[i].point - goal.trajectory[i].point));
   return  path_norma / (0.1f + distScale);
 }
-
+float trajectory_v_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
+{
+  float path_norma = 0.f;
+  for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
+    path_norma += length((path.trajectory[i].velocity - goal.trajectory[i].velocity));
+  return  path_norma;
+}
+float trajectory_w_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
+{
+  float path_norma = 0.f;
+  for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
+    path_norma += length((path.trajectory[i].angularVelocity - goal.trajectory[i].angularVelocity));
+  return  path_norma;
+}
 MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& goal_feature,
   const MotionMatchingSettings &settings)
 {
@@ -92,12 +105,10 @@ MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& g
   score.pose = pose_matching_norma(clip_feature.features, goal_feature.features, settings);
   score.goal_path = goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight;
   score.goal_rotation = rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight;
+  score.trajectory_v = trajectory_v_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalVelocityWeight;
+  score.trajectory_w = trajectory_w_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalAngularVelocityWeight;
   score.full_score = score.pose * settings.realism + (score.goal_path + score.goal_rotation);
-  #define NAN_LOG(var)if (std::isnan(-var)) debug_error("NAN in %s", #var);
 
-  //NAN_LOG(score.pose)
-  //NAN_LOG(score.goal_path)
-  //NAN_LOG(score.goal_rotation)
   return score;
 }
 
@@ -108,5 +119,9 @@ float FrameMetric::distance(const FrameFeature& clip_feature, const FrameFeature
     +
   goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight
     +
-  rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight;
+  rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight
+    +
+  trajectory_v_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalVelocityWeight
+    +
+  trajectory_w_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalAngularVelocityWeight;
 }

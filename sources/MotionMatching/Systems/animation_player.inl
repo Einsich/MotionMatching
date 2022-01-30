@@ -53,12 +53,10 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   {
     animationPlayer.index.update(dt, settings.lerpTime);
   }
-  float ticks = animationPlayer.index.ticks_per_second();
   
   animationPlayer.currentCadr = animationPlayer.index.get_lerped_cadr();
-  animationPlayer.rootDeltaTranslation = animationPlayer.currentCadr.rootTranslationDelta * ticks;
-  animationPlayer.rootDeltaRotation = animationPlayer.currentCadr.rootRotationDelta * ticks;
-
+  animationPlayer.rootDeltaTranslation = animationPlayer.currentCadr.rootLinearVelocity;
+  animationPlayer.rootDeltaRotation = animationPlayer.currentCadr.rootAngularVelocity;
   animationPlayer.tree.set_cadr(animationPlayer.currentCadr);
   animationPlayer.tree.calculate_bone_transforms();
 }

@@ -13,8 +13,8 @@ private:
   void ground_calculate();
   void leg_process(int leg_index, u8 leg);
   vector<AnimationChannel> channels;
-  vector<vec3> hipsTranslation;
-  vector<float> hipsRotation;
+  vector<vec3> hipsTranslation, hipsVelocity;
+  vector<float> hipsRotation, hipsAngularVelocity;
 
 
   uint hipsChannelIndex;
