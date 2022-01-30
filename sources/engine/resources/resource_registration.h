@@ -74,7 +74,7 @@ Asset<T> create_exists_asset(const filesystem::path &path)
     debug_error("can't open file %s when load exists asset", pathToAsset.string().c_str());
     return Asset<T>();
   }
-  name = path.stem().string();
+  name = pathToAsset.stem().string();
  
   auto it = resourcesMap.resources.find(name);
 
