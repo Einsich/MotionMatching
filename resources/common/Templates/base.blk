@@ -21,3 +21,10 @@ plane {
   }
   material:Asset<Material> { path:t = "resources/common/Material/plane.Material"; }
 }
+
+free_camera {
+  camera:Camera {}
+  freeCamera:FreeCamera {}
+  transform:Transform {}
+  isMainCamera:b = false
+}

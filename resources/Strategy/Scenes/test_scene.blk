@@ -9,3 +9,9 @@ entity {
 entity {
   _template:t="plane";
 }
+
+entity {
+  _template:t="free_camera";
+  isMainCamera:b = true;
+  transform:Transform { position:f3 = 0, 5, -5; }
+}

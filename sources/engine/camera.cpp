@@ -11,7 +11,10 @@ aspectRatio(Application::get_context().get_aspect_ratio()),
 fieldOfView(90), 
 zNear(0.01f),
 zFar(5000.f)
-{}
+{
+  projection = perspective(fieldOfView * DegToRad, aspectRatio, zNear, zFar);
+}
+
 void Camera::set_orthographic(float aspectRatio, float orhtoScale, float zNear, float zFar) 
 { 
   orthographic = true;
