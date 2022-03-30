@@ -125,7 +125,7 @@ bool matComparer(const RenderStuff &a, const RenderStuff &b)
 };
 bool emptyRenderStuff(const RenderStuff &a)
 {
-  return !(a.material && a.mesh);
+  return !(a.material && a.material->get_shader() && a.mesh);
 };
 
 template<typename Callable> 
