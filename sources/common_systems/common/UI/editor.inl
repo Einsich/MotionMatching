@@ -38,6 +38,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
   char buf[BUFN];
   bool selectNewResourceType = selectedAsset.selectNewResourceType;
   selectedAsset.selectNewResourceType = false;
+  static float scroll = 0;
   if (selectedAsset.resourceType)
   {
     if (ImGui::Begin("asset viewer", nullptr, ui.windowFlags))
@@ -113,7 +114,10 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
             }
           }
           if (ImGui::Button("Back"))
+          {
             adding = false;
+            scroll = 0;
+          }
         }
         else
         {
@@ -137,20 +141,32 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
         if (selectedAsset.asset)
         {
           if (ImGui::Button("Back"))
+          {
             selectedAsset.asset = nullptr;
+            scroll *= -1;
+          }
           else
           if (selectedAsset.asset->loaded() && selectedAsset.resourceType->editAsset(*selectedAsset.asset))
             selectedAsset.resourceType->reloadAsset(*selectedAsset.asset);
         }
         else
-        for (auto &asset : selectedAsset.resourceType->resources)
         {
-          const string &assetName = asset.second.asset_name();
-          if (ImGui::Button(assetName.c_str()))
+          for (auto &asset : selectedAsset.resourceType->resources)
           {
-            selectedAsset.asset = &asset.second;
-            selectedAsset.resourceType->loadAsset(asset.second);
+            const string &assetName = asset.second.asset_name();
+            if (ImGui::Button(assetName.c_str()))
+            {
+              selectedAsset.asset = &asset.second;
+              selectedAsset.resourceType->loadAsset(asset.second);
+            }
           }
+          if (scroll < 0)
+          {
+            ImGui::SetScrollY(-scroll);
+            scroll *= -1;
+          }
+          else
+            scroll = ImGui::GetScrollY();
         }
       }
     }
