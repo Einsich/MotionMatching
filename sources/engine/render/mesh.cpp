@@ -120,6 +120,11 @@ void Mesh::load(const filesystem::path &path, bool reload)
       aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
     const aiScene* scene = importer.GetScene();
+    if (!scene)
+    {
+      debug_error("no asset in %s", strPath.c_str());
+      return;
+    }
     load_assimp(scene->mMeshes[ind]);
   }
 }

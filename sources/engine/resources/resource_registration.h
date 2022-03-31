@@ -12,6 +12,7 @@ Asset<T> create_new_asset(const filesystem::path &path)
   asset->name = asset->asset.asset_name(path);
   asset->path = meta_data_asset ? path.string() + ".meta" : path;
   asset->edited = true;
+  asset->asset.after_load(asset->path);
 
   const string &assetName = asset->name;
   const filesystem::path &pathToAsset = asset->path;  
@@ -86,7 +87,7 @@ Asset<T> create_exists_asset(const filesystem::path &path)
     asset->name = asset->asset.asset_name(pathToAsset);
     asset->userPathUsage = user_path_usage;
     read(file, asset->asset);
-    asset->asset.after_load();
+    asset->edited = asset->asset.after_load(pathToAsset);
     Asset<T> asset_(asset);
     return resourcesMap.resources.try_emplace(asset->name, asset_).first->second;
   }
@@ -99,7 +100,7 @@ Asset<T> create_exists_asset(const filesystem::path &path)
       asset.asset->name = asset.asset->asset.asset_name(pathToAsset);
       asset.asset->userPathUsage = user_path_usage;
       read(file, asset.asset->asset);
-      asset.asset->asset.after_load();
+      asset.asset->edited = asset.asset->asset.after_load(pathToAsset);
     }
     else
     {

@@ -46,11 +46,11 @@ namespace ecs
   void SceneManager::restart_cur_scene()
   {
     ecs::destroy_scene();
-    for (auto &p : ecs::SingletonTypeInfo::types())
+/*     for (auto &p : ecs::SingletonTypeInfo::types())
     {
       auto &singleton = p.second;
-      //singleton.constructor(singleton.getSingleton());        
-    }
+      singleton.constructor(singleton.getSingleton());        
+    } */
     load_scene(currentScene.path);
     send_event(OnSceneCreated());
   }

@@ -13,9 +13,9 @@
 class IAsset
 {
 public:
-  virtual void after_load()
+  virtual bool after_load(const filesystem::path &)
   {
-
+    return false;
   }
   //called when this resource really needed - load data from disk 
   virtual void load(const filesystem::path &path, bool reload) = 0;
