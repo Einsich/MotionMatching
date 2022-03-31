@@ -52,7 +52,10 @@ uniform sampler2D mainTex;
 #include lambert_lighting
 void main()
 {
-  vec3 texColor = texture(mainTex, vsOutput.UV).rgb;
+  vec4 tex = texture(mainTex, vsOutput.UV);
+  if (tex.a < 0.3)
+    discard;
+  vec3 texColor = tex.rgb;
   vec3 color = LightedColor(texColor, material_inst, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
