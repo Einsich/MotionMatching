@@ -4,7 +4,7 @@
 #include <camera.h> 
 #include "resources/resource_registration.h"
 #include <resources/resources.h>
- 
+
 Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w) 
 { 
   vector<uint> indices; 
@@ -48,6 +48,7 @@ Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w
 } 
 EVENT() scene_created(const ecs::OnSceneCreated&) 
 { 
+  return;
   Asset<Mesh> flag = create_flag(1, 2, 1.5f, 0.02f); 
   Asset<Material> flag_mat = get_resource<Material>("flag");
    
@@ -60,3 +61,35 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
     } 
  
 } 
+
+EVENT(ecs::SystemTag::GameEditor) spawn_buildings(const ecs::OnSceneCreated&,
+  const vector<string> &items_templates,
+  vec3 center,
+  float step_length,
+  int row_count
+)
+{
+  row_count = row_count <= 0 ? 1 : row_count;
+  int i = 0;
+  for (const string &template_name : items_templates)
+  {
+    ecs::ComponentInitializerList list;
+    const ecs::Template *t = ecs::get_template(template_name.c_str());
+    Transform transform;
+    for (const auto &component : t->components)
+    {
+      
+      if (component.typeNameHash == ecs::get_type_description<Transform>("transform"))
+      {
+        transform = *(const Transform *)component.get_data();
+        break;
+      }
+    }
+    int x = i / row_count;
+    int y = i % row_count;
+    transform.set_position(center + vec3(x, 0, y) * step_length);
+    list.set("transform", transform);
+    ecs::create_entity(t, std::move(list));
+    i++;
+  }
+}

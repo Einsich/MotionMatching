@@ -46,7 +46,9 @@ Test
 *.fbx
 *.jpg
 *.png
+*.dae
 
 *.fbx.meta
 *.jpg.meta
 *.png.meta
+*.dae.meta

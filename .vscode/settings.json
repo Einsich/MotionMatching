@@ -150,9 +150,9 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
-      "name": "MotionMatching",
+      "name": "Strategy",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
     }
   },
