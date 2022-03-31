@@ -9,9 +9,45 @@ entity {
 entity {
   _template:t="plane";
 }
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_01-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 0; }
+}
 
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_02-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 5; }
+}
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_03-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 10; }
+}
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_04-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 15; }
+}
+
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_01-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 20; }
+}
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_02-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 25; }
+}
+entity {
+  _template:t="eastern_buildings";
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_03-export.dae[0]"; }
+  transform:Transform { position:f3 = 0, 0, 30; }
+}
 entity {
   _template:t="free_camera";
   isMainCamera:b = true;
-  transform:Transform { position:f3 = 0, 5, -5; }
+  transform:Transform { position:f3 = 0, 10, -5; }
 }

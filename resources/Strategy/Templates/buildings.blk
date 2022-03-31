@@ -1,0 +1,5 @@
+eastern_buildings {
+  transform:Transform { }
+  mesh:Asset<Mesh> { }
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/eastern_buildings.Material"; }
+}

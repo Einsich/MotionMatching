@@ -8,7 +8,7 @@ sun {
 
 sky_box {
   skyBox:SkyBox {
-    material:Asset<Material> { path:t = "resources/common/Material/skybox.Material"; }
+    material:Asset<Material> { path:t = "resources/common/Materials/skybox.Material"; }
   }
 }
 
@@ -19,12 +19,12 @@ plane {
   mesh:Asset<Mesh> {
     path:t = "plane";
   }
-  material:Asset<Material> { path:t = "resources/common/Material/plane.Material"; }
+  material:Asset<Material> { path:t = "resources/common/Materials/plane.Material"; }
 }
 
 free_camera {
   camera:Camera {}
   freeCamera:FreeCamera {}
   transform:Transform {}
-  isMainCamera:b = false
+  isMainCamera:b = false;
 }

@@ -101,8 +101,17 @@ void Mesh::load(const filesystem::path &path, bool reload)
   }
   else
   {
-    int ind = std::stoi(path.parent_path().filename().string());
-    string strPath = root_path(path.parent_path().parent_path().string());
+    string indexedName = path.string();
+    size_t bracketPosBegin = indexedName.find_last_of('[');
+    size_t bracketPosEnd = indexedName.find_last_of(']');
+    if (bracketPosBegin == string::npos || bracketPosEnd == string::npos || bracketPosBegin > bracketPosEnd)
+    {
+      debug_error("bad mesh index in %s", indexedName.c_str());
+      return;
+    }
+    int bracketCount = bracketPosEnd - bracketPosBegin - 1;
+    int ind = std::stoi(indexedName.substr(bracketPosBegin+1, bracketCount));
+    string strPath = root_path(indexedName.substr(0, bracketPosBegin));
     Assimp::Importer importer;
     importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
     importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);

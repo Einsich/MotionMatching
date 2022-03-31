@@ -33,11 +33,11 @@ void FBXMeta::load(const filesystem::path &path, bool reload)
   filesystem::path resourceRoot = root_path();
   for (uint i = 0; i < scene->mNumMeshes; ++i)
   {
-    filesystem::path path_ = (fbxPath + "\\" + to_string(i) + "\\" + scene->mMeshes[i]->mName.C_Str());
+    filesystem::path path_ = (fbxPath + "[" + to_string(i) + "]" );
     meshMetaData.emplace_back(path_.lexically_relative(resourceRoot).string());
   }
   importer.FreeScene();
   create_assets();
   loaded = true;
 }
-ResourceRegister<FBXMeta> fbxImrorter({".fbx"});
+ResourceRegister<FBXMeta> fbxImrorter({".fbx", ".dae"});
