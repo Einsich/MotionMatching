@@ -23,8 +23,8 @@ EVENT(ecs::SystemTag::Game) find_main_camera_game(
   MainCamera &mainCamera)
 {
   mainCamera.eid = ecs::EntityId();
-  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera,bool *isEditorCamera){
-    if (isMainCamera && !isEditorCamera)
+  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
+    if (isMainCamera)
       mainCamera.eid = eid;
   });
 }
@@ -36,18 +36,18 @@ EVENT(ecs::SystemTag::Editor) find_main_camera_editor(
   EditorCamera &editorCameraManager)
 {
   ecs::EntityId editorCamera;
-  QUERY() find_editor_camera([&](bool isEditorCamera, ecs::EntityId eid)
+  QUERY(Camera camera) find_editor_camera([&](bool isMainCamera, ecs::EntityId eid)
   {
-    if (isEditorCamera)
+    if (isMainCamera)
       editorCamera = eid;
   });
   if (!editorCamera)
   {
     Camera camera;
     camera.set_perspective(90.f, 0.01f, 5000.f);
-    editorCamera = ecs::create_entity<Camera, FreeCamera, Transform, bool, bool>
+    editorCamera = ecs::create_entity<Camera, FreeCamera, Transform, bool>
     ({"camera", camera}, {"freeCamera", FreeCamera()}, 
-      {"transform", Transform()}, {"isMainCamera", true}, {"isEditorCamera", true});
+      {"transform", Transform()}, {"isMainCamera", true});
   }
   editorCameraManager.camera = editorCamera;
 }

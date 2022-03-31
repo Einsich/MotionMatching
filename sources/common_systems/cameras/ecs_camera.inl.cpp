@@ -4,21 +4,21 @@
 ecs::QueryDescription find_all_created_camera_descr("find_all_created_camera", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<bool>("isEditorCamera"), true},
   {ecs::get_type_description<Camera>("camera"), false}
 });
 
 template<typename Callable>
 void find_all_created_camera(Callable lambda)
 {
-  ecs::perform_query<ecs::EntityId, bool, bool*>
+  ecs::perform_query<ecs::EntityId, bool>
   (find_all_created_camera_descr, lambda);
 }
 
 
 ecs::QueryDescription find_editor_camera_descr("find_editor_camera", {
-  {ecs::get_type_description<bool>("isEditorCamera"), false},
-  {ecs::get_type_description<ecs::EntityId>("eid"), false}
+  {ecs::get_type_description<bool>("isMainCamera"), false},
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<Camera>("camera"), false}
 });
 
 template<typename Callable>
