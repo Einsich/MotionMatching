@@ -1,0 +1,211 @@
+
+leafs_1 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_01.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_01.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_01.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_01.dae[3]"; }
+  }
+}
+leafs_2 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_02.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_02.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_02.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_02.dae[3]"; }
+  }
+}
+leafs_3 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_03.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_03.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_03.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/leafs_03.dae[3]"; }
+  }
+}
+
+palms_1 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_palms.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Palms_02.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Palms_02.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Palms_02.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Palms_02.dae[3]"; }
+  }
+}
+
+pine_1 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 50;
+    lod3:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_01.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_01.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_01.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_01.dae[3]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_01.dae[4]"; }
+  }
+}
+pine_2 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 50;
+    lod3:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_02.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_02.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_02.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_02.dae[3]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_02.dae[4]"; }
+  }
+}
+pine_3 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 50;
+    lod3:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_03.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_03.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_03.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_03.dae[3]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/Pine_03.dae[4]"; }
+  }
+}
+savanna_1 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 50;
+    lod2:f = 150;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_01.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_01.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_01.dae[2]"; }
+  }
+}
+savanna_2 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 50;
+    lod2:f = 150;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_02.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_02.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_02.dae[2]"; }
+  }
+}
+savanna_3 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 50;
+    lod2:f = 150;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_03.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_03.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/savanna_03.dae[2]"; }
+  }
+}
+tropical_1 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_01.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_01.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_01.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_01.dae[3]"; }
+  }
+}
+tropical_2 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_02.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_02.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_02.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_02.dae[3]"; }
+  }
+}
+tropical_3 {
+  _extends:t="buildings_common";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
+  lods_distances:vector<float> {
+    lod0:f = 10;
+    lod1:f = 30;
+    lod2:f = 100;
+    lod3:f = 1000;
+  }
+  lods_meshes:vector<Asset<Mesh>> {
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_03.dae[0]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_03.dae[1]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_03.dae[2]"; }
+    mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Trees/tropical_03.dae[3]"; }
+  }
+}

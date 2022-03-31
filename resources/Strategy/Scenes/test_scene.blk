@@ -9,45 +9,134 @@ entity {
 entity {
   _template:t="plane";
 }
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_01-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 0; }
-}
 
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_02-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 5; }
-}
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_03-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 10; }
-}
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_1_04-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 15; }
-}
-
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_01-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 20; }
-}
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_02-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 25; }
-}
-entity {
-  _template:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/eastern_buildings_2_03-export.dae[0]"; }
-  transform:Transform { position:f3 = 0, 0, 30; }
-}
 entity {
   _template:t="free_camera";
   isMainCamera:b = true;
   transform:Transform { position:f3 = 0, 10, -5; }
+}
+
+entity {
+  _template:t="items_spawner";
+  items_templates:vector<string> {
+    name:t = "eastern_buildings_11";
+    name:t = "eastern_buildings_12";
+    name:t = "eastern_buildings_13";
+    name:t = "eastern_buildings_14";
+    name:t = "eastern_buildings_21";
+    name:t = "eastern_buildings_22";
+    name:t = "eastern_buildings_23";
+    name:t = "eastern_buildings_24";
+    name:t = "eastern_buildings_31";
+    name:t = "eastern_buildings_32";
+    name:t = "eastern_buildings_33";
+    name:t = "eastern_buildings_34";
+    name:t = "eastern_buildings_41";
+    name:t = "eastern_buildings_42";
+    name:t = "eastern_buildings_43";
+    name:t = "eastern_buildings_44";
+    name:t = "eastern_buildings_51";
+    name:t = "eastern_buildings_52";
+    name:t = "eastern_buildings_53";
+    name:t = "eastern_buildings_54";
+  }
+  center:f3 = 0, 0, 0;
+  row_count:i = 4;
+}
+entity {
+  _template:t="items_spawner";
+  items_templates:vector<string> {
+    name:t = "western_buildings_11";
+    name:t = "western_buildings_12";
+    name:t = "western_buildings_13";
+    name:t = "western_buildings_14";
+    name:t = "western_buildings_21";
+    name:t = "western_buildings_22";
+    name:t = "western_buildings_23";
+    name:t = "western_buildings_24";
+    name:t = "western_buildings_31";
+    name:t = "western_buildings_32";
+    name:t = "western_buildings_33";
+    name:t = "western_buildings_34";
+    name:t = "western_buildings_41";
+    name:t = "western_buildings_42";
+    name:t = "western_buildings_43";
+    name:t = "western_buildings_44";
+    name:t = "western_buildings_52";
+    name:t = "western_buildings_53";
+    name:t = "western_buildings_54";
+  }
+  center:f3 = 25, 0, 0;
+  row_count:i = 4;
+}
+entity {
+  _template:t="items_spawner";
+  items_templates:vector<string> {
+    name:t = "asian_buildings_11";
+    name:t = "asian_buildings_12";
+    name:t = "asian_buildings_13";
+    name:t = "asian_buildings_14";
+    name:t = "asian_buildings_21";
+    name:t = "asian_buildings_22";
+    name:t = "asian_buildings_23";
+    name:t = "asian_buildings_24";
+    name:t = "asian_buildings_31";
+    name:t = "asian_buildings_32";
+    name:t = "asian_buildings_33";
+    name:t = "asian_buildings_34";
+    name:t = "asian_buildings_41";
+    name:t = "asian_buildings_42";
+    name:t = "asian_buildings_43";
+    name:t = "asian_buildings_44";
+    name:t = "asian_buildings_52";
+    name:t = "asian_buildings_53";
+    name:t = "asian_buildings_54";
+  }
+  center:f3 = 50, 0, 0;
+  row_count:i = 4;
+}
+
+entity {
+  _template:t="items_spawner";
+  items_templates:vector<string> {
+    name:t = "manufactory_farm";
+    name:t = "manufactory_fine_art";
+    name:t = "manufactory_plantation";
+    name:t = "manufactory_refinery";
+    name:t = "manufactory_textile_factory";
+    name:t = "manufactory_trade_company";
+    name:t = "manufactory_university";
+    name:t = "manufactory_weapons_factory";
+    name:t = "manufactory_wharf";
+    name:t = "capital_indicator";
+    name:t = "reformation_protestant";
+    name:t = "reformation_reformed";
+    name:t = "trade_node";
+    name:t = "coin";
+  }
+  center:f3 = -25, 0, 0;
+  row_count:i = 4;
+}
+
+entity {
+  _template:t="items_spawner";
+  items_templates:vector<string> {
+    name:t = "leafs_1";
+    name:t = "leafs_2";
+    name:t = "leafs_3";
+    name:t = "pine_1";
+    name:t = "pine_2";
+    name:t = "pine_3";
+    name:t = "tropical_1";
+    name:t = "tropical_2";
+    name:t = "tropical_3";
+    name:t = "savanna_1";
+    name:t = "savanna_2";
+    name:t = "savanna_3";
+    name:t = "palms_1";
+    
+  }
+  center:f3 = 0, 0, 25;
+  step_length:f = 10;
+  row_count:i = 3;
 }
