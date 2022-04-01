@@ -1,0 +1,14 @@
+terrain {
+  heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/heightmap.bmp.meta"; }
+  provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/provinces.bmp.meta"; }
+  normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/world_normal.bmp.meta"; }
+  trees_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/trees.bmp.meta"; }
+  rivers_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/rivers.bmp.meta"; }
+  terrain_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/terrain.bmp.meta"; }
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
+
+  mesh:Asset<Mesh> { }
+  transform:Transform { }
+
+  pixel_scale:f = 0.01;
+}

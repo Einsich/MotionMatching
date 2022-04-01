@@ -22,6 +22,7 @@ layout(location = 4)in uvec4 BoneIndex  ;
 
 void main()
 {
+  vec3 vertex_position = Position;
   #include common_vs
 }
 

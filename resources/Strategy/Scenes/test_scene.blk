@@ -1,5 +1,10 @@
 entity {
   _template:t="sun";
+  directionalLight:DirectionLight {
+    lightDirection:f3 = -1, -1, 0;
+    lightColor:f3 = 1, 1, 1;
+    ambient:f3 = 0.2, 0.2, 0.2;
+  }
 }
 
 entity {
@@ -8,7 +13,6 @@ entity {
 
 entity {
   _template:t="plane";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
 }
 
 entity {
@@ -140,4 +144,9 @@ entity {
   center:f3 = 0, 0, 25;
   step_length:f = 10;
   row_count:i = 3;
+}
+
+entity {
+  _template:t="terrain";
+  transform:Transform { position:f3 = 0, 1, 0; }
 }

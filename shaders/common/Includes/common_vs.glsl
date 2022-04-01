@@ -4,10 +4,10 @@
 mat4 BoneTransform = mat4(0);
 for (int i = 0; i < 4; i++)
   BoneTransform += instance.Bones[BoneIndex[i]] * BoneWeights[i];
-vec4 VertexPosition = instance.Model * BoneTransform * vec4(Position, 1);
+vec4 VertexPosition = instance.Model * BoneTransform * vec4(vertex_position, 1);
 vsOutput.EyespaceNormal = mat3(instance.Model) * mat3(BoneTransform) * Normal;
 #else
-vec4 VertexPosition = instance.Model * vec4(Position, 1);
+vec4 VertexPosition = instance.Model * vec4(vertex_position, 1);
 vsOutput.EyespaceNormal = mat3(instance.Model) * Normal;
 #endif
 gl_Position = ViewProjection * VertexPosition;

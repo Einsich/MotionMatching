@@ -20,6 +20,7 @@ struct Material
 
 void main()
 {
+  vec3 vertex_position = Position;
   #include common_vs
 }
 

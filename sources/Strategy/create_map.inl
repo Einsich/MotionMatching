@@ -1,9 +1,6 @@
 #include <ecs.h> 
-#include "application/application.h" 
 #include <render/render.h> 
-#include <camera.h> 
-#include "resources/resource_registration.h"
-#include <resources/resources.h>
+#include <transform.h> 
 
 Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w) 
 { 
@@ -62,7 +59,7 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
  
 } 
 
-EVENT(ecs::SystemTag::GameEditor) spawn_buildings(const ecs::OnSceneCreated&,
+EVENT(ecs::SystemTag::GameEditor) spawn_buildings(const ecs::OnEntityCreated&,
   const vector<string> &items_templates,
   vec3 center,
   float step_length,

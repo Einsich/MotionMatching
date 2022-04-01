@@ -11,6 +11,7 @@
 
 void main() 
 {
+  vec3 vertex_position = Position;
   #include common_vs
 }
 
@@ -40,6 +41,7 @@ void main()
 #include vs_input
 void main()
 {
+  vec3 vertex_position = Position;
   #include common_vs
 }
 
@@ -75,6 +77,7 @@ void main()
 #include vs_input
 void main()
 {
+  vec3 vertex_position = Position;
   #include common_vs
 }
 
