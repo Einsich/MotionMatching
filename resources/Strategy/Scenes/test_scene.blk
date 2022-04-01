@@ -8,6 +8,7 @@ entity {
 
 entity {
   _template:t="plane";
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
 }
 
 entity {

@@ -155,4 +155,4 @@ size_t Texture2D::deserialize(std::istream& is)
   return read(is, textureName, textureType, colorFormat, textureFormat, wrapping, 
               pixelFormat, textureWidth, textureHeight, generateMips);
 }
-ResourceRegister<Texture2D> texture2DRegister({".jpg", ".png"});
+ResourceRegister<Texture2D> texture2DRegister({".jpg", ".png", ".bmp"});
