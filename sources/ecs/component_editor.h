@@ -102,7 +102,9 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
     }
     else
     {
-      static bool select = false;
+      static std::map<intptr_t, bool> selectionMap;
+      intptr_t hash = (intptr_t)(void *)&component;
+      bool &select = selectionMap[hash];
       snprintf(buf, BUFN, "Select asset##%p", (void*)&component);
       if (ImGui::Button(buf))
         select = !select;

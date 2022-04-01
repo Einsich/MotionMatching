@@ -46,6 +46,6 @@ uniform sampler2D mainTex;
 void main()
 {
   vec3 texColor = texture(mainTex, vsOutput.UV).rgb;
-  vec3 color = LightedColor(texColor, material_inst, vsOutput, LightDirection, CameraPosition);
+  vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
