@@ -1,14 +1,40 @@
 terrain {
-  heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/heightmap.bmp.meta"; }
-  provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/provinces.bmp.meta"; }
-  normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/world_normal.bmp.meta"; }
-  trees_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/trees.bmp.meta"; }
-  rivers_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/rivers.bmp.meta"; }
-  terrain_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/terrain.bmp.meta"; }
+  heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_heightmap.png.meta"; }
+  provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_provinces.png.meta"; }
+  normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
+  terrain_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_terrain.png.meta"; }
+  atlas_diffuse:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
+  atlas_normal:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
   material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
 
+  terrain_diffuse_array:Asset<Texture2DArray> {
+    new_asset:b = true;
+    path:t = "terrain_diffuse+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas01.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas02.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas03.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas04.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas05.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas06.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas07.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas08.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas09.png+";
+  }
+  terrain_normal_array:Asset<Texture2DArray> {
+    new_asset:b = true;
+    path:t = "terrain_diffuse+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal01.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal02.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal03.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal04.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal05.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal06.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal07.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal08.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal09.png+";
+  }
   mesh:Asset<Mesh> { }
   transform:Transform { }
 
-  pixel_scale:f = 0.01;
+  pixel_scale:f = 0.05;
 }

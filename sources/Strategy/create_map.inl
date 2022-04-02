@@ -66,6 +66,7 @@ EVENT(ecs::SystemTag::GameEditor) spawn_buildings(const ecs::OnEntityCreated&,
   int row_count
 )
 {
+  return;
   row_count = row_count <= 0 ? 1 : row_count;
   int i = 0;
   for (const string &template_name : items_templates)
