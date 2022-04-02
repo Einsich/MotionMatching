@@ -131,7 +131,10 @@ public:
     false, false, false, false, T()))
   {
     asset->name = asset->asset.asset_name(asset->path);
-    *this = create_asset_by_id<T>(asset->name);
+    if (blk.get<bool>("new_asset", false))
+      register_asset(asset->name, *this);
+    else
+      *this = create_asset_by_id<T>(asset->name);
   }
   template<typename ...Args>
   Asset(const filesystem::path &path_or_name, Args &&...args) :
