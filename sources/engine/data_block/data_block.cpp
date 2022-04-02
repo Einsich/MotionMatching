@@ -213,6 +213,8 @@ static bool parse(Stream &stream, bool &value)
 static bool parse(Stream &stream, string &value)
 {
   skip_spaces(stream);
+  bool result = false;
+string_start:
   if (stream.peek() == '"')
   {
     stream.get();
@@ -221,7 +223,9 @@ static bool parse(Stream &stream, string &value)
       if (c == '\"')
       {
         stream.get();
-        return true;
+        skip_spaces(stream);
+        result = true;
+        goto string_start;
       }
       if (c == '\\')//special character
       {
@@ -247,7 +251,7 @@ static bool parse(Stream &stream, string &value)
       value += (char)c;
     }
   }
-  return false;
+  return result;
 }
 template<typename T>
 static bool try_parse_value(Stream &stream, DataBlock &blk, const char *varName, const char *varType)
