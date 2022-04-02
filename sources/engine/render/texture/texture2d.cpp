@@ -9,7 +9,7 @@ Texture2D::Texture2D()
   generateMips = false;
   textureType = TextureType::Texture2DType;
   colorFormat = TextureColorFormat::RGB;
-  textureFormat = TextureFormat::Byte;
+  textureFormat = TextureFormat::UnsignedByte;
   wrapping = TextureWrappFormat::Repeat;
   pixelFormat = TexturePixelFormat::Linear;
   textureName = "";
@@ -71,6 +71,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     if (image)
     {
       create_from_pointer(image, h, w, sizeof(image[0]));
+      stbi_image_free(image);
     }
 		else
 		{
