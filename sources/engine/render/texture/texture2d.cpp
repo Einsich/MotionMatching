@@ -110,7 +110,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
         glTexImage2D(textureType, 0, format, textureWidth, textureHeight, 0, colorFormat, textureFormat, image);
     else
       debug_error("Wrong sizeof for texture format");
-    if (!powerOfTwo && wrapping != TextureWrappFormat::ClampToEdge)
+    //if (!powerOfTwo && wrapping != TextureWrappFormat::ClampToEdge)
     {
       glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapping);
       glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapping);

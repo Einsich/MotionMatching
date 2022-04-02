@@ -106,6 +106,8 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
     switch (type)
     {
     //case GL_SAMPLER_1D:
+    case GL_UNSIGNED_INT_SAMPLER_2D:
+    type = GL_SAMPLER_2D;
     case GL_SAMPLER_2D:
     case GL_SAMPLER_3D:
     case GL_SAMPLER_CUBE:

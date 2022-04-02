@@ -7,6 +7,10 @@ struct Material
   #define LAMBERT
   #include material
   float atlasScale;
+  float colorMapWeigth;
+  float seasonTime;
+  ivec2 mapSize;
+  vec2 texelSize;
 };
 #include vs_output
 #include instancing
@@ -19,8 +23,8 @@ uniform sampler2D heightMap;
 void main()
 {
   vec3 vertex_position = Position;
-  float heigth = texture(heightMap, TexCoord).y;
-  vertex_position.y += heigth * 1.0;
+  float height = texture(heightMap, TexCoord).y;
+  vertex_position.y += height * 1.0;
   #include common_vs
 }
 
@@ -32,55 +36,80 @@ out vec4 FragColor;
 uniform sampler2D heightMap;
 uniform sampler2D provincesMap;
 uniform sampler2D normalMap;
-uniform sampler2D terrainMap;
+uniform usampler2D terrainMap;
 uniform sampler2DArray terrainDiffuseArray;
 uniform sampler2DArray terrainNormalArray;
+uniform sampler2DArray terrainColormapArray;
 
 #include lambert_lighting
 #include normal_map
 
-int terrain_type(vec3 color)
+uint terrain_type(vec2 physUV, vec2 detailedUV, ivec2 mapSize, out vec4 finalColor, out vec3 finalNormal)
 {
-  const float eps = 0.1;
-  const int N = 5;
-  int indices[N] = int[](0, 7, 8, 4, 6);
-  vec3 colors[N] = vec3[](
-    vec3(0.09326, 0.20117, 0.01099),
-    vec3(0.07031, 0.29102, 0.42383),
-    vec3(0.00000, 0.09326, 0.00183),
-    vec3(0.05273, 0.02319, 0.00562),
-    vec3(0.57813, 0.67188, 0.14746)
-  );
+  const int N = 4;
+  vec4 color[N];
+  vec3 normal[N];
+  uvec4 terrain = textureGather(terrainMap, physUV, 0);
   for (int i = 0; i < N; i++)
+  {
+    uint type = terrain[i];
+    vec3 atlasUV = vec3(detailedUV, type);
+    if (type <= 10)
+    {
+      color[i] = vec4(texture(terrainDiffuseArray, atlasUV).rgb, 1);
+      normal[i] = texture(terrainNormalArray, atlasUV).xyz * 2.0 - 1.0;
+    }
+    else
+    {
+      color[i] = vec4(0,0,0,0);
+      normal[i] = vec3(0,1,0);
+    }
+  }
+  vec2 uv = physUV * mapSize - 0.5;
+  vec2 a = fract(uv);
+  vec2 b = 1 - a;
+  float w[N] = float[](b.x*a.y, a.x*a.y, a.x*b.y, b.x*b.y);
 
-  if (length(color - pow(colors[i], vec3(1/2.2))) < eps)
-    return indices[i];
-  return -1;
+  for (int i = 0; i < N; i++)
+  {
+    finalColor += color[i] * w[i];
+    finalNormal += normal[i] * w[i];
+  }
+  finalNormal = normalize(finalNormal);
+  return textureLod(terrainMap, physUV, 0).x;
 }
+  
 
 void main()
 {
-  vec4 heigth = texture(heightMap, vsOutput.UV);
   vec4 tex = texture(provincesMap, vsOutput.UV);
-  vec4 n = texture(normalMap, vsOutput.UV);
-  vec4 terrain = texture(terrainMap, vsOutput.UV);
+
+  float yearTime = Time.x * material_inst.seasonTime;
+  int season = int(yearTime) & 3;
+  int next = (season+1) & 3;
+  float progress = fract(yearTime);
+  vec3 colorMap = 
+    mix(texture(terrainColormapArray, vec3(vsOutput.UV, season)).rgb,
+        texture(terrainColormapArray, vec3(vsOutput.UV, next)).rgb,
+        progress);
 
   
-  vec3 texColor = terrain.rgb;
+  vec3 texColor = colorMap;
   vec3 normalMap = texture(normalMap, vsOutput.UV).xyz * 2.0 - 1.0;
   vec3 normal = vsOutput.EyespaceNormal;
   normal = apply_normal_map(normalMap, vsOutput.EyespaceNormal, vsOutput.WorldPosition, vsOutput.UV);
 
-  float atlasScale = material_inst.atlasScale;
-  int terrainType = terrain_type(terrain.rgb);//should be in texture
-  if (terrainType >= 0)
+  vec4 detailColor = vec4(0,0,0,0);
+  vec3 detailNormal = vec3(0,0,1);
+  vec2 detailedUV = vsOutput.UV * material_inst.atlasScale;
+  uint terrainType = terrain_type(vsOutput.UV, detailedUV, material_inst.mapSize, detailColor, detailNormal);
+  
+  if (terrainType <= 10)
   {
-    vec2 cellUV = vsOutput.UV * atlasScale;
-    vec3 detailDiffuse = texture(terrainDiffuseArray, vec3(cellUV, terrainType)).rgb;
-    vec3 detailNormal = texture(terrainNormalArray, vec3(cellUV, terrainType)).xyz * 2.0 - 1.0;
-    normal = apply_normal_map(detailNormal, normal, vsOutput.WorldPosition, cellUV);
-    texColor = detailDiffuse.rgb;
+    normal = apply_normal_map(detailNormal, normal, vsOutput.WorldPosition, detailedUV);
+    texColor = mix(detailColor.rgb, texColor, material_inst.colorMapWeigth);
   }
+
   vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

@@ -153,7 +153,7 @@ public:
   }
   explicit operator bool() const
   {
-    return asset != nullptr && asset->name != "";
+    return asset != nullptr && (asset->loaded || asset->name != "");
   }
   T* operator->()
   {

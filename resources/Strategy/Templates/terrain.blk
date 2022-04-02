@@ -2,7 +2,7 @@ terrain {
   heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_heightmap.png.meta"; }
   provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_provinces.png.meta"; }
   normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
-  terrain_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_terrain.png.meta"; }
+  terrain_texture:t = "resources/Strategy/Assets/Terrain/europe_terrain.png";
   atlas_diffuse:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
   atlas_normal:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
   material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
@@ -10,6 +10,7 @@ terrain {
   terrain_diffuse_array:Asset<Texture2DArray> {
     new_asset:b = true;
     path:t = "terrain_diffuse+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas00.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas01.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas02.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas03.png+"
@@ -18,11 +19,13 @@ terrain {
     "resources/Strategy/Assets/Terrain/atlas/atlas06.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas07.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas08.png+"
-    "resources/Strategy/Assets/Terrain/atlas/atlas09.png+";
+    "resources/Strategy/Assets/Terrain/atlas/atlas09.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas10.png+";
   }
   terrain_normal_array:Asset<Texture2DArray> {
     new_asset:b = true;
-    path:t = "terrain_diffuse+"
+    path:t = "terrain_normal+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal00.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal01.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal02.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal03.png+"
@@ -31,10 +34,56 @@ terrain {
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal06.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal07.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal08.png+"
-    "resources/Strategy/Assets/Terrain/atlas/atlas_normal09.png+";
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal09.png+"
+    "resources/Strategy/Assets/Terrain/atlas/atlas_normal07.png+";
   }
+  terrain_types_texture:Asset<Texture2D> { }
+  terrain_colormap_array:Asset<Texture2DArray> {
+    new_asset:b = true;
+    path:t = "terrain_colormap+"
+    "resources/Strategy/Assets/Terrain/europe_colormap_autumn.png+"
+    "resources/Strategy/Assets/Terrain/europe_colormap_winter.png+"
+    "resources/Strategy/Assets/Terrain/europe_colormap_spring.png+"
+    "resources/Strategy/Assets/Terrain/europe_colormap_summer.png+";
+  } 
+  
+  lods_distances:vector<float> { }
+  terrain_lods_meshes:vector<Asset<Mesh>> { }
   mesh:Asset<Mesh> { }
+  terrain_lods_count:i=5;
+  first_lod_distance:f=4;
   transform:Transform { }
 
   pixel_scale:f = 0.05;
+
+  terrain_type_color:vector<ivec3> {
+    x:i3 = 0, 86, 6;
+    x:i3 = 8, 31, 130;
+    x:i3 = 55, 90, 220;
+    x:i3 = 65, 42, 17;
+    x:i3 = 75, 147, 174;
+    x:i3 = 86, 124, 27;
+    x:i3 = 112, 74, 31;
+    x:i3 = 158, 130, 77;
+    x:i3 = 200, 214, 107;
+    x:i3 = 203, 191, 103;
+    x:i3 = 206, 169, 99;
+    x:i3 = 255, 247, 0;
+    x:i3 = 255, 255, 255;
+  }
+  terrain_type_index:vector<int> {
+    x:i = 1;//rock+green
+    x:i = 10;//water
+    x:i = 10;//water little
+    x:i = 2;//rock
+    x:i = 8;//swamp
+    x:i = 0;//land
+    x:i = 6;//desert with rock
+    x:i = 7;//rock and green
+    x:i = 4;//steppe
+    x:i = 6;
+    x:i = 3;//desert
+    x:i = 3;//waterline
+    x:i = 5;//mount
+  }
 }
