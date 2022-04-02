@@ -10,7 +10,9 @@
   TYPE(int, GL_INT) TYPE(ivec2, GL_INT_VEC2) TYPE(ivec3, GL_INT_VEC3) TYPE(ivec4, GL_INT_VEC4)
 
 #define SAMPLERS \
-  SAMPLER(Asset<Texture2D>, GL_SAMPLER_2D) SAMPLER(Asset<CubeMap>, GL_SAMPLER_CUBE)
+  SAMPLER(Asset<Texture2D>, GL_SAMPLER_2D)\
+  SAMPLER(Asset<CubeMap>, GL_SAMPLER_CUBE)\
+  SAMPLER(Asset<Texture2DArray>, GL_SAMPLER_2D_ARRAY)\
 
 class Material : public IAsset
 {

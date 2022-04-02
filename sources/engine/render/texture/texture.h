@@ -5,7 +5,8 @@ enum TextureType
 {
   Texture2DType = GL_TEXTURE_2D,
   Texture3DType = GL_TEXTURE_3D,
-  CubeMapType = GL_TEXTURE_CUBE_MAP
+  CubeMapType = GL_TEXTURE_CUBE_MAP,
+  Texture2DArrayType = GL_TEXTURE_2D_ARRAY
 };
 enum TextureColorFormat
 {

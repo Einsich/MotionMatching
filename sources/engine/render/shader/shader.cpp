@@ -109,6 +109,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
     case GL_SAMPLER_2D:
     case GL_SAMPLER_3D:
     case GL_SAMPLER_CUBE:
+    case GL_SAMPLER_2D_ARRAY:
     //case GL_SAMPLER_1D_SHADOW:
     //case GL_SAMPLER_2D_SHADOW:
 
