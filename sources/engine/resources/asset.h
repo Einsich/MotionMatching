@@ -42,8 +42,6 @@ class Asset;
 template<typename T>
 Asset<T> create_asset_by_id(const string &name);
 
-template<typename T>
-bool register_asset(const string &assetName, const Asset<T> &asset);
 
 class AssetStub : public  IAsset
 {
@@ -53,6 +51,7 @@ public:
   virtual bool edit() override{return false;}
 };
 
+bool register_asset(const string &assetName, const string_view &typeName, const Asset<AssetStub> &asset);
 
 template<typename T>
 struct AssetImplementation
@@ -116,7 +115,8 @@ public:
   {
 
     asset->name = asset->asset.asset_name(path_or_name);
-    register_asset(asset->name, *this);
+    constexpr const string_view &typeName = nameOf<T>::value;
+    register_asset(asset->name, typeName, *this);
   }
     Asset(const T &instance) :
     asset(new AssetImplementation<T>(
@@ -131,9 +131,7 @@ public:
     false, false, false, false, T()))
   {
     asset->name = asset->asset.asset_name(asset->path);
-    if (blk.get<bool>("new_asset", false))
-      register_asset(asset->name, *this);
-    else
+    if (!blk.get<bool>("new_asset", false))
       *this = create_asset_by_id<T>(asset->name);
   }
   template<typename ...Args>
@@ -144,7 +142,8 @@ public:
   {
 
     asset->name = asset->asset.asset_name(path_or_name);
-    register_asset(asset->name, *this);
+    constexpr const string_view &typeName = nameOf<T>::value;
+    register_asset(asset->name, typeName, *this);
   }
   template<typename U>
   operator Asset<U>() const

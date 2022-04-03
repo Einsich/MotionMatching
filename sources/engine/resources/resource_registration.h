@@ -111,25 +111,6 @@ Asset<T> create_exists_asset(const filesystem::path &path)
 }
 
 template<typename T>
-bool register_asset(const string &assetName, const Asset<T> &asset)
-{
-  constexpr const string_view &typeName = nameOf<T>::value;
-  auto &resourcesMap = Resources::instance().assets[typeName];
-  auto it = resourcesMap.resources.find(assetName);
-  if (it == resourcesMap.resources.end())
-  {
-    resourcesMap.resources.try_emplace(assetName, asset);
-    return true;
-  }
-  else
-  {
-    it->second.copy(asset);
-    return true;
-  }
-  return false;
-}
-
-template<typename T>
 Asset<T> create_asset_by_id(const string &name)
 {
   constexpr const string_view &typeName = nameOf<T>::value;

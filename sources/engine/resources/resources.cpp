@@ -96,3 +96,19 @@ void save_all_resources_to_metadata()
     }
   }
 }
+
+bool register_asset(const string &assetName, const string_view &typeName, const Asset<AssetStub> &asset)
+{
+  auto &resourcesMap = Resources::instance().assets[typeName];
+  auto it = resourcesMap.resources.find(assetName);
+  if (it == resourcesMap.resources.end())
+  {
+    resourcesMap.resources.try_emplace(assetName, asset);
+    return true;
+  }
+  else
+  {
+    debug_error("asset<%s> %s already exists", typeName.data(), assetName.c_str());
+  }
+  return false;
+}
