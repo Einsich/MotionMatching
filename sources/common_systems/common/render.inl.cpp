@@ -58,7 +58,8 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
+  {ecs::get_type_description<vec3>("lod_selector_axis"), true}
 }, lod_selector_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor,
 {},
 {});

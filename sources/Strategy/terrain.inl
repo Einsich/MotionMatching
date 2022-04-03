@@ -82,7 +82,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
   Asset<Material> &material,
   Transform &transform,
   vector<float> &lods_distances,
-  vector<Asset<Mesh>> &terrain_lods_meshes,
+  vector<Asset<Mesh>> &lods_meshes,
   int terrain_lods_count,
   float first_lod_distance,
   const string &terrain_texture,
@@ -101,12 +101,12 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
   transform.set_scale(vec3(w * pixel_scale, 1, h * pixel_scale));
   
   lods_distances.resize(terrain_lods_count);
-  terrain_lods_meshes.resize(terrain_lods_count);
+  lods_meshes.resize(terrain_lods_count);
   for (int i = 0; i < terrain_lods_count; i++)
   {
     int power = 1 << i;
     lods_distances[i] = first_lod_distance * power;
-    terrain_lods_meshes[i] = create_detailed_plane(h >> i, w >> i, i);
+    lods_meshes[i] = create_detailed_plane(h >> i, w >> i, i);
   }
 
   terrain_types_texture = Asset<Texture2D>(
@@ -130,27 +130,4 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
   material->set_property("material.mapSize", ivec2(w, h));
   material->set_property("material.texelSize", vec2(1.f / w, 1.f / h));
   material->before_save();
-}
-
-SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) terrain_lod_selector(
-  const MainCamera &mainCamera,
-  const Transform &transform,
-  const vector<Asset<Mesh>> &terrain_lods_meshes,
-  const vector<float> &lods_distances,
-  Asset<Mesh> &mesh)
-{
-  float distToCamera = abs(transform.get_position().y - mainCamera.position.y);//need only height
-  uint lod = terrain_lods_meshes.size();
-  for (uint i = 0; i < lods_distances.size() && i < terrain_lods_meshes.size(); ++i)
-  {
-    if (distToCamera < lods_distances[i])
-    {
-      lod = i;
-      break;
-    }
-  }
-  if (lod < terrain_lods_meshes.size())
-    mesh = terrain_lods_meshes[lod];
-  else
-    mesh = Asset<Mesh>();//culled by dist
 }

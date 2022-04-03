@@ -48,7 +48,7 @@ terrain {
   } 
   
   lods_distances:vector<float> { }
-  terrain_lods_meshes:vector<Asset<Mesh>> { }
+  lods_meshes:vector<Asset<Mesh>> { }
   mesh:Asset<Mesh> { }
   terrain_lods_count:i=5;
   first_lod_distance:f=4;
@@ -86,4 +86,5 @@ terrain {
     x:i = 3;//waterline
     x:i = 5;//mount
   }
+  lod_selector_axis:f3=0,1,0;
 }

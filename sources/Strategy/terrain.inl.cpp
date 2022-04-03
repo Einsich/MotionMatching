@@ -1,23 +1,6 @@
 #include "terrain.inl"
 //Code-generator production
 
-void terrain_lod_selector_func();
-
-ecs::SystemDescription terrain_lod_selector_descr("terrain_lod_selector", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<vector<Asset<Mesh>>>("terrain_lods_meshes"), false},
-  {ecs::get_type_description<vector<float>>("lods_distances"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
-}, terrain_lod_selector_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor,
-{},
-{});
-
-void terrain_lod_selector_func()
-{
-  ecs::perform_system(terrain_lod_selector_descr, terrain_lod_selector);
-}
-
 void create_terrain_handler(const ecs::OnEntityCreated &event);
 void create_terrain_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
 
@@ -32,7 +15,7 @@ ecs::EventDescription<ecs::OnEntityCreated> create_terrain_descr("create_terrain
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
-  {ecs::get_type_description<vector<Asset<Mesh>>>("terrain_lods_meshes"), false},
+  {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
   {ecs::get_type_description<int>("terrain_lods_count"), false},
   {ecs::get_type_description<float>("first_lod_distance"), false},
   {ecs::get_type_description<string>("terrain_texture"), false},

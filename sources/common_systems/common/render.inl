@@ -57,13 +57,17 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
   const Transform &transform,
   const vector<Asset<Mesh>> &lods_meshes,
   const vector<float> &lods_distances,
-  Asset<Mesh> &mesh)
+  Asset<Mesh> &mesh,
+  const vec3 *lod_selector_axis)
 {
-  float distToCamera = length(transform.get_position() - mainCamera.position);
+  vec3 delta = transform.get_position() - mainCamera.position;
+  if (lod_selector_axis)
+    delta *= *lod_selector_axis;
+  float distToCameraSq = length2(delta);
   uint lod = lods_meshes.size();
   for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
   {
-    if (distToCamera < lods_distances[i])
+    if (distToCameraSq < lods_distances[i]*lods_distances[i])
     {
       lod = i;
       break;
