@@ -116,13 +116,17 @@ render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSetting
 
 bool matComparer(const RenderStuff &a, const RenderStuff &b)
 {
-    int as = a.material->get_shader().get_shader_program();
-    int bs = b.material->get_shader().get_shader_program();
-    if (as != bs)
-      return as < bs;
-    int av = a.mesh->get_vao().vao();
-    int bv = b.mesh->get_vao().vao();
-    return av < bv;
+  int ad = a.material->draw_order();
+  int bd = b.material->draw_order();
+  if (ad != bd)
+    return ad < bd;
+  int as = a.material->get_shader().get_shader_program();
+  int bs = b.material->get_shader().get_shader_program();
+  if (as != bs)
+    return as < bs;
+  int av = a.mesh->get_vao().vao();
+  int bv = b.mesh->get_vao().vao();
+  return av < bv;
 };
 bool emptyRenderStuff(const RenderStuff &a)
 {
@@ -159,6 +163,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
   {
     uint instanceCount = 0;
     uint sp = 0;
+    bool startTransparentPass = false;
     for (uint i = 0; i < render.queue.size(); i++)
     {
       const RenderStuff &stuff = render.queue[i];
@@ -175,12 +180,22 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
         {
           stuff.material->get_shader().use();
           sp = stuff.material->get_shader().get_shader_program();
+          if (stuff.material->is_transparent() && !startTransparentPass)
+          {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            startTransparentPass = true;
+          }
         }
         stuff.material->bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
         stuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
         instanceCount = 0;
       }
+    }
+    if (startTransparentPass)
+    {
+      glDisable(GL_BLEND);
     }
   }
   render.queue.clear();

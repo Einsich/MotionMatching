@@ -31,7 +31,9 @@ private:
   REFLECT(Material,
   TYPES
   SAMPLERS
-  (string) (shaderName))
+  (string) (shaderName),
+  (bool) (isTransparent),
+  (int) (drawOrder))
   #undef SAMPLER
   #undef TYPE
   pair<int, int> get_uniform_index(const char *name, int gl_type) const;
@@ -41,6 +43,14 @@ public:
   Shader &get_shader();
   const Shader &get_shader() const;
   void bind_textures_to_shader() const;
+  bool is_transparent() const
+  {
+    return isTransparent;
+  }
+  int draw_order() const
+  {
+    return isTransparent ? drawOrder : INT_MIN;
+  }
   virtual void load(const filesystem::path &path, bool reload) override;
   virtual void before_save() override;
   virtual bool edit() override;

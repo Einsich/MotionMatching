@@ -262,6 +262,9 @@ bool Material::edit()
       #undef TYPE
     }
   }
+  edited |= edit_component(isTransparent, "tranparent material", false);
+  if (isTransparent)
+    edited |= edit_component(drawOrder, "draw order", false);
   return edited;
 }
 ResourceRegister<Material> materialRegister;
