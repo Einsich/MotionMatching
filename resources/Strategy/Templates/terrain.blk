@@ -55,6 +55,7 @@ terrain {
   transform:Transform { }
 
   pixel_scale:f = 0.05;
+  water_level:i=94;
 
   terrain_type_color:vector<ivec3> {
     x:i3 = 0, 86, 6;
@@ -73,8 +74,8 @@ terrain {
   }
   terrain_type_index:vector<int> {
     x:i = 1;//rock+green
-    x:i = 10;//water
-    x:i = 10;//water little
+    x:i = 2;//water
+    x:i = 2;//water little
     x:i = 2;//rock
     x:i = 8;//swamp
     x:i = 0;//land

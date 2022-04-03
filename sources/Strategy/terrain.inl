@@ -71,7 +71,10 @@ vector<uint> terrain_types(
   return terrainTypes;
 }
 
-EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
+template<typename Callable>
+static void query_water(Callable);
+
+EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   const Asset<Texture2D> &heights_texture,
   const Asset<Texture2D> &provinces_texture,
   const Asset<Texture2D> &normal_texture,
@@ -88,7 +91,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
   const string &terrain_texture,
   const vector<ivec3> &terrain_type_color,
   const vector<int> &terrain_type_index,
-  float pixel_scale
+  float pixel_scale,
+  int water_level
 )
 {
   if (!heights_texture)
@@ -130,4 +134,26 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnEntityCreated&,
   material->set_property("material.mapSize", ivec2(w, h));
   material->set_property("material.texelSize", vec2(1.f / w, 1.f / h));
   material->before_save();
+
+  QUERY(ecs::Tag isWater)query_water([&](
+    const Asset<Texture2D> &water_noise_texture,
+    const Asset<Texture2D> &water_color_texture,
+    const Asset<Texture2D> &water_foam_texture,
+    const Asset<CubeMap> &sky_reflection,
+    Asset<Material> &material,
+    Transform &transform)
+  {
+    float waterLevel = (water_level+0.5f)/255.f;
+    float wScale = w * pixel_scale * 0.5f;
+    float hScale = h * pixel_scale * 0.5f;
+    transform.set_position(vec3(wScale, 1 + waterLevel, hScale));
+    transform.set_scale(vec3(wScale, 1, hScale));
+    material->set_texture("heightMap", heights_texture);
+    material->set_texture("waterNoise", water_noise_texture);
+    material->set_texture("waterColor", water_color_texture);
+    material->set_texture("waterFoam", water_foam_texture);
+    material->set_texture("skyReflection", sky_reflection);
+    material->set_property("material.waterLevel", waterLevel);
+    material->before_save();
+  });
 }

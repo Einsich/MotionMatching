@@ -1,7 +1,7 @@
 entity {
   _template:t="sun";
   directionalLight:DirectionLight {
-    lightDirection:f3 = -1, -1, 0;
+    lightDirection:f3 = 0, -1, -1;
     lightColor:f3 = 1, 1, 1;
     ambient:f3 = 0.2, 0.2, 0.2;
   }
@@ -13,6 +13,10 @@ entity {
 
 entity {
   _template:t="plane";
+}
+
+entity {
+  _template:t="water";
 }
 
 entity {
