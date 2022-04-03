@@ -168,7 +168,10 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
   if (freeCamera.rotationable)
   {
     float const pixToRad = freeCamera.rotationSensitivity * DegToRad;
+    float prevY = freeCamera.wantedRotation.y;
     freeCamera.wantedRotation += vec2(e.dx, e.dy) * pixToRad;
+    if (abs(prevY) < PIHALF && PIHALF <= abs(freeCamera.wantedRotation.y))
+      freeCamera.wantedRotation.y = prevY;
   } else
   if (freeCamera.screenSpaceMovable)
   {
