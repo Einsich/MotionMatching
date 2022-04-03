@@ -12,7 +12,16 @@ struct Material
   ivec2 mapSize;
   vec2 texelSize;
 };
-#include vs_output
+struct VsOutput
+{
+  vec3 EyespaceNormal;
+  vec3 WorldPosition;
+#ifdef USE_UV
+  vec2 UV;
+#endif
+  float underWater;
+};
+
 #include instancing
 #include common_data
 
@@ -26,6 +35,7 @@ void main()
   float height = texture(heightMap, TexCoord).y;
   vertex_position.y += height * 1.0;
   #include common_vs
+  vsOutput.underWater = height - (94.0 / 255.0);
 }
 
 #pixel_shader
@@ -82,7 +92,6 @@ uint terrain_type(vec2 physUV, vec2 detailedUV, ivec2 mapSize, out vec4 finalCol
 
 void main()
 {
-  vec4 tex = texture(provincesMap, vsOutput.UV);
 
   float yearTime = Time.x * material_inst.seasonTime;
   int season = int(yearTime) & 3;
@@ -93,6 +102,11 @@ void main()
         texture(terrainColormapArray, vec3(vsOutput.UV, next)).rgb,
         progress);
 
+  if (vsOutput.underWater < -0.02)
+  {
+    FragColor = vec4(colorMap, 1);
+    return;
+  }
   
   vec3 texColor = colorMap;
   vec3 normalMap = texture(normalMap, vsOutput.UV).xyz * 2.0 - 1.0;
