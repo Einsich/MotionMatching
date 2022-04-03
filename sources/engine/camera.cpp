@@ -9,8 +9,8 @@ orthographic(false),
 orhtoScale(1.f),
 aspectRatio(Application::get_context().get_aspect_ratio()),
 fieldOfView(90), 
-zNear(0.01f),
-zFar(5000.f)
+zNear(0.1f),
+zFar(1000.f)
 {
   projection = perspective(fieldOfView * DegToRad, aspectRatio, zNear, zFar);
 }
