@@ -37,15 +37,12 @@ void main()
 
 #include ps_input
 out vec4 FragColor;
-struct Material
-{
-  float Shininess;
-  float Metallness;
-};
+
 #include lambert_lighting
 void main()
 {
-  Material boneMat = {40, 0};
-  vec3 color = LightedColor(instances[instanceID].Color.rgb, boneMat, vsOutput, LightDirection, CameraPosition);
+  float shininess = 40;
+  float metallness = 0;
+  vec3 color = LightedColor(instances[instanceID].Color.rgb, shininess, metallness, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

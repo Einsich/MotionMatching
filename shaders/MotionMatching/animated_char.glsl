@@ -35,7 +35,9 @@ uniform sampler2D mainTex;
 #include lambert_lighting
 void main()
 {
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
   vec3 color = texture(mainTex, vsOutput.UV).rgb + material_inst.AdditionalColor;
-  color = LightedColor(color, material_inst, vsOutput, LightDirection, CameraPosition);
+  color = LightedColor(color, shininess, metallness, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

@@ -4,7 +4,7 @@
 #include <render/texture/stb_image.h>
 #include <camera.h>
 
-Asset<Mesh> create_detailed_plane(uint h, uint w, int lod) 
+static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod) 
 { 
   uint tris = h * w * 2 * 3;
   uint vert = (h+1)*(w+1);
@@ -40,7 +40,7 @@ Asset<Mesh> create_detailed_plane(uint h, uint w, int lod)
   return Asset<Mesh>(name, VertexArrayObject(indices, poses, normes, uves)); 
 } 
 
-vector<uint> terrain_types(
+static vector<uint> terrain_types(
   const string &terrain_texture,
   const vector<ivec3> &terrain_type_color,
   const vector<int> &terrain_type_index)
@@ -71,6 +71,77 @@ vector<uint> terrain_types(
   return terrainTypes;
 }
 
+//ugly hardcoded tree spawn
+static void spawn_tress(
+  const Asset<Texture2DArray> &terrain_colormap_array,
+  const string &tree_map,
+  vec2 map_scale,
+  float tree_scale
+)
+{
+  const auto &path = root_path(tree_map);
+  int w, h, ch;
+  stbi_set_flip_vertically_on_load(true);
+  auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
+  auto imPtr = image;
+  const char *material_names[3] = {"tree_leafs", "tree_pine", "tree_palms"};
+  vec2 texelSize = vec2(1.f / map_scale.x, 1.f / map_scale.y);
+  for (int i = 0; i < 3; i++)
+  {
+    Asset<Material> leaf = get_resource<Material>(material_names[i]);
+    if (leaf)
+    {
+      leaf->set_property("material.mapTexelSize", texelSize);
+      leaf->set_texture("terrainColormapArray", terrain_colormap_array);
+      leaf->before_save();
+    }
+  }
+  const ecs::Template *leafs[3] = {
+    ecs::get_template("leafs_1"),
+    ecs::get_template("leafs_2"),
+    ecs::get_template("leafs_3")
+  };
+  const ecs::Template *pines[3] = {
+    ecs::get_template("pine_1"),
+    ecs::get_template("pine_2"),
+    ecs::get_template("pine_3")
+  };
+  const ecs::Template *palms[1] = {
+    ecs::get_template("palms_1")
+  };
+  vec2 d = vec2(1.f/w, 1.f/h);
+  for (uint i = 0, n = w * h; i < n; i++, imPtr += 3)
+  {
+    int r = imPtr[0] >> 6u;
+    int g = imPtr[1] >> 6u;
+    int b = imPtr[2] >> 6u;
+    uint key = (r<<16u) + (g<<8u) + b;
+
+    if (key!=0)
+    {
+      const ecs::Template *treeTempalte = nullptr;
+      if (b >= g && r == 0)
+        treeTempalte = pines[(b+g)*3 / 8];
+      else if (imPtr[0] >= imPtr[1] )
+        treeTempalte = palms[0];
+      else if (g > 0)
+        treeTempalte = leafs[(b+g)*3 / 8 ];
+      
+
+      if (!treeTempalte)
+        continue;
+      ecs::ComponentInitializerList list;
+
+      vec2 p = (vec2(i % w + 0.5f, i / w) + rand_vec2() * 0.35f) * map_scale * d ;
+      
+      list.set("transform", Transform(vec3(p.x, 1, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
+      ecs::create_entity(treeTempalte, std::move(list));
+
+    }
+  }
+  stbi_image_free(image);
+
+}
 template<typename Callable>
 static void query_water(Callable);
 
@@ -89,6 +160,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   int terrain_lods_count,
   float first_lod_distance,
   const string &terrain_texture,
+  const string &tree_map,
+  float tree_scale,
   const vector<ivec3> &terrain_type_color,
   const vector<int> &terrain_type_index,
   float pixel_scale,
@@ -102,7 +175,9 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   }
 
   int w = heights_texture->width(), h = heights_texture->height();
-  transform.set_scale(vec3(w * pixel_scale, 1, h * pixel_scale));
+  float mapWidth = w * pixel_scale;
+  float mapHeight = h * pixel_scale;
+  transform.set_scale(vec3(mapWidth, 1, mapHeight));
   
   lods_distances.resize(terrain_lods_count);
   lods_meshes.resize(terrain_lods_count);
@@ -123,6 +198,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   else
     debug_error("terrain_type_color and terrain_type_index should have same size");
 
+  spawn_tress(terrain_colormap_array, tree_map, vec2(mapWidth, mapHeight), tree_scale);
 
   material->set_texture("heightMap", heights_texture);
   material->set_texture("provincesMap", provinces_texture);
@@ -144,8 +220,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
     Transform &transform)
   {
     float waterLevel = (water_level+0.5f)/255.f;
-    float wScale = w * pixel_scale * 0.5f;
-    float hScale = h * pixel_scale * 0.5f;
+    float wScale = mapWidth * 0.5f;
+    float hScale = mapHeight * 0.5f;
     transform.set_position(vec3(wScale, 1 + waterLevel, hScale));
     transform.set_scale(vec3(wScale, 1, hScale));
     material->set_texture("heightMap", heights_texture);

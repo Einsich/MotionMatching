@@ -37,6 +37,8 @@ ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain"
   {ecs::get_type_description<int>("terrain_lods_count"), false},
   {ecs::get_type_description<float>("first_lod_distance"), false},
   {ecs::get_type_description<string>("terrain_texture"), false},
+  {ecs::get_type_description<string>("tree_map"), false},
+  {ecs::get_type_description<float>("tree_scale"), false},
   {ecs::get_type_description<vector<ivec3>>("terrain_type_color"), false},
   {ecs::get_type_description<vector<int>>("terrain_type_index"), false},
   {ecs::get_type_description<float>("pixel_scale"), false},

@@ -46,6 +46,8 @@ uniform sampler2D mainTex;
 void main()
 {
   vec3 texColor = texture(mainTex, vsOutput.UV).rgb;
-  vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

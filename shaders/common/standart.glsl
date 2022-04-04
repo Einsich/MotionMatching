@@ -23,7 +23,9 @@ out vec4 FragColor;
 #include lambert_lighting
 void main()
 {
-  vec3 color = LightedColor(vec3(1), material_inst, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
+  vec3 color = LightedColor(vec3(1), shininess, metallness, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
 
@@ -58,7 +60,9 @@ void main()
   if (tex.a < 0.3)
     discard;
   vec3 texColor = tex.rgb;
-  vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
 
@@ -95,9 +99,11 @@ void main()
   vec4 tex = texture(mainTex, vsOutput.UV);
   if (tex.a < 0.3)
     discard;
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
   vec3 texColor = tex.rgb;
   vec3 normalMap = texture(normalMap, vsOutput.UV).xyz * 2.0 - 1.0;
   vec3 normal = apply_normal_map(normalMap, vsOutput.EyespaceNormal, vsOutput.WorldPosition, vsOutput.UV);
-  vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

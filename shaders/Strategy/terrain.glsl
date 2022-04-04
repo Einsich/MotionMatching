@@ -49,10 +49,10 @@ uniform sampler2D normalMap;
 uniform usampler2D terrainMap;
 uniform sampler2DArray terrainDiffuseArray;
 uniform sampler2DArray terrainNormalArray;
-uniform sampler2DArray terrainColormapArray;
 
 #include lambert_lighting
 #include normal_map
+#include season_color
 
 uint terrain_type(vec2 physUV, vec2 detailedUV, ivec2 mapSize, out vec4 finalColor, out vec3 finalNormal)
 {
@@ -92,15 +92,8 @@ uint terrain_type(vec2 physUV, vec2 detailedUV, ivec2 mapSize, out vec4 finalCol
 
 void main()
 {
-
   float yearTime = Time.x * material_inst.seasonTime;
-  int season = int(yearTime) & 3;
-  int next = (season+1) & 3;
-  float progress = fract(yearTime);
-  vec3 colorMap = 
-    mix(texture(terrainColormapArray, vec3(vsOutput.UV, season)).rgb,
-        texture(terrainColormapArray, vec3(vsOutput.UV, next)).rgb,
-        progress);
+  vec3 colorMap = season_color(vsOutput.UV, yearTime);
 
   if (vsOutput.underWater < -0.02)
   {
@@ -124,6 +117,8 @@ void main()
     texColor = mix(detailColor.rgb, texColor, material_inst.colorMapWeigth);
   }
 
-  vec3 color = LightedColor(texColor, material_inst, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

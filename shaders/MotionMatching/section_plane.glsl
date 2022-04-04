@@ -40,6 +40,8 @@ void main()
   float t = min(section.x, section.y);
   bool addSection = toCameraDist < 45 && t * material_inst.sectionScale < 0.05;
   vec3 texColor = addSection ? vec3(1, 1, 1) : texture(mainTex, vsOutput.UV).rgb;
-  vec3 color = LightedColor(texColor, material_inst, vsOutput, LightDirection, CameraPosition);
+  float shininess = material_inst.Shininess;
+  float metallness = material_inst.Metallness;
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

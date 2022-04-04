@@ -3,6 +3,7 @@ terrain {
   provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_provinces.png.meta"; }
   normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
   terrain_texture:t = "resources/Strategy/Assets/Terrain/europe_terrain.png";
+  tree_map:t ="resources/Strategy/Assets/Terrain/europe_trees.png";
   atlas_diffuse:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
   atlas_normal:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
   material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
@@ -88,4 +89,5 @@ terrain {
     x:i = 5;//mount
   }
   lod_selector_axis:f3=0,1,0;
+  tree_scale:f=0.05;
 }
