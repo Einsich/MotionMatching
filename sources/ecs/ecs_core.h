@@ -146,7 +146,7 @@ namespace ecs
   std::array<char*__restrict, N> copy_data_pointer_impl(uint binIndex,
     const std::array<vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
   {
-    return std::array<char*__restrict, N> {(data_vectors[Is] ? ((char*)(*data_vectors[Is])[0]) : nullptr)...};
+    return std::array<char*__restrict, N> {(data_vectors[Is] ? (char*)((*data_vectors[Is])[binIndex]) : nullptr)...};
   }
 
   template<std::size_t N, std::size_t... Is>
