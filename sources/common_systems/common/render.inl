@@ -169,6 +169,8 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     uint instanceCount = 0;
     uint sp = 0;
     bool startTransparentPass = false;
+    instanceData.bind();
+    //debug_log("start");
     for (uint i = 0; i < render.queue.size(); i++)
     {
       const RenderStuff &stuff = render.queue[i];
@@ -195,6 +197,8 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
         stuff.material->bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
         stuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
+        //debug_log("draw instance = %d, instance size = %d, %s",
+        //    instanceCount, instanceSize, stuff.material->get_shader().get_name().c_str());
         instanceCount = 0;
       }
     }

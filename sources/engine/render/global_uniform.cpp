@@ -53,8 +53,6 @@ void UniformBuffer::update_buffer(const void *data, size_t offset, size_t size) 
 }
 void UniformBuffer::flush_buffer(size_t flush_size) const
 {
-  glBindBuffer(bufType, arrayID);
-  glBindBufferBase(bufType, bindID, arrayID); 
   if (bufSize < size()) 
   {
     glBufferData(bufType, size(), NULL, GL_DYNAMIC_DRAW);
@@ -68,6 +66,12 @@ char *UniformBuffer::get_buffer(uint offset, uint size)
     buffer.resize(offset + size);
 
   return buffer.data() + offset;
+}
+
+void UniformBuffer::bind() const
+{
+  glBindBuffer(bufType, arrayID);
+  glBindBufferBase(bufType, bindID, arrayID); 
 }
 
 UniformBuffer &get_buffer(const char *name)

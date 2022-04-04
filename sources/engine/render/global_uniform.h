@@ -26,6 +26,7 @@ public:
   void update_buffer(const void *data, size_t offset, size_t size) const;
   void flush_buffer(size_t flush_size) const;
   char *get_buffer(uint offset, uint size);
+  void bind() const;
 };
 void add_uniform_buffer(const char *name, size_t size, int binding);
 void add_storage_buffer(const char *name, size_t size, int binding);
