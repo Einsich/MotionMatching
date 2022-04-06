@@ -1,13 +1,13 @@
 #include "profiler.h"
 
 ProfilerLabel::ProfilerLabel(const char *label):
- start(std::chrono::high_resolution_clock::now()), label(label), stopped(false)
+ start(std::chrono::high_resolution_clock::now().time_since_epoch().count()), label(label), stopped(false)
 {
   get_profiler().open_label(start, label);
 }
 void ProfilerLabel::stop()
 {
-  get_profiler().close_label(start, std::chrono::high_resolution_clock::now(), label);
+  get_profiler().close_label(start, std::chrono::high_resolution_clock::now().time_since_epoch().count(), label);
   stopped = true;
 }
 ProfilerLabel::~ProfilerLabel()
@@ -25,14 +25,14 @@ void Profiler::end_frame()
 {
 
 }
-void Profiler::open_label(time_point start, const char *label)
+void Profiler::open_label(uint64_t start, const char *label)
 {
   cur_frame_labels.push_back({start, label, true});
 }
-void Profiler::close_label(time_point start, time_point end, const char *label)
+void Profiler::close_label(uint64_t start, uint64_t end, const char *label)
 {
   cur_frame_labels.push_back({end, label, false});
-  labelAveranges[label].add_time(time_delta(end - start).count());
+  labelAveranges[label].add_time((end - start) * 0.000001);
 }
 float Profiler::get_averange(const char *label)
 {
