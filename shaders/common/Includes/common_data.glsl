@@ -8,3 +8,4 @@ layout(std140, binding = 0) uniform Commondata
     vec3 SunLight;
     vec4 Time;
 };
+#include common_functions

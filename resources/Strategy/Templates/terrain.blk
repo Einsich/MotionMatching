@@ -89,5 +89,5 @@ terrain {
     x:i = 5;//mount
   }
   lod_selector_axis:f3=0,1,0;
-  tree_scale:f=0.05;
+  tree_scale:f=0.03;
 }

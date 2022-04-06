@@ -88,7 +88,16 @@ uint terrain_type(vec2 physUV, vec2 detailedUV, ivec2 mapSize, out vec4 finalCol
   finalNormal = normalize(finalNormal);
   return textureLod(terrainMap, physUV, 0).x;
 }
-  
+
+vec3 GetOverlay(vec3 vColor,vec3 vOverlay, float vOverlayPercent )
+{
+	vec3 res;
+	res.r = vOverlay.r < .5 ? (2 * vOverlay.r * vColor.r) : (1 - 2 * (1 - vOverlay.r) * (1 - vColor.r));
+	res.g = vOverlay.g < .5 ? (2 * vOverlay.g * vColor.g) : (1 - 2 * (1 - vOverlay.g) * (1 - vColor.g));
+	res.b = vOverlay.b < .5 ? (2 * vOverlay.b * vColor.b) : (1 - 2 * (1 - vOverlay.b) * (1 - vColor.b));
+
+	return mix(vColor, res, vOverlayPercent);
+}
 
 void main()
 {
@@ -114,11 +123,12 @@ void main()
   if (terrainType <= 10)
   {
     normal = apply_normal_map(detailNormal, normal, vsOutput.WorldPosition, detailedUV);
-    texColor = mix(detailColor.rgb, texColor, material_inst.colorMapWeigth);
+    texColor = GetOverlay(detailColor.rgb, texColor, material_inst.colorMapWeigth);
   }
 
   float shininess = material_inst.Shininess;
   float metallness = material_inst.Metallness;
-  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, normal, LightDirection, CameraPosition);
+  vec3 color = CalculateLighting(texColor, normal, LightDirection, 0, vec3(1,1,1), 1.5);
+
   FragColor = vec4(color, 1.0);
 }

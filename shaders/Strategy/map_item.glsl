@@ -3,7 +3,7 @@
 struct Material
 {
   vec2 mapTexelSize;
-  float seasonTime;
+  vec3 additionalColorMultiplier;
 };
 #include vs_output
 #include instancing
@@ -40,20 +40,14 @@ uniform sampler2D mainTex;
 uniform sampler2D normalMap;
 #include lambert_lighting
 #include normal_map
-#include season_color
+
 void main()
 {
   vec4 tex = texture(mainTex, vsOutput.UV);
   if (tex.a < 0.3)
     discard;
   
-  if (material_inst.seasonTime > 0)
-  {
-    float yearTime = Time.x * material_inst.seasonTime;
-    vec3 colorMap = season_color(material_inst.mapTexelSize*vsOutput.WorldPosition.xz, yearTime);
-    tex.rgb = colorMap;
-  }
-  vec3 texColor = tex.rgb;
+  vec3 texColor = tex.rgb * (1 + material_inst.additionalColorMultiplier);
   vec3 normalMap = texture(normalMap, vsOutput.UV).xyz * 2.0 - 1.0;
   vec3 normal = apply_normal_map(normalMap, vsOutput.EyespaceNormal, vsOutput.WorldPosition, vsOutput.UV);
   float shininess = 40;

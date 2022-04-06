@@ -73,7 +73,6 @@ static vector<uint> terrain_types(
 
 //ugly hardcoded tree spawn
 static void spawn_tress(
-  const Asset<Texture2DArray> &terrain_colormap_array,
   const string &tree_map,
   vec2 map_scale,
   float tree_scale
@@ -92,7 +91,6 @@ static void spawn_tress(
     if (leaf)
     {
       leaf->set_property("material.mapTexelSize", texelSize);
-      leaf->set_texture("terrainColormapArray", terrain_colormap_array);
       leaf->before_save();
     }
   }
@@ -130,13 +128,16 @@ static void spawn_tress(
 
       if (!treeTempalte)
         continue;
-      ecs::ComponentInitializerList list;
+      vec2 offsets[4] = {vec2(0, 0),vec2(0, 1.f),vec2(1.f, 0), vec2(1.f, 1.f)};
+      for (int k = 0; k < 4; k ++)
+      {
+        ecs::ComponentInitializerList list;
 
-      vec2 p = (vec2(i % w + 0.5f, i / w) + rand_vec2() * 0.35f) * map_scale * d ;
-      
-      list.set("transform", Transform(vec3(p.x, 1, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
-      ecs::create_entity(treeTempalte, std::move(list));
-
+        vec2 p = (vec2(i % w + 0.5f, i / w) + offsets[k]*0.5f + rand_vec2() * 0.25f) * map_scale * d ;
+        
+        list.set("transform", Transform(vec3(p.x, 1, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
+        ecs::create_entity(treeTempalte, std::move(list));
+      }
     }
   }
   stbi_image_free(image);
@@ -198,7 +199,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   else
     debug_error("terrain_type_color and terrain_type_index should have same size");
 
-  spawn_tress(terrain_colormap_array, tree_map, vec2(mapWidth, mapHeight), tree_scale);
+  spawn_tress(tree_map, vec2(mapWidth, mapHeight), tree_scale);
 
   material->set_texture("heightMap", heights_texture);
   material->set_texture("provincesMap", provinces_texture);

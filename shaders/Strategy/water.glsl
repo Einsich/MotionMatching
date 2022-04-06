@@ -57,14 +57,7 @@ vec3 CalcWaterNormal(vec2 scaled_uv, float scaled_time)
 }
 
 
-float saturate(float x)
-{
-  return clamp(x, 0, 1);
-}
-vec3 saturate(vec3 x)
-{
-  return clamp(x, 0, 1);
-}
+
 vec3 ComposeSpecular( vec3 vColor, float vSpecular ) 
 {
 	return saturate(vColor + vSpecular);// * STANDARD_HDR_RANGE + ( 1.0f - STANDARD_HDR_RANGE ) * vSpecular;
