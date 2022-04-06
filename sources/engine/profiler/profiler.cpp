@@ -1,6 +1,6 @@
 #include "profiler.h"
 
-ProfilerLabel::ProfilerLabel(const string &label):
+ProfilerLabel::ProfilerLabel(const char *label):
  start(std::chrono::high_resolution_clock::now()), label(label), stopped(false)
 {
   get_profiler().open_label(start, label);
@@ -25,21 +25,21 @@ void Profiler::end_frame()
 {
 
 }
-void Profiler::open_label(time_point start, const string &label)
+void Profiler::open_label(time_point start, const char *label)
 {
   cur_frame_labels.push_back({start, label, true});
 }
-void Profiler::close_label(time_point start, time_point end, const string &label)
+void Profiler::close_label(time_point start, time_point end, const char *label)
 {
   cur_frame_labels.push_back({end, label, false});
   labelAveranges[label].add_time(time_delta(end - start).count());
 }
-float Profiler::get_averange(const string &label)
+float Profiler::get_averange(const char *label)
 {
   return labelAveranges[label].get_averange();
 }
 
-float Profiler::get_max(const string &label)
+float Profiler::get_max(const char *label)
 {
   return labelAveranges[label].get_max();
 }

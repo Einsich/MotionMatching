@@ -31,7 +31,7 @@ void profiler()
       openTimes.push(lastCloseTime);
       float hardness = sqrt(dt / maxdt);
       vec3 color = glm::lerp(vec3(1), vec3(1,0,0), hardness);
-      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: avg %.2f, max %.2f ms",level*3, ' ', label.label.c_str(), dt, spike);
+      ImGui::TextColored(ImVec4(color.x, color.y, color.z, 1.f), "%*c%s: avg %.2f, max %.2f ms",level*3, ' ', label.label, dt, spike);
 
     }
     else
