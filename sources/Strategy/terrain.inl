@@ -3,6 +3,7 @@
 #include <transform.h>
 #include <render/texture/stb_image.h>
 #include <camera.h>
+#include "heightmap.h"
 
 static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod) 
 { 
@@ -75,7 +76,8 @@ static vector<uint> terrain_types(
 static void spawn_tress(
   const string &tree_map,
   vec2 map_scale,
-  float tree_scale
+  float tree_scale,
+  const HeightMap &height_map
 )
 {
   const auto &path = root_path(tree_map);
@@ -134,8 +136,8 @@ static void spawn_tress(
         ecs::ComponentInitializerList list;
 
         vec2 p = (vec2(i % w + 0.5f, i / w) + offsets[k]*0.5f + rand_vec2() * 0.25f) * map_scale * d ;
-        
-        list.set("transform", Transform(vec3(p.x, 1, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
+        float height = height_map.get_height(p);
+        list.set("transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
         ecs::create_entity(treeTempalte, std::move(list));
       }
     }
@@ -166,7 +168,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   const vector<ivec3> &terrain_type_color,
   const vector<int> &terrain_type_index,
   float pixel_scale,
-  int water_level
+  int water_level,
+  HeightMap &heigth_map
 )
 {
   if (!heights_texture)
@@ -180,6 +183,11 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   float mapHeight = h * pixel_scale;
   transform.set_scale(vec3(mapWidth, 1, mapHeight));
   
+  string path = heights_texture.asset_path().string();
+  path.resize(path.size() - sizeof("meta"));
+  heigth_map.load_heightmap(path, 1.f);
+  heigth_map.worldOffset = vec2(0, 0);
+  heigth_map.worldScale = vec2(1.f) / pixel_scale;
   lods_distances.resize(terrain_lods_count);
   lods_meshes.resize(terrain_lods_count);
   for (int i = 0; i < terrain_lods_count; i++)
@@ -200,7 +208,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   else
     debug_error("terrain_type_color and terrain_type_index should have same size");
 
-  spawn_tress(tree_map, vec2(mapWidth, mapHeight), tree_scale);
+  spawn_tress(tree_map, vec2(mapWidth, mapHeight), tree_scale, heigth_map);
 
   material->set_texture("heightMap", heights_texture);
   material->set_texture("provincesMap", provinces_texture);
@@ -224,7 +232,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
     float waterLevel = (water_level+0.5f)/255.f;
     float wScale = mapWidth * 0.5f;
     float hScale = mapHeight * 0.5f;
-    transform.set_position(vec3(wScale, 1 + waterLevel, hScale));
+    transform.set_position(vec3(wScale, waterLevel, hScale));
     transform.set_scale(vec3(wScale, 1, hScale));
     material->set_texture("heightMap", heights_texture);
     material->set_texture("waterNoise", water_noise_texture);

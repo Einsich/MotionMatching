@@ -17,8 +17,9 @@ void main()
 {
   #define instance instances[gl_InstanceID]
   vec3 vertex_position = Position;
-
-  vec4 VertexPosition = instance.Model * vec4(vertex_position, 1);
+  mat4 tm = instance.Model;
+  tm[3].y = 0;
+  vec4 VertexPosition = tm * vec4(vertex_position, 1);
   vsOutput.EyespaceNormal = mat3(instance.Model) * Normal;
 
   float height = texture(heightMap, material_inst.mapTexelSize*VertexPosition.xz).y;

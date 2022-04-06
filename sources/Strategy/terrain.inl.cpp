@@ -42,7 +42,8 @@ ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain"
   {ecs::get_type_description<vector<ivec3>>("terrain_type_color"), false},
   {ecs::get_type_description<vector<int>>("terrain_type_index"), false},
   {ecs::get_type_description<float>("pixel_scale"), false},
-  {ecs::get_type_description<int>("water_level"), false}
+  {ecs::get_type_description<int>("water_level"), false},
+  {ecs::get_type_description<HeightMap>("heigth_map"), false}
 }, create_terrain_handler, create_terrain_singl_handler, ecs::SystemTag::GameEditor);
 
 void create_terrain_handler(const ecs::OnSceneCreated &event)
