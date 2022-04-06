@@ -63,17 +63,18 @@ void Mesh::load_assimp(const aiMesh *mesh)
 {
   numVert = mesh->mNumVertices;
   numFaces = mesh->mNumFaces;
-  vec3 box[2];
+
   if (mesh->HasPositions())
   {
     positions.resize(numVert);
     for (int i = 0; i < numVert; i++)
     {
       positions[i] = to_vec3(mesh->mVertices[i]);
-      box[0] = glm::min(box[0], positions[i]);
-      box[1] = glm::max(box[1], positions[i]);
+      box.minimize(positions[i]);
+      box.maximize(positions[i]);
     }
   }
+  
   if (mesh->HasNormals())
   {
     normals.resize(numVert);

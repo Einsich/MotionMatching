@@ -13,6 +13,19 @@ void find_light(Callable lambda)
 }
 
 
+ecs::QueryDescription find_collidable_entity_descr("find_collidable_entity", {
+  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+});
+
+template<typename Callable>
+void find_collidable_entity(Callable lambda)
+{
+  ecs::perform_query<Transform&, Asset<Mesh>&>
+  (find_collidable_entity_descr, lambda);
+}
+
+
 ecs::QueryDescription find_matrices_descr("find_matrices", {
   {ecs::get_type_description<Transform>("transform"), true}
 });
@@ -124,6 +137,19 @@ ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
 void main_instanced_render_func()
 {
   ecs::perform_system(main_instanced_render_descr, main_instanced_render);
+}
+
+void render_collision_func();
+
+ecs::SystemDescription render_collision_descr("render_collision", {
+  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+}, render_collision_func, ecs::SystemOrder::RENDER + 0, ecs::SystemTag::GameEditor,
+{},
+{});
+
+void render_collision_func()
+{
+  ecs::perform_system(render_collision_descr, render_collision);
 }
 
 void add_global_uniform_handler(const ecs::OnSceneCreated &event);

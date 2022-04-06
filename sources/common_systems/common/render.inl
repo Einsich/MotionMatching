@@ -30,6 +30,7 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) render_submenu(EditorRe
   if (ImGui::BeginMenu("Render"))
   {
     ImGui::Checkbox("wire frame", &settings.wire_frame);
+    ImGui::Checkbox("Render collision", &settings.render_collision);
     ImGui::EndMenu();
   }
 }
@@ -211,4 +212,44 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     }
   }
   render.queue.clear();
+}
+
+
+
+template<typename Callable> 
+void find_collidable_entity(Callable);
+
+SYSTEM(ecs::SystemOrder::RENDER + 0,ecs::SystemTag::GameEditor)
+render_collision(const EditorRenderSettings &editorSettings)
+{
+  if (!editorSettings.render_collision)
+    return;
+  Asset<Mesh> cube = cube_mesh(false);
+  Asset<Material> collisionMat = get_resource<Material>("collision");
+  if (!cube || !collisionMat)
+    return;
+
+  const auto &instanceDescr = collisionMat->get_shader().get_instance_data();
+  if (!instanceDescr.Model.type)
+    return;
+  UniformBuffer &instanceData = get_buffer("InstanceData");
+  uint instanceSize = collisionMat->buffer_size();
+  uint instanceCount = 0;
+  QUERY()find_collidable_entity([&](const Transform &transform, const Asset<Mesh> &mesh)
+  {
+    const BoundingBox &box = mesh->get_bounding_box();
+    Transform tm = transform;
+    tm.get_position() += tm.get_scale() * box.center();
+    tm.set_scale(tm.get_scale() * box.diagonal() * 0.5f);
+    char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
+    copy_buffer_field(tm.get_transform(), buffer, instanceDescr.Model);
+    instanceCount++;
+  });
+  if (instanceCount == 0)
+    return;
+  ProfilerLabelGPU label("collision");
+  instanceData.bind();
+  collisionMat->get_shader().use();
+  instanceData.flush_buffer(instanceCount * instanceSize);
+  cube->render_instances(instanceCount, true);
 }

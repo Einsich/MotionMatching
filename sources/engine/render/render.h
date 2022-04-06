@@ -16,4 +16,5 @@ struct GlobalRenderData
 struct EditorRenderSettings : ecs::Singleton
 {
   bool wire_frame;
+  bool render_collision;
 };
