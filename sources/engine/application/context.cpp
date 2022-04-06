@@ -21,19 +21,10 @@ Context::Context(string window_name, int width, int height, bool full_screen)
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
+  size_t window_flags = SDL_WINDOW_OPENGL;
   if (full_screen)
-  {
-    SDL_DisplayMode dm;
-
-    if (SDL_GetDesktopDisplayMode(0, &dm))
-    {
-      throw std::runtime_error {"Error getting desktop display mode\n"};
-    }
-    resolution.width = dm.w;
-    resolution.height = dm.h;
-  } 
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-  window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, resolution.width, resolution.height, window_flags);
+    window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, resolution.width, resolution.height, (SDL_WindowFlags)(window_flags));
   gl_context = SDL_GL_CreateContext(window);
   SDL_GL_MakeCurrent(window, gl_context);
   SDL_GL_SetSwapInterval(0);
