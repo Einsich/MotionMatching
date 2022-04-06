@@ -46,7 +46,8 @@ void Application::start()
   #endif
   scene->start();
   ecs::load_templates_from_blk();
-  get_profiler();
+  get_cpu_profiler();
+  get_gpu_profiler();
   string sceneName;
   uint tags = editor ? ecs::SystemTag::Editor : ecs::SystemTag::Game;
   scene->start_scene(root_path(metaInfo.firstScene), tags);
@@ -92,7 +93,7 @@ void Application::main_loop()
 {
   bool running = true;
   while(running){
-    get_profiler().start_frame();
+    get_cpu_profiler().start_frame();
     PROFILER(main_loop);
     timer.update();
     PROFILER(sdl_events) 
@@ -110,6 +111,10 @@ void Application::main_loop()
       PROFILER(swapchain);
       context.swap_buffer();
       swapchain.stop();
+      extern void process_gpu_time_queries();
+      process_gpu_time_queries();
+      get_gpu_profiler().start_frame();
+      ProfilerLabelGPU frame_label("frame");
       PROFILER(ecs_render);
       scene->update_render();
       ecs_render.stop();
@@ -119,6 +124,8 @@ void Application::main_loop()
       PROFILER(ecs_ui);
       scene->update_ui();
       ecs_ui.stop();
+      
+      ProfilerLabelGPU imgui_render_label("imgui_render");
       PROFILER(imgui_render);
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -126,7 +133,6 @@ void Application::main_loop()
       ui.stop();
     }
     main_loop.stop();
-    get_profiler().end_frame();
 	}
 }
 void Application::exit()

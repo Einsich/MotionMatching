@@ -3,9 +3,9 @@
 #include <stack>
 #include <3dmath.h>
 
-void profiler()
+void profiler(Profiler &profiler)
 {
-  auto& history = get_profiler().get_frame_history();
+  auto& history = profiler.get_frame_history();
   if (history.size() == 0)
   {
     ImGui::End();
@@ -14,7 +14,7 @@ void profiler()
   //ImVec2 corner = ImGui::GetWindowPos();
   //float width = ImGui::GetWindowWidth();
   //float height = 10.f;
-  float maxdt = get_profiler().get_averange(history.back().label);
+  float maxdt = profiler.get_averange(history.back());
 
   stack<float> openTimes;
   openTimes.push(0.f);
@@ -23,8 +23,8 @@ void profiler()
   float lastCloseTime = 0.f;
   for (const TimeLabel &label : history)
   {
-    float dt = get_profiler().get_averange(label.label);
-    float spike = get_profiler().get_max(label.label);
+    float dt = profiler.get_averange(label);
+    float spike = profiler.get_max(label);
     int level = openTimes.size();
     if (label.open)
     {
@@ -36,7 +36,9 @@ void profiler()
     }
     else
     {
-      float dt = get_profiler().get_averange(label.label);
+      if (openTimes.empty())
+        continue;
+      float dt = profiler.get_averange(label);
       float openTime = openTimes.top();
       float closeTime = openTime + dt;
       lastCloseTime = closeTime;
@@ -57,7 +59,18 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::GameEditor) menu_profiler()
 
   if (ImGui::BeginMenu("Profiler"))
   {
-    profiler();
+    if (ImGui::BeginTabBar(""))
+    {
+      static int selectedProfiler = 0;//cpu
+      if (ImGui::TabItemButton("cpu"))
+        selectedProfiler = 0;
+      else if (ImGui::TabItemButton("gpu"))
+        selectedProfiler = 1;
+      
+      profiler(selectedProfiler == 0 ? get_cpu_profiler() : get_gpu_profiler());
+      
+      ImGui::EndTabBar();
+    }
     ImGui::EndMenu();
   }
 }

@@ -11,6 +11,7 @@
 #include "resources/resource_registration.h"
 #include "resources/resources.h"
 #include <imgui.h>
+#include <profiler/profiler.h>
 
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Mesh>, Mesh)
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2D>, Texture2D)
@@ -108,6 +109,7 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
 SYSTEM(ecs::SystemOrder::RENDER+100,ecs::SystemTag::GameEditor)
 render_sky_box(SkyBox &skyBox)
 {
+  ProfilerLabelGPU label("skybox");
   skyBox.render();
 }
 // after skybox
@@ -183,6 +185,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
       bool needRender = i + 1 == render.queue.size() || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
       if (needRender)
       {
+        ProfilerLabelGPU label(stuff.material.asset_name().c_str());
         if (stuff.material->get_shader().get_shader_program() != sp)//need use new shader
         {
           stuff.material->get_shader().use();

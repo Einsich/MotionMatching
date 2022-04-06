@@ -13,8 +13,19 @@ public:
   ~ProfilerLabel();
   void stop();
 };
+class ProfilerLabelGPU
+{
+private:
+  bool stopped;
+  uint startQuery, endQuery;
+  const char *label;
+public:
+  ProfilerLabelGPU(const char *label);
+  ~ProfilerLabelGPU();
+  void stop();
+};
 
-struct TimeLabel {uint64_t time; const char *label; bool open;};
+struct TimeLabel {int id; const char *label; bool open;};
 class Profiler
 {
 private:
@@ -28,24 +39,19 @@ private:
     float get_max() const;
     void add_time(float dt);
   };
-  struct cmp_str
-  {
-    bool operator()(char const *a, char const *b) const
-    {
-        return std::strcmp(a, b) < 0;
-    }
-  };
-  map<const char*, AverangeTime, cmp_str> labelAveranges;
+
+  map<uint64_t, AverangeTime> labelAveranges;
+  map<uint64_t, int> labelCount;
   vector<TimeLabel> prev_frame_labels, cur_frame_labels;
 public:
   void start_frame();
-  void end_frame();
-  void open_label(uint64_t start, const char *label);
-  void close_label(uint64_t start, uint64_t end, const char *label);
-  float get_averange(const char *label);
-  float get_max(const char *label);
+  void open_label(const char *label);
+  void close_label(float time_ms, const char *label);
+  float get_averange(const TimeLabel &label);
+  float get_max(const TimeLabel &label);
   const vector<TimeLabel> &get_frame_history();
 };
 
-Profiler &get_profiler();
+Profiler &get_cpu_profiler();
+Profiler &get_gpu_profiler();
 #define PROFILER(label) ProfilerLabel label(#label);

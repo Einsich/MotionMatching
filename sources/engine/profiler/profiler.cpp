@@ -1,13 +1,16 @@
 #include "profiler.h"
+#include <manager/string_hash.h>
+
 
 ProfilerLabel::ProfilerLabel(const char *label):
  start(std::chrono::high_resolution_clock::now().time_since_epoch().count()), label(label), stopped(false)
 {
-  get_profiler().open_label(start, label);
+  get_cpu_profiler().open_label(label);
 }
 void ProfilerLabel::stop()
 {
-  get_profiler().close_label(start, std::chrono::high_resolution_clock::now().time_since_epoch().count(), label);
+  float dt = (std::chrono::high_resolution_clock::now().time_since_epoch().count() - start) * 0.000001;
+  get_cpu_profiler().close_label(dt, label);
   stopped = true;
 }
 ProfilerLabel::~ProfilerLabel()
@@ -15,33 +18,38 @@ ProfilerLabel::~ProfilerLabel()
   if (!stopped)
     stop();
 }
+static uint label_id_hash(const char *label, int id)
+{
+  return HashedString(label) ^ (id * 16397816463u);
+}
 
 void Profiler::start_frame()
 {
   prev_frame_labels = std::move(cur_frame_labels);
   cur_frame_labels.clear();
-}
-void Profiler::end_frame()
-{
-
-}
-void Profiler::open_label(uint64_t start, const char *label)
-{
-  cur_frame_labels.push_back({start, label, true});
-}
-void Profiler::close_label(uint64_t start, uint64_t end, const char *label)
-{
-  cur_frame_labels.push_back({end, label, false});
-  labelAveranges[label].add_time((end - start) * 0.000001);
-}
-float Profiler::get_averange(const char *label)
-{
-  return labelAveranges[label].get_averange();
+  labelCount.clear();
 }
 
-float Profiler::get_max(const char *label)
+void Profiler::open_label(const char *label)
 {
-  return labelAveranges[label].get_max();
+  int id = ++labelCount[HashedString(label)];
+  cur_frame_labels.push_back({id, label, true});
+}
+void Profiler::close_label(float time_ms, const char *label)
+{
+  //support only flat similar label names
+  int id = labelCount[HashedString(label)];
+  cur_frame_labels.push_back({id, label, false});
+  labelAveranges[label_id_hash(label, id)].add_time(time_ms);
+}
+float Profiler::get_averange(const TimeLabel &label)
+{
+  return labelAveranges[label_id_hash(label.label, label.id)].get_averange();
+}
+
+float Profiler::get_max(const TimeLabel &label)
+{
+  return labelAveranges[label_id_hash(label.label, label.id)].get_max();
 }
 
 const vector<TimeLabel> &Profiler::get_frame_history()
@@ -49,7 +57,7 @@ const vector<TimeLabel> &Profiler::get_frame_history()
   return prev_frame_labels;
 }
 
-Profiler &get_profiler()
+Profiler &get_cpu_profiler()
 {
   static Profiler profiler;
   return profiler;
