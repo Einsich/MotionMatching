@@ -1,5 +1,4 @@
 #include <ecs.h> 
-#include <render/vertex_array_object.h>
 #include <render/shader/shader.h>
 #include <render/texture/texture2d.h>
 #include <transform2d.h>

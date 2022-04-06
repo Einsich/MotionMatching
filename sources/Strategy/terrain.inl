@@ -37,7 +37,7 @@ static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod)
       k += 6;
     }
   string name = "terrain_lod[" + to_string(lod) + "]";
-  return Asset<Mesh>(name, VertexArrayObject(indices, poses, normes, uves)); 
+  return Asset<Mesh>(name, indices, poses, normes, uves); 
 } 
 
 static vector<uint> terrain_types(

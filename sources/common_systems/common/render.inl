@@ -131,8 +131,8 @@ bool matComparer(const RenderStuff &a, const RenderStuff &b)
   int bs = b.material->get_shader().get_shader_program();
   if (as != bs)
     return as < bs;
-  int av = a.mesh->get_vao().vao();
-  int bv = b.mesh->get_vao().vao();
+  uint av = a.mesh->get_vao();
+  uint bv = b.mesh->get_vao();
   return av < bv;
 };
 bool emptyRenderStuff(const RenderStuff &a)
@@ -199,7 +199,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
         }
         stuff.material->bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
-        stuff.mesh->get_vao().render_instances(instanceCount, wire_frame);
+        stuff.mesh->render_instances(instanceCount, wire_frame);
         //debug_log("draw instance = %d, instance size = %d, %s",
         //    instanceCount, instanceSize, stuff.material->get_shader().get_name().c_str());
         instanceCount = 0;

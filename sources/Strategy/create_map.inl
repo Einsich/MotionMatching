@@ -41,7 +41,7 @@ Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w
       uint a = k + i * (N+1) + j, b = a + 1, c = a + N+1, d = c + 1; 
       indices.insert(indices.end(),{a,b,c, b,d,c}); 
     } 
-  return Asset<Mesh>("flag mesh", VertexArrayObject(indices, poses, normes, uves)); 
+  return Asset<Mesh>("flag mesh", indices, poses, normes, uves); 
 } 
 EVENT() scene_created(const ecs::OnSceneCreated&) 
 { 

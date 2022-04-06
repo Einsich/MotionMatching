@@ -31,22 +31,18 @@ SkyBox::SkyBox()
 				indices.push_back(ind); indices.push_back(ind + 2); indices.push_back(ind + 3);
 		}
 	}
-	skyboxVAO = VertexArrayObject(indices, vertecs);
+	skyboxMesh = Mesh(indices, vertecs);
 }
 
 void SkyBox::render() const
 {
+	if (!material)
+		return;
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	if (material)
-	{
-		material->get_shader().use();
-		material->bind_textures_to_shader();
-	}
-
-	skyboxVAO.render();
+	material->get_shader().use();
+	material->bind_textures_to_shader();
+	skyboxMesh.render();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
-
-	
 }

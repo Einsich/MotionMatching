@@ -53,7 +53,7 @@ DebugArrow::DebugArrow()
 
   add_triangle(p[0], p[1], p[2], indices, vert, normal);
   add_triangle(p[0], p[2], p[3], indices, vert, normal);
-  arrow = VertexArrayObject(indices, vert, normal);
+  arrow = Mesh(indices, vert, normal);
 }
 
 mat4 directionMatrix(vec3 from, vec3 to) {

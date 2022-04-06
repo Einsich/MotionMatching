@@ -4,7 +4,6 @@
 #include <render/texture/texture2d.h>
 #include <render/shader/shader.h>
 #include <singleton.h>
-#include <render/vertex_array_object.h>
 
 class WorldRenderer : ecs::Singleton
 {

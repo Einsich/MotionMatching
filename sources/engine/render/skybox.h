@@ -1,11 +1,11 @@
 #pragma once
 #include "material.h"
-#include "vertex_array_object.h"
+#include "mesh.h"
 #include "serialization/reflection.h"
 class SkyBox
 {
 public:
-  VertexArrayObject skyboxVAO;
+  Mesh skyboxMesh;
   REFLECT(
     SkyBox,
     (Asset<Material>) (material)

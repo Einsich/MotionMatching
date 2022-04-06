@@ -3,16 +3,17 @@
 PostFX::PostFX(Shader shader):
 shader(shader)
 {
-  static VertexArrayObject postFXvao;
+  static Mesh postFXvao;
   if (!postFXvao.is_valid())
   {
     vector<uint> indices = {0,1,2,0,2,3};
     vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
-    postFXvao = VertexArrayObject(indices, corners);
+    postFXvao = Mesh(indices, corners);
+    postFXvao.clear_cpu_data();
   }
-  vao = postFXvao;
+  mesh = postFXvao;
 }
 void PostFX::render()
 {
-  vao.render(false);
+  mesh.render(false);
 }

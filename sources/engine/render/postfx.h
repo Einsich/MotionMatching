@@ -1,10 +1,10 @@
 #pragma once
-#include "vertex_array_object.h"
+#include "mesh.h"
 #include "shader/shader.h"
 class PostFX
 {
 private:
-  VertexArrayObject vao;
+  Mesh mesh;
 public:
   Shader shader;
   PostFX(Shader shader);

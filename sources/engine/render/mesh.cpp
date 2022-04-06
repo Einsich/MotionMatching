@@ -3,29 +3,76 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include "imgui.h"
+#include "glad/glad.h"
 
-Mesh::Mesh(VertexArrayObject vao):
-vertexArrayObject(vao)
+
+void Mesh::create_vertex_array()
 {
+  glGenVertexArrays(1, &vertexArrayBufferObject);
+  glBindVertexArray(vertexArrayBufferObject);
+}
 
+void Mesh::create_indices(const std::vector<unsigned int> &indices)
+{
+  GLuint arrayIndexBuffer;
+  glGenBuffers(1, &arrayIndexBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrayIndexBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
+  glBindVertexArray(0);
+  numIndices = indices.size();
+}
+
+void Mesh::init_channel(int index, size_t data_size, const void *data_ptr, int component_count, bool is_float)
+{
+  GLuint arrayBuffer;
+  glGenBuffers(1, &arrayBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+  glBufferData(GL_ARRAY_BUFFER, data_size, data_ptr, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(index);
+  
+  if (is_float) 
+    glVertexAttribIPointer(index, component_count, GL_UNSIGNED_INT, 0, 0);
+  else
+    glVertexAttribPointer(index, component_count, GL_FLOAT, GL_FALSE, 0, 0);
 }
 Mesh::Mesh(const aiMesh *mesh)
 {
   load_assimp(mesh);
 }
-VertexArrayObject Mesh::get_vao() const
+uint Mesh::get_vao() const
 {
-  return vertexArrayObject;
+  return vertexArrayBufferObject;
 }
+
+const BoundingBox &Mesh::get_bounding_box() const
+{
+  return box;
+}
+
+void Mesh::clear_cpu_data()
+{
+  indices.clear();
+  normals.clear();
+  positions.clear();
+  uvs.clear();
+  weights.clear();
+  weightsIndex.clear();
+}
+
 void Mesh::load_assimp(const aiMesh *mesh)
 {
   numVert = mesh->mNumVertices;
   numFaces = mesh->mNumFaces;
+  vec3 box[2];
   if (mesh->HasPositions())
   {
     positions.resize(numVert);
     for (int i = 0; i < numVert; i++)
+    {
       positions[i] = to_vec3(mesh->mVertices[i]);
+      box[0] = glm::min(box[0], positions[i]);
+      box[1] = glm::max(box[1], positions[i]);
+    }
   }
   if (mesh->HasNormals())
   {
@@ -71,13 +118,10 @@ void Mesh::load_assimp(const aiMesh *mesh)
   }
   if (indices.size() && positions.size())
   {
-    vertexArrayObject = VertexArrayObject(indices, positions, normals, uvs, weights, weightsIndex);
+    init(indices, positions, normals, uvs, weights, weightsIndex);
   }
 }
-void Mesh::render(bool wire_frame) const
-{
-  vertexArrayObject.render(wire_frame);
-}
+
 void Mesh::load(const filesystem::path &path, bool reload)
 {
   if (reload)
@@ -129,9 +173,26 @@ void Mesh::load(const filesystem::path &path, bool reload)
   }
 }
 
+void Mesh::render(bool wire_frame) const
+{
+  glBindVertexArray(vertexArrayBufferObject);
+  glDrawElementsBaseVertex(wire_frame ? GL_LINES : GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, 0);
+}
+
+void Mesh::render_instances(int instance, bool wire_frame) const
+{
+  glBindVertexArray(vertexArrayBufferObject);
+  glDrawElementsInstancedBaseVertex(wire_frame ? GL_LINES : GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, instance, 0);
+}
+
+bool Mesh::is_valid() const
+{
+  return vertexArrayBufferObject > 0 && numIndices > 0;
+}
+
 bool Mesh::edit()
 {
-  ImGui::Text("vertex array object: %s", vertexArrayObject.is_valid() ? "is valid" : "not valid");
+  ImGui::Text("vertex array object: %s", is_valid() ? "is valid" : "not valid");
   return false;
 }
 
@@ -155,8 +216,8 @@ Asset<Mesh> plane_mesh(bool create_uv)
     vector<vec3> normals(4, vec3(0,1,0));
     vector<uint> indices = {0,1,2,0,2,3};
     vector<vec2> uv =  {vec2(0,0), vec2(1,0), vec2(1,1),vec2(0,1)};
-    uvMesh = Asset<Mesh>("plane", VertexArrayObject(indices, vertices, normals, uv));
-    notUvMesh = Asset<Mesh>("plane (without uv)", VertexArrayObject(indices, vertices, normals));
+    uvMesh = Asset<Mesh>("plane", indices, vertices, normals, uv);
+    notUvMesh = Asset<Mesh>("plane (without uv)", indices, vertices, normals);
   }
   return create_uv ? uvMesh : notUvMesh;  
 }
@@ -210,8 +271,8 @@ Asset<Mesh> cube_mesh(bool create_uv)
         indices.push_back(ind); indices.push_back(ind + 3); indices.push_back(ind + 2);
       }
     }
-    uvMesh = Asset<Mesh>("cube", VertexArrayObject(indices, vertices, normals, uv));
-    notUvMesh = Asset<Mesh>("cube (without uv)", VertexArrayObject(indices, vertices, normals));
+    uvMesh = Asset<Mesh>("cube", indices, vertices, normals, uv);
+    notUvMesh = Asset<Mesh>("cube (without uv)", indices, vertices, normals);
   }
   return create_uv ? uvMesh : notUvMesh;  
 }
@@ -260,12 +321,12 @@ Asset<Mesh> sphere_mesh(int detailed, bool create_uv)
     {
       int r = detailed * (1 + 1);
       string name = "sphere " + to_string(detailed);
-      spheres[r] = Asset<Mesh>(name, VertexArrayObject(indices, vertices, normals, uv));
+      spheres[r] = Asset<Mesh>(name, indices, vertices, normals, uv);
     }
     {
       int r = detailed * (1 + 0);
       string name = "sphere " + to_string(detailed) + " (without uv)";
-      spheres[r] = Asset<Mesh>(name, VertexArrayObject(indices, vertices, normals));
+      spheres[r] = Asset<Mesh>(name, indices, vertices, normals);
     }
   }
   return spheres[t];  

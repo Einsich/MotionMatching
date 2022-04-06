@@ -1,7 +1,7 @@
 #pragma once
 #include "3dmath.h"
 #include "material.h"
-#include "vertex_array_object.h"
+#include "mesh.h"
 #include "../transform.h"
 #include "singleton.h"
 #include "global_uniform.h"
@@ -14,7 +14,7 @@ private:
     vec4 color;
   };
   Asset<Material> arrowMaterial;
-  VertexArrayObject arrow;
+  Mesh arrow;
   vector<Arrow> depthIgnore;
   vector<Arrow> depthNotIgnore;
   void add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vector<vec3> &vert, vector<vec3> &normal);
