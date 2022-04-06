@@ -186,7 +186,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   {
     int power = 1 << i;
     lods_distances[i] = first_lod_distance * power;
-    lods_meshes[i] = create_detailed_plane(h >> i, w >> i, i);
+    uint p = i + 1;
+    lods_meshes[i] = create_detailed_plane(h >> p, w >> p, i);
   }
 
   terrain_types_texture = Asset<Texture2D>(

@@ -52,7 +52,7 @@ terrain {
   lods_meshes:vector<Asset<Mesh>> { }
   mesh:Asset<Mesh> { }
   terrain_lods_count:i=5;
-  first_lod_distance:f=4;
+  first_lod_distance:f=6;
   transform:Transform { }
 
   pixel_scale:f = 0.05;

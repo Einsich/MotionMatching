@@ -1,11 +1,17 @@
+trees_common
+{
+  _extends:t="buildings_common";
+  lod_selector_axis:f3=0.35,1.0,0.35;
+}
+
 
 leafs_1 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
   lods_distances:vector<float> {
     lod0:f = 1;
-    lod1:f = 10;
-    lod2:f = 30;
+    lod1:f = 2.5;
+    lod2:f = 5;
     lod3:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -16,12 +22,12 @@ leafs_1 {
   }
 }
 leafs_2 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
   lods_distances:vector<float> {
     lod0:f = 1;
-    lod1:f = 10;
-    lod2:f = 30;
+    lod1:f = 2.5;
+    lod2:f = 5;
     lod3:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -32,12 +38,12 @@ leafs_2 {
   }
 }
 leafs_3 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_leafs.Material"; }
   lods_distances:vector<float> {
     lod0:f = 1;
-    lod1:f = 10;
-    lod2:f = 30;
+    lod1:f = 2.5;
+    lod2:f = 5;
     lod3:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -49,12 +55,12 @@ leafs_3 {
 }
 
 palms_1 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_palms.Material"; }
   lods_distances:vector<float> {
     lod0:f = 1;
-    lod1:f = 10;
-    lod2:f = 30;
+    lod1:f = 2.5;
+    lod2:f = 5;
     lod3:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -66,13 +72,13 @@ palms_1 {
 }
 
 pine_1 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
   lods_distances:vector<float> {
-    lod0:f = 1;
-    lod1:f = 3;
-    lod2:f = 10;
-    lod3:f = 30;
+    lod0:f = 0.5;
+    lod1:f = 1;
+    lod2:f = 2.5;
+    lod3:f = 5;
     lod4:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -84,13 +90,13 @@ pine_1 {
   }
 }
 pine_2 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
   lods_distances:vector<float> {
-    lod0:f = 1;
-    lod1:f = 3;
-    lod2:f = 10;
-    lod3:f = 30;
+    lod0:f = 0.5;
+    lod1:f = 1;
+    lod2:f = 2.5;
+    lod3:f = 5;
     lod4:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -102,13 +108,13 @@ pine_2 {
   }
 }
 pine_3 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_pine.Material"; }
   lods_distances:vector<float> {
-    lod0:f = 1;
-    lod1:f = 3;
-    lod2:f = 10;
-    lod3:f = 30;
+    lod0:f = 0.5;
+    lod1:f = 1;
+    lod2:f = 2.5;
+    lod3:f = 5;
     lod4:f = 100;
   }
   lods_meshes:vector<Asset<Mesh>> {
@@ -120,7 +126,7 @@ pine_3 {
   }
 }
 savanna_1 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
   lods_distances:vector<float> {
     lod0:f = 50;
@@ -134,7 +140,7 @@ savanna_1 {
   }
 }
 savanna_2 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
   lods_distances:vector<float> {
     lod0:f = 50;
@@ -148,7 +154,7 @@ savanna_2 {
   }
 }
 savanna_3 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_savanna.Material"; }
   lods_distances:vector<float> {
     lod0:f = 50;
@@ -162,7 +168,7 @@ savanna_3 {
   }
 }
 tropical_1 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
   lods_distances:vector<float> {
     lod0:f = 10;
@@ -178,7 +184,7 @@ tropical_1 {
   }
 }
 tropical_2 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
   lods_distances:vector<float> {
     lod0:f = 10;
@@ -194,7 +200,7 @@ tropical_2 {
   }
 }
 tropical_3 {
-  _extends:t="buildings_common";
+  _extends:t="trees_common";
   material:Asset<Material> { path:t = "resources/Strategy/Materials/tree_tropical.Material"; }
   lods_distances:vector<float> {
     lod0:f = 10;
