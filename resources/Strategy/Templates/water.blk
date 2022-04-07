@@ -10,4 +10,5 @@ water {
   sky_reflection:Asset<CubeMap> { path:t = "resources/common/Textures/Skyboxes/default_sky.CubeMap"; }
 
   isWater:Tag { }
+  is_visible:b=true;
 }

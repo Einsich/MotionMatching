@@ -231,6 +231,7 @@ void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
     mainCamera.transform = transform.get_transform();
     mainCamera.projection = camera.get_projection();
     mainCamera.view = inverse(mainCamera.transform);
+    mainCamera.mainFrustum = create_frustum_from_camera(camera, transform);
     mainCameraExists = true;
   });
   if (!mainCameraExists)

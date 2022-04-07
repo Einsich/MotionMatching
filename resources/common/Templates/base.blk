@@ -20,6 +20,7 @@ plane {
     path:t = "plane";
   }
   material:Asset<Material> { path:t = "resources/common/Materials/plane.Material"; }
+  is_visible:b=true;
 }
 
 free_camera {

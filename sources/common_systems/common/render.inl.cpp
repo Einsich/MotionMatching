@@ -82,13 +82,31 @@ void lod_selector_func()
   ecs::perform_system(lod_selector_descr, lod_selector);
 }
 
+void frustum_culling_func();
+
+ecs::SystemDescription frustum_culling_descr("frustum_culling", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false},
+  {ecs::get_type_description<Transform>("transform"), false},
+  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
+  {ecs::get_type_description<bool>("is_visible"), false},
+  {ecs::get_type_description<ecs::Tag>("useFrustumCulling"), false}
+}, frustum_culling_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor,
+{},
+{});
+
+void frustum_culling_func()
+{
+  ecs::perform_system(frustum_culling_descr, frustum_culling);
+}
+
 void process_mesh_position_func();
 
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<RenderQueue>("render"), false}
+  {ecs::get_type_description<RenderQueue>("render"), false},
+  {ecs::get_type_description<bool>("is_visible"), false}
 }, process_mesh_position_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
 {},
 {});

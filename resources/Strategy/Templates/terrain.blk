@@ -54,6 +54,7 @@ terrain {
   terrain_lods_count:i=5;
   first_lod_distance:f=6;
   transform:Transform { }
+  is_visible:b=true;
 
   pixel_scale:f = 0.05;
   water_level:i=94;

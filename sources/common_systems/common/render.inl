@@ -12,6 +12,7 @@
 #include "resources/resources.h"
 #include <imgui.h>
 #include <profiler/profiler.h>
+#include <render/frustum.h>
 
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Mesh>, Mesh)
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2D>, Texture2D)
@@ -83,7 +84,19 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
   if (mesh)
     mesh.load();
 }
+SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor, ecs::Tag useFrustumCulling) frustum_culling(
+  const MainCamera &mainCamera,
+  const Transform &transform,
+  const Asset<Mesh> &mesh,
+  bool &is_visible)
+{
+  if (mesh)
+    is_visible = isOnFrustum(mainCamera.mainFrustum, transform.get_position(), 
+        (transform.get_scale() * mesh->get_bounding_box().diagonal()).length() * 0.5f);
+  else
+    is_visible = false;
 
+}
 struct RenderStuff
 {
   ecs::EntityId eid;
@@ -99,9 +112,10 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
   const ecs::EntityId &eid,
-  RenderQueue &render)
+  RenderQueue &render,
+  bool is_visible)
 {
-  if (material && mesh)
+  if ( is_visible && material && material->get_shader() && mesh)
   {
     render.queue.emplace_back(RenderStuff{eid, material, mesh});
   }
@@ -122,7 +136,7 @@ render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSetting
 
 }
 
-bool matComparer(const RenderStuff &a, const RenderStuff &b)
+static bool matComparer(const RenderStuff &a, const RenderStuff &b)
 {
   int ad = a.material->draw_order();
   int bd = b.material->draw_order();
@@ -135,10 +149,6 @@ bool matComparer(const RenderStuff &a, const RenderStuff &b)
   uint av = a.mesh->get_vao();
   uint bv = b.mesh->get_vao();
   return av < bv;
-};
-bool emptyRenderStuff(const RenderStuff &a)
-{
-  return !(a.material && a.material->get_shader() && a.mesh);
 };
 
 template<typename Callable> 
@@ -164,7 +174,6 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
   UniformBuffer &instanceData = get_buffer("InstanceData");
   bool wire_frame = editorSettings.wire_frame; 
 
-  render.queue.erase(std::remove_if(render.queue.begin(), render.queue.end(), emptyRenderStuff), render.queue.end());
   std::sort(render.queue.begin(), render.queue.end(), matComparer);
 
   if (render.queue.size() > 0)
@@ -225,8 +234,9 @@ render_collision(const EditorRenderSettings &editorSettings)
   if (!editorSettings.render_collision)
     return;
   Asset<Mesh> cube = cube_mesh(false);
+  Asset<Mesh> sphere = sphere_mesh(4, false);
   Asset<Material> collisionMat = get_resource<Material>("collision");
-  if (!cube || !collisionMat)
+  if (!cube || !collisionMat || !sphere)
     return;
 
   const auto &instanceDescr = collisionMat->get_shader().get_instance_data();
@@ -237,6 +247,8 @@ render_collision(const EditorRenderSettings &editorSettings)
   uint instanceCount = 0;
   QUERY()find_collidable_entity([&](const Transform &transform, const Asset<Mesh> &mesh)
   {
+    if (!mesh)
+      return;
     const BoundingBox &box = mesh->get_bounding_box();
     Transform tm = transform;
     tm.get_position() += tm.get_scale() * box.center();
@@ -252,4 +264,5 @@ render_collision(const EditorRenderSettings &editorSettings)
   collisionMat->get_shader().use();
   instanceData.flush_buffer(instanceCount * instanceSize);
   cube->render_instances(instanceCount, true);
+  sphere->render_instances(instanceCount, true);
 }

@@ -2,6 +2,7 @@ buildings_common {
   transform:Transform { }
   mesh:Asset<Mesh> { }
   material:Asset<Material> { }
+  is_visible:b=true;
 }
 
 eastern_buildings {

@@ -3,6 +3,7 @@
 #include "transform.h"
 #include "ecs.h"
 #include "serialization/reflection.h"
+#include "render/frustum.h"
 struct Camera
 {
 private:
@@ -75,6 +76,7 @@ ecs::EntityId create_camera(vec3 position = vec3(0.f), vec2 rotation = vec2(0.f)
 struct MainCamera : ecs::Singleton
 {
   mat4 projection, transform, view;
+  Frustum mainFrustum;
   vec3 position;
   ecs::EntityId eid;
 };
