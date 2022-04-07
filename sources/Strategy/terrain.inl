@@ -185,7 +185,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   
   string path = heights_texture.asset_path().string();
   path.resize(path.size() - sizeof("meta"));
-  heigth_map.load_heightmap(path, 1.f);
+  heigth_map.load_heightmap(path, 1.f, water_level);
   heigth_map.worldOffset = vec2(0, 0);
   heigth_map.worldScale = vec2(1.f) / pixel_scale;
   lods_distances.resize(terrain_lods_count);
