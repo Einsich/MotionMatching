@@ -1,0 +1,12 @@
+coin_effect
+{
+  transform:Transform { }
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/coin.Material"; }
+  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
+  is_visible:b=true;
+  coinEffect:Tag { }
+  linear_velocity:f3=0,0,0;
+  angular_velocity:f3=0,0,0;
+  life_time:f=0;
+  life_period:f=5;
+}
