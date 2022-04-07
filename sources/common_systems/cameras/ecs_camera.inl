@@ -232,6 +232,7 @@ void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
     mainCamera.projection = camera.get_projection();
     mainCamera.view = inverse(mainCamera.transform);
     mainCamera.mainFrustum = create_frustum_from_camera(camera, transform);
+    mainCamera.aspectRatio = camera.aspectRatio;
     mainCameraExists = true;
   });
   if (!mainCameraExists)
@@ -239,8 +240,8 @@ void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
     mainCamera.position = vec3();
     mainCamera.transform = mat4(1.f);
     mainCamera.view = mat4(1.f);
-    const float aspectRatio = Application::get_context().get_aspect_ratio();
-    mainCamera.projection = perspective(90 * DegToRad, aspectRatio, 0.1f, 1000.f);
+    mainCamera.aspectRatio = Application::get_context().get_aspect_ratio();
+    mainCamera.projection = perspective(90 * DegToRad, mainCamera.aspectRatio, 0.1f, 1000.f);
   }
 }
 

@@ -78,5 +78,6 @@ struct MainCamera : ecs::Singleton
   mat4 projection, transform, view;
   Frustum mainFrustum;
   vec3 position;
+  float aspectRatio;
   ecs::EntityId eid;
 };
