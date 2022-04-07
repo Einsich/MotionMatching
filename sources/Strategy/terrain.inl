@@ -133,12 +133,21 @@ static void spawn_tress(
       vec2 offsets[4] = {vec2(0, 0),vec2(0, 1.f),vec2(1.f, 0), vec2(1.f, 1.f)};
       for (int k = 0; k < 4; k ++)
       {
-        ecs::ComponentInitializerList list;
 
         vec2 p = (vec2(i % w + 0.5f, i / w) + offsets[k]*0.5f + rand_vec2() * 0.25f) * map_scale * d ;
-        float height = height_map.get_height(p);
-        list.set("transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
-        ecs::create_entity(treeTempalte, std::move(list));
+        float height;
+        bool onLand = 
+            height_map.is_land(p + vec2(1, 1) * tree_scale, height) &&
+            height_map.is_land(p + vec2(1, -1) * tree_scale, height) &&
+            height_map.is_land(p + vec2(-1, 1) * tree_scale, height) &&
+            height_map.is_land(p + vec2(-1, -1) * tree_scale, height);
+
+        if (onLand && height_map.is_land(p, height))
+        {
+          ecs::ComponentInitializerList list;
+          list.set("transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
+          ecs::create_entity(treeTempalte, std::move(list));
+        }
       }
     }
   }

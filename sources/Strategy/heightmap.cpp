@@ -3,17 +3,6 @@
 #include <application/application.h>
 #include <common.h>
 
-float HeightMap::get_height(size_t x, size_t y) const
-{
-  if (0 <= x && x < w && 0 <= y && y < h)
-    return heightMap[x + y * w];
-  else
-  {
-    debug_error("(");
-  }
-  
-  return 0;
-}
 
 bool HeightMap::get_height(size_t x, size_t y, float &height) const
 {
@@ -25,12 +14,17 @@ bool HeightMap::get_height(size_t x, size_t y, float &height) const
   return false;
 }
 
-float HeightMap::get_height(vec2 world_pos) const
+bool HeightMap::is_land(vec2 world_pos, float &height) const
 {
   vec2 localPos = (world_pos - worldOffset) * worldScale;
-  return get_height(localPos.x, localPos.y);
+  return get_height(localPos.x, localPos.y, height) && height > waterLevel;
 }
 
+bool HeightMap::get_height(vec2 world_pos, float &height) const
+{
+  vec2 localPos = (world_pos - worldOffset) * worldScale;
+  return get_height(localPos.x, localPos.y, height);
+}
 bool HeightMap::get_height(vec3 world_pos, float &height) const
 {
   vec2 localPos = (vec2(world_pos.x, world_pos.z) - worldOffset) * worldScale;

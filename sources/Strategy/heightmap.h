@@ -11,9 +11,9 @@ struct HeightMap : ecs::Singleton
   size_t w, h;
   float waterLevel;
   vec2 worldOffset, worldScale;
-  float get_height(size_t x, size_t y) const;
   bool get_height(size_t x, size_t y, float &height) const;
-  float get_height(vec2 world_pos) const;
+  bool get_height(vec2 world_pos, float &height) const;
+  bool is_land(vec2 world_pos, float &height) const;
   bool get_height(vec3 world_pos, float &height) const;
   void load_heightmap(const std::string &path, float height_scale, int water_level);
 
