@@ -51,68 +51,47 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset 
       {
         if (adding)
         {
-          static string bufString = "";
-          snprintf(buf, BUFN, "%s", bufString.c_str());
-          if (ImGui::InputText("", buf, BUFN))
+          static bool wantCopy = false;
+          static Asset<AssetStub> stub;
+          static const char *copyName;
+          ImGui::SameLine();
+          if (ImGui::Button("Copy"))
+            wantCopy = !wantCopy, stub = Asset<AssetStub>();
+          if (wantCopy)
           {
-            bufString.assign(buf);
-          }
+            static string searchString = "";
+            snprintf(buf, BUFN, "%s", searchString.c_str());
+            if (ImGui::InputText("Search substr", buf, BUFN))
+            {
+              searchString.assign(buf);
+            }
+            static int curCopy = -1;
+            vector<const char *> names;
             
-          if (bufString == "")
-            ImGui::TextColored(ImVec4(1,0,0,1), "Enter name");
-          else
-          {
-            auto it = selectedAsset.resourceType->resources.find(bufString);
-            if (it != selectedAsset.resourceType->resources.end())
+            for (auto &asset : selectedAsset.resourceType->resources)
             {
-              ImGui::TextColored(ImVec4(1,0,0,1), "There is asset with this name");
+              const string &assetName = asset.second.asset_name();
+              if (strstr(assetName.c_str(), searchString.c_str()))
+                names.push_back(assetName.c_str());
             }
-            else
+            if (ImGui::ListBox("", &curCopy, names.data(), names.size()))
             {
-              static bool wantCopy = false;
-              static Asset<AssetStub> stub;
-              static const char *copyName;
-              ImGui::SameLine();
-              if (ImGui::Button("Copy"))
-                wantCopy = !wantCopy, stub = Asset<AssetStub>();
-              if (wantCopy)
-              {
-                static string searchString = "";
-                snprintf(buf, BUFN, "%s", searchString.c_str());
-                if (ImGui::InputText("Search substr", buf, BUFN))
-                {
-                  searchString.assign(buf);
-                }
-                static int curCopy = -1;
-                vector<const char *> names;
-                
-                for (auto &asset : selectedAsset.resourceType->resources)
-                {
-                  const string &assetName = asset.second.asset_name();
-                  if (strstr(assetName.c_str(), searchString.c_str()))
-                    names.push_back(assetName.c_str());
-                }
-                if (ImGui::ListBox("", &curCopy, names.data(), names.size()))
-                {
-                  stub = selectedAsset.resourceType->resources[string(names[curCopy])];
-                  copyName = names[curCopy];
-                }
-              }
-              ImGui::SameLine();
-              snprintf(buf, BUFN, "%s%s", stub ? "Copy " : "Create", stub ?  copyName : "");
-              std::filesystem::path path;
-              if (ImGui::Button(buf) && get_save_file(path, "." + selectedAsset.resourceType->name))
-              {
-                if (stub)
-                  selectedAsset.resourceType->createCopyAsset(path, stub);
-                else
-                  selectedAsset.resourceType->createNewAsset(path);
-                adding = false;
-                bufString = "";
-              }
-              
+              stub = selectedAsset.resourceType->resources[string(names[curCopy])];
+              copyName = names[curCopy];
             }
           }
+          ImGui::SameLine();
+          snprintf(buf, BUFN, "%s%s", stub ? "Copy " : "Create", stub ?  copyName : "");
+          std::filesystem::path path;
+          if (ImGui::Button(buf) && get_save_file(path, "." + selectedAsset.resourceType->name))
+          {
+            if (stub)
+              selectedAsset.resourceType->createCopyAsset(path, stub);
+            else
+              selectedAsset.resourceType->createNewAsset(path);
+            adding = false;
+          }
+              
           if (ImGui::Button("Back"))
           {
             adding = false;
