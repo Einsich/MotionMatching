@@ -11,6 +11,12 @@
 #include "reflection.h"
 #include "iserializable.h"
 
+template< class T >
+struct is_pair : std::false_type {};
+
+template< class T1 , class T2 >
+struct is_pair< std::pair< T1 , T2 > > : std::true_type {};
+
 template<typename T>
 inline std::enable_if_t<!std::is_base_of_v<ISerializable, T> && !HasReflection<T>::value, size_t>
  write(std::ostream& os, const T& value)
@@ -156,17 +162,30 @@ inline size_t read(std::istream& is, std::vector<T>& value)
   is.read(reinterpret_cast<char*>(&len), sizeof(len));
 
   value.resize(len);
-  for (uint i = 0, n = value.size(); i < n; ++i)
+  if constexpr (std::is_base_of_v<ISerializable, T> ||
+      HasReflection<T>::value ||
+      std::is_same_v<std::filesystem::path, T> ||
+      std::is_same_v<std::string, T> ||
+      is_pair<T>::value ||
+      std::is_same_v<bool, T>)
   {
-    if constexpr (std::is_same_v<bool, T>)
+    for (uint i = 0, n = value.size(); i < n; ++i)
     {
-      T v = value[i];
-      read(is, v);
-      value[i] = v;
+      if constexpr (std::is_same_v<bool, T>)
+      {
+        bool v = value[i];
+        read(is, v);
+        value[i] = v;
+      }
+      else
+        read(is, value[i]);
     }
-    else
-      read(is, value[i]);
   }
+  else
+  {
+    is.read(reinterpret_cast<char*>(value.data()), sizeof(T) * len);
+  }
+  
   return static_cast<size_t>(is.tellg() - pos);
 }
 template<typename T, typename U>

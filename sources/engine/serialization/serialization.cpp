@@ -9,7 +9,7 @@ void print_file_size(const std::string &path, size_t fileSize)
   for (int i = 0; i < N; i++)
     if (fileSize < bound[i])
     {
-      double size = fileSize / (1e3 * bound[i]);
+      double size = 1e3 * fileSize / bound[i];
       debug_log("file %s size = %.1f %s", path.c_str(), size, suffix[i].c_str()); 
       return;
     }
