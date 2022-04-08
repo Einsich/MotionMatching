@@ -394,6 +394,90 @@ DataBlock::DataBlock(std::ifstream &stream)
   read_blk(in_stream, *this);
 }
 
+static void write_to_stream(std::ofstream &stream, const char *name, bool value)
+{
+  stream << name << ":b=" << (value ? "true" : "false") << ";\n";
+}
+static void write_to_stream(std::ofstream &stream, const char *name, int value)
+{
+  stream << name << ":i=" << value << ";\n";
+}
+static void write_to_stream(std::ofstream &stream, const char *name, uint value)
+{
+  stream << name << ":u=" << value << ";\n";
+}
+static void write_to_stream(std::ofstream &stream, const char *name, float value)
+{
+  stream << name << ":f=" << value << ";\n";
+}
+static void write_to_stream(std::ofstream &stream, const char *name, const string &value)
+{
+  stream << name << ":t=\"" << value << "\";\n";
+}
+#define WRITE_VEC(vec2, vec3, vec4, vec2_pr, vec3_pr, vec4_pr)\
+static void write_to_stream(std::ofstream &stream, const char *name, vec2 value)\
+{\
+  stream << name << ":" vec2_pr "=" << value.x << ',' << value.y << ";\n";\
+}\
+static void write_to_stream(std::ofstream &stream, const char *name, vec3 value)\
+{\
+  stream << name << ":" vec3_pr "=" << value.x << ',' << value.y << value.z << ";\n";\
+}\
+static void write_to_stream(std::ofstream &stream, const char *name, vec4 value)\
+{\
+  stream << name << ":" vec4_pr "=" << value.x << ',' << value.y << value.z << value.w << ";\n";\
+}
+
+WRITE_VEC(vec2, vec3, vec4, "f2", "f3", "f4")
+WRITE_VEC(ivec2, ivec3, ivec4, "i2", "i3", "i4")
+WRITE_VEC(uvec2, uvec3, uvec4, "u2", "u3", "u4")
+struct repeat_char
+{
+    repeat_char(size_t count, char c) : c(c), count(count) {}
+    friend std::ostream & operator<<(std::ostream & os, repeat_char repeat)
+    {
+        while (repeat.count-- > 0)
+            os << repeat.c;
+        return os;
+    }
+    char c;
+    size_t count;
+};
+template<typename T>
+static void write(std::ofstream &stream, const DataBlock &blk, const DataBlock::Property &property)
+{
+  write_to_stream(stream, property.name.c_str(), blk.get<T>(property));
+}
+GET_FUNCTIONS(blk_type_writer, write)
+
+void DataBlock::save(std::ofstream &stream, int depth) const
+{
+  for (const Property &property : properties)
+  {
+    stream << repeat_char(depth, ' ');
+    blk_type_writer[property.type](stream, *this, property);
+  }
+  for (const auto &block : blocks)
+  {
+    stream << repeat_char(depth, ' ');
+    if (block->type().empty())
+    {
+      stream << block->name() << "{\n";
+    } 
+    else
+    {
+      stream << '"' << block->name() << ':' << block->type() << "\"{\n";
+    }
+    block->save(stream, depth + 2);
+    stream << repeat_char(depth, ' ') << "}\n\n";
+  }
+}
+void DataBlock::save(const std::string &path) const
+{
+  std::ofstream stream(path);
+  save(stream, 0);
+}
+
 
 const string& DataBlock::name() const
 {

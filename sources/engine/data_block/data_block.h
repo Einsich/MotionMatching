@@ -27,10 +27,7 @@ public:
       name(name), type(type), index(index) {}
   };
 private:
-  template<typename U, typename ...Ts> struct belong_to
-  {
-    static constexpr bool value = (std::is_same<U, Ts>::value || ... );
-  };
+
   template<typename T>
   struct PropertiesTuple ;
 
@@ -92,6 +89,7 @@ private:
     properties.emplace_back(name, N, index);
   }
   
+  void save(std::ofstream &stream, int depth) const;
 
 public:
   DataBlock() = default;
@@ -99,6 +97,8 @@ public:
   explicit DataBlock(const std::string &path);
   explicit DataBlock(const char *path);
   explicit DataBlock(std::ifstream &stream);
+
+  void save(const std::string &path) const;
 
   const std::string& name() const;
   const std::string& type() const;
