@@ -3,6 +3,7 @@
 #include <input.h>
 #include <camera.h>
 #include <imgui.h>
+#include <application/file_dialog.h>
 #include "political_map.h"
 #include "heightmap.h"
 
@@ -49,6 +50,23 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
       {
         is_enabled = editor.enableWater;
       });
+    }
+    string provincesFile;
+    if (ImGui::Button("Save provinces") && get_save_file(provincesFile, ".blk"))
+    {
+      DataBlock provicesData;
+      vector<DataBlock *> states(politicalMap.countries.size());
+      for (int i = 0, n = politicalMap.countries.size(); i < n; i++)
+        states[i] = provicesData.addBlock(politicalMap.countries[i].name.c_str());
+      for (int i = 0, n = politicalMap.provincesInfo.size(); i < n; i++)
+      {
+        uint state = politicalMap.provincesInfo[i].x;
+        if (state < politicalMap.countries.size())
+        {
+          states[state]->add("province", i);
+        }
+      }
+      provicesData.save(provincesFile);
     }
     ImGui::End();
   }

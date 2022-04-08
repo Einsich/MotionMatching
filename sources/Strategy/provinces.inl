@@ -30,17 +30,21 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   Asset<Material> &political_material,
   Asset<Texture2D> &provinces_texture,
   const string &provinces_texture_name,
+  const string &load_provinces_info,
   PoliticalMap &politicalMap)
 {
   
   const auto &path = root_path(provinces_texture_name);
-  DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
+  
 
   int w, h, ch;
-  stbi_set_flip_vertically_on_load(true);
-  auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
-  auto imPtr = image;
-  map<uint, int> colorMap;
+  if (!stbi_info(path.c_str(), &w, &h, &ch))
+  {
+    debug_error("hasn't texture %s", provinces_texture_name.c_str());
+    return;
+  }
+  DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
+  DataBlock provincesOwn(root_path(load_provinces_info));
   auto &states = politicalMap.countries;
   vector<vec3> countriesColors;
   for (uint i = 0; i < countries.blockCount(); i++)
@@ -51,30 +55,44 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
     countriesColors.emplace_back(color);
     states.push_back({color, (int)i, state->name()});
   }
-  auto &provincesMap = politicalMap.provincesIdx;
-  provincesMap.resize(h*w);
-  int cnt = 0;
-  for (int i = 0, n = h * w; i < n; i++, imPtr += ch)
-  {
-    uint c = (imPtr[0] << 16u) + (imPtr[1] << 8u) + imPtr[2];
-    auto it = colorMap.find(c);
-    if (it == colorMap.end())
-    {
-      provincesMap[i] = cnt;
-      colorMap[c] = cnt++;
-    }
-    else
-    {
-      provincesMap[i] = it->second;
-    }    
-  }
-  auto &provincesInfo = politicalMap.provincesInfo;
-  provincesInfo.resize(colorMap.size(), uvec2(0xffff, 0xffff));
 
+  load_object_path(politicalMap.provincesIdx, root_path("resources/Strategy/Content/provinces.bin"));
+
+  auto &provincesMap = politicalMap.provincesIdx;  
+  uint provincesCount = politicalMap.provincesIdx.back();
+  provincesMap.pop_back();
+
+  auto &provincesInfo = politicalMap.provincesInfo;
+  provincesInfo.resize(provincesCount, uvec2(0xffff, 0xffff));
+  for (int i = 0, n = provincesOwn.blockCount(); i < n; i++)
+  {
+    const DataBlock *state = provincesOwn.getBlock(i);
+    
+    auto it = std::find_if(states.begin(), states.end(), [state](const auto &s){return s.name == state->name();});
+    if (it == states.end())
+    {
+      debug_error("doesn't exist %s state", state->name().c_str());
+      continue;
+    }
+    int stateIdx = it->id;
+    for (int j = 0, n = state->propertiesCount(); j < n; j++)
+    {
+      const auto &prop = state->getProperty(j);
+      if (prop.name == "province")
+      {
+        int provinceId = state->get<int>(prop);
+        provincesInfo[provinceId].x = stateIdx;
+      }
+    }
+  }
   provinces_texture = Asset<Texture2D>(
     Texture2D(w, h, TextureColorFormat::RI, TextureFormat::UnsignedInt, TexturePixelFormat::Pixel, TextureWrappFormat::ClampToEdge));
   provinces_texture->update_sub_region(0,0,0,w,h,provincesMap.data());
-  debug_log("%d", colorMap.size());
+  //provincesMap.push_back(provincesCount);
+  //save_object_path(provincesMap, root_path("resources/Strategy/Content/provinces.bin"));
+  //provincesMap.pop_back();
+  debug_log("%d", provincesCount);
+  
   political_material->set_property("material.stateColor[0]", countriesColors);
   political_material->set_property("material.provincesInfo[0]", provincesInfo);
   political_material->set_texture("provincesMap", provinces_texture);

@@ -10,8 +10,8 @@ terrain {
   political_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain_political.Material"; }
   physycal_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
 
-  provinces_texture_name:t="resources/Strategy/Assets/Terrain/europe_provinces.png";
-
+  provinces_texture_name:t="resources/Strategy/Assets/Terrain/europe_heightmap.png";
+  load_provinces_info:t="resources/Strategy/Content/a.blk";
   terrain_diffuse_array:Asset<Texture2DArray> {
     new_asset:b = true;
     path:t = "terrain_diffuse+"

@@ -1,4 +1,4 @@
-#include "country_builder.inl"
+#include "map_editor.inl"
 //Code-generator production
 
 ecs::QueryDescription toggle_water_descr("toggle_water", {
