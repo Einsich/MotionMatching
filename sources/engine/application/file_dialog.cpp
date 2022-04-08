@@ -66,7 +66,11 @@ bool get_save_file_impl(char *file, int file_size, const std::string &extension)
 {
   bool success = get_filename_impl(GetSaveFileName, file, file_size, OFN_PATHMUSTEXIST|OFN_HIDEREADONLY, {{extension, extension}});
   if (success)
+  {
+    if (std::filesystem::exists(file))
+      return true;
     sprintf(file + strlen(file), "%s", extension.c_str());
+  }
   return success;
 }
 bool get_save_file(std::string &path, const std::string &extension)
