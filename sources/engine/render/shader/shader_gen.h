@@ -16,6 +16,7 @@ struct PrecompiledShader
 enum class ShaderLexema
 {
   SHADER_NAME,
+  VARIANT,
   VS_SHADER,
   PS_SHADER,
   INCLUDE
@@ -46,6 +47,7 @@ struct ShaderFileDependency
   ;
   string content;
   vector<MatchRange> lexems;
+  vector<pair<string, vector<int>>> intervals;
 };
 
 bool compile_shader(const string &shaderName, const vector<pair<GLuint, const char*>> &shaders, GLuint &program);

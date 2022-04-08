@@ -18,6 +18,7 @@ namespace fs = filesystem;
 #define NAME_REGEX "[" NAME_SYM "]+"
 #define ARGS_REGEX "[" SPACE_SYM "," NAME_SYM "]*"
 static const regex shader_regex("#shader" SPACE_REGEX NAME_REGEX);
+static const regex variant_regex("#variant" SPACE_REGEX NAME_REGEX SPACE_REGEX ARGS_REGEX "[;]");
 static const regex vs_regex("#vertex_shader");
 static const regex ps_regex("#pixel_shader");
 static const regex include_regex("#include" SPACE_REGEX NAME_REGEX);
@@ -63,19 +64,38 @@ void try_load_shader_code(ShaderFileDependency &shader)
 
   shader.lexems.clear();
   get_matches(shader.lexems, shader.content, shader_regex, ShaderLexema::SHADER_NAME);
+  get_matches(shader.lexems, shader.content, variant_regex, ShaderLexema::VARIANT);
   get_matches(shader.lexems, shader.content, vs_regex, ShaderLexema::VS_SHADER);
   get_matches(shader.lexems, shader.content, ps_regex, ShaderLexema::PS_SHADER);
   shader.isShaderFile = !shader.lexems.empty();
   get_matches(shader.lexems, shader.content, include_regex, ShaderLexema::INCLUDE);
   std::sort(shader.lexems.begin(), shader.lexems.end(), 
     [](const MatchRange &a, const MatchRange &b)->bool{ return a.beginIndex < b.beginIndex;});
-  
+
   for (MatchRange &r : shader.lexems)
   {
     char buf[255];
+    int x;
+    char c;
+    stringstream ss;
     switch (r.type)
     {
     case ShaderLexema::SHADER_NAME: sscanf(&(*r.begin), "#shader %s", buf); r.typeContent.assign(buf); break;
+    case ShaderLexema::VARIANT:
+      ss = stringstream(string((const char*)&(*r.begin), (const char*)&(*r.end)));
+      ss >> r.typeContent;//#variant
+      ss >> r.typeContent;//real name
+      shader.intervals.push_back({r.typeContent, {}});
+
+      while (ss >> x && ss >> c)
+        shader.intervals.back().second.push_back(x);
+      if (shader.intervals.back().second.empty())
+      {
+        shader.intervals.pop_back();
+        debug_error("emty #interval %s", r.typeContent.c_str());
+      }
+
+     break;
     case ShaderLexema::INCLUDE : sscanf(&(*r.begin), "#include %s", buf); r.typeContent.assign(buf); break;
     default: break;
     }
@@ -101,7 +121,7 @@ void update_file(const fs::path &file_path)
   }
   else
   {
-    shaderFiles.try_emplace(fileName, ShaderFileDependency{last_write, {}, file_path, false, false, true, false, "", {}});
+    shaderFiles.try_emplace(fileName, ShaderFileDependency{last_write, {}, file_path, false, false, true, false, "", {}, {}});
   }
 }
 static set<string> invalidation_list;
@@ -207,17 +227,14 @@ struct ParseState
 
   }
 };
-void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
+static void create_shader_from_parsed_state(const fs::path &path, const ParseState &state, const string &predefine)
 {
-  state.vsPart.insert(state.vsPart.begin(), state.commonPart.begin(), state.commonPart.end());
-  state.vsPart.insert(0, "#version 450\n#define VS 1\n");
-
-  state.psPart.insert(state.psPart.begin(), state.commonPart.begin(), state.commonPart.end());
-  state.psPart.insert(0, "#version 450\n#define PS 1\n");
+  string vsPart = "#version 450\n#define VS 1\n" + predefine + state.commonPart + state.vsPart;
+  string psPart = "#version 450\n#define PS 1\n" + predefine + state.commonPart + state.psPart;
   
   vector<pair<uint, const char*>> shaderCode{
-    {GL_VERTEX_SHADER, state.vsPart.c_str()},
-    {GL_FRAGMENT_SHADER, state.psPart.c_str()}
+    {GL_VERTEX_SHADER, vsPart.c_str()},
+    {GL_FRAGMENT_SHADER, psPart.c_str()}
   };
   uint program;
   if (compile_shader(state.currentShader, shaderCode, program))
@@ -237,6 +254,40 @@ void create_shader_from_parsed_state(const fs::path &path, ParseState &state)
     }
   }
 }
+static void create_shader_from_parsed_state(const ShaderFileDependency &shader, ParseState &state)
+{
+  if (shader.intervals.empty())
+  {
+    create_shader_from_parsed_state(shader.path, state, "");
+  }
+  else
+  {
+    string originalName = state.currentShader;
+    int n = shader.intervals.size();
+    vector<int> intervals(n);
+    int count = 1;
+    for (int i = 0; i < n; i++)
+    {
+      intervals[i] = shader.intervals[i].second.size();
+      count *= intervals[i];
+    }
+    for (int v = 0; v < count; v++)
+    {
+      int vTmp = v;
+      string predefine, variantName = "(";
+      for (int i = 0; i < n; i++)
+      {
+        int value = vTmp % intervals[i];
+        predefine += "#define " + shader.intervals[i].first + " " + to_string(value) + "\n";
+        vTmp /= intervals[i];
+        variantName += shader.intervals[i].first + "=" + to_string(value) + (i == n-1 ? ")" : ",");
+      }
+      state.currentShader = originalName + variantName;
+      create_shader_from_parsed_state(shader.path, state, predefine);
+    }
+  }
+}
+
 void process_codegen_shaders()
 {
   dependency_unvalidation();
@@ -255,11 +306,13 @@ void process_codegen_shaders()
         const MatchRange &r = shader.lexems[i];
         switch (r.type)
         {
-        
+        case ShaderLexema::VARIANT:
+          insert_includes(state.commonPart, shaderName, shader.content, shader.lexems, i);
+        break;
         case ShaderLexema::SHADER_NAME:
           if (state.startShader)
           {
-            create_shader_from_parsed_state(shader.path, state);
+            create_shader_from_parsed_state(shader, state);
             state.clear();
           }
           state.startShader = true;
@@ -280,11 +333,14 @@ void process_codegen_shaders()
           insert_includes(state.psPart, shaderName, shader.content, shader.lexems, i);
         break;
         default:
+          i++;
           break;
         }
       }
       if (state.startShader)
-        create_shader_from_parsed_state(shader.path, state);
+      {
+        create_shader_from_parsed_state(shader, state);
+      }
       
     }
   }
