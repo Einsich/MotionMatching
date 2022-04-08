@@ -24,13 +24,14 @@ void create_terrain_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityI
 
 ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain", {
   {ecs::get_type_description<Asset<Texture2D>>("heights_texture"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("provinces_texture"), false},
   {ecs::get_type_description<Asset<Texture2D>>("normal_texture"), false},
   {ecs::get_type_description<Asset<Texture2DArray>>("terrain_diffuse_array"), false},
   {ecs::get_type_description<Asset<Texture2DArray>>("terrain_normal_array"), false},
   {ecs::get_type_description<Asset<Texture2DArray>>("terrain_colormap_array"), false},
   {ecs::get_type_description<Asset<Texture2D>>("terrain_types_texture"), false},
   {ecs::get_type_description<Asset<Material>>("material"), false},
+  {ecs::get_type_description<Asset<Material>>("political_material"), false},
+  {ecs::get_type_description<Asset<Material>>("physycal_material"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},

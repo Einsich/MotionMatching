@@ -11,4 +11,5 @@ water {
 
   isWater:Tag { }
   is_visible:b=true;
+  is_enabled:b=true;
 }

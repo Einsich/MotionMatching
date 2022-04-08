@@ -3,6 +3,7 @@ trees_common
   _extends:t="buildings_common";
   lod_selector_axis:f3=0.35,1.0,0.35;
   useFrustumCulling:Tag{ }
+  isTree:Tag{ }
 }
 
 

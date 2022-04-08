@@ -62,8 +62,11 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
   const vector<Asset<Mesh>> &lods_meshes,
   const vector<float> &lods_distances,
   Asset<Mesh> &mesh,
-  const vec3 *lod_selector_axis)
+  const vec3 *lod_selector_axis,
+  bool is_enabled)
 {
+  if (!is_enabled)
+    return;
   vec3 delta = transform.get_position() - mainCamera.position;
   if (lod_selector_axis)
     delta *= *lod_selector_axis;
@@ -88,9 +91,10 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor, ecs::Tag useFrustu
   const MainCamera &mainCamera,
   const Transform &transform,
   const Asset<Mesh> &mesh,
-  bool &is_visible)
+  bool &is_visible,
+  bool is_enabled)
 {
-  if (mesh)
+  if (mesh && is_enabled)
     is_visible = isOnFrustum(mainCamera.mainFrustum, transform.get_position(), 
         (transform.get_scale() * mesh->get_bounding_box().diagonal()).length() * 0.5f);
   else
@@ -113,9 +117,10 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   Asset<Material> &material,
   const ecs::EntityId &eid,
   RenderQueue &render,
-  bool is_visible)
+  bool is_visible,
+  bool is_enabled)
 {
-  if ( is_visible && material && material->get_shader() && mesh)
+  if (is_enabled && is_visible && material && material->get_shader() && mesh)
   {
     render.queue.emplace_back(RenderStuff{eid, material, mesh});
   }

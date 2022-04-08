@@ -1,12 +1,16 @@
 terrain {
   heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_heightmap.png.meta"; }
-  provinces_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_provinces.png.meta"; }
+  provinces_texture:Asset<Texture2D> { }
   normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
   terrain_texture:t = "resources/Strategy/Assets/Terrain/europe_terrain.png";
   tree_map:t ="resources/Strategy/Assets/Terrain/europe_trees.png";
   atlas_diffuse:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
   atlas_normal:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
+  material:Asset<Material> { }
+  political_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain_political.Material"; }
+  physycal_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
+
+  provinces_texture_name:t="resources/Strategy/Assets/Terrain/europe_provinces.png";
 
   terrain_diffuse_array:Asset<Texture2DArray> {
     new_asset:b = true;
@@ -55,6 +59,7 @@ terrain {
   first_lod_distance:f=6;
   transform:Transform { }
   is_visible:b=true;
+  is_enabled:b=true;
 
   pixel_scale:f = 0.05;
   water_level:i=94;

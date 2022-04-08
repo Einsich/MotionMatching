@@ -72,6 +72,7 @@ void try_load_shader_code(ShaderFileDependency &shader)
   std::sort(shader.lexems.begin(), shader.lexems.end(), 
     [](const MatchRange &a, const MatchRange &b)->bool{ return a.beginIndex < b.beginIndex;});
 
+  shader.intervals.clear();
   for (MatchRange &r : shader.lexems)
   {
     char buf[255];

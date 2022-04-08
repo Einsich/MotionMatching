@@ -100,3 +100,17 @@ bool HeightMap::ray_trace(const vec3 &p, const vec3 &n, vec3 &hitPos, float eps)
   }
   return false;
 }
+
+bool HeightMap::world_to_pixel(const vec3 &world, int &x, int &y) const
+{
+  vec2 localPos = (vec2(world.x, world.z) - worldOffset) * worldScale;
+  x = localPos.x;
+  y = localPos.y;
+  return 0 <= x && x < (int)w && 0 <= y && y < (int)h;
+}
+
+bool HeightMap::world_to_pixel(const vec3 &world, ivec2 &pixel) const
+{
+  pixel = (vec2(world.x, world.z) - worldOffset) * worldScale;
+  return 0 <= pixel.x && pixel.x < (int)w && 0 <= pixel.y && pixel.y < (int)h;
+}

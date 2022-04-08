@@ -159,13 +159,14 @@ static void query_water(Callable);
 
 EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   const Asset<Texture2D> &heights_texture,
-  const Asset<Texture2D> &provinces_texture,
   const Asset<Texture2D> &normal_texture,
   const Asset<Texture2DArray> &terrain_diffuse_array,
   const Asset<Texture2DArray> &terrain_normal_array,
   const Asset<Texture2DArray> &terrain_colormap_array,
   Asset<Texture2D> &terrain_types_texture,
   Asset<Material> &material,
+  Asset<Material> &political_material,
+  Asset<Material> &physycal_material,
   Transform &transform,
   vector<float> &lods_distances,
   vector<Asset<Mesh>> &lods_meshes,
@@ -218,17 +219,21 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
     debug_error("terrain_type_color and terrain_type_index should have same size");
 
   spawn_tress(tree_map, vec2(mapWidth, mapHeight), tree_scale, heigth_map);
-
-  material->set_texture("heightMap", heights_texture);
-  material->set_texture("provincesMap", provinces_texture);
-  material->set_texture("normalMap", normal_texture);
-  material->set_texture("terrainMap", terrain_types_texture);
-  material->set_texture("terrainDiffuseArray", terrain_diffuse_array);
-  material->set_texture("terrainNormalArray", terrain_normal_array);
-  material->set_texture("terrainColormapArray", terrain_colormap_array);
-  material->set_property("material.mapSize", ivec2(w, h));
-  material->set_property("material.texelSize", vec2(1.f / w, 1.f / h));
-  material->before_save();
+  auto materialSetter = [&](Material &mat)
+  {
+    mat.set_texture("heightMap", heights_texture);
+    mat.set_texture("normalMap", normal_texture);
+    mat.set_texture("terrainMap", terrain_types_texture);
+    mat.set_texture("terrainDiffuseArray", terrain_diffuse_array);
+    mat.set_texture("terrainNormalArray", terrain_normal_array);
+    mat.set_texture("terrainColormapArray", terrain_colormap_array);
+    mat.set_property("material.mapSize", ivec2(w, h));
+    mat.set_property("material.texelSize", vec2(1.f / w, 1.f / h));
+    mat.before_save();
+  };
+  materialSetter(*political_material);
+  materialSetter(*physycal_material);
+  material = political_material;
 
   QUERY(ecs::Tag isWater)query_water([&](
     const Asset<Texture2D> &water_noise_texture,

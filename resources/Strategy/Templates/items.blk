@@ -4,6 +4,7 @@ coin_effect
   material:Asset<Material> { path:t = "resources/Strategy/Materials/coin.Material"; }
   mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
   is_visible:b=true;
+  is_enabled:b=true;
   coinEffect:Tag { }
   linear_velocity:f3=0,0,0;
   angular_velocity:f3=0,0,0;

@@ -52,7 +52,7 @@ pair<int, int> Material::get_uniform_index(const char *name, int gl_type) const
     }
     return {instanceData.materialFields[i].vectorOffset, instanceData.materialFields[i].size};
   } 
-  debug_error("there is no field %s", name);
+  debug_error("there is no field %s in %s", name, shader.get_name().c_str());
   return {-1, -1};
 }
 

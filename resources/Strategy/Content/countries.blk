@@ -1,0 +1,29 @@
+
+Aachen{
+  color:i3=157,51,167;
+  tag:t="AAC";
+}
+Castille{
+  color:i3=193,171,8;
+  tag:t="CAS";
+}
+Burgundy{
+  color:i3=148,30,70;
+  tag:t="BUR";
+}
+Britanny{
+  color:i3=118,99,151;
+  tag:t="BRI";
+}
+France{
+  color:i3=20,50,210;
+  tag:t="FRA";
+}
+England{
+  color:i3=193,26,14;
+  tag:t="ENG";
+}
+Scotland{
+  color:i3=199,175,12;
+  tag:t="SCO";
+}

@@ -60,6 +60,14 @@ bool edit_component(TYPE &component, const char *name, bool view_only)\
   ImGui::Spacing();\
   return edited; \
 }
+#define VEC_UTYPE(TYPE, INPUT)\
+bool edit_component(TYPE &component, const char *name, bool view_only)\
+{\
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+  bool edited = ImGui::INPUT(name, (int*)&component.x, flags);\
+  ImGui::Spacing();\
+  return edited; \
+}
 #define VEC_TYPE(TYPE, INPUT)\
 bool edit_component(TYPE &component, const char *name, bool view_only)\
 {\
@@ -71,6 +79,10 @@ bool edit_component(TYPE &component, const char *name, bool view_only)\
 VEC_ITYPE(ivec2, InputInt2)
 VEC_ITYPE(ivec3, InputInt3)
 VEC_ITYPE(ivec4, InputInt4)
+
+VEC_UTYPE(uvec2, InputInt2)
+VEC_UTYPE(uvec3, InputInt3)
+VEC_UTYPE(uvec4, InputInt4)
 
 VEC_TYPE(vec2, InputFloat2)
 VEC_TYPE(vec3, InputFloat3)

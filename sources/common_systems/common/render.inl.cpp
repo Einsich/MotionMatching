@@ -72,7 +72,8 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
   {ecs::get_type_description<vector<float>>("lods_distances"), false},
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<vec3>("lod_selector_axis"), true}
+  {ecs::get_type_description<vec3>("lod_selector_axis"), true},
+  {ecs::get_type_description<bool>("is_enabled"), false}
 }, lod_selector_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor,
 {},
 {});
@@ -89,6 +90,7 @@ ecs::SystemDescription frustum_culling_descr("frustum_culling", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<bool>("is_visible"), false},
+  {ecs::get_type_description<bool>("is_enabled"), false},
   {ecs::get_type_description<ecs::Tag>("useFrustumCulling"), false}
 }, frustum_culling_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::GameEditor,
 {},
@@ -106,7 +108,8 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<RenderQueue>("render"), false},
-  {ecs::get_type_description<bool>("is_visible"), false}
+  {ecs::get_type_description<bool>("is_visible"), false},
+  {ecs::get_type_description<bool>("is_enabled"), false}
 }, process_mesh_position_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
 {},
 {});

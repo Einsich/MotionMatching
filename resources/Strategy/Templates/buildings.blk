@@ -3,6 +3,7 @@ buildings_common {
   mesh:Asset<Mesh> { }
   material:Asset<Material> { }
   is_visible:b=true;
+  is_enabled:b=true;
 }
 
 eastern_buildings {
