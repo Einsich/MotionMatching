@@ -1,6 +1,7 @@
 #include <ecs.h> 
 #include <render/render.h> 
 #include <render/texture/stb_image.h>
+#include <render/texture/stb_write.h>
 #include <input.h>
 #include "political_map.h"
 
@@ -33,16 +34,6 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   const string &load_provinces_info,
   PoliticalMap &politicalMap)
 {
-  
-  const auto &path = root_path(provinces_texture_name);
-  
-
-  int w, h, ch;
-  if (!stbi_info(path.c_str(), &w, &h, &ch))
-  {
-    debug_error("hasn't texture %s", provinces_texture_name.c_str());
-    return;
-  }
   DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
   DataBlock provincesOwn(root_path(load_provinces_info));
   auto &states = politicalMap.countries;
@@ -56,14 +47,19 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
     states.push_back({color, (int)i, state->name()});
   }
 
-  load_object_path(politicalMap.provincesIdx, root_path("resources/Strategy/Content/provinces.bin"));
-
+  const auto &path = root_path(provinces_texture_name);
+  int w, h, ch;
+  stbi_set_flip_vertically_on_load(true);
+  auto img = stbi_load(path.c_str(), &w, &h, &ch, 4);
   auto &provincesMap = politicalMap.provincesIdx;  
-  uint provincesCount = politicalMap.provincesIdx.back();
-  provincesMap.pop_back();
+  provincesMap.resize(w*h);
+  memcpy(provincesMap.data(), img, w*h*4);
+  stbi_image_free(img);
+
+  uint provincesCount = PoliticalMap::MAX_PROVINCES;
 
   auto &provincesInfo = politicalMap.provincesInfo;
-  provincesInfo.resize(provincesCount, uvec2(0xffff, 0xffff));
+  provincesInfo.resize(provincesCount, uvec2(PoliticalMap::MAX_PROVINCES, PoliticalMap::MAX_PROVINCES));
   for (int i = 0, n = provincesOwn.blockCount(); i < n; i++)
   {
     const DataBlock *state = provincesOwn.getBlock(i);
@@ -88,10 +84,9 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   provinces_texture = Asset<Texture2D>(
     Texture2D(w, h, TextureColorFormat::RI, TextureFormat::UnsignedInt, TexturePixelFormat::Pixel, TextureWrappFormat::ClampToEdge));
   provinces_texture->update_sub_region(0,0,0,w,h,provincesMap.data());
-  //provincesMap.push_back(provincesCount);
-  //save_object_path(provincesMap, root_path("resources/Strategy/Content/provinces.bin"));
-  //provincesMap.pop_back();
-  debug_log("%d", provincesCount);
+  //stbi_flip_vertically_on_write(1);
+  //stbi_write_tga(root_path("resources/Strategy/Content/provinces.tga").c_str(), w, h, 4, provincesMap.data());
+
   
   political_material->set_property("material.stateColor[0]", countriesColors);
   political_material->set_property("material.provincesInfo[0]", provincesInfo);

@@ -1,6 +1,8 @@
 #include "texture2d.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_write.h"
 #include "resources/resource_registration.h"
 #include "imgui.h"
 #include "component_editor.h"

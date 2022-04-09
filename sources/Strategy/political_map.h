@@ -18,4 +18,8 @@ struct PoliticalMap : ecs::Singleton
   vector<uint> provincesIdx;
   //readonly
   vector<uvec2> provincesInfo;
+  enum
+  {
+    MAX_PROVINCES = 1 << 10
+  };
 };
