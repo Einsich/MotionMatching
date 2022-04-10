@@ -157,7 +157,7 @@ void main()
   texColor = GetOverlay(detailColor.rgb, texColor, material_inst.colorMapWeigth);
 #endif
 
-  vec3 color = CalculateLighting(texColor, normal, LightDirection, 0, vec3(1,1,1), 1.5);
+  vec3 color = CalculateLighting(texColor, normal, LightDirection, AmbientLight.x, SunLight, 1.0);
 
   FragColor = vec4(color, 1.0);
 }

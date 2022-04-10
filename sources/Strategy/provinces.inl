@@ -42,7 +42,8 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   {
     const DataBlock *state = countries.getBlock(i);
     vec3 color = state->get("color", ivec3(0,0,0));
-    color = glm::pow(color / 255.f, vec3(2.5f));
+    color /= 255.f;
+    //color = glm::pow(color / 255.f, vec3(2.5f));
     countriesColors.emplace_back(color);
     states.push_back({color, (int)i, state->name()});
   }

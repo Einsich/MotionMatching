@@ -11,7 +11,7 @@ terrain {
   physycal_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
 
   provinces_texture_name:t="resources/Strategy/Assets/Terrain/provinces.tga";
-  load_provinces_info:t="resources/Strategy/Content/a.blk";
+  load_provinces_info:t="resources/Strategy/Content/provinces_owning.blk";
   terrain_diffuse_array:Asset<Texture2DArray> {
     new_asset:b = true;
     path:t = "terrain_diffuse+"

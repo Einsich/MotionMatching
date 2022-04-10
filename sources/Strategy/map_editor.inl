@@ -80,7 +80,10 @@ EVENT(ecs::SystemTag::Editor) trace_province(
   const HeightMap &heightMap,
   PoliticalMap &politicalMap)
 {
-  if (event.action != MouseAction::Down || !editor.editProvinces || editor.currentCountry < 0)
+  if (event.action != MouseAction::Down ||
+      !editor.editProvinces ||
+      editor.currentCountry < 0 ||
+      ImGui::IsAnyWindowHovered())
     return;
   float x = event.x, y = event.y;
 

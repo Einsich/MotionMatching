@@ -36,7 +36,7 @@ EVENT(ecs::SystemTag::GameEditor) spawn_coin_effect(
   const MainCamera &mainCamera,
   const HeightMap &heightMap)
 {
-  if (event.action != MouseAction::Down)
+  //if (event.action != MouseAction::Down)
     return;
   float x = event.x, y = event.y;
 

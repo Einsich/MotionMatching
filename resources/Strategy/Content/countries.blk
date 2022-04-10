@@ -1,7 +1,38 @@
-
 Aachen{
   color:i3=157,51,167;
   tag:t="AAC";
+}
+Alencon{
+  color:i3=162,116,225;
+  tag:t="ALE";
+}
+Algiers{
+  color:i3=230,225,110;
+  tag:t="ALG";
+}
+Alsace{
+  color:i3=246,223,15;
+  tag:t="ALS";
+}
+Anhalt{
+  color:i3=203,93,124;
+  tag:t="ANH";
+}
+Ansbach{
+  color:i3=130,77,119;
+  tag:t="ANS";
+}
+Aquilea{
+  color:i3=34,30,174;
+  tag:t="AQU";
+}
+Aragon{
+  color:i3=166,68,72;
+  tag:t="ARA";
+}
+Armagnac{
+  color:i3=154,182,242;
+  tag:t="ARM";
 }
 Castille{
   color:i3=193,171,8;
@@ -26,4 +57,73 @@ England{
 Scotland{
   color:i3=199,175,12;
   tag:t="SCO";
+}
+Liege{
+  color:i3=149,186,37;
+  tag:t="LIE";
+}
+Leinster{
+  color:i3=48,164,51;
+  tag:t="LEI";
+}
+Tyrone{
+  color:i3=131,101,85;
+  tag:t="TYR";
+}
+Savoy{
+  color:i3=235,196,231;
+  tag:t="SAV";
+}
+Provence{
+  color:i3=93,160,163;
+  tag:t="PRO";
+}
+Navarra{
+  color:i3=252,233,58;
+  tag:t="NAV";
+}
+Holland{
+  color:i3=156,96,100;
+  tag:t="HOL";
+}
+
+Foix{
+  color:i3=105,106,182;
+  tag:t="FOI";
+}
+Brabant{
+  color:i3=118,193,153;
+  tag:t="BRA";
+}
+Bourbonnais{
+  color:i3=120,148,140;
+  tag:t="BOU";
+}
+Berry{
+  color:i3=85,65,215;
+  tag:t="BER";
+}
+Bavaria{
+  color:i3=178,163,143;
+  tag:t="BAV";
+}
+Avignon{
+  color:i3=205,178,107;
+  tag:t="AVI";
+}
+Baden{
+  color:i3=117,161,67;
+  tag:t="BAD";
+}
+Auvergne{
+  color:i3=81,122,125;
+  tag:t="AUV";
+}
+Granada{
+  color:i3=210,220,175;
+  tag:t="GRA";
+}
+Portugal{
+  color:i3=57,160,101;
+  tag:t="POR";
 }
