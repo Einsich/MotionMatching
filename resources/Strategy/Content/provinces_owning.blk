@@ -2,6 +2,7 @@ Aachen{
 }
 
 Alencon{
+  province:i=378;
 }
 
 Algiers{
@@ -23,6 +24,7 @@ Algiers{
 }
 
 Alsace{
+  province:i=365;
   province:i=387;
 }
 
@@ -53,6 +55,108 @@ Armagnac{
   province:i=264;
 }
 
+Avignon{
+  province:i=270;
+}
+
+Athens{
+  province:i=139;
+}
+
+Auvergne{
+  province:i=305;
+}
+
+Augsburg{
+}
+
+Austria{
+  province:i=342;
+  province:i=375;
+  province:i=376;
+  province:i=400;
+}
+
+Baden{
+  province:i=372;
+  province:i=398;
+}
+
+Bavaria{
+  province:i=370;
+  province:i=371;
+  province:i=373;
+  province:i=393;
+  province:i=407;
+  province:i=415;
+  province:i=418;
+}
+
+Bar{
+  province:i=384;
+}
+
+Berry{
+  province:i=353;
+}
+
+Bohemia{
+  province:i=405;
+  province:i=432;
+  province:i=450;
+}
+
+Bourbonnais{
+  province:i=285;
+  province:i=322;
+}
+
+Brabant{
+  province:i=455;
+  province:i=456;
+  province:i=468;
+  province:i=478;
+}
+
+Brandenburg{
+}
+
+Bremen{
+  province:i=527;
+}
+
+Britanny{
+  province:i=352;
+  province:i=362;
+  province:i=374;
+  province:i=381;
+}
+
+Brunswick{
+}
+
+Burgundy{
+  province:i=325;
+  province:i=330;
+  province:i=347;
+  province:i=354;
+  province:i=417;
+  province:i=427;
+  province:i=430;
+  province:i=433;
+  province:i=452;
+}
+
+ByzantineEmpire{
+  province:i=110;
+  province:i=119;
+  province:i=140;
+  province:i=208;
+}
+
+Candar{
+}
+
 Castille{
   province:i=126;
   province:i=132;
@@ -67,75 +171,471 @@ Castille{
   province:i=193;
   province:i=194;
   province:i=211;
-  province:i=214;
-  province:i=224;
   province:i=225;
   province:i=237;
   province:i=244;
-  province:i=247;
 }
 
-Burgundy{
-  province:i=325;
-  province:i=330;
-  province:i=347;
-  province:i=354;
-  province:i=414;
-  province:i=417;
-  province:i=427;
-  province:i=430;
-  province:i=433;
-  province:i=435;
-  province:i=438;
-  province:i=452;
+Chernigov{
 }
 
-Britanny{
-  province:i=352;
-  province:i=362;
-  province:i=374;
-  province:i=381;
+Cologne{
 }
 
-France{
-  province:i=231;
-  province:i=234;
-  province:i=245;
-  province:i=257;
+Connacht{
+}
+
+Corsica{
+  province:i=219;
+}
+
+Crete{
+  province:i=89;
+}
+
+Croatia{
+  province:i=246;
+  province:i=265;
+  province:i=267;
+  province:i=280;
+  province:i=302;
+}
+
+Cyprus{
+  province:i=84;
+}
+
+Danzig{
+  province:i=539;
+}
+
+Dauphine{
   province:i=281;
   province:i=308;
-  province:i=328;
-  province:i=369;
-  province:i=378;
-  province:i=386;
-  province:i=390;
-  province:i=413;
+}
+
+EastFrisia{
+  province:i=529;
 }
 
 England{
   province:i=258;
   province:i=275;
-  province:i=397;
-  province:i=404;
-  province:i=441;
   province:i=454;
-  province:i=457;
   province:i=464;
   province:i=472;
-  province:i=475;
-  province:i=483;
   province:i=484;
   province:i=491;
-  province:i=499;
   province:i=500;
   province:i=510;
   province:i=514;
   province:i=519;
   province:i=524;
   province:i=530;
-  province:i=542;
-  province:i=557;
-  province:i=565;
+}
+
+Epirus{
+  province:i=151;
+}
+
+Ferrara{
+}
+
+Finland{
+  province:i=650;
+  province:i=653;
+  province:i=657;
+  province:i=660;
+  province:i=667;
+  province:i=671;
+  province:i=676;
+}
+
+France{
+  province:i=369;
+  province:i=386;
+  province:i=390;
+  province:i=413;
+}
+
+Frankfurt{
+}
+
+Friesland{
+  province:i=520;
+}
+
+Foix{
+  province:i=239;
+}
+
+Galicia{
+  province:i=214;
+  province:i=224;
+  province:i=247;
+}
+
+Gelre{
+  province:i=501;
+}
+
+Genoa{
+  province:i=271;
+}
+
+Georgia{
+  province:i=221;
+  province:i=223;
+  province:i=243;
+}
+
+GoldenHorde{
+}
+
+Gotland{
+  province:i=605;
+}
+
+Guyenne{
+  province:i=234;
+  province:i=276;
+  province:i=288;
+}
+
+Granada{
+  province:i=106;
+  province:i=109;
+  province:i=117;
+  province:i=120;
+}
+
+Hainaut{
+  province:i=435;
+  province:i=438;
+}
+
+Hamburg{
+  province:i=515;
+  province:i=521;
+  province:i=537;
+}
+
+Hannover{
+}
+
+Hansa{
+  province:i=525;
+  province:i=548;
+}
+
+Hessen{
+}
+
+Holland{
+  province:i=485;
+  province:i=496;
+}
+
+Holstein{
+  province:i=546;
+}
+
+Hungary{
+  province:i=289;
+  province:i=296;
+  province:i=299;
+  province:i=311;
+  province:i=312;
+  province:i=318;
+  province:i=327;
+  province:i=334;
+  province:i=344;
+  province:i=349;
+  province:i=356;
+  province:i=366;
+  province:i=368;
+  province:i=382;
+  province:i=389;
+  province:i=394;
+}
+
+Karaman{
+  province:i=108;
+  province:i=124;
+  province:i=136;
+}
+
+Kleves{
+  province:i=462;
+  province:i=492;
+}
+
+KnightsHospitaller{
+  province:i=104;
+}
+
+Lauenburg{
+  province:i=534;
+}
+
+Lithuania{
+}
+
+Liege{
+  province:i=434;
+}
+
+Leinster{
+  province:i=554;
+}
+
+Lorraine{
+  province:i=379;
+  province:i=403;
+}
+
+Lunenburg{
+}
+
+Luxemburg{
+  province:i=414;
+}
+
+Magdenburg{
+}
+
+Maintz{
+}
+
+Mantua{
+}
+
+Manster{
+  province:i=535;
+}
+
+Mazovia{
+}
+
+Mecklenburg{
+  province:i=533;
+}
+
+Meissen{
+}
+
+Milan{
+  province:i=294;
+  province:i=295;
+  province:i=298;
+  province:i=304;
+  province:i=307;
+}
+
+Modena{
+  province:i=286;
+}
+
+Moldavia{
+  province:i=290;
+  province:i=314;
+  province:i=321;
+}
+
+Montenegro{
+  province:i=226;
+  province:i=238;
+}
+
+Morea{
+  province:i=123;
+}
+
+Morocco{
+  province:i=2;
+  province:i=3;
+  province:i=4;
+  province:i=29;
+  province:i=30;
+  province:i=36;
+  province:i=40;
+  province:i=46;
+  province:i=54;
+  province:i=58;
+  province:i=62;
+  province:i=64;
+  province:i=79;
+  province:i=80;
+  province:i=81;
+}
+
+Munster{
+}
+
+Navarra{
+  province:i=228;
+}
+
+Naples{
+  province:i=146;
+  province:i=180;
+  province:i=181;
+  province:i=190;
+  province:i=202;
+}
+
+NizhnyNovgorod{
+}
+
+Normandy{
+  province:i=397;
+  province:i=404;
+}
+
+Northumberland{
+  province:i=441;
+  province:i=457;
+  province:i=475;
+}
+
+Norway{
+  province:i=626;
+  province:i=639;
+  province:i=647;
+  province:i=651;
+  province:i=662;
+  province:i=666;
+  province:i=670;
+  province:i=675;
+}
+
+Novgorod{
+  province:i=620;
+  province:i=632;
+  province:i=634;
+  province:i=642;
+  province:i=649;
+  province:i=655;
+  province:i=656;
+  province:i=672;
+  province:i=678;
+}
+
+Oldenburg{
+}
+
+Orleans{
+  province:i=328;
+}
+
+Ottomans{
+  province:i=111;
+  province:i=113;
+  province:i=118;
+  province:i=129;
+  province:i=131;
+  province:i=134;
+  province:i=142;
+  province:i=144;
+  province:i=147;
+  province:i=153;
+  province:i=158;
+  province:i=161;
+  province:i=164;
+  province:i=166;
+  province:i=171;
+  province:i=172;
+  province:i=174;
+  province:i=178;
+  province:i=183;
+  province:i=184;
+  province:i=185;
+  province:i=196;
+  province:i=197;
+  province:i=198;
+  province:i=200;
+  province:i=206;
+  province:i=217;
+  province:i=218;
+  province:i=227;
+  province:i=235;
+  province:i=241;
+}
+
+Palatinate{
+}
+
+Parma{
+  province:i=277;
+}
+
+Perm{
+}
+
+Pisa{
+  province:i=273;
+}
+
+Poland{
+}
+
+Portugal{
+  province:i=125;
+  province:i=135;
+  province:i=159;
+  province:i=177;
+  province:i=186;
+  province:i=203;
+  province:i=210;
+}
+
+Pommerania{
+  province:i=532;
+  province:i=538;
+  province:i=547;
+}
+
+Provence{
+  province:i=249;
+  province:i=338;
+  province:i=363;
+}
+
+Pskov{
+}
+
+Raguza{
+  province:i=233;
+}
+
+Ryazan{
+}
+
+Salzburg{
+}
+
+Sardinia{
+  province:i=162;
+}
+
+Savoy{
+  province:i=262;
+  province:i=279;
+  province:i=297;
+}
+
+Saxony{
+}
+
+Schweiz{
+  province:i=301;
+  province:i=320;
+  province:i=329;
+  province:i=331;
+  province:i=336;
+  province:i=339;
+  province:i=350;
+  province:i=355;
 }
 
 Scotland{
@@ -148,88 +648,157 @@ Scotland{
   province:i=636;
 }
 
-Liege{
-  province:i=434;
+Serbia{
+  province:i=229;
+  province:i=230;
+  province:i=260;
+  province:i=263;
 }
 
-Leinster{
-  province:i=554;
+Sicily{
+  province:i=101;
+  province:i=121;
+  province:i=128;
+}
+
+Silesia{
+  province:i=411;
+  province:i=429;
+}
+
+Smolensk{
+}
+
+Styria{
+  province:i=335;
+  province:i=357;
+}
+
+Sweden{
+  province:i=583;
+  province:i=593;
+  province:i=597;
+  province:i=598;
+  province:i=604;
+  province:i=621;
+  province:i=622;
+  province:i=630;
+  province:i=633;
+  province:i=637;
+  province:i=646;
+  province:i=652;
+  province:i=659;
+  province:i=661;
+  province:i=677;
+  province:i=679;
+}
+
+Teutonics{
+  province:i=540;
+  province:i=544;
+  province:i=558;
+  province:i=566;
+  province:i=580;
+  province:i=594;
+  province:i=602;
+  province:i=606;
+  province:i=607;
+  province:i=615;
+  province:i=616;
+  province:i=625;
+  province:i=629;
+  province:i=635;
+}
+
+Thuringia{
+}
+
+Tirol{
+  province:i=323;
+  province:i=340;
+  province:i=341;
+  province:i=359;
+}
+
+Toulouse{
+  province:i=231;
+  province:i=245;
+  province:i=257;
+}
+
+Trier{
+  province:i=409;
+  province:i=421;
+}
+
+Trebizond{
+  province:i=192;
+}
+
+Tunisia{
+  province:i=45;
+  province:i=48;
+  province:i=60;
+  province:i=82;
+  province:i=85;
+  province:i=97;
+  province:i=112;
+}
+
+Tuscany{
+  province:i=251;
+}
+
+Tver{
 }
 
 Tyrone{
-  province:i=503;
+  province:i=487;
 }
 
-Savoy{
+Ulm{
 }
 
-Provence{
-  province:i=249;
-  province:i=338;
-  province:i=363;
+Urbino{
+  province:i=240;
+  province:i=274;
 }
 
-Navarra{
-  province:i=228;
+Utrecht{
+  province:i=497;
 }
 
-Holland{
-  province:i=485;
-  province:i=496;
+Venice{
+  province:i=283;
+  province:i=306;
+  province:i=313;
 }
 
-Foix{
-  province:i=239;
+Volyn{
 }
 
-Brabant{
-  province:i=455;
-  province:i=456;
-  province:i=468;
-  province:i=478;
+Wales{
+  province:i=483;
+  province:i=499;
 }
 
-Bourbonnais{
-  province:i=285;
-  province:i=322;
+Wallachia{
+  province:i=266;
+  province:i=268;
 }
 
-Berry{
-  province:i=353;
+Wurttemberg{
 }
 
-Bavaria{
+Wurzburg{
 }
 
-Avignon{
-  province:i=270;
+Yaroslavl{
 }
 
-Baden{
-  province:i=372;
-  province:i=398;
-}
-
-Auvergne{
-  province:i=276;
-  province:i=288;
-  province:i=305;
-}
-
-Granada{
-  province:i=106;
-  province:i=109;
-  province:i=117;
-  province:i=120;
-}
-
-Portugal{
-  province:i=125;
-  province:i=135;
-  province:i=159;
-  province:i=177;
-  province:i=186;
-  province:i=203;
-  province:i=210;
+York{
+  province:i=542;
+  province:i=557;
+  province:i=565;
 }
 

@@ -30,7 +30,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
       vector<const char *> names;
       vector<int> keys;
       names.emplace_back("None");
-      keys.emplace_back(0xffff);
+      keys.emplace_back(PoliticalMap::MAX_PROVINCES);
       for (const auto &state : politicalMap.countries)
       {
         names.emplace_back(state.name.c_str());
@@ -73,7 +73,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
 }
 
 EVENT(ecs::SystemTag::Editor) trace_province(
-  const MouseButtonDownEvent<MouseButton::LeftButton> &event,
+  const MouseClickEvent &event,
   Asset<Material> &political_material,
   const MapEditor &editor,
   const MainCamera &mainCamera,
@@ -85,6 +85,9 @@ EVENT(ecs::SystemTag::Editor) trace_province(
       editor.currentCountry < 0 ||
       ImGui::IsAnyWindowHovered())
     return;
+  int editedProvId = event.buttonType == MouseButton::RightButton ? PoliticalMap::MAX_PROVINCES : editor.currentCountryId;
+
+
   float x = event.x, y = event.y;
 
   auto [w, h] = get_resolution();
@@ -100,7 +103,7 @@ EVENT(ecs::SystemTag::Editor) trace_province(
     if (heightMap.world_to_pixel(worldPos, x, y))
     {
       uint id = politicalMap.provincesIdx[x+y*heightMap.w];
-      politicalMap.provincesInfo[id].x = editor.currentCountryId;
+      politicalMap.provincesInfo[id].x = editedProvId;
       political_material->set_property("material.provincesInfo[0]", politicalMap.provincesInfo);
     }
 

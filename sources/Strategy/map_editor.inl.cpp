@@ -28,10 +28,10 @@ void country_builder_func()
   ecs::perform_system(country_builder_descr, country_builder);
 }
 
-void trace_province_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event);
-void trace_province_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid);
+void trace_province_handler(const MouseClickEvent &event);
+void trace_province_singl_handler(const MouseClickEvent &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> trace_province_descr("trace_province", {
+ecs::EventDescription<MouseClickEvent> trace_province_descr("trace_province", {
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<MapEditor>("editor"), false},
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
@@ -39,11 +39,11 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> trace_provi
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
 }, trace_province_handler, trace_province_singl_handler, ecs::SystemTag::Editor);
 
-void trace_province_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
+void trace_province_handler(const MouseClickEvent &event)
 {
   ecs::perform_event(event, trace_province_descr, trace_province);
 }
-void trace_province_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid)
+void trace_province_singl_handler(const MouseClickEvent &event, ecs::EntityId eid)
 {
   ecs::perform_event(event, trace_province_descr, eid, trace_province);
 }

@@ -34,29 +34,241 @@ Armagnac{
   color:i3=154,182,242;
   tag:t="ARM";
 }
-Castille{
-  color:i3=193,171,8;
-  tag:t="CAS";
+Avignon{
+  color:i3=205,178,107;
+  tag:t="AVI";
 }
-Burgundy{
-  color:i3=148,30,70;
-  tag:t="BUR";
+Athens{
+  color:i3=113,112,96;
+  tag:t="ATH";
+}
+Auvergne{
+  color:i3=81,122,125;
+  tag:t="AUV";
+}
+Augsburg{
+  color:i3=20,188,131;
+  tag:t="AUG";
+}
+Austria{
+  color:i3=220,220,220;
+  tag:t="AUS";
+}
+Baden{
+  color:i3=117,161,67;
+  tag:t="BAD";
+}
+Bavaria{
+  color:i3=178,163,143;
+  tag:t="BAV";
+}
+Bar{
+  color:i3=108,139,228;
+  tag:t="BAR";
+}
+Berry{
+  color:i3=85,65,215;
+  tag:t="BER";
+}
+Bohemia{
+  color:i3=161,139,40;
+  tag:t="BOH";
+}
+Bourbonnais{
+  color:i3=120,148,140;
+  tag:t="BOU";
+}
+Brabant{
+  color:i3=118,193,153;
+  tag:t="BRA";
+}
+Brandenburg{
+  color:i3=123,90,90;
+  tag:t="BRA";
+}
+Bremen{
+  color:i3=33,101,137;
+  tag:t="BRE";
 }
 Britanny{
   color:i3=118,99,151;
   tag:t="BRI";
 }
-France{
-  color:i3=20,50,210;
-  tag:t="FRA";
+Brunswick{
+  color:i3=116,92,39;
+  tag:t="BRU";
+}
+Burgundy{
+  color:i3=148,30,70;
+  tag:t="BUR";
+}
+ByzantineEmpire{
+  color:i3=149,45,102;
+  tag:t="BYZ";
+}
+Candar{
+  color:i3=114,70,103;
+  tag:t="CAN";
+}
+Castille{
+  color:i3=193,171,8;
+  tag:t="CAS";
+}
+Chernigov{
+  color:i3=190,190,190;
+  tag:t="CHE";
+}
+Cologne{
+  color:i3=84,124,48;
+  tag:t="COL";
+}
+Connacht{
+  color:i3=193,237,85;
+  tag:t="CON";
+}
+Corsica{
+  color:i3=106,178,46;
+  tag:t="COR";
+}
+Crete{
+  color:i3=138,110,130;
+  tag:t="CRE";
+}
+Croatia{
+  color:i3=174,227,95;
+  tag:t="CRO";
+}
+Cyprus{
+  color:i3=245,200,30;
+  tag:t="CYP";
+}
+Danzig{
+  color:i3=78,129,151;
+  tag:t="BUR";
+}
+Dauphine{
+  color:i3=93,194,122;
+  tag:t="DAU";
+}
+EastFrisia{
+  color:i3=190,32,16;
+  tag:t="FRS";
 }
 England{
   color:i3=193,26,14;
   tag:t="ENG";
 }
-Scotland{
-  color:i3=199,175,12;
-  tag:t="SCO";
+Epirus{
+  color:i3=230,228,214;
+  tag:t="EPI";
+}
+Ferrara{
+  color:i3=192,102,151;
+  tag:t="FER";
+}
+Finland{
+  color:i3=182,134,100;
+  tag:t="FIN";
+}
+France{
+  color:i3=20,50,210;
+  tag:t="FRA";
+}
+Frankfurt{
+  color:i3=243,201,33;
+  tag:t="FRN";
+}
+Friesland{
+  color:i3=165,89,27;
+  tag:t="FRI";
+}
+Foix{
+  color:i3=105,106,182;
+  tag:t="FOI";
+}
+Galicia{
+  color:i3=240,167,130;
+  tag:t="GAL";
+}
+Gelre{
+  color:i3=139,66,97;
+  tag:t="GEL";
+}
+Genoa{
+  color:i3=218,215,56;
+  tag:t="GEN";
+}
+Georgia{
+  color:i3=190,35,37;
+  tag:t="GEO";
+}
+GoldenHorde{
+  color:i3=193,179,127;
+  tag:t="HOR";
+}
+Gotland{
+  color:i3=191,113,133;
+  tag:t="GOT";
+}
+Guyenne{
+  color:i3=32,144,204;
+  tag:t="GUY";
+}
+Granada{
+  color:i3=210,220,175;
+  tag:t="GRA";
+}
+Hainaut{
+  color:i3=103,62,185;
+  tag:t="HAI";
+}
+Hamburg{
+  color:i3=104,148,71;
+  tag:t="HAM";
+}
+Hannover{
+  color:i3=164,217,127;
+  tag:t="HAN";
+}
+Hansa{
+  color:i3=156,179,189;
+  tag:t="HSA";
+}
+Hessen{
+  color:i3=114,171,184;
+  tag:t="HES";
+}
+Holland{
+  color:i3=156,96,100;
+  tag:t="HOL";
+}
+Holstein{
+  color:i3=220,150,158;
+  tag:t="HOL";
+}
+Hungary{
+  color:i3=152,85,92;
+  tag:t="HUN";
+}
+Karaman{
+  color:i3=30,100,130;
+  tag:t="KAR";
+}
+Kleves{
+  color:i3=173,176,113;
+  tag:t="KLE";
+}
+KnightsHospitaller{
+  color:i3=106,127,183;
+  tag:t="KNI";
+}
+Lauenburg{
+  color:i3=79,139,99;
+  tag:t="LAE";
+}
+Lithuania{
+  color:i3=154,69,116;
+  tag:t="LIT";
 }
 Liege{
   color:i3=149,186,37;
@@ -66,64 +278,287 @@ Leinster{
   color:i3=48,164,51;
   tag:t="LEI";
 }
-Tyrone{
-  color:i3=131,101,85;
-  tag:t="TYR";
+Lorraine{
+  color:i3=115,142,205;
+  tag:t="LOR";
 }
-Savoy{
-  color:i3=235,196,231;
-  tag:t="SAV";
+Lunenburg{
+  color:i3=135,109,147;
+  tag:t="LUN";
 }
-Provence{
-  color:i3=93,160,163;
-  tag:t="PRO";
+Luxemburg{
+  color:i3=53,140,73;
+  tag:t="LUX";
+}
+Magdenburg{
+  color:i3=189,115,99;
+  tag:t="MAG";
+}
+Maintz{
+  color:i3=178,145,87;
+  tag:t="MAI";
+}
+Mantua{
+  color:i3=191,83,101;
+  tag:t="MAN";
+}
+Manster{
+  color:i3=104,137,140;
+  tag:t="MST";
+}
+Mazovia{
+  color:i3=195,149,155;
+  tag:t="MAZ";
+}
+Mecklenburg{
+  color:i3=55,140,143;
+  tag:t="MEC";
+}
+Meissen{
+  color:i3=58,174,61;
+  tag:t="MEI";
+}
+Milan{
+  color:i3=166,108,146;
+  tag:t="MIL";
+}
+Modena{
+  color:i3=241,252,151;
+  tag:t="MOD";
+}
+Moldavia{
+  color:i3=136,157,23;
+  tag:t="MOL";
+}
+Montenegro{
+  color:i3=39,108,140;
+  tag:t="MON";
+}
+Morea{
+  color:i3=168,121,129;
+  tag:t="MOR";
+}
+Morocco{
+  color:i3=191,110,62;
+  tag:t="MRC";
+}
+Munster{
+  color:i3=205,103,80;
+  tag:t="MUN";
 }
 Navarra{
   color:i3=252,233,58;
   tag:t="NAV";
 }
-Holland{
-  color:i3=156,96,100;
-  tag:t="HOL";
+Naples{
+  color:i3=100,50,150;
+  tag:t="NAP";
 }
-
-Foix{
-  color:i3=105,106,182;
-  tag:t="FOI";
+NizhnyNovgorod{
+  color:i3=176,72,77;
+  tag:t="NZN";
 }
-Brabant{
-  color:i3=118,193,153;
-  tag:t="BRA";
+Normandy{
+  color:i3=131,138,116;
+  tag:t="NOR";
 }
-Bourbonnais{
-  color:i3=120,148,140;
-  tag:t="BOU";
+Northumberland{
+  color:i3=83,149,105;
+  tag:t="NRT";
 }
-Berry{
-  color:i3=85,65,215;
-  tag:t="BER";
+Norway{
+  color:i3=117,165,188;
+  tag:t="NOR";
 }
-Bavaria{
-  color:i3=178,163,143;
-  tag:t="BAV";
+Novgorod{
+  color:i3=97,126,37;
+  tag:t="NOV";
 }
-Avignon{
-  color:i3=205,178,107;
-  tag:t="AVI";
+Oldenburg{
+  color:i3=147,130,118;
+  tag:t="OLD";
 }
-Baden{
-  color:i3=117,161,67;
-  tag:t="BAD";
+Orleans{
+  color:i3=111,122,184;
+  tag:t="ORL";
 }
-Auvergne{
-  color:i3=81,122,125;
-  tag:t="AUV";
+Ottomans{
+  color:i3=126,203,120;
+  tag:t="TUR";
 }
-Granada{
-  color:i3=210,220,175;
-  tag:t="GRA";
+Palatinate{
+  color:i3=57,151,142;
+  tag:t="PAL";
+}
+Parma{
+  color:i3=128,202,129;
+  tag:t="PAR";
+}
+Perm{
+  color:i3=236,159,90;
+  tag:t="PER";
+}
+Pisa{
+  color:i3=177,150,109;
+  tag:t="PIS";
+}
+Poland{
+  color:i3=197,92,106;
+  tag:t="POL";
 }
 Portugal{
   color:i3=57,160,101;
   tag:t="POR";
+}
+Pommerania{
+  color:i3=61,136,66;
+  tag:t="POM";
+}
+Provence{
+  color:i3=93,160,163;
+  tag:t="PRO";
+}
+Pskov{
+  color:i3=82,123,95;
+  tag:t="PSK";
+}
+Raguza{
+  color:i3=160,82,128;
+  tag:t="RAG";
+}
+Ryazan{
+  color:i3=146,134,77;
+  tag:t="RYA";
+}
+Salzburg{
+  color:i3=129,109,9;
+  tag:t="SAL";
+}
+Sardinia{
+  color:i3=117,146,167;
+  tag:t="SAR";
+}
+Savoy{
+  color:i3=235,196,231;
+  tag:t="SAV";
+}
+Saxony{
+  color:i3=155,147,180;
+  tag:t="SAX";
+}
+Schweiz{
+  color:i3=153,122,108;
+  tag:t="SCH";
+}
+Scotland{
+  color:i3=199,175,12;
+  tag:t="SCO";
+}
+Serbia{
+  color:i3=166,72,57;
+  tag:t="SER";
+}
+Sicily{
+  color:i3=73,152,76;
+  tag:t="SIC";
+}
+Silesia{
+  color:i3=84,166,93;
+  tag:t="SIL";
+}
+Smolensk{
+  color:i3=106,160,43;
+  tag:t="SMO";
+}
+Styria{
+  color:i3=59,126,59;
+  tag:t="STY";
+}
+Sweden{
+  color:i3=8,82,165;
+  tag:t="SWE";
+}
+Teutonics{
+  color:i3=102,105,104;
+  tag:t="TEU";
+}
+Thuringia{
+  color:i3=66,126,157;
+  tag:t="THU";
+}
+Tirol{
+  color:i3=170,43,21;
+  tag:t="TIR";
+}
+Toulouse{
+  color:i3=127,170,146;
+  tag:t="TOU";
+}
+Trier{
+  color:i3=208,104,44;
+  tag:t="WAL";
+}
+Trebizond{
+  color:i3=40,164,157;
+  tag:t="TRE";
+}
+Tunisia{
+  color:i3=146,134,57;
+  tag:t="TUN";
+}
+Tuscany{
+  color:i3=84,96,136;
+  tag:t="TUS";
+}
+Tver{
+  color:i3=136,158,183;
+  tag:t="TVE";
+}
+Tyrone{
+  color:i3=131,101,85;
+  tag:t="TYR";
+}
+Ulm{
+  color:i3=202,202,202;
+  tag:t="ULM";
+}
+Urbino{
+  color:i3=61,152,180;
+  tag:t="URB";
+}
+Utrecht{
+  color:i3=223,198,64;
+  tag:t="UTR";
+}
+Venice{
+  color:i3=54,167,156;
+  tag:t="VEN";
+}
+Volyn{
+  color:i3=205,38,38;
+  tag:t="VOL";
+}
+Wales{
+  color:i3=117,127,174;
+  tag:t="WLS";
+}
+Wallachia{
+  color:i3=161,126,128;
+  tag:t="WAL";
+}
+Wurttemberg{
+  color:i3=111,162,128;
+  tag:t="WRT";
+}
+Wurzburg{
+  color:i3=147,146,106;
+  tag:t="WRZ";
+}
+Yaroslavl{
+  color:i3=131,141,142;
+  tag:t="YAR";
+}
+York{
+  color:i3=107,170,77;
+  tag:t="YOR";
 }
