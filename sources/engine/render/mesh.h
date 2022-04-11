@@ -30,7 +30,7 @@ class Mesh : public  IAsset
     if (channel.size() > 0)
     {
       const int size = sizeof(T) / sizeof(channel[0][0]);
-      init_channel(i, sizeof(T) * channel.size(), channel.data(), size, !std::is_same<T, uvec4>::value);
+      init_channel(i, sizeof(T) * channel.size(), channel.data(), size, !(std::is_same<T, uvec4>::value || std::is_same<T, uvec1>::value));
     }
     InitChannel<i + 1>(channels...);
   }

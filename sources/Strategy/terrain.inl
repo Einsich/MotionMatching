@@ -4,7 +4,26 @@
 #include <render/texture/stb_image.h>
 #include <camera.h>
 #include "heightmap.h"
+#include <render/global_uniform.h>
 
+struct MapRenderData
+{
+  vec4 mapSize;
+};
+
+EVENT(ecs::SystemTag::GameEditor) add_map_uniform(const ecs::OnSceneCreated &)
+{
+  add_uniform_buffer<MapRenderData>("mapData", 1);
+}
+SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor)
+set_map_render_data(vec2 map_size)
+{
+  get_buffer("mapData").
+  update_buffer_and_flush<MapRenderData>( 
+  {
+    vec4(map_size, 1.f / map_size)
+  });
+}
 static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod) 
 { 
   uint tris = h * w * 2 * 3;
@@ -146,6 +165,7 @@ static void spawn_tress(
         {
           ecs::ComponentInitializerList list;
           list.set("transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
+          list.set("is_enabled", false);
           ecs::create_entity(treeTempalte, std::move(list));
         }
       }
@@ -179,6 +199,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   const vector<int> &terrain_type_index,
   float pixel_scale,
   int water_level,
+  vec2 &map_size,
   HeightMap &heigth_map
 )
 {
@@ -191,6 +212,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   int w = heights_texture->width(), h = heights_texture->height();
   float mapWidth = w * pixel_scale;
   float mapHeight = h * pixel_scale;
+  map_size = vec2(mapWidth, mapHeight);
   transform.set_scale(vec3(mapWidth, 1, mapHeight));
   
   string path = heights_texture.asset_path().string();

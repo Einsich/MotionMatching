@@ -62,6 +62,7 @@ terrain {
   is_enabled:b=true;
 
   pixel_scale:f = 0.05;
+  map_size:f2=0,0;
   water_level:i=94;
 
   terrain_type_color:vector<ivec3> {
@@ -96,4 +97,12 @@ terrain {
   }
   lod_selector_axis:f3=0,1,0;
   tree_scale:f=0.03;
+}
+
+borders{
+  material:Asset<Material> { path:t = "resources/Strategy/Materials/border.Material"; }
+  mesh:Asset<Mesh> { }
+  transform:Transform { }
+  is_visible:b=true;
+  is_enabled:b=true;
 }

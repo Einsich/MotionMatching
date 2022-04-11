@@ -208,6 +208,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
           if (stuff.material->is_transparent() && !startTransparentPass)
           {
             glEnable(GL_BLEND);
+            glDisable(GL_DEPTH_TEST);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             startTransparentPass = true;
           }
@@ -223,6 +224,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     if (startTransparentPass)
     {
       glDisable(GL_BLEND);
+      glEnable(GL_DEPTH_TEST);
     }
   }
   render.queue.clear();

@@ -31,9 +31,9 @@ void Mesh::init_channel(int index, size_t data_size, const void *data_ptr, int c
   glEnableVertexAttribArray(index);
   
   if (is_float) 
-    glVertexAttribIPointer(index, component_count, GL_UNSIGNED_INT, 0, 0);
-  else
     glVertexAttribPointer(index, component_count, GL_FLOAT, GL_FALSE, 0, 0);
+  else
+    glVertexAttribIPointer(index, component_count, GL_UNSIGNED_INT, 0, 0);
 }
 Mesh::Mesh(const aiMesh *mesh)
 {

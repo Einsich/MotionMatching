@@ -14,12 +14,16 @@ struct Country
 
 struct PoliticalMap : ecs::Singleton
 {
+  int w, h;
   vector<Country> countries;
   vector<uint> provincesIdx;
   //readonly
   vector<uvec2> provincesInfo;
+  //key = a << 16 | b, a < b, value = {border index, swaped}
+  map<uint, pair<int, bool>> borderIndexes;
   enum
   {
-    MAX_PROVINCES = 1 << 10
+    MAX_PROVINCES = 1 << 10,
+    PROVINCES_MASK = MAX_PROVINCES - 1
   };
 };

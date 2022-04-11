@@ -5,6 +5,8 @@
 #include <input.h>
 #include "political_map.h"
 
+Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale);
+
 template<typename Callable>
 static void toggle_map_mode(Callable);
 
@@ -32,6 +34,7 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   Asset<Texture2D> &provinces_texture,
   const string &provinces_texture_name,
   const string &load_provinces_info,
+  float pixel_scale,
   PoliticalMap &politicalMap)
 {
   DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
@@ -52,6 +55,8 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   int w, h, ch;
   stbi_set_flip_vertically_on_load(true);
   auto img = stbi_load(path.c_str(), &w, &h, &ch, 4);
+  politicalMap.w = w;
+  politicalMap.h = h;
   auto &provincesMap = politicalMap.provincesIdx;  
   provincesMap.resize(w*h);
   memcpy(provincesMap.data(), img, w*h*4);
@@ -92,4 +97,13 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   political_material->set_property("material.stateColor[0]", countriesColors);
   political_material->set_property("material.provincesInfo[0]", provincesInfo);
   political_material->set_texture("provincesMap", provinces_texture);
+  
+
+  {
+    const ecs::Template *borders = ecs::get_template("borders");
+    ecs::ComponentInitializerList list;
+    list.set("mesh", build_borders(politicalMap, pixel_scale));
+    ecs::create_entity(borders, std::move(list));
+    debug_log("%d", politicalMap.borderIndexes.size());
+  }
 }

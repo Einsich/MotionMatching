@@ -247,11 +247,11 @@ static void create_shader_from_parsed_state(const fs::path &path, const ParseSta
   {
     {
       ofstream file(fs::path(path).concat("." + state.currentShader + ".ps"));
-      file << state.psPart;
+      file << psPart;
     }
     {
       ofstream file(fs::path(path).concat("." + state.currentShader + ".vs"));
-      file << state.vsPart;
+      file << vsPart;
     }
   }
 }

@@ -2,12 +2,12 @@
 #define USE_UV
 struct Material
 {
-  vec2 mapTexelSize;
   vec3 additionalColorMultiplier;
 };
 #include vs_output
 #include instancing
 #include common_data
+#include map_uniforms
 
 #vertex_shader
 
@@ -22,7 +22,7 @@ void main()
   vec4 VertexPosition = tm * vec4(vertex_position, 1);
   vsOutput.EyespaceNormal = mat3(instance.Model) * Normal;
 
-  float height = texture(heightMap, material_inst.mapTexelSize*VertexPosition.xz).y;
+  float height = texture(heightMap, mapSize.zw*VertexPosition.xz).y;
   VertexPosition.y += height * 1.0;
 
   gl_Position = ViewProjection * VertexPosition;
