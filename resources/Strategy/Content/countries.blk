@@ -2,6 +2,10 @@ Aachen{
   color:i3=157,51,167;
   tag:t="AAC";
 }
+Albania{
+  color:i3=181,0,20;
+  tag:t="ALB";
+}
 Alencon{
   color:i3=162,116,225;
   tag:t="ALE";
@@ -33,6 +37,10 @@ Aragon{
 Armagnac{
   color:i3=154,182,242;
   tag:t="ARM";
+}
+Armenia{
+  color:i3=145,30,75;
+  tag:t="ARE";
 }
 Avignon{
   color:i3=205,178,107;
@@ -73,6 +81,10 @@ Berry{
 Bohemia{
   color:i3=161,139,40;
   tag:t="BOH";
+}
+Bosnia{
+  color:i3=240,167,130;
+  tag:t="BOS";
 }
 Bourbonnais{
   color:i3=120,148,140;
@@ -130,9 +142,17 @@ Corsica{
   color:i3=106,178,46;
   tag:t="COR";
 }
+Corfu{
+  color:i3=211,172,185;
+  tag:t="CRF";
+}
 Crete{
   color:i3=138,110,130;
   tag:t="CRE";
+}
+Crimea{
+  color:i3=59,158,125;
+  tag:t="CRI";
 }
 Croatia{
   color:i3=174,227,95;
@@ -150,6 +170,10 @@ Dauphine{
   color:i3=93,194,122;
   tag:t="DAU";
 }
+Denmark{
+  color:i3=190,70,70;
+  tag:t="DEN";
+}
 EastFrisia{
   color:i3=190,32,16;
   tag:t="FRS";
@@ -161,6 +185,10 @@ England{
 Epirus{
   color:i3=230,228,214;
   tag:t="EPI";
+}
+Egypt{
+  color:i3=255,220,104;
+  tag:t="EGY";
 }
 Ferrara{
   color:i3=192,102,151;
@@ -250,17 +278,37 @@ Hungary{
   color:i3=152,85,92;
   tag:t="HUN";
 }
+Kaffa{
+  color:i3=150,0,25;
+  tag:t="KAF";
+}
 Karaman{
   color:i3=30,100,130;
   tag:t="KAR";
+}
+Kiev{
+  color:i3=81,123,210;
+  tag:t="KIE";
 }
 Kleves{
   color:i3=173,176,113;
   tag:t="KLE";
 }
+Khorosan{
+  color:i3=130,168,224;
+  tag:t="KHO";
+}
 KnightsHospitaller{
   color:i3=106,127,183;
   tag:t="KNI";
+}
+Krakow{
+  color:i3=138,193,231;
+  tag:t="KRA";
+}
+Kurland{
+  color:i3=99,137,153;
+  tag:t="KUR";
 }
 Lauenburg{
   color:i3=79,139,99;
@@ -269,6 +317,10 @@ Lauenburg{
 Lithuania{
   color:i3=154,69,116;
   tag:t="LIT";
+}
+LivonianOrder{
+  color:i3=125,30,100;
+  tag:t="LIV";
 }
 Liege{
   color:i3=149,186,37;
@@ -342,6 +394,10 @@ Morocco{
   color:i3=191,110,62;
   tag:t="MRC";
 }
+Moscowy{
+  color:i3=206,181,97;
+  tag:t="MOS";
+}
 Munster{
   color:i3=205,103,80;
   tag:t="MUN";
@@ -386,6 +442,10 @@ Ottomans{
   color:i3=126,203,120;
   tag:t="TUR";
 }
+Papal{
+  color:i3=211,220,178;
+  tag:t="PAP";
+}
 Palatinate{
   color:i3=57,151,142;
   tag:t="PAL";
@@ -405,6 +465,10 @@ Pisa{
 Poland{
   color:i3=197,92,106;
   tag:t="POL";
+}
+Polotsk{
+  color:i3=16,113,155;
+  tag:t="PLT";
 }
 Portugal{
   color:i3=57,160,101;
@@ -426,6 +490,14 @@ Raguza{
   color:i3=160,82,128;
   tag:t="RAG";
 }
+Ramazan{
+  color:i3=130,0,0;
+  tag:t="RAM";
+}
+Riga{
+  color:i3=183,176,194;
+  tag:t="RIG";
+}
 Ryazan{
   color:i3=146,134,77;
   tag:t="RYA";
@@ -437,6 +509,10 @@ Salzburg{
 Sardinia{
   color:i3=117,146,167;
   tag:t="SAR";
+}
+Saruhan{
+  color:i3=0,123,12;
+  tag:t="SRH";
 }
 Savoy{
   color:i3=235,196,231;
@@ -496,7 +572,11 @@ Toulouse{
 }
 Trier{
   color:i3=208,104,44;
-  tag:t="WAL";
+  tag:t="TRI";
+}
+Tripoli{
+  color:i3=25,105,90;
+  tag:t="TRP";
 }
 Trebizond{
   color:i3=40,164,157;
