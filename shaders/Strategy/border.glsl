@@ -61,17 +61,30 @@ void main()
   float lod = log2(1+distToCamera)+1;
   vec4 c0 = borders[borderIndex].color0;
   vec4 c1 = borders[borderIndex].color1;
+  vec4 result;
   if (c0.a > 0)
   {
-    vec4 tex = textureLod(thickBorder, vsOutput.UV * vec2(1, 2), lod);
-    tex.a /= 0.75;
-    tex.rgb = ((vsOutput.UV.y < 0.5 ? c0.rgb : c1.rgb) + tex.rgb*0.7) * tex.a;
-    FragColor = tex;
+    result = textureLod(thickBorder, vsOutput.UV * vec2(1, 2), lod);
+    result.a /= 0.75;
+    result.rgb = ((vsOutput.UV.y < 0.5 ? c0.rgb : c1.rgb) + result.rgb*0.7) * result.a;
   }
   else
   {
     vec2 uv = vsOutput.UV;
     uv.y = (uv.y - 0.5) * 1.5 + 0.5;
-    FragColor = textureLod(thinBorder, uv, lod-1);
+    result = textureLod(thinBorder, uv, lod-1);
   }
+  if (c1.a > 0)
+  {
+    float pulsationTime = c1.a - Time.x;
+    float t = cos(pulsationTime);
+    t = t*t + 1.0;
+    vec3 pulsationColor = vec3(1, 0.84, 0) * t;
+    float p = 1.0 - abs(vsOutput.UV.y - 0.5);
+    p = pow(p, 7);
+    float pulsationAlpha = t * p;
+    result.rgb = mix(result.rgb, pulsationColor, pulsationAlpha);
+    result.a = max(result.a, pulsationAlpha);
+  }
+  FragColor = result;
 }

@@ -48,4 +48,23 @@ void trace_province_singl_handler(const MouseClickEvent &event, ecs::EntityId ei
   ecs::perform_event(event, trace_province_descr, eid, trace_province);
 }
 
+void selecte_handler(const MouseClickEvent &event);
+void selecte_singl_handler(const MouseClickEvent &event, ecs::EntityId eid);
+
+ecs::EventDescription<MouseClickEvent> selecte_descr("selecte", {
+  {ecs::get_type_description<MainCamera>("mainCamera"), false},
+  {ecs::get_type_description<HeightMap>("heightMap"), false},
+  {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
+  {ecs::get_type_description<MapRenderData>("renderData"), false}
+}, selecte_handler, selecte_singl_handler, ecs::SystemTag::GameEditor);
+
+void selecte_handler(const MouseClickEvent &event)
+{
+  ecs::perform_event(event, selecte_descr, selecte);
+}
+void selecte_singl_handler(const MouseClickEvent &event, ecs::EntityId eid)
+{
+  ecs::perform_event(event, selecte_descr, eid, selecte);
+}
+
 

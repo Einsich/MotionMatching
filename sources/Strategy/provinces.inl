@@ -67,6 +67,7 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   uint provincesCount = PoliticalMap::MAX_PROVINCES;
 
   auto &provincesInfo = politicalMap.provincesInfo;
+  politicalMap.provinces.resize(provincesCount);
   provincesInfo.resize(provincesCount, uvec2(PoliticalMap::MAX_PROVINCES, PoliticalMap::MAX_PROVINCES));
   for (int i = 0, n = provincesOwn.blockCount(); i < n; i++)
   {
@@ -106,7 +107,6 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
     ecs::ComponentInitializerList list;
     list.set("mesh", build_borders(politicalMap, pixel_scale));
     ecs::create_entity(borders, std::move(list));
-    debug_log("%d", politicalMap.borderIndexes.size());
     for (auto [key, value] : politicalMap.borderIndexes)
     {
       uint prov0 = key & PoliticalMap::PROVINCES_MASK;

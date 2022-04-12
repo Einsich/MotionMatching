@@ -11,6 +11,10 @@ struct Country
   int id;
   std::string name;
 };
+struct Province
+{
+  vector<int> borderIndexes;
+};
 
 struct PoliticalMap : ecs::Singleton
 {
@@ -19,6 +23,7 @@ struct PoliticalMap : ecs::Singleton
   vector<uint> provincesIdx;
   //readonly
   vector<uvec2> provincesInfo;
+  vector<Province> provinces;
   //key = a << 16 | b, a < b, value = {border index, swaped}
   map<uint, pair<int, bool>> borderIndexes;
   enum

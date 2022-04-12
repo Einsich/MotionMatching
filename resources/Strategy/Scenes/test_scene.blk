@@ -12,10 +12,6 @@ entity {
 }
 
 entity {
-  _template:t="plane";
-}
-
-entity {
   _template:t="water";
 }
 

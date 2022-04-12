@@ -9,6 +9,7 @@ struct Provinces
   float pixelScale;
   const vector<uint> &provinces;
   map<uint, pair<int, bool>> &borderIdx;
+  vector<Province> &provincesData;
   vector<bool> borderFlags;
   map<uint, vector<uint>> bordersMap;
   vector<vec2> border, borderUp;
@@ -17,7 +18,8 @@ struct Provinces
   vector<uvec1> borderId;
   Provinces(PoliticalMap &political_map, float pixel_scale) :
     w(political_map.w), h(political_map.h), pixelScale(pixel_scale),
-    provinces(political_map.provincesIdx), borderIdx(political_map.borderIndexes), borderFlags((w+1)*(h+1)*4, false)
+    provinces(political_map.provincesIdx), borderIdx(political_map.borderIndexes), provincesData(political_map.provinces),
+    borderFlags((w+1)*(h+1)*4, false)
   {}
   uint get(int i, int j) const
   {
@@ -151,7 +153,12 @@ struct Provinces
     if (it == borderIdx.end())
       borderIdx[key] = {borderIdx.size(), swaped};
     else
-      borderIndex = it->first;
+      borderIndex = it->second.first;
+    
+    if (a < provincesData.size())
+      provincesData[a].borderIndexes.push_back(borderIndex);
+    if (b < provincesData.size())
+      provincesData[b].borderIndexes.push_back(borderIndex);
     add_border_mesh_data(borderIndex);
 
   }

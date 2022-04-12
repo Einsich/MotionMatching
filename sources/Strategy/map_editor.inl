@@ -4,8 +4,10 @@
 #include <camera.h>
 #include <imgui.h>
 #include <application/file_dialog.h>
+#include <application/time.h>
 #include "political_map.h"
 #include "heightmap.h"
+#include "map_render_data.h"
 
 struct MapEditor : ecs::Singleton
 {
@@ -72,6 +74,32 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
     ImGui::End();
 }
 
+bool get_map_hit(
+  float screen_x,
+  float screen_y,
+  const MainCamera &camera,
+  const HeightMap &height_map,
+  const PoliticalMap &political_map,
+  vec3 &world_pos,
+  uint &prov_id)
+{
+  auto [w, h] = get_resolution();
+  vec2 screenPos((screen_x / w * 2.f - 1.0f)*camera.aspectRatio, 1.0f - screen_y / h * 2.f);
+  vec3 p = camera.transform * vec4(screenPos, 1, 1);
+  vec3 n = camera.transform * vec4(screenPos, 1, 0);
+  n = normalize(n);
+  if (height_map.ray_trace(p, n, world_pos))
+  {
+    int x,y;
+    if (height_map.world_to_pixel(world_pos, x, y))
+    {
+      prov_id = political_map.provincesIdx[x+y*height_map.w];
+      return true;
+    }
+  }
+  return false;
+}
+
 EVENT(ecs::SystemTag::Editor) trace_province(
   const MouseClickEvent &event,
   Asset<Material> &political_material,
@@ -87,25 +115,48 @@ EVENT(ecs::SystemTag::Editor) trace_province(
     return;
   int editedProvId = event.buttonType == MouseButton::RightButton ? PoliticalMap::MAX_PROVINCES : editor.currentCountryId;
 
-
-  float x = event.x, y = event.y;
-
-  auto [w, h] = get_resolution();
-  
-  vec2 screenPos((x / w * 2.f - 1.0f)*mainCamera.aspectRatio, 1.0f - y / h * 2.f);
-  vec3 p = mainCamera.transform * vec4(screenPos, 1, 1);
-  vec3 n = mainCamera.transform * vec4(screenPos, 1, 0);
-  n = normalize(n);
   vec3 worldPos;
-  if (heightMap.ray_trace(p, n, worldPos))
+  uint provId;
+  if (get_map_hit(event.x, event.y, mainCamera, heightMap, politicalMap, worldPos, provId))
   {
-    int x,y;
-    if (heightMap.world_to_pixel(worldPos, x, y))
-    {
-      uint id = politicalMap.provincesIdx[x+y*heightMap.w];
-      politicalMap.provincesInfo[id].x = editedProvId;
-      political_material->set_property("material.provincesInfo[0]", politicalMap.provincesInfo);
-    }
+    politicalMap.provincesInfo[provId].x = editedProvId;
+    political_material->set_property("material.provincesInfo[0]", politicalMap.provincesInfo);
+  }
+}
 
+static void selection_province(const PoliticalMap &political_map, MapRenderData &render_data, uint province_id, bool selection)
+{
+  if (province_id >= political_map.provinces.size())
+    return;
+  for (int borderId : political_map.provinces[province_id].borderIndexes)
+    render_data.borders[borderId].color1.a = selection ? Time::time() : 0;
+}
+
+EVENT(ecs::SystemTag::GameEditor) selecte(
+  const MouseClickEvent &event,
+  const MainCamera &mainCamera,
+  const HeightMap &heightMap,
+  const PoliticalMap &politicalMap,
+  MapRenderData &renderData)
+{
+  if (event.action != MouseAction::Down || event.buttonType != MouseButton::LeftButton ||
+      ImGui::IsAnyWindowHovered())
+    return;
+
+  vec3 worldPos;
+  uint provId;
+  static uint prevSelectedProv = -1;
+  if (get_map_hit(event.x, event.y, mainCamera, heightMap, politicalMap, worldPos, provId))
+  {
+    selection_province(politicalMap, renderData, prevSelectedProv, false);
+    if (prevSelectedProv != provId)
+    {
+      selection_province(politicalMap, renderData, provId, true);
+      prevSelectedProv = provId;
+    }
+    else
+    {
+      prevSelectedProv = -1;
+    }
   }
 }
