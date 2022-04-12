@@ -104,14 +104,17 @@ BufferField Material::get_buffer_field(const char *name) const
   return BufferField();
 }
 
-void Material::load(const filesystem::path &, bool reload)
+void Material::load(const filesystem::path &path, bool reload)
 {
   if (!reload)
   {
-    shader = ::get_shader(shaderName), debug_log("set shader %s to material", shaderName.c_str());
+    shader = ::get_shader(shaderName);
     uniformMap.clear();
     if (!shader)
+    {
+      debug_error("missed shader for material %s ", path.string().c_str());
       return;
+    }
     const ShaderBuffer &instanceData = shader.get_instance_data();
 
     for (uint i = 0; i < instanceData.materialFields.size(); ++i)

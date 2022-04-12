@@ -241,10 +241,10 @@ static void create_shader_from_parsed_state(const fs::path &path, const ParseSta
   if (compile_shader(state.currentShader, shaderCode, program))
   {
     Shader(state.currentShader, program, true, true);
-    debug_log("shader %s compiled", state.currentShader.c_str());
   }
   else
   {
+    debug_error("shader %s doesn't compiled", state.currentShader.c_str());
     {
       ofstream file(fs::path(path).concat("." + state.currentShader + ".ps"));
       file << psPart;

@@ -96,17 +96,7 @@ static void spawn_tress(
   stbi_set_flip_vertically_on_load(true);
   auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
   auto imPtr = image;
-  const char *material_names[3] = {"tree_leafs", "tree_pine", "tree_palms"};
-  vec2 texelSize = vec2(1.f / map_scale.x, 1.f / map_scale.y);
-  for (int i = 0; i < 3; i++)
-  {
-    Asset<Material> leaf = get_resource<Material>(material_names[i]);
-    if (leaf)
-    {
-      leaf->set_property("material.mapTexelSize", texelSize);
-      leaf->before_save();
-    }
-  }
+
   const ecs::Template *leafs[3] = {
     ecs::get_template("leafs_1"),
     ecs::get_template("leafs_2"),
