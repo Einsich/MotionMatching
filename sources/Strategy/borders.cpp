@@ -49,16 +49,29 @@ struct Provinces
         borderFlags[i] = true;
         int x = position % w;
         int y = position / w;
-        start_mark_border(a, b, ivec2(x, y), direction);
+        start_mark_border(a, b, ivec2(x, y), direction, false);
       }
     }
   }
-  void start_mark_border(uint a, uint b, ivec2 p, uint direction)
+  void try_add_cyclic_border(uint a, uint b, uint position, uint direction)
+  {
+    uint i = position*4+direction;
+    if (!borderFlags[i])
+    {
+      borderFlags[i] = true;
+      int x = position % w;
+      int y = position / w;
+      start_mark_border(a, b, ivec2(x, y), direction, true);
+    }
+  }
+  void start_mark_border(uint a, uint b, ivec2 p, uint direction, bool cyclic)
   {
     ivec2 off[4] = {ivec2(0,-1), ivec2(1, 0), ivec2(0, 1), ivec2(-1,0)};
     vector<vec2> borderRaw;
     borderRaw.push_back(p);
     p += off[direction];
+    uint dirOpposite = (direction + 2)&3;
+    borderFlags[(p.y*w+p.x)*4+dirOpposite] = true;
     borderRaw.push_back(p);
     int prevDirection = direction;
     bool findEnd = false;
@@ -77,10 +90,16 @@ struct Provinces
       {
         if (samples[i] == a && samples[(i+1)&3] == b)
         {
+          uint pos = (p.y*w+p.x)*4;
+          borderFlags[pos+i] = true;
           p += off[i];
-          borderRaw.push_back(p);
+          pos = (p.y*w+p.x)*4;
+          uint prevDirOpposite = (i + 2)&3;
+          borderFlags[pos+prevDirOpposite] = true;
+          if (!cyclic || (cyclic && !borderFlags[pos+i]))
+            borderRaw.push_back(p);
           prevDirection = i;
-          findEnd = false;
+          findEnd = borderFlags[pos+i];
           break;
         }
       }
@@ -96,21 +115,20 @@ struct Provinces
       prevDirection = (prevDirection+2)&3;
       borderFlags[(p.y*w+p.x)*4+prevDirection] = true;
     }
-    /* borderRaw.resize(borderRaw.size()*2-1);
-    for (int i = borderRaw.size() - 1, j = borderRaw.size()/2; j > 0; i-= 2, j--)
-    {
-      borderRaw[i] = borderRaw[j];
-      borderRaw[i-1] = (borderRaw[j] + borderRaw[j-1]) * 0.5f;
-    } */
+
     border.resize(borderRaw.size());
     constexpr int N = 3;
     float weights[2*N+1] = {0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05 };
+    float cyclicsWeights[2*N+1] = {0.00, 0.05, 0.2, 0.5, 0.2, 0.05, 0.00 };
     border[0] = borderRaw[0];
     for (int i = 1, n = borderRaw.size(); i < n-1; i++)
     {
       vec2 weightedPos = vec2(0,0);
       for (int j = i-N, k = 0; j <= i+N; j++, k++)
-        weightedPos += (0 <= j ? (j < n ? borderRaw[j] : borderRaw[n-1]) : borderRaw[0]) * weights[k];
+      {
+        int idx = cyclic ? (j + n) % n : 0 <= j ? (j < n ? j : n-1) : 0;
+        weightedPos += borderRaw[idx] * (cyclic ? cyclicsWeights[k] : weights[k]);
+      }
       border[i] = weightedPos;
     }
     border.back() = borderRaw.back();
@@ -202,6 +220,18 @@ Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale)
         provinces.try_add_border(b,c,d,a, pos, 1);
         provinces.try_add_border(d,a,b,c, pos, 3);
       }
+    }
+  for (int i = 1; i < h; i++)
+    for (int j = 1; j < w; j++)
+    {
+      uint pos = i * provinces.w + j;
+      uint b = provinces.get(i-1, j-0);
+      uint c = provinces.get(i-0, j-0);
+      uint d = provinces.get(i-0, j-1);
+      if (c != d)
+        provinces.try_add_cyclic_border(c,d, pos, 2);
+      if (b != c)
+        provinces.try_add_cyclic_border(b,c, pos, 1);
     }
   return provinces.generate_mesh();
 }
