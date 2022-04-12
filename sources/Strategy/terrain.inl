@@ -5,24 +5,16 @@
 #include <camera.h>
 #include "heightmap.h"
 #include <render/global_uniform.h>
-
-struct MapRenderData
-{
-  vec4 mapSize;
-};
+#include "map_render_data.h"
 
 EVENT(ecs::SystemTag::GameEditor) add_map_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<MapRenderData>("mapData", 1);
 }
 SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor)
-set_map_render_data(vec2 map_size)
+set_map_render_data(const MapRenderData &data)
 {
-  get_buffer("mapData").
-  update_buffer_and_flush<MapRenderData>( 
-  {
-    vec4(map_size, 1.f / map_size)
-  });
+  get_buffer("mapData").update_buffer_and_flush<MapRenderData>(data); 
 }
 static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod) 
 { 
@@ -200,7 +192,8 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   float pixel_scale,
   int water_level,
   vec2 &map_size,
-  HeightMap &heigth_map
+  HeightMap &heigth_map,
+  MapRenderData &data
 )
 {
   if (!heights_texture)
@@ -213,6 +206,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   float mapWidth = w * pixel_scale;
   float mapHeight = h * pixel_scale;
   map_size = vec2(mapWidth, mapHeight);
+  data.mapSize = vec4(map_size, 1.f / map_size);
   transform.set_scale(vec3(mapWidth, 1, mapHeight));
   
   string path = heights_texture.asset_path().string();

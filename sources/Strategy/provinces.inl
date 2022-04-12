@@ -4,6 +4,7 @@
 #include <render/texture/stb_write.h>
 #include <input.h>
 #include "political_map.h"
+#include "map_render_data.h"
 
 Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale);
 
@@ -35,7 +36,8 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
   const string &provinces_texture_name,
   const string &load_provinces_info,
   float pixel_scale,
-  PoliticalMap &politicalMap)
+  PoliticalMap &politicalMap,
+  MapRenderData &data)
 {
   DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
   DataBlock provincesOwn(root_path(load_provinces_info));
@@ -105,5 +107,24 @@ EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
     list.set("mesh", build_borders(politicalMap, pixel_scale));
     ecs::create_entity(borders, std::move(list));
     debug_log("%d", politicalMap.borderIndexes.size());
+    for (auto [key, value] : politicalMap.borderIndexes)
+    {
+      uint prov0 = key & PoliticalMap::PROVINCES_MASK;
+      uint prov1 = (key >> 16u) & PoliticalMap::PROVINCES_MASK;
+
+      uint owner0 = politicalMap.provincesInfo[prov0].x;
+      uint owner1 = politicalMap.provincesInfo[prov1].x;
+      if (owner0 == owner1 || owner0 == PoliticalMap::MAX_PROVINCES || owner1 == PoliticalMap::MAX_PROVINCES)
+        data.borders[value.first] = {vec4(0,0,0, 0), vec4(0,0,0, 0)};
+      else
+      {
+        if (!value.second)
+          std::swap(owner0, owner1);
+        data.borders[value.first] = {
+          vec4(politicalMap.countries[owner0].color, 1),
+          vec4(politicalMap.countries[owner1].color, 0)
+        };
+      }
+    }
   }
 }

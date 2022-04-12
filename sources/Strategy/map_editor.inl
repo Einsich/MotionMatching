@@ -68,8 +68,8 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
       }
       provicesData.save(provincesFile);
     }
-    ImGui::End();
   }
+    ImGui::End();
 }
 
 EVENT(ecs::SystemTag::Editor) trace_province(

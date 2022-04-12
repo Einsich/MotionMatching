@@ -96,9 +96,15 @@ struct Provinces
       prevDirection = (prevDirection+2)&3;
       borderFlags[(p.y*w+p.x)*4+prevDirection] = true;
     }
+    /* borderRaw.resize(borderRaw.size()*2-1);
+    for (int i = borderRaw.size() - 1, j = borderRaw.size()/2; j > 0; i-= 2, j--)
+    {
+      borderRaw[i] = borderRaw[j];
+      borderRaw[i-1] = (borderRaw[j] + borderRaw[j-1]) * 0.5f;
+    } */
     border.resize(borderRaw.size());
-    constexpr int N = 2;
-    float weights[2*N+1] = {0.1, 0.2, 0.4, 0.2, 0.1 };
+    constexpr int N = 3;
+    float weights[2*N+1] = {0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05 };
     border[0] = borderRaw[0];
     for (int i = 1, n = borderRaw.size(); i < n-1; i++)
     {
@@ -111,10 +117,13 @@ struct Provinces
     borderUp.resize(border.size());
     for (int i = 0, n = border.size()-1; i < n; i++)
       borderUp[i] = up_axis(normalize(borderRaw[i+1] - borderRaw[i]));
-    for (int i = 1, n = borderRaw.size(); i < n-1; i++)
-      borderUp[i] = normalize(borderUp[i-1] + borderUp[i] + borderUp[i+1]);
     borderUp.back() = borderUp[border.size()-2];
-
+    for (int i = 0, n = borderUp.size(); i < n-1; i++)
+      borderUp[i] = (borderUp[i] + borderUp[i+1]) * 0.5f;
+    for (int i = 1, n = borderUp.size(); i < n; i++)
+      borderUp[i] = (borderUp[i] + borderUp[i-1]) * 0.5f;
+    for (int i = 0, n = borderUp.size(); i < n; i++)
+      borderUp[i] = normalize(borderUp[i]);
     bool swaped = b > a;
     if (swaped)
       std::swap(a, b);
@@ -142,7 +151,7 @@ struct Provinces
     indices.reserve(indices.size() + border.size()*6);
     borderId.reserve(borderId.size() + border.size()+1);
 
-    float borderWidth = 0.5f;
+    float borderWidth = 1.25f;
     for (uint i = 0, n = border.size(); i < n; i++)
     {
       vec2 up = borderUp[i];

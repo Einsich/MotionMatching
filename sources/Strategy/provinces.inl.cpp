@@ -41,7 +41,8 @@ ecs::EventDescription<ecs::OnSceneCreated> create_provinces_descr("create_provin
   {ecs::get_type_description<string>("provinces_texture_name"), false},
   {ecs::get_type_description<string>("load_provinces_info"), false},
   {ecs::get_type_description<float>("pixel_scale"), false},
-  {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
+  {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
+  {ecs::get_type_description<MapRenderData>("data"), false}
 }, create_provinces_handler, create_provinces_singl_handler, ecs::SystemTag::GameEditor);
 
 void create_provinces_handler(const ecs::OnSceneCreated &event)

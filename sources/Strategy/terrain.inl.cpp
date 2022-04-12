@@ -22,7 +22,7 @@ void query_water(Callable lambda)
 void set_map_render_data_func();
 
 ecs::SystemDescription set_map_render_data_descr("set_map_render_data", {
-  {ecs::get_type_description<vec2>("map_size"), false}
+  {ecs::get_type_description<MapRenderData>("data"), false}
 }, set_map_render_data_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
 {},
 {});
@@ -73,7 +73,8 @@ ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain"
   {ecs::get_type_description<float>("pixel_scale"), false},
   {ecs::get_type_description<int>("water_level"), false},
   {ecs::get_type_description<vec2>("map_size"), false},
-  {ecs::get_type_description<HeightMap>("heigth_map"), false}
+  {ecs::get_type_description<HeightMap>("heigth_map"), false},
+  {ecs::get_type_description<MapRenderData>("data"), false}
 }, create_terrain_handler, create_terrain_singl_handler, ecs::SystemTag::GameEditor);
 
 void create_terrain_handler(const ecs::OnSceneCreated &event)

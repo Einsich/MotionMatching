@@ -51,16 +51,27 @@ in VsOutput vsOutput;
 flat in uint borderIndex;
 
 out vec4 FragColor;
-uniform sampler2D tinyBorder;
+uniform sampler2D thinBorder;
+uniform sampler2D thickBorder;
 
 void main()
 {
   
   float distToCamera = length(vsOutput.WorldPosition - CameraPosition);
   float lod = log2(1+distToCamera)+1;
-  vec4 color = textureLod(tinyBorder, vsOutput.UV, lod);
-  //color.a = 1;
-  if (borderIndex%2 == 1)
-    color.rgb += 1;
-  FragColor = color;
+  vec4 c0 = borders[borderIndex].color0;
+  vec4 c1 = borders[borderIndex].color1;
+  if (c0.a > 0)
+  {
+    vec4 tex = textureLod(thickBorder, vsOutput.UV * vec2(1, 2), lod);
+    tex.a /= 0.75;
+    tex.rgb = ((vsOutput.UV.y < 0.5 ? c0.rgb : c1.rgb) + tex.rgb*0.7) * tex.a;
+    FragColor = tex;
+  }
+  else
+  {
+    vec2 uv = vsOutput.UV;
+    uv.y = (uv.y - 0.5) * 1.5 + 0.5;
+    FragColor = textureLod(thinBorder, uv, lod-1);
+  }
 }
