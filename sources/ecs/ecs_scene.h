@@ -21,6 +21,7 @@ namespace ecs
     Scene currentScene;
     void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
+    void sort_systems();
   public:
     void restart_cur_scene();
     void start();

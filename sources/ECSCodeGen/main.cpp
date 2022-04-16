@@ -26,21 +26,33 @@ struct ParserSystemDescription
   std::string sys_file, sys_name;
   std::string order = "ecs::SystemOrder::NO_ORDER";
   std::string tags;
-  std::vector<ParserFunctionArgument> args;
-  std::vector<ParserFunctionArgument> req_args;
-  std::vector<std::string> before, after;
+  std::vector<ParserFunctionArgument> args, req_args, req_not_args;
+  std::vector<std::string> before, after, scenes;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
 #define NAME_SYM "a-zA-Z0-9_"
 #define SPACE "[" SPACE_SYM "]*"
 #define NAME "[" NAME_SYM "]+"
 #define ARGS "[" NAME_SYM "&*,:<>\\+\\-" SPACE_SYM "]*"
+
+#define SYSTEM_LEXEMA NAME_SYM "&*,:<>\\]\\[" SPACE_SYM
+#define SYSTEM_ANNOTATION "[" SYSTEM_LEXEMA "=;]*"
+#define LEXEMA_ANNOTATION "[" SYSTEM_LEXEMA "=]+"
+#define NEW_SYSTEM_ARGS "[(][" SYSTEM_LEXEMA "=;]*[)]"
+#define VAR_NAME "[a-zA-Z]+[a-zA-Z0-9_]*"
+#define VAR_TYPE "[a-zA-Z]+[a-zA-Z0-9_:]*"
+#define ARG_TYPE "[a-zA-Z]+[a-zA-Z0-9_:<>,&*]*"
+#define TYPE_NAME VAR_TYPE SPACE VAR_NAME
+#define TYPE_REGEX "(" VAR_TYPE SPACE "<" SPACE VAR_TYPE "(" SPACE "," SPACE VAR_TYPE ")*" SPACE ">|" VAR_TYPE ")"
+#define SYSTEM_ARG  "((" VAR_TYPE SPACE "<" SPACE TYPE_REGEX "(" SPACE "," SPACE TYPE_REGEX ")*" SPACE ">|" VAR_TYPE ")" SPACE VAR_NAME ")|" VAR_NAME
+
 #define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
 #define SYSTEM "SYSTEM" SPACE "[(]" ARGS "[)]"
 #define QUERY "QUERY" SPACE "[(]" ARGS "[)]"
 #define EVENT "EVENT" SPACE "[(]" ARGS "[)]"
+#define NEW_SYSTEM "NEW_SYSTEM" SPACE "[(]" SYSTEM_ANNOTATION "[)]"
 
 static const std::regex name_regex(NAME);
 static const std::regex system_full_regex(SYSTEM SPACE NAME SPACE ARGS_L);
@@ -53,6 +65,10 @@ static const std::regex event_regex(EVENT);
 static const std::regex args_regex(ARGS_L);
 static const std::regex arg_regex("[" NAME_SYM "&*:<>" SPACE_SYM "]+");
 static const std::regex sys_definition_regex("[" NAME_SYM "&*:<>\\+\\-" SPACE_SYM "]+");
+static const std::regex new_system_regex(NEW_SYSTEM);
+static const std::regex new_system_args_regex(NEW_SYSTEM_ARGS);
+static const std::regex new_system_annotation_regex(LEXEMA_ANNOTATION);
+static const std::regex new_system_arg_regex(SYSTEM_ARG);
 
 namespace fs = std::filesystem;
 
@@ -233,9 +249,11 @@ void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
 constexpr int bufferSize = 2000;
 static char buffer[bufferSize];
 
-void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgument> &args, 
-    const std::vector<ParserFunctionArgument> &req_args, bool event = false)
+static void fill_arguments(std::ofstream &outFile, const ParserSystemDescription &system, bool event = false)
 {
+  const auto &args = system.args;
+  const auto &req_args = system.req_args;
+  const auto &req_not_args = system.req_not_args;
   for (uint i = event ? 1 : 0; i < args.size(); i++)
   {
     auto& arg  = args[i];
@@ -252,8 +270,28 @@ void fill_arguments(std::ofstream &outFile, const std::vector<ParserFunctionArgu
     arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_args.size()? "" : ",");
     outFile << buffer;
   }
+  snprintf(buffer, bufferSize,
+  "}, {\n");
+  outFile << buffer;
+  for (uint i = 0; i < req_not_args.size(); i++)
+  {
+    auto& arg  = req_not_args[i];
+    snprintf(buffer, bufferSize,
+    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_not_args.size()? "" : ",");
+    outFile << buffer;
+  }
 }
-
+static void fill_scenes(std::ofstream &outFile, const ParserSystemDescription &system)
+{
+  outFile << "}, {";
+  for (uint i = 0; i < system.scenes.size(); i++)
+  {
+    snprintf(buffer, bufferSize, "\"%s\"%s", system.scenes[i].c_str(), i + 1 == (uint)system.scenes.size() ? "" : ",");
+    outFile << buffer;
+  }
+  outFile << "},\n";
+}
 
 void fill_array(std::ofstream &outFile, const std::vector<std::string> &args)
 {
@@ -302,6 +340,42 @@ void write(std::ofstream &outFile, const char *fmt, ...)
   outFile << buffer;
 }
 
+
+static void parse_new_systems(const std::string &file, const std::regex &full_regex, const std::regex &min_regex)
+{
+
+  auto systems = get_matches(file, full_regex);
+  for (auto& system : systems)
+  {/* 
+    auto definition_range = get_match({system.begin(), system.end()}, def_regex);
+    auto name_range = get_match({definition_range.end, system.end()}, name_regex);
+    
+    std::string definition, name, args; */
+    auto args_range = get_match({system.begin(), system.end()}, min_regex);
+    
+    printf("%s\n", system.c_str());
+    if (!args_range.empty())
+    {
+      auto args = get_matches(args_range.str(), new_system_annotation_regex);
+      for (auto &arg : args)
+      {
+        printf("%*c %s\n", 2, ' ', arg.c_str());
+        auto args0 = get_matches(arg, new_system_arg_regex);
+        for (auto &arg : args0)
+        {
+          printf("%*c %s\n", 4, ' ', arg.c_str());
+
+        }
+      }
+      if (args.empty())
+        log_error("no matched args");
+
+    }
+  }
+  if (systems.empty())
+    log_error("no matches");
+}
+
 void process_inl_file(const fs::path& path)
 {
   std::ifstream inFile;
@@ -317,15 +391,16 @@ void process_inl_file(const fs::path& path)
   std::vector<ParserSystemDescription>  queriesDescriptions;
   std::vector<ParserSystemDescription>  singlqueriesDescriptions;
   std::vector<ParserSystemDescription>  eventsDescriptions;
-  parse_system(systemsDescriptions, str, path.string(), system_full_regex, system_regex);
-  parse_system(queriesDescriptions, str, path.string(), query_full_regex, query_regex);
-  parse_system(singlqueriesDescriptions, str, path.string(), singl_query_full_regex, query_regex);
-  parse_system(eventsDescriptions, str, path.string(), event_full_regex, event_regex);
+  std::string pathStr = path.string();
+  parse_system(systemsDescriptions, str, pathStr, system_full_regex, system_regex);
+  parse_system(queriesDescriptions, str, pathStr, query_full_regex, query_regex);
+  parse_system(singlqueriesDescriptions, str, pathStr, singl_query_full_regex, query_regex);
+  parse_system(eventsDescriptions, str, pathStr, event_full_regex, event_regex);
 
-
+  parse_new_systems(str, new_system_regex, new_system_args_regex);
   std::ofstream outFile;
-  log_success(path.string() + ".cpp");
-  outFile.open(path.string() + ".cpp", std::ios::out);
+  log_success(pathStr + ".cpp");
+  outFile.open(pathStr + ".cpp", std::ios::out);
   outFile << "#include " << path.filename() << "\n";
   outFile << "//Code-generator production\n\n";
 
@@ -336,7 +411,7 @@ void process_inl_file(const fs::path& path)
     "ecs::QueryDescription %s(\"%s\", {\n",
     query_descr.c_str(), query.sys_name.c_str());
     
-    fill_arguments(outFile, query.args, query.req_args);
+    fill_arguments(outFile, query);
     write(outFile,
     "});\n\n");
 
@@ -360,7 +435,7 @@ void process_inl_file(const fs::path& path)
     "ecs::QueryDescription %s(\"%s\", {\n",
     query_descr.c_str(), query.sys_name.c_str());
 
-    fill_arguments(outFile, query.args, query.req_args);
+    fill_arguments(outFile, query);
 
     write(outFile,
     "});\n\n");
@@ -390,10 +465,10 @@ void process_inl_file(const fs::path& path)
     "ecs::SystemDescription %s(\"%s\", {\n",
     sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
-    fill_arguments(outFile, system.args, system.req_args);
-  
+    fill_arguments(outFile, system);
+    fill_scenes(outFile, system);
     write(outFile,
-    "}, %s, %s, %s,\n", sys_func.c_str(), system.order.c_str(), system.tags.c_str());
+    "%s, %s, %s,\n", sys_func.c_str(), system.order.c_str(), system.tags.c_str());
 
     fill_array(outFile, system.before);
     write(outFile, ",\n");
@@ -423,9 +498,10 @@ void process_inl_file(const fs::path& path)
     event_singl_handler.c_str(), event_type.c_str(),
     event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
-    fill_arguments(outFile, event.args, event.req_args, true);
+    fill_arguments(outFile, event, true);
+    fill_scenes(outFile, event);
     write(outFile, 
-    "}, %s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
+    "%s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
 
     write(outFile,
     "void %s(const %s &event)\n"
@@ -465,7 +541,7 @@ void process_folder(const std::string &path)
         bool exist = fs::exists(cpp_file);
         if (exist)
             last_write = fs::last_write_time(cpp_file);
-        if (!exist || last_write < p.last_write_time())
+        if (!exist || last_write < p.last_write_time() || p.path().filename().string() == "t.inl")
             process_inl_file(p.path());
       }
     }

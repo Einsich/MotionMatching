@@ -7,6 +7,7 @@ namespace ecs
     Game = 1 << 0u,
     Editor = 1 << 1u,
     GameEditor = Game | Editor,
-    Debug = 1 << 2u;
+    Debug = 1 << 2u,
+    All = 0xffffffff;
   }
 }

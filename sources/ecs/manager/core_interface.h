@@ -11,6 +11,8 @@ namespace ecs
   Destructor type_destructor(uint type);
 
 
+  struct CallableDescription;
+  void add_callable(CallableDescription *system_description);
   struct SystemDescription;
   void add_system(SystemDescription *system_description);
   struct QueryDescription;

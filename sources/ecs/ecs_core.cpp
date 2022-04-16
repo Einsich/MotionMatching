@@ -54,13 +54,24 @@ namespace ecs
     }
   }
   
-  bool Core::allow_system_execute(uint tags, uint require_tags)
+  static bool allow_system_execute(uint tags, uint require_tags)
   {
 #ifdef RELEASE
     if (tags & SystemTag::Debug)
       return false;
 #endif
     return (tags & require_tags) == require_tags;
+  }
+  void Core::register_allowed_callable()
+  {
+    systems.clear();
+    queries.clear();
+    event_queries.clear();
+    for (const auto &cleaner : events_cleaners)
+      cleaner();
+    for (CallableDescription *callable : all_callable)
+      if (allow_system_execute(callable->tags, currentSceneTags))
+        callable->registration();
   }
 
 
@@ -72,7 +83,7 @@ namespace ecs
       query->archetypes.clear();
     for (SystemDescription *system: core().systems)
       system->archetypes.clear();
-    for (QueryDescription *system: core().event_queries)
+    for (CallableDescription *system: core().event_queries)
       system->archetypes.clear();
 
     for (Archetype *archetype : entityContainer->archetypes)
@@ -95,30 +106,35 @@ namespace ecs
   } */
 
 
-  static void register_archetype_to(QueryDescription *query, Archetype *archetype)
+  static void register_archetype_to(CallableDescription &query, Archetype *archetype)
   {
-    if (!query->withArgs)
+    if (query.notSingletonArgsCount == 0)
       return;
-    std::vector<SystemCashedArchetype> &sys_archetypes = query->archetypes;
-    std::vector<ComponentContainer*> containers(query->args.size(), nullptr);
+    std::vector<SystemCashedArchetype> &sys_archetypes = query.archetypes;
+    std::vector<ComponentContainer*> containers(query.requireArgs.size(), nullptr);
     bool breaked = false;
     int i = 0;
-    for(auto& arg : query->args)
+    for(const auto& arg : query.requireArgs)
     {
       if (arg.descr != 0)//singleton case
       {
         ComponentContainer* container = archetype->get_container(arg.descr);
-        if (!arg.optional)
+        if (!arg.optional && (container == nullptr || container->typeNameHash != arg.descr))
         {
-          if (container == nullptr || container->typeNameHash != arg.descr)
-          {
-            breaked = true;
-            break;
-          }
+          breaked = true;
+          break;
         }
         containers[i] = container;
       }
       i++;
+    }
+    for(const auto& arg : query.requireNotArgs)
+    {
+      if (arg.descr != 0 && archetype->get_container(arg.descr) != nullptr)//singleton case
+      {
+        breaked = true;
+        break;
+      }
     }
     if (!breaked)
     {
@@ -143,11 +159,11 @@ namespace ecs
     }
 #endif
     for (QueryDescription *query: core().queries)
-      register_archetype_to(query, archetype);
+      register_archetype_to(*query, archetype);
     for (SystemDescription *system: core().systems)
-      register_archetype_to(system, archetype);
-    for (QueryDescription *system: core().event_queries)
-      register_archetype_to(system, archetype);
+      register_archetype_to(*system, archetype);
+    for (CallableDescription *system: core().event_queries)
+      register_archetype_to(*system, archetype);
     
   }
   Archetype *add_archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim)

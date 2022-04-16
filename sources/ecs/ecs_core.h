@@ -8,16 +8,17 @@ namespace ecs
 {
   template<typename E>
   struct EventDescription;
-  template<typename E>
-  struct SingleEventDescription;
+
   struct EntityContainer;
   struct Core
   {
     std::unordered_map<uint, FullTypeDescription> types;
+    std::vector<CallableDescription*> all_callable;
     std::vector<SystemDescription*> systems;
     std::vector<QueryDescription*> queries;
-    std::vector<QueryDescription*> event_queries;
+    std::vector<CallableDescription*> event_queries;
     EntityContainer *entityContainer;
+    std::vector<std::function<void()>> events_cleaners;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint currentSceneTags;
@@ -25,32 +26,52 @@ namespace ecs
     bool reloadScene;
     Core();
     ~Core();
+    
+    struct EventsCleaner
+    {
+      EventsCleaner(std::function<void()> &&cleaner, Core &core)
+      {
+        core.events_cleaners.emplace_back(std::move(cleaner));
+      }
+    };
     template<typename E>
     std::vector<EventDescription<E>*> &events_handler()
     {
       static std::vector<EventDescription<E>*> handlers;
+      static EventsCleaner cleaner([&](){handlers.clear();}, *this);
       return handlers;
     }
     void destroy_all_entities();
     void destroy_entities_from_destroy_queue(bool with_swap_last_element);
     void update_systems_subscribes();
-    static bool allow_system_execute(uint tags, uint require_tags);
+    void register_allowed_callable();
   };
   Core &core();
 
   template<typename E>
-  struct EventDescription : QueryDescription
+  struct EventDescription final : CallableDescription
   {
     typedef  void (*EventHandler)(const E&);
     typedef  void (*SingleEventHandler)(const E&, ecs::EntityId);
-    EventHandler eventHandler;
-    SingleEventHandler singleEventHandler;
-    uint tags;
-    EventDescription(const char *name, std::vector<FunctionArgument> &&args, EventHandler eventHandler, SingleEventHandler singleEventHandler, uint tags):
-      QueryDescription(name, std::move(args), false), eventHandler(eventHandler), singleEventHandler(singleEventHandler), tags(tags)
+    EventHandler broadcastEventHandler;
+    SingleEventHandler unicastEventHandler;
+    EventDescription(const char *name, 
+      std::vector<FunctionArgument> &&require_args,
+      std::vector<FunctionArgument> &&require_not_args,
+      std::vector<std::string> &&scenes,
+      EventHandler broadcastEventHandler,
+      SingleEventHandler unicastEventHandler,
+      uint tags):
+      CallableDescription(name, std::move(require_args), std::move(require_not_args), std::move(scenes), tags),
+      broadcastEventHandler(broadcastEventHandler),
+      unicastEventHandler(unicastEventHandler)
+    {
+      core().all_callable.push_back(this);
+    }
+    void registration() override
     {
       core().events_handler<E>().push_back(this);
-      core().event_queries.push_back((QueryDescription*)this);
+      core().event_queries.push_back((CallableDescription*)this);
     }
   };
 
@@ -106,16 +127,14 @@ namespace ecs
   {
     core().events.push([event](){
       for (EventDescription<E> *descr : core().events_handler<E>())
-        if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-          descr->eventHandler(event);
+        descr->broadcastEventHandler(event);
     });
   }
   template<typename E>
   void send_event_immediate(const E &event)
   {
     for (EventDescription<E> *descr : core().events_handler<E>())
-      if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-        descr->eventHandler(event);
+      descr->broadcastEventHandler(event);
   }
 
   template<typename E>
@@ -125,8 +144,7 @@ namespace ecs
     {
       core().events.push([eid, event](){
         for (EventDescription<E> *descr : core().events_handler<E>())
-          if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-            descr->singleEventHandler(event, eid);
+          descr->unicastEventHandler(event, eid);
       });
     }
   }
@@ -136,8 +154,7 @@ namespace ecs
     if (eid)
     {
       for (EventDescription<E> *descr : core().events_handler<E>())
-        if (Core::allow_system_execute(descr->tags, core().currentSceneTags))
-          descr->singleEventHandler(event, eid);
+        descr->unicastEventHandler(event, eid);
     }
   }
 
@@ -194,7 +211,7 @@ namespace ecs
   }
 
   template<typename ...Args, typename Callable>
-  void perform_query(const QueryDescription &descr, Callable function)
+  void perform_query(const CallableDescription &descr, Callable function)
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
@@ -202,7 +219,7 @@ namespace ecs
     {
       if constexpr(N == 0)
       {
-        if (descr.realArgs == 0)
+        if (descr.requireArgs.empty())
         {
           function();
           return;
@@ -246,19 +263,19 @@ namespace ecs
   }
   
   template<typename ...Args>
-  void perform_system(const QueryDescription &descr, void(*function)(Args...))
+  void perform_system(const CallableDescription &descr, void(*function)(Args...))
   {
     perform_query<Args...>(descr, function);
   }
   template<typename E, typename Event, typename ...Args>
-  void perform_event(const E &event, const QueryDescription &descr, void(*function)(Event, Args...))
+  void perform_event(const E &event, const CallableDescription &descr, void(*function)(Event, Args...))
   {
     perform_query<Args...>(descr, [&](Args...args){function(event, args...);});
   }
 
 
   template<typename ...Args, typename Callable>
-  void perform_query(const QueryDescription &descr, EntityId eid, Callable function)
+  void perform_query(const CallableDescription &descr, EntityId eid, Callable function)
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
@@ -279,7 +296,7 @@ namespace ecs
   }
 
   template<typename E, typename Event, typename ...Args>
-  void perform_event(const E &event, const QueryDescription &descr, EntityId eid, void(*function)(Event, Args...))
+  void perform_event(const E &event, const CallableDescription &descr, EntityId eid, void(*function)(Event, Args...))
   {
     perform_query<Args...>(descr, eid, [&](Args...args){function(event, args...);});
   }

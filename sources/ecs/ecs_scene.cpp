@@ -13,31 +13,31 @@ namespace ecs
   void destroy_scene();
   void invalidate_cached_archetype();
 
-  bool system_comparator(const SystemDescription *a, const SystemDescription *b)
+  static bool system_comparator(const SystemDescription *a, const SystemDescription *b)
   {
-    return a->order < b->order;
+    return a->stage < b->stage;
   }
   void SceneManager::start()
   {
     create_all_resources_from_metadata();
-
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+  }
+  void SceneManager::sort_systems()
+  {
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
     logic.begin = systems.begin();
     logic.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->order >= (int)SystemOrder::RENDER;});
+      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::RENDER;});
     render.begin = logic.end;
     render.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->order >= (int)SystemOrder::UI;});
+      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::UI;});
     ui.begin = render.end;
     ui.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->order >= (int)SystemOrder::UIMENU;});
+      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::UIMENU;});
     menu.begin = ui.end;
     menu.end = systems.end();
-
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
   }
 
   void save(std::ostream& os, const std::vector<Archetype*> &archetypes);
@@ -70,6 +70,8 @@ namespace ecs
     ecs::EntityContainer &curContainer = inEditor ? currentScene.editorScene : currentScene.gameScene;
     core().currentSceneTags = newTags;
     core().entityContainer = &curContainer;
+    core().register_allowed_callable();
+    sort_systems();
     core().update_systems_subscribes();
     bool needRestart = (inEditor && !curContainer.loaded) || !inEditor;
 
@@ -82,11 +84,10 @@ namespace ecs
   void SceneManager::update_range(const SystemRange &range)
   {
     for (SystemIterator it = range.begin; it != range.end; it++)
-      if (Core::allow_system_execute((*it)->tags, core().currentSceneTags))
-      {
-        ProfilerLabel label((*it)->name.c_str());
-        (*it)->execute();
-      }
+    {
+      ProfilerLabel label((*it)->name.c_str());
+      (*it)->execute();
+    }
   }
   void SceneManager::update_logic()
   {
