@@ -102,52 +102,13 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<uint>("forces"), false}
 }, {
 }, {},
-update_bot_invasions_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+update_bot_invasions_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
 void update_bot_invasions_func()
 {
   ecs::perform_system(update_bot_invasions_descr, update_bot_invasions);
-}
-
-void map_update_func();
-
-ecs::SystemDescription map_update_descr("map_update", {
-  {ecs::get_type_description<float>("forceFromCell"), false},
-  {ecs::get_type_description<float>("forceFromPeople"), false},
-  {ecs::get_type_description<float>("maxForceFromCell"), false},
-  {ecs::get_type_description<float>("updatePeriod"), false},
-  {ecs::get_type_description<float>("updateTime"), false},
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<bool>("mapWasChanged"), false},
-  {ecs::get_type_description<bool>("needUpdateBorder"), false},
-  {ecs::get_type_description<bool>("gameStarted"), false}
-}, {
-}, {},
-map_update_func, ecs::SystemOrder::LOGIC+2, ecs::SystemTag::Game,
-{},
-{});
-
-void map_update_func()
-{
-  ecs::perform_system(map_update_descr, map_update);
-}
-
-void border_update_func();
-
-ecs::SystemDescription border_update_descr("border_update", {
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<bool>("needUpdateBorder"), false}
-}, {
-}, {},
-border_update_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
-{},
-{});
-
-void border_update_func()
-{
-  ecs::perform_system(border_update_descr, border_update);
 }
 
 void game_started_handler(const OnGameStarted &event);
@@ -160,7 +121,7 @@ ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
 }, {
 }, {},
-game_started_handler, game_started_singl_handler, ecs::SystemTag::Game);
+game_started_handler, game_started_singl_handler, ecs::tags::all);
 
 void game_started_handler(const OnGameStarted &event)
 {

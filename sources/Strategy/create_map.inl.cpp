@@ -7,7 +7,7 @@ void scene_created_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId
 ecs::EventDescription<ecs::OnSceneCreated> scene_created_descr("scene_created", {
 }, {
 }, {},
-scene_created_handler, scene_created_singl_handler, ecs::SystemTag::Game);
+scene_created_handler, scene_created_singl_handler, ecs::tags::all);
 
 void scene_created_handler(const ecs::OnSceneCreated &event)
 {
@@ -27,8 +27,8 @@ ecs::EventDescription<ecs::OnEntityCreated> spawn_buildings_descr("spawn_buildin
   {ecs::get_type_description<float>("step_length"), false},
   {ecs::get_type_description<int>("row_count"), false}
 }, {
-}, {},
-spawn_buildings_handler, spawn_buildings_singl_handler, ecs::SystemTag::GameEditor);
+}, {"game","editor"},
+spawn_buildings_handler, spawn_buildings_singl_handler, ecs::tags::all);
 
 void spawn_buildings_handler(const ecs::OnEntityCreated &event)
 {

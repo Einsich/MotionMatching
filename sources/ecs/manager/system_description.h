@@ -1,6 +1,5 @@
 #pragma once
 #include <iterator>
-#include "../system_order.h"
 #include "archetype.h"
 
 namespace ecs
@@ -23,12 +22,16 @@ namespace ecs
     std::vector<FunctionArgument> requireArgs, requireNotArgs;
     std::vector<SystemCashedArchetype> archetypes;
     std::vector<std::string> scenes;
+    std::vector<std::string> before, after;
     uint tags;
     uint notSingletonArgsCount;
+    bool isQuery;
     CallableDescription(const char *name,
       std::vector<FunctionArgument> &&require_args,
       std::vector<FunctionArgument> &&require_not_args,
       std::vector<std::string> &&scenes,
+      std::vector<std::string> &&before,
+      std::vector<std::string> &&after,
       uint tags);
     virtual void registration() = 0;
   };
@@ -43,7 +46,6 @@ namespace ecs
   {
     void (*function)();
     int stage;
-    std::vector<std::string> before, after;
     SystemDescription(const char *name,
       std::vector<FunctionArgument> &&require_args,
       std::vector<FunctionArgument> &&require_not_args,

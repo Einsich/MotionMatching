@@ -9,7 +9,7 @@ ecs::EventDescription<StartGameEvent> init_game_descr("init_game", {
   {ecs::get_type_description<ScoreBoard>("sb"), false}
 }, {
 }, {},
-init_game_handler, init_game_singl_handler, ecs::SystemTag::Game);
+init_game_handler, init_game_singl_handler, ecs::tags::all);
 
 void init_game_handler(const StartGameEvent &event)
 {

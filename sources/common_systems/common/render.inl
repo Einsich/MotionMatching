@@ -20,13 +20,13 @@ ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2DArray>, Texture2DArray)
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<CubeMap>, CubeMap)
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Material>, Material)
 
-EVENT(ecs::SystemTag::GameEditor) add_global_uniform(const ecs::OnSceneCreated &)
+EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<GlobalRenderData>("GlobalRenderData", 0);
   add_storage_buffer("InstanceData", 0, 1);
 }
 
-SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) render_submenu(EditorRenderSettings &settings)
+SYSTEM(stage=ui_menu; scene=editor) render_submenu(EditorRenderSettings &settings)
 {
   if (ImGui::BeginMenu("Render"))
   {
@@ -39,7 +39,7 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) render_submenu(EditorRe
 template<typename Callable> 
 void find_light(Callable);
 
-SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor)
+SYSTEM(stage=render;scene=game, editor)
 set_global_render_data(const MainCamera &mainCamera)
 {
   DirectionLight light; 
@@ -51,12 +51,12 @@ set_global_render_data(const MainCamera &mainCamera)
     mainCamera.position, light.normalizedLightDirection, 
     light.ambient, light.lightColor, vec4(t , t * 2.f, t * 4.f, dt)});
 }
-EVENT(ecs::SystemTag::GameEditor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &mesh)
+EVENT(scene=game, editor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &mesh)
 {
   if (mesh)
     mesh.load();
 }
-SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
+SYSTEM(stage=render; before=frustum_culling; scene=game, editor) lod_selector(
   const MainCamera &mainCamera,
   const Transform &transform,
   const vector<Asset<Mesh>> &lods_meshes,
@@ -87,7 +87,8 @@ SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor) lod_selector(
   if (mesh)
     mesh.load();
 }
-SYSTEM(ecs::SystemOrder::RENDER-1,ecs::SystemTag::GameEditor, ecs::Tag useFrustumCulling) frustum_culling(
+SYSTEM(stage=render; before=process_mesh_position; scene=game, editor; require=ecs::Tag useFrustumCulling)
+frustum_culling(
   const MainCamera &mainCamera,
   const Transform &transform,
   const Asset<Mesh> &mesh,
@@ -112,7 +113,7 @@ struct RenderQueue : ecs::Singleton
   vector<RenderStuff> queue;
 };
 
-SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_position(
+SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_mesh_position(
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
   const ecs::EntityId &eid,
@@ -126,14 +127,14 @@ SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor) process_mesh_positio
   }
 }
 
-SYSTEM(ecs::SystemOrder::RENDER+100,ecs::SystemTag::GameEditor)
+SYSTEM(stage=render; after=main_instanced_render; scene=game, editor)
 render_sky_box(SkyBox &skyBox)
 {
   ProfilerLabelGPU label("skybox");
   skyBox.render();
 }
 // after skybox
-SYSTEM(ecs::SystemOrder::RENDER+101,ecs::SystemTag::GameEditor) 
+SYSTEM(stage=render; after=render_sky_box; scene=game, editor) 
 render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
 {
   UniformBuffer &instanceData = get_buffer("InstanceData");
@@ -173,7 +174,7 @@ void set_matrices_to_buffer(ecs::EntityId eid, const ShaderBuffer &buffer, char 
   });
 }
 
-SYSTEM(ecs::SystemOrder::RENDER + 2,ecs::SystemTag::GameEditor)
+SYSTEM(stage=render; scene=game, editor)
 main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 {
   UniformBuffer &instanceData = get_buffer("InstanceData");
@@ -235,7 +236,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 template<typename Callable> 
 void find_collidable_entity(Callable);
 
-SYSTEM(ecs::SystemOrder::RENDER + 0,ecs::SystemTag::GameEditor)
+SYSTEM(stage=render; after=process_mesh_position; before=render_sky_box; scene=game, editor)
 render_collision(const EditorRenderSettings &editorSettings)
 {
   if (!editorSettings.render_collision)

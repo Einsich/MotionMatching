@@ -12,7 +12,7 @@ struct SelectedAsset : ecs::Singleton
   ResourceMap *resourceType = nullptr;
   bool selectNewResourceType = false;
 };
-SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(SelectedAsset &selectedAsset)
+SYSTEM(stage=ui_menu; scene=editor) resources_menu(SelectedAsset &selectedAsset)
 {
   if (ImGui::BeginMenu("Resources"))
   {
@@ -32,7 +32,7 @@ SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) resources_menu(Selected
   }
 }
 
-SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui)
+SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

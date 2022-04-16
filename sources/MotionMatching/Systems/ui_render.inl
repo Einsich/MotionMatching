@@ -101,7 +101,7 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, Anim
   ImGui::End();
 }
 
-SYSTEM(ecs::SystemOrder::UI) briefing_ui()
+SYSTEM(stage=ui) briefing_ui()
 {
   if (!ImGui::Begin("Briefing"))
   {
@@ -115,7 +115,7 @@ SYSTEM(ecs::SystemOrder::UI) briefing_ui()
   ImGui::End();
 }
 
-SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion_matching_statistic(
+SYSTEM(stage=ui; require=ThirdPersonController thirdPersonController) motion_matching_statistic(
   const AnimationPlayer &animationPlayer,
   const Settings &settings,
   bool &updateMMStatistic)
@@ -143,7 +143,7 @@ SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) motion
   updateMMStatistic = true;
 }
 
-SYSTEM(ecs::SystemOrder::UI, ThirdPersonController thirdPersonController) current_anim_index(
+SYSTEM(stage=ui; require=ThirdPersonController thirdPersonController) current_anim_index(
   const AnimationPlayer &animationPlayer)
 {
   ImGui::Begin("Current anim");
@@ -240,7 +240,7 @@ void settings_manager(vector<pair<string, T>> &settings, const char *settings_na
 }
 
 
-SYSTEM(ecs::SystemOrder::UIMENU) menu_ui(
+SYSTEM(stage=ui_menu) menu_ui(
   Settings &settings,
   SettingsContainer &settingsContainer)
 {
@@ -251,7 +251,7 @@ SYSTEM(ecs::SystemOrder::UIMENU) menu_ui(
 }
 
 
-SYSTEM(ecs::SystemOrder::UI) mm_early_text_perf(Settings &settings)
+SYSTEM(stage=ui) mm_early_text_perf(Settings &settings)
 {
 
   ImGui::Begin("Early mm test");

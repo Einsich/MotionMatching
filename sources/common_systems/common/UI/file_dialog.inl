@@ -2,7 +2,7 @@
 #include <application/file_dialog.h>
 #include "editor_window.h"
 
-SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::Editor) open_dialog(EditorUI &ui)
+SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
 {
   if (ImGui::BeginMenu("Editor"))
   {

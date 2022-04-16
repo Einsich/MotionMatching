@@ -42,7 +42,7 @@ static Invasion find_target(const vector<ecs::EntityId> &neighbors, uint forces)
   return Invasion {ecs::EntityId(), -1u, 0, false};
 }
 
-EVENT(ecs::Tag isPlayableLand) game_started(
+EVENT(require=ecs::Tag isPlayableLand) game_started(
   const OnGameStarted&,
   uint &forces,
   uint startForces,
@@ -116,8 +116,8 @@ static void conquer(MapArrays &map_arrays, uint conquerer, ivec2 p)
     }
   }
 }
-
-SYSTEM(ecs::SystemOrder::LOGIC+2) map_update(
+//stage=act+2
+SYSTEM(stage=act) map_update(
   float forceFromCell,
   float forceFromPeople,
   float maxForceFromCell,
@@ -137,7 +137,7 @@ SYSTEM(ecs::SystemOrder::LOGIC+2) map_update(
 
   updateTime -= updatePeriod;
   
-  QUERY(ecs::Tag isPlayableLand)lands_economic([&](
+  QUERY(require=ecs::Tag isPlayableLand)lands_economic([&](
     int landCount,
     uint &forces
   )
@@ -203,8 +203,8 @@ SYSTEM(ecs::SystemOrder::LOGIC+2) map_update(
   });
   needUpdateBorder = mapWasChanged;
 }
-
-SYSTEM(ecs::SystemOrder::LOGIC+1) border_update(
+//stage=act+1
+SYSTEM(stage=act) border_update(
   MapArrays &map_arrays,
   bool &needUpdateBorder
 )
@@ -226,7 +226,7 @@ SYSTEM(ecs::SystemOrder::LOGIC+1) border_update(
       return !isBorder;
     });
 
-  QUERY(ecs::Tag isPlayableLand)gather_invaders2([&](
+  QUERY(require=ecs::Tag isPlayableLand)gather_invaders2([&](
     uint landIndex,
     vector<ecs::EntityId> &neighbors,
     vector<uint> &neighborsIdx

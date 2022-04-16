@@ -7,7 +7,6 @@
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "template/blk_template.h"
-#include "system_tag.h"
 #include "ecs_scene.h"
 #include "application_metainfo.h"
 
@@ -48,9 +47,8 @@ void Application::start()
   ecs::load_templates_from_blk();
   get_cpu_profiler();
   get_gpu_profiler();
-  string sceneName;
-  uint tags = editor ? ecs::SystemTag::Editor : ecs::SystemTag::Game;
-  scene->start_scene(root_path(metaInfo.firstScene), tags);
+
+  scene->start_scene(root_path(metaInfo.firstScene), editor);
 }
 bool Application::sdl_event_handler()
 {
@@ -104,9 +102,9 @@ void Application::main_loop()
       PROFILER(ecs_events);
       scene->process_events();
       ecs_events.stop();
-      PROFILER(ecs_logic);
-      scene->update_logic();
-      ecs_logic.stop();
+      PROFILER(ecs_act);
+      scene->update_act();
+      ecs_act.stop();
       
       PROFILER(swapchain);
       context.swap_buffer();

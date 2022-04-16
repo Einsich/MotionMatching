@@ -10,7 +10,7 @@ ecs::EventDescription<ecs::OnSceneCreated> init_sprites_shaders_camera_descr("in
   {ecs::get_type_description<ScoreBoard>("sb"), false}
 }, {
 }, {},
-init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, ecs::SystemTag::Game);
+init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, ecs::tags::all);
 
 void init_sprites_shaders_camera_handler(const ecs::OnSceneCreated &event)
 {
@@ -27,7 +27,7 @@ void load_scene_event_singl_handler(const LoadSceneEvent &event, ecs::EntityId e
 ecs::EventDescription<LoadSceneEvent> load_scene_event_descr("load_scene_event", {
 }, {
 }, {},
-load_scene_event_handler, load_scene_event_singl_handler, ecs::SystemTag::Game);
+load_scene_event_handler, load_scene_event_singl_handler, ecs::tags::all);
 
 void load_scene_event_handler(const LoadSceneEvent &event)
 {

@@ -23,7 +23,7 @@ ecs::SystemDescription show_statistic_descr("show_statistic", {
   {ecs::get_type_description<vector<vec3>>("land_colors"), false}
 }, {
 }, {},
-show_statistic_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+show_statistic_func, ecs::stage::ui, ecs::tags::all,
 {},
 {});
 

@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "ecs_core.h"
 #include "ecs_event.h"
-#include "system_tag.h"
 #include "manager/system_description.h"
 #include "common.h"
 #include "manager/entity_container.h"
@@ -14,6 +13,10 @@ namespace ecs
   {
     entityContainer = new EntityContainer();
     sceneToLoad = "";
+    applicationTags = 0;
+#ifndef RELEASE
+    applicationTags |= tags::debug;
+#endif
   }
   
   Core::~Core()
@@ -54,14 +57,6 @@ namespace ecs
     }
   }
   
-  static bool allow_system_execute(uint tags, uint require_tags)
-  {
-#ifdef RELEASE
-    if (tags & SystemTag::Debug)
-      return false;
-#endif
-    return (tags & require_tags) == require_tags;
-  }
   void Core::register_allowed_callable()
   {
     systems.clear();
@@ -70,8 +65,15 @@ namespace ecs
     for (const auto &cleaner : events_cleaners)
       cleaner();
     for (CallableDescription *callable : all_callable)
-      if (allow_system_execute(callable->tags, currentSceneTags))
-        callable->registration();
+    {
+      if ((callable->tags & applicationTags) == applicationTags &&
+        (callable->isQuery ||
+          (callable->scenes.empty() && currentSceneTags != "editor") || 
+        std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)
+          != callable->scenes.end()))
+          callable->registration();
+    }
+      
   }
 
 

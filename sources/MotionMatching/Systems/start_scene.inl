@@ -23,7 +23,7 @@ ECS_DECLARE_TYPE(ThirdPersonController)
 ECS_DECLARE_TYPE(AnimationDataBasePtr)
 
 
-EVENT(ecs::SystemTag::Game) init_anim_settings(const ecs::OnEntityCreated &,
+EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,
   AnimationDataBasePtr dataBase,
   vector<AnimationTest> &tests,
   Settings &settings,

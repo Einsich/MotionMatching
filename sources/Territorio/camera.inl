@@ -40,7 +40,7 @@ SYSTEM() camera_lerp(
   transform.scale = glm::lerp(transform.scale, targetTransform.scale, t);
 }
 
-EVENT(mat3 cameraProjection) change_zoom(
+EVENT(require=mat3 cameraProjection) change_zoom(
   const MouseWheelEvent &event,
   Transform2D &targetTransform,
   float zoomStrength,
@@ -52,7 +52,7 @@ EVENT(mat3 cameraProjection) change_zoom(
   targetTransform.scale = vec2(lerp(zoom.x, zoom.y, zoom.z));
 }
 
-EVENT(mat3 cameraProjection) move_camera(
+EVENT(require=mat3 cameraProjection) move_camera(
   const MouseMoveEvent &event,
   Transform2D &targetTransform,
   const WorldRenderer &wr,
@@ -67,7 +67,7 @@ EVENT(mat3 cameraProjection) move_camera(
   }
 }
 
-EVENT(mat3 cameraProjection) lock_unlock_camera(
+EVENT(require=mat3 cameraProjection) lock_unlock_camera(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,
   bool &cameraLocked)
 {

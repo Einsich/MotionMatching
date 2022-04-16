@@ -9,11 +9,10 @@ ecs::SystemDescription coin_move_descr("coin_move", {
   {ecs::get_type_description<vec3>("angular_velocity"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<float>("life_time"), false},
-  {ecs::get_type_description<float>("life_period"), false},
-  {ecs::get_type_description<ecs::Tag>("coinEffect"), false}
+  {ecs::get_type_description<float>("life_period"), false}
 }, {
-}, {},
-coin_move_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+}, {"game","editor","ecs::Tag coinEffect"},
+coin_move_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -29,8 +28,8 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> spawn_coin_
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<HeightMap>("heightMap"), false}
 }, {
-}, {},
-spawn_coin_effect_handler, spawn_coin_effect_singl_handler, ecs::SystemTag::GameEditor);
+}, {"game","editor"},
+spawn_coin_effect_handler, spawn_coin_effect_singl_handler, ecs::tags::all);
 
 void spawn_coin_effect_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
 {

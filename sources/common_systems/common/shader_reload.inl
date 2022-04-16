@@ -20,7 +20,7 @@ void foreach_resources(std::function<void(Asset<T>)> && pred)
 }
 template<typename Callable>
 void update_material(Callable);
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game, ecs::SystemTag::Debug) reload_shaders(const KeyDownEvent<SDLK_F5> &)
+EVENT(scene=editor,scene=game, scene=debug) reload_shaders(const KeyDownEvent<SDLK_F5> &)
 {
   recompile_shaders();
   foreach_resources<Material>([](Asset<Material> m){m->load("", false);});
@@ -28,12 +28,12 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game, ecs::SystemTag::Debug) reload
   debug_log("shaders were recompiled");
 }
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) 
+EVENT(scene=editor,scene=game) 
 load_directional_light(const ecs::OnEntityCreated &, DirectionLight &directionalLight)
 {
   directionalLight.normalizedLightDirection = normalize(directionalLight.lightDirection);
 }
-EVENT(ecs::SystemTag::Editor) 
+EVENT(scene=editor) 
 reload_directional_light(const ecs::OnEntityEdited &, DirectionLight &directionalLight)
 {
   directionalLight.normalizedLightDirection = normalize(directionalLight.lightDirection);

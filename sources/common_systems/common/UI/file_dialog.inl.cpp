@@ -6,8 +6,8 @@ void open_dialog_func();
 ecs::SystemDescription open_dialog_descr("open_dialog", {
   {ecs::get_type_description<EditorUI>("ui"), false}
 }, {
-}, {},
-open_dialog_func, ecs::SystemOrder::UIMENU,  ecs::SystemTag::Editor,
+}, {"editor"},
+open_dialog_func, ecs::stage::ui_menu, ecs::tags::all,
 {},
 {});
 

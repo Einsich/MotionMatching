@@ -19,7 +19,7 @@ struct TestClass
 static vector<TestClass> list0;
 static vector<TestClass*> list1;
 
-EVENT(ecs::SystemTag::GameEditor) init(const ecs::OnSceneCreated &)
+EVENT(scene=game, editor) init(const ecs::OnSceneCreated &)
 {
 /*   DataBlock blk;
   
@@ -90,12 +90,12 @@ static void process(float dt, vec3 &pos, vec3 &vel, const vec3 &center, float m)
   vel += a * dt;
   pos += vel * dt;
 }
-SYSTEM(ecs::SystemTag::GameEditor) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
+SYSTEM(scene=game, editor) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
 {
   process(Time::delta_time(), pos, vel, center, m);
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) vector_structs_update()
+SYSTEM(scene=game, editor) vector_structs_update()
 {
   for (auto &entity : list0)
   {
@@ -103,7 +103,7 @@ SYSTEM(ecs::SystemTag::GameEditor) vector_structs_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) vector_pointers_update()
+SYSTEM(scene=game, editor) vector_pointers_update()
 {
   for (auto entityPrt : list1)
   {

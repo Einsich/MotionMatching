@@ -22,7 +22,7 @@ ecs::SystemDescription third_peson_controller_update_descr("third_peson_controll
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-third_peson_controller_update_func, ecs::SystemOrder::LOGIC, ecs::SystemTag::Game,
+third_peson_controller_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -39,7 +39,7 @@ ecs::EventDescription<ecs::OnEntityCreated> third_controller_appear_descr("third
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-third_controller_appear_handler, third_controller_appear_singl_handler, ecs::SystemTag::Game);
+third_controller_appear_handler, third_controller_appear_singl_handler, ecs::tags::all);
 
 void third_controller_appear_handler(const ecs::OnEntityCreated &event)
 {
@@ -60,7 +60,7 @@ ecs::EventDescription<MouseMoveEvent> mouse_move_handler_descr("mouse_move_handl
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {},
-mouse_move_handler_handler, mouse_move_handler_singl_handler, ecs::SystemTag::Game);
+mouse_move_handler_handler, mouse_move_handler_singl_handler, ecs::tags::all);
 
 void mouse_move_handler_handler(const MouseMoveEvent &event)
 {
@@ -78,7 +78,7 @@ ecs::EventDescription<MouseWheelEvent> mouse_wheel_handler_descr("mouse_wheel_ha
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, ecs::SystemTag::Game);
+mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, ecs::tags::all);
 
 void mouse_wheel_handler_handler(const MouseWheelEvent &event)
 {
@@ -97,7 +97,7 @@ ecs::EventDescription<KeyEventAnyActionKey> crouch_event_handler_descr("crouch_e
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-crouch_event_handler_handler, crouch_event_handler_singl_handler, ecs::SystemTag::Game);
+crouch_event_handler_handler, crouch_event_handler_singl_handler, ecs::tags::all);
 
 void crouch_event_handler_handler(const KeyEventAnyActionKey &event)
 {
@@ -116,7 +116,7 @@ ecs::EventDescription<KeyEventAnyActionKey> animation_player_handler_descr("anim
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-animation_player_handler_handler, animation_player_handler_singl_handler, ecs::SystemTag::Game);
+animation_player_handler_handler, animation_player_handler_singl_handler, ecs::tags::all);
 
 void animation_player_handler_handler(const KeyEventAnyActionKey &event)
 {

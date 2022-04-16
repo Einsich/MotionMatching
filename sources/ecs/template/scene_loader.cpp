@@ -6,9 +6,8 @@ namespace ecs
   void init_components_from_blk(const DataBlock *tmpl, vector<ComponentInstance> &components);
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
 
-  void load_scene(const string &path)
+  void load_scene(const DataBlock &scene)
   {
-    DataBlock scene(path);
     for (uint i = 0, n = scene.blockCount(); i < n; i++)
     {
       const DataBlock *entity = scene.getBlock(i);

@@ -18,12 +18,12 @@ struct EditorCamera : ecs::Singleton
 {
   ecs::EntityId camera;
 };
-EVENT(ecs::SystemTag::Game) find_main_camera_game(
+EVENT(scene=game) find_main_camera_game(
   const ecs::OnSceneCreated &,
   MainCamera &mainCamera)
 {
   mainCamera.eid = ecs::EntityId();
-  QUERY(Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
+  QUERY(require=Camera camera)find_all_created_camera([&](ecs::EntityId eid, bool isMainCamera){
     if (isMainCamera)
       mainCamera.eid = eid;
   });
@@ -31,12 +31,12 @@ EVENT(ecs::SystemTag::Game) find_main_camera_game(
 template<typename Callable>
 void find_editor_camera(Callable);
 
-EVENT(ecs::SystemTag::Editor) find_main_camera_editor(
+EVENT(scene=editor) find_main_camera_editor(
   const ecs::OnSceneCreated &,
   EditorCamera &editorCameraManager)
 {
   ecs::EntityId editorCamera;
-  QUERY(Camera camera) find_editor_camera([&](bool isMainCamera, ecs::EntityId eid)
+  QUERY(require=Camera camera)find_editor_camera([&](bool isMainCamera, ecs::EntityId eid)
   {
     if (isMainCamera)
       editorCamera = eid;
@@ -52,7 +52,7 @@ EVENT(ecs::SystemTag::Editor) find_main_camera_editor(
   editorCameraManager.camera = editorCamera;
 }
 
-SYSTEM(ecs::SystemTag::GameEditor, Camera camera) set_main_camera(
+SYSTEM(scene=game, editor; require=Camera camera) set_main_camera(
   ecs::EntityId eid,
   const bool isMainCamera,
   MainCamera &mainCamera)
@@ -148,7 +148,7 @@ void update_free_cam_from_transform(FreeCamera &freeCamera, const Transform &tra
   }
 }
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_created(
+EVENT(scene=[editor,game]) freecam_created(
   const ecs::OnEntityCreated &,
   FreeCamera &freeCamera,
   Transform &transform)
@@ -157,7 +157,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_created(
   freeCamera.screenSpaceMovable = freeCamera.rotationable = false;
 }
 
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
+EVENT(scene=[editor,game]) freecam_mouse_move_handler(
   const MouseMoveEvent &e,
   FreeCamera &freeCamera,
   Transform &transform,
@@ -179,7 +179,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_move_handler(
     freeCamera.wantedPosition += transform.get_right() * d.x +  transform.get_up() * d.y;
   }
 }
-EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
+EVENT(scene=[editor,game]) freecam_mouse_click_handler(
   const MouseClickEvent &e,
   FreeCamera &freeCamera,
   bool isMainCamera)
@@ -195,7 +195,7 @@ EVENT(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecam_mouse_click_handler(
   }
 }
 
-SYSTEM(ecs::SystemTag::Editor,ecs::SystemTag::Game) freecamera_update(
+SYSTEM(scene=[editor,game]) freecamera_update(
   FreeCamera &freeCamera,
   bool isMainCamera,
   Transform &transform)
@@ -245,13 +245,13 @@ void update_camera_transformation(MainCamera &mainCamera, ecs::EntityId eid)
   }
 }
 
-SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::Game)
+SYSTEM(stage=before_render; scene=game)
 update_main_camera_game_transformations(MainCamera &mainCamera)
 {
   update_camera_transformation(mainCamera, mainCamera.eid);
 }
 
-SYSTEM(ecs::SystemOrder::RENDER - 5,ecs::SystemTag::Editor)
+SYSTEM(stage=before_render; scene=editor)
 update_main_camera_editor_transformations(MainCamera &mainCamera, EditorCamera &editorCamera)
 {
   update_camera_transformation(mainCamera, editorCamera.camera);

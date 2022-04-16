@@ -7,7 +7,7 @@
 #include <camera.h>
 #include "heightmap.h"
 
-SYSTEM(ecs::SystemTag::GameEditor, ecs::Tag coinEffect) coin_move(
+SYSTEM(scene=game, editor, ecs::Tag coinEffect) coin_move(
   ecs::EntityId eid,
   vec3 &linear_velocity,
   vec3 &angular_velocity,
@@ -31,7 +31,7 @@ SYSTEM(ecs::SystemTag::GameEditor, ecs::Tag coinEffect) coin_move(
 
 
 
-EVENT(ecs::SystemTag::GameEditor) spawn_coin_effect(
+EVENT(scene=game, editor) spawn_coin_effect(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,
   const MainCamera &mainCamera,
   const HeightMap &heightMap)

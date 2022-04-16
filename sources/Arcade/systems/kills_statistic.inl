@@ -2,7 +2,7 @@
 #include <imgui.h>
 #include "game_structs.h"
 
-EVENT(ecs::Tag mainHero) collect_kills(
+EVENT(require=ecs::Tag mainHero) collect_kills(
   const KillTargetEvent&,
   int &killsCount
 )
@@ -10,7 +10,7 @@ EVENT(ecs::Tag mainHero) collect_kills(
   killsCount++;
 }
 
-SYSTEM(ecs::SystemOrder::UI) show_kill_stat(int killsCount)
+SYSTEM(stage=ui) show_kill_stat(int killsCount)
 {
   if (ImGui::Begin("Score"))
   {
@@ -21,12 +21,12 @@ SYSTEM(ecs::SystemOrder::UI) show_kill_stat(int killsCount)
 
 template<typename Callable> void gather_all_targets(Callable);
 
-SYSTEM(ecs::SystemOrder::LOGIC, ecs::Tag mainHero) check_winner(bool &isWinner)
+SYSTEM(stage=act; require=ecs::Tag mainHero) check_winner(bool &isWinner)
 {
   if (isWinner)
     return;
   int aliveTargets = 0;
-  QUERY(ecs::Tag target) gather_all_targets([&]()
+  QUERY(require=ecs::Tag target) gather_all_targets([&]()
   {
     aliveTargets++;
   });

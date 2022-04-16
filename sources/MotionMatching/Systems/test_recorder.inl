@@ -6,7 +6,7 @@
 
 ECS_DECLARE_TYPE_EXT(AnimationTest)
 
-SYSTEM(ecs::SystemOrder::UI) recorder_ui(
+SYSTEM(stage=ui) recorder_ui(
   vector<AnimationTest> &tests,
   int &recordedTest,
   int &recordedState,

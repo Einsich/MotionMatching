@@ -7,11 +7,11 @@
 #include <render/global_uniform.h>
 #include "map_render_data.h"
 
-EVENT(ecs::SystemTag::GameEditor) add_map_uniform(const ecs::OnSceneCreated &)
+EVENT(scene=game, editor) add_map_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<MapRenderData>("mapData", 1);
 }
-SYSTEM(ecs::SystemOrder::RENDER,ecs::SystemTag::GameEditor)
+SYSTEM(stage=render;scene=game, editor)
 set_map_render_data(const MapRenderData &data)
 {
   get_buffer("mapData").update_buffer_and_flush<MapRenderData>(data); 
@@ -159,7 +159,7 @@ static void spawn_tress(
 template<typename Callable>
 static void query_water(Callable);
 
-EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
+EVENT(scene=game, editor) create_terrain(const ecs::OnSceneCreated&,
   const Asset<Texture2D> &heights_texture,
   const Asset<Texture2D> &normal_texture,
   const Asset<Texture2DArray> &terrain_diffuse_array,
@@ -242,7 +242,7 @@ EVENT(ecs::SystemTag::GameEditor) create_terrain(const ecs::OnSceneCreated&,
   materialSetter(*physycal_material);
   material = political_material;
 
-  QUERY(ecs::Tag isWater)query_water([&](
+  QUERY(require=ecs::Tag isWater)query_water([&](
     const Asset<Texture2D> &water_noise_texture,
     const Asset<Texture2D> &water_color_texture,
     const Asset<Texture2D> &water_foam_texture,

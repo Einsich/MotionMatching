@@ -11,7 +11,7 @@ Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale);
 template<typename Callable>
 static void toggle_map_mode(Callable);
 
-EVENT(ecs::SystemTag::GameEditor) change_terrain_mode(
+EVENT(scene=game, editor) change_terrain_mode(
   const KeyDownEvent<SDLK_m> &,
   Asset<Material> &material,
   const Asset<Material> &political_material,
@@ -24,13 +24,13 @@ EVENT(ecs::SystemTag::GameEditor) change_terrain_mode(
     material = political_material;
   else
     material = physycal_material;
-  QUERY(ecs::Tag isTree)toggle_map_mode([&](bool &is_enabled)
+  QUERY(require=ecs::Tag isTree)toggle_map_mode([&](bool &is_enabled)
   {
     is_enabled = !politicalMode;
   });
 }
 
-EVENT(ecs::SystemTag::GameEditor) create_provinces(const ecs::OnSceneCreated&,
+EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
   Asset<Material> &political_material,
   Asset<Texture2D> &provinces_texture,
   const string &provinces_texture_name,

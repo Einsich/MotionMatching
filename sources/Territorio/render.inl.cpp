@@ -39,7 +39,7 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
 }, {},
-render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
+render_scene_func, ecs::stage::render, ecs::tags::all,
 {},
 {});
 
@@ -56,7 +56,7 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
 }, {
 }, {},
-update_map_textures_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+update_map_textures_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 

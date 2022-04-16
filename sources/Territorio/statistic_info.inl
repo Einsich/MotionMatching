@@ -6,7 +6,7 @@
 template<typename Callable>
 void gather_lands(Callable);
 
-SYSTEM(ecs::SystemOrder::UI) show_statistic(vector<vec3> &land_colors)
+SYSTEM(stage=ui) show_statistic(vector<vec3> &land_colors)
 {
   struct StatInfo
   {
@@ -19,7 +19,7 @@ SYSTEM(ecs::SystemOrder::UI) show_statistic(vector<vec3> &land_colors)
     }
   };
   vector<StatInfo> info;
-  QUERY(ecs::Tag isPlayableLand)gather_lands([&](uint landIndex, int landCount, uint forces)
+  QUERY(require=ecs::Tag isPlayableLand)gather_lands([&](uint landIndex, int landCount, uint forces)
   {
     info.emplace_back(StatInfo{landIndex, landCount, forces});
   });

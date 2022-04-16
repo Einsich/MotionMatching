@@ -20,7 +20,7 @@ struct MapEditor : ecs::Singleton
 template<typename Callable>
 static void toggle_water(Callable);
 
-SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
+SYSTEM(stage=ui; scene=editor) country_builder(
   MapEditor &editor,
   const PoliticalMap &politicalMap)
 {
@@ -48,7 +48,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::SystemTag::Editor) country_builder(
     }
     if (ImGui::Checkbox("Toggle water", &editor.enableWater))
     {
-      QUERY(ecs::Tag isWater)toggle_water([&](bool &is_enabled)
+      QUERY(require=ecs::Tag isWater)toggle_water([&](bool &is_enabled)
       {
         is_enabled = editor.enableWater;
       });
@@ -100,7 +100,7 @@ bool get_map_hit(
   return false;
 }
 
-EVENT(ecs::SystemTag::Editor) trace_province(
+EVENT(scene=editor) trace_province(
   const MouseClickEvent &event,
   Asset<Material> &political_material,
   const MapEditor &editor,
@@ -132,7 +132,7 @@ static void selection_province(const PoliticalMap &political_map, MapRenderData 
     render_data.borders[borderId].color1.a = selection ? Time::time() : 0;
 }
 
-EVENT(ecs::SystemTag::GameEditor) selecte(
+EVENT(scene=game, editor) selecte(
   const MouseClickEvent &event,
   const MainCamera &mainCamera,
   const HeightMap &heightMap,

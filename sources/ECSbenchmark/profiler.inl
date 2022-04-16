@@ -51,7 +51,7 @@ void profiler()
     }
   }
 }
-SYSTEM(ecs::SystemOrder::UIMENU, ecs::SystemTag::GameEditor) menu_profiler()
+SYSTEM(stage=ui_menu; scene=game, editor) menu_profiler()
 {
 
   if (ImGui::BeginMenu("Profiler"))

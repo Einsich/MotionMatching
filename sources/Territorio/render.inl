@@ -20,7 +20,7 @@ vec2 screen_to_world(int x, int y)
 template<typename Callable>
 void gather_sprites(Callable);
 
-SYSTEM(ecs::SystemOrder::RENDER) render_scene(
+SYSTEM(stage=render) render_scene(
   const mat3 &cameraProjection,
   const Transform2D &transform,
   WorldRenderer &wr)

@@ -4,7 +4,7 @@
 #include "game_structs.h"
 
 
-SYSTEM(ecs::SystemOrder::LOGIC+1) move_all_entity_with_velocity(
+SYSTEM(stage=act) move_all_entity_with_velocity(
   Transform2D &transform,
   const vec2 &velocity,
   float *rotationVelocity
@@ -18,7 +18,7 @@ SYSTEM(ecs::SystemOrder::LOGIC+1) move_all_entity_with_velocity(
 template<typename Callable> void gather_all_target_colliders(Callable);
 
 
-SYSTEM(ecs::SystemOrder::LOGIC, ecs::Tag bullet) collision_detection(
+SYSTEM(stage=act; require=ecs::Tag bullet) collision_detection(
   ecs::EntityId eid,
   const Transform2D &transform
 )
@@ -26,7 +26,7 @@ SYSTEM(ecs::SystemOrder::LOGIC, ecs::Tag bullet) collision_detection(
   vec2 bulletPosition = transform.position;
   float bulletRadius = transform.scale.x * 0.5f;
   bool penetrate = false;
-  QUERY(ecs::Tag target) gather_all_target_colliders([&](
+  QUERY(require=ecs::Tag target) gather_all_target_colliders([&](
     ecs::EntityId eid,
     const Transform2D &transform,
     bool &destroyed)

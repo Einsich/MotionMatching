@@ -31,7 +31,7 @@ ecs::EventDescription<ecs::OnEntityCreated> create_map_descr("create_map", {
   {ecs::get_type_description<int>("botsCount"), false}
 }, {
 }, {},
-create_map_handler, create_map_singl_handler, ecs::SystemTag::Game);
+create_map_handler, create_map_singl_handler, ecs::tags::all);
 
 void create_map_handler(const ecs::OnEntityCreated &event)
 {

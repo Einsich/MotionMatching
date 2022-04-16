@@ -42,7 +42,7 @@ void prune_cache()
     cache0 += i;
 }
 
-EVENT(ecs::SystemTag::GameEditor) dag_init(const ecs::OnSceneCreated &)
+EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
 {
 
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
@@ -149,17 +149,17 @@ static void process(float dt, vec3 &pos, const vec3 &vel)
   pos += vel * dt;
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) dag_ecs_update(vec3 &p, const vec3 &v)
+SYSTEM(scene=game, editor) dag_ecs_update(vec3 &p, const vec3 &v)
 {
   process(Time::delta_time(), p, v);
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache0()
+SYSTEM(scene=game, editor) prune_cache0()
 {
   prune_cache();
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) dag_vector_structs_update()
+SYSTEM(scene=game, editor) dag_vector_structs_update()
 {
   for (DagorTestEntity &entity : list0)
   {
@@ -167,12 +167,12 @@ SYSTEM(ecs::SystemTag::GameEditor) dag_vector_structs_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache1()
+SYSTEM(scene=game, editor) prune_cache1()
 {
   prune_cache();
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) dag_vector_pointers_update()
+SYSTEM(scene=game, editor) dag_vector_pointers_update()
 {
   for (auto &entity : list1)
   {
@@ -180,12 +180,12 @@ SYSTEM(ecs::SystemTag::GameEditor) dag_vector_pointers_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache2()
+SYSTEM(scene=game, editor) prune_cache2()
 {
   prune_cache();
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) dag_vector_pointers_virtual_update()
+SYSTEM(scene=game, editor) dag_vector_pointers_virtual_update()
 {
   for (auto &entity : list2)
   {
@@ -193,23 +193,23 @@ SYSTEM(ecs::SystemTag::GameEditor) dag_vector_pointers_virtual_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache3()
+SYSTEM(scene=game, editor) prune_cache3()
 {
   prune_cache();
 }
 
 
-SYSTEM(ecs::SystemTag::GameEditor) tiny_ecs_update(vec3 &P, const vec3 &V)
+SYSTEM(scene=game, editor) tiny_ecs_update(vec3 &P, const vec3 &V)
 {
   process(Time::delta_time(), P, V);
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache4()
+SYSTEM(scene=game, editor) prune_cache4()
 {
   prune_cache();
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) tiny_soa_structs_update()
+SYSTEM(scene=game, editor) tiny_soa_structs_update()
 {
   for (uint i = 0, n = vData.size(); i < n; i++)
   {
@@ -217,12 +217,12 @@ SYSTEM(ecs::SystemTag::GameEditor) tiny_soa_structs_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache5()
+SYSTEM(scene=game, editor) prune_cache5()
 {
   prune_cache();
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) tiny_vector_structs_update()
+SYSTEM(scene=game, editor) tiny_vector_structs_update()
 {
   for (TinyEntity &entity : tinyList0)
   {
@@ -230,7 +230,7 @@ SYSTEM(ecs::SystemTag::GameEditor) tiny_vector_structs_update()
   }
 }
 
-SYSTEM(ecs::SystemTag::GameEditor) prune_cache6()
+SYSTEM(scene=game, editor) prune_cache6()
 {
   prune_cache();
 }

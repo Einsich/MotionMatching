@@ -7,7 +7,7 @@
 template<typename Callable>
 static void is_game_started(Callable);
 
-EVENT(ecs::Tag isPlayer)start_game(const KeyDownEvent<SDLK_RETURN>&)
+EVENT(require=ecs::Tag isPlayer)start_game(const KeyDownEvent<SDLK_RETURN>&)
 {
   QUERY()is_game_started([&](bool &gameStarted)
   {
@@ -33,7 +33,7 @@ static bool get_world_pos(int x, int y, const MapArrays &map_arrays, ivec2 &worl
 template<typename Callable>
 static void select_map_query(Callable);
 
-EVENT(ecs::Tag player_spawning) select_spawn_point(
+EVENT(require=ecs::Tag player_spawning) select_spawn_point(
   const MouseButtonDownEvent<MouseButton::RightButton> &event,
   ecs::EntityId eid
 )
@@ -54,7 +54,7 @@ EVENT(ecs::Tag player_spawning) select_spawn_point(
 
 void try_add_invasion(uint &forces, vector<Invasion> &invasions, Invasion invasion);
 
-EVENT(ecs::Tag isPlayer) select_invasion(
+EVENT(require=ecs::Tag isPlayer) select_invasion(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,
   uint landIndex,
   uint &forces,
@@ -87,7 +87,7 @@ EVENT(ecs::Tag isPlayer) select_invasion(
 
 #include <imgui.h>
 
-SYSTEM(ecs::SystemOrder::UI, ecs::Tag isPlayer) change_invasion_weight(float &invasion_weight, uint forces)
+SYSTEM(stage=ui; require=ecs::Tag isPlayer) change_invasion_weight(float &invasion_weight, uint forces)
 {
   if (ImGui::Begin("invasion forces"))
   {
@@ -100,7 +100,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::Tag isPlayer) change_invasion_weight(float &in
   }
   
 }
-SYSTEM(ecs::SystemOrder::UI) check_mouse_over_ui()
+SYSTEM(stage=ui) check_mouse_over_ui()
 {
   Input::input().mouseOverUI = ImGui::GetIO().WantCaptureMouse;
 }

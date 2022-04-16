@@ -15,22 +15,6 @@ void update_main_camera_position(Callable lambda)
 }
 
 
-void update_camera_pos_before_render_func();
-
-ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, {
-}, {},
-update_camera_pos_before_render_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::Game,
-{},
-{});
-
-void update_camera_pos_before_render_func()
-{
-  ecs::perform_system(update_camera_pos_before_render_descr, update_camera_pos_before_render);
-}
-
 void change_zoom_handler(const MouseWheelEvent &event);
 void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid);
 
@@ -40,7 +24,7 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
 }, {},
-change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
+change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
 
 void change_zoom_handler(const MouseWheelEvent &event)
 {

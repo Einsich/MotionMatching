@@ -9,8 +9,8 @@ ecs::SystemDescription ecs_update_descr("ecs_update", {
   {ecs::get_type_description<vec3>("center"), false},
   {ecs::get_type_description<float>("m"), false}
 }, {
-}, {},
-ecs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+}, {"game","editor"},
+ecs_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -23,8 +23,8 @@ void vector_structs_update_func();
 
 ecs::SystemDescription vector_structs_update_descr("vector_structs_update", {
 }, {
-}, {},
-vector_structs_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+}, {"game","editor"},
+vector_structs_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -37,8 +37,8 @@ void vector_pointers_update_func();
 
 ecs::SystemDescription vector_pointers_update_descr("vector_pointers_update", {
 }, {
-}, {},
-vector_pointers_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+}, {"game","editor"},
+vector_pointers_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -52,8 +52,8 @@ void init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> init_descr("init", {
 }, {
-}, {},
-init_handler, init_singl_handler, ecs::SystemTag::GameEditor);
+}, {"game","editor"},
+init_handler, init_singl_handler, ecs::tags::all);
 
 void init_handler(const ecs::OnSceneCreated &event)
 {

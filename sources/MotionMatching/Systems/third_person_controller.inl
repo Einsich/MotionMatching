@@ -33,7 +33,7 @@ EVENT() third_controller_appear(
 template<typename Callable>
 void update_attached_camera(ecs::EntityId, Callable);
 
-SYSTEM(ecs::SystemOrder::LOGIC) third_peson_controller_update(
+SYSTEM(stage=act) third_peson_controller_update(
   ecs::EntityId attachedCamera,
   PersonController &personController,
   ThirdPersonController &thirdPersonController) 
@@ -89,13 +89,13 @@ EVENT() mouse_wheel_handler(
 }
 
 
-EVENT(ThirdPersonController thirdPersonController) crouch_event_handler(
+EVENT(require=ThirdPersonController thirdPersonController) crouch_event_handler(
   const KeyEventAnyActionKey &e,
   ecs::EntityId eid)
 {
   ecs::send_event_immediate(eid, ControllerKeyBoardEvent(e));
 }
-EVENT(ThirdPersonController thirdPersonController) animation_player_handler(
+EVENT(require=ThirdPersonController thirdPersonController) animation_player_handler(
   const KeyEventAnyActionKey &e,
   AnimationPlayer &animationPlayer)
 {

@@ -11,7 +11,7 @@
 template<typename C>
 void detect_motion_matching_lod(C);
 
-SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
+SYSTEM(stage=act) animation_player_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
   Asset<Material> &material,
@@ -61,7 +61,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) animation_player_update(
   animationPlayer.tree.calculate_bone_transforms();
 }
 
-EVENT(ecs::SystemTag::GameEditor) init_animation_character(
+EVENT(scene=game, editor) init_animation_character(
   const ecs::OnEntityCreated &,
   Asset<Mesh> &mesh,
   const vector<Asset<Mesh>> *lods_meshes,
@@ -92,7 +92,7 @@ EVENT(ecs::SystemTag::GameEditor) init_animation_character(
       (it2 != mesh->bonesMap.end()) ? it2->second : -1;
   }
 }
-EVENT(ecs::SystemTag::Game) init_animation_material(
+EVENT(scene=game) init_animation_material(
   const ecs::OnEntityCreated &,
   Asset<Material> &material)
 {

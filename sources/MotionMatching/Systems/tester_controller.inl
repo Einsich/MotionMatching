@@ -11,7 +11,7 @@ void get_tests(Callable);
 template<typename Callable>
 void get_tests2(Callable);
 
-SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
+SYSTEM(stage=act) tester_update(
   ecs::EntityId eid,
   AnimationTester &animationTester)
 {
@@ -56,7 +56,7 @@ SYSTEM(ecs::SystemOrder::LOGIC) tester_update(
   });
 }
 
-EVENT(ecs::SystemTag::GameEditor) start_test(
+EVENT(scene=game, editor) start_test(
   const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
   Transform &transform,
@@ -79,7 +79,7 @@ EVENT(ecs::SystemTag::GameEditor) start_test(
   });
 }
 
-SYSTEM(ecs::SystemTag::Game) test_count(
+SYSTEM(scene=game) test_count(
   vector<ecs::EntityId> &testers,
   vector<AnimationTest> &tests,
   Settings &settings)

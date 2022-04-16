@@ -66,8 +66,8 @@ ecs::SystemDescription set_main_camera_descr("set_main_camera", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<Camera>("camera"), false}
 }, {
-}, {},
-set_main_camera_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::GameEditor,
+}, {"game","editor"},
+set_main_camera_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -85,7 +85,7 @@ ecs::SystemDescription arcball_camera_update_descr("arcball_camera_update", {
   {ecs::get_type_description<ecs::EntityId>("arcballCameraTarget"), false}
 }, {
 }, {},
-arcball_camera_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+arcball_camera_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -101,8 +101,8 @@ ecs::SystemDescription freecamera_update_descr("freecamera_update", {
   {ecs::get_type_description<bool>("isMainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
-}, {},
-freecamera_update_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Editor|ecs::SystemTag::Game,
+}, {"editor","game"},
+freecamera_update_func, ecs::stage::act, ecs::tags::all,
 {},
 {});
 
@@ -116,8 +116,8 @@ void update_main_camera_game_transformations_func();
 ecs::SystemDescription update_main_camera_game_transformations_descr("update_main_camera_game_transformations", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {},
-update_main_camera_game_transformations_func, ecs::SystemOrder::RENDER - 5, ecs::SystemTag::Game,
+}, {"game"},
+update_main_camera_game_transformations_func, ecs::stage::before_render, ecs::tags::all,
 {},
 {});
 
@@ -132,8 +132,8 @@ ecs::SystemDescription update_main_camera_editor_transformations_descr("update_m
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<EditorCamera>("editorCamera"), false}
 }, {
-}, {},
-update_main_camera_editor_transformations_func, ecs::SystemOrder::RENDER - 5, ecs::SystemTag::Editor,
+}, {"editor"},
+update_main_camera_editor_transformations_func, ecs::stage::before_render, ecs::tags::all,
 {},
 {});
 
@@ -148,8 +148,8 @@ void find_main_camera_game_singl_handler(const ecs::OnSceneCreated &event, ecs::
 ecs::EventDescription<ecs::OnSceneCreated> find_main_camera_game_descr("find_main_camera_game", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {},
-find_main_camera_game_handler, find_main_camera_game_singl_handler, ecs::SystemTag::Game);
+}, {"game"},
+find_main_camera_game_handler, find_main_camera_game_singl_handler, ecs::tags::all);
 
 void find_main_camera_game_handler(const ecs::OnSceneCreated &event)
 {
@@ -166,8 +166,8 @@ void find_main_camera_editor_singl_handler(const ecs::OnSceneCreated &event, ecs
 ecs::EventDescription<ecs::OnSceneCreated> find_main_camera_editor_descr("find_main_camera_editor", {
   {ecs::get_type_description<EditorCamera>("editorCameraManager"), false}
 }, {
-}, {},
-find_main_camera_editor_handler, find_main_camera_editor_singl_handler, ecs::SystemTag::Editor);
+}, {"editor"},
+find_main_camera_editor_handler, find_main_camera_editor_singl_handler, ecs::tags::all);
 
 void find_main_camera_editor_handler(const ecs::OnSceneCreated &event)
 {
@@ -186,7 +186,7 @@ ecs::EventDescription<ecs::OnEntityCreated> arcball_created_descr("arcball_creat
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
 }, {},
-arcball_created_handler, arcball_created_singl_handler, ecs::SystemTag::Game);
+arcball_created_handler, arcball_created_singl_handler, ecs::tags::all);
 
 void arcball_created_handler(const ecs::OnEntityCreated &event)
 {
@@ -205,7 +205,7 @@ ecs::EventDescription<MouseMoveEvent> arccam_mouse_move_handler_descr("arccam_mo
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
 }, {},
-arccam_mouse_move_handler_handler, arccam_mouse_move_handler_singl_handler, ecs::SystemTag::Game);
+arccam_mouse_move_handler_handler, arccam_mouse_move_handler_singl_handler, ecs::tags::all);
 
 void arccam_mouse_move_handler_handler(const MouseMoveEvent &event)
 {
@@ -224,7 +224,7 @@ ecs::EventDescription<MouseClickEvent> arccam_mouse_click_handler_descr("arccam_
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
 }, {},
-arccam_mouse_click_handler_handler, arccam_mouse_click_handler_singl_handler, ecs::SystemTag::Game);
+arccam_mouse_click_handler_handler, arccam_mouse_click_handler_singl_handler, ecs::tags::all);
 
 void arccam_mouse_click_handler_handler(const MouseClickEvent &event)
 {
@@ -243,7 +243,7 @@ ecs::EventDescription<MouseWheelEvent> arccam_mouse_wheel_handler_descr("arccam_
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
 }, {},
-arccam_mouse_wheel_handler_handler, arccam_mouse_wheel_handler_singl_handler, ecs::SystemTag::Game);
+arccam_mouse_wheel_handler_handler, arccam_mouse_wheel_handler_singl_handler, ecs::tags::all);
 
 void arccam_mouse_wheel_handler_handler(const MouseWheelEvent &event)
 {
@@ -261,8 +261,8 @@ ecs::EventDescription<ecs::OnEntityCreated> freecam_created_descr("freecam_creat
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
-}, {},
-freecam_created_handler, freecam_created_singl_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game);
+}, {"editor","game"},
+freecam_created_handler, freecam_created_singl_handler, ecs::tags::all);
 
 void freecam_created_handler(const ecs::OnEntityCreated &event)
 {
@@ -281,8 +281,8 @@ ecs::EventDescription<MouseMoveEvent> freecam_mouse_move_handler_descr("freecam_
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {},
-freecam_mouse_move_handler_handler, freecam_mouse_move_handler_singl_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game);
+}, {"editor","game"},
+freecam_mouse_move_handler_handler, freecam_mouse_move_handler_singl_handler, ecs::tags::all);
 
 void freecam_mouse_move_handler_handler(const MouseMoveEvent &event)
 {
@@ -300,8 +300,8 @@ ecs::EventDescription<MouseClickEvent> freecam_mouse_click_handler_descr("freeca
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {},
-freecam_mouse_click_handler_handler, freecam_mouse_click_handler_singl_handler, ecs::SystemTag::Editor|ecs::SystemTag::Game);
+}, {"editor","game"},
+freecam_mouse_click_handler_handler, freecam_mouse_click_handler_singl_handler, ecs::tags::all);
 
 void freecam_mouse_click_handler_handler(const MouseClickEvent &event)
 {

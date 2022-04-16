@@ -25,7 +25,7 @@ EVENT() setup_camera(
 }
 
 //update menu
-SYSTEM(ecs::SystemOrder::UI, ecs::Tag startGameButton) start_game_button(ecs::EntityId eid, const ScoreBoard &sb)
+SYSTEM(stage=ui; require=ecs::Tag startGameButton) start_game_button(ecs::EntityId eid, const ScoreBoard &sb)
 {
   constexpr int N = 64;
   char buf[N];
@@ -42,7 +42,7 @@ SYSTEM(ecs::SystemOrder::UI, ecs::Tag startGameButton) start_game_button(ecs::En
 }
 
 
-SYSTEM(ecs::SystemOrder::UI) exit_menu_button(bool isWinner, int killsCount, ScoreBoard &sb)
+SYSTEM(stage=ui) exit_menu_button(bool isWinner, int killsCount, ScoreBoard &sb)
 {
   if (isWinner && ImGui::Begin("Result"))
   {

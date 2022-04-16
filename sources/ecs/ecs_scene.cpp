@@ -9,7 +9,7 @@ void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 namespace ecs
 {
-  void load_scene(const string &path);
+  void load_scene(const DataBlock &scene);
   void destroy_scene();
   void invalidate_cached_archetype();
 
@@ -17,25 +17,95 @@ namespace ecs
   {
     return a->stage < b->stage;
   }
+  static void dfs(uint v, const vector<vector<uint>> &edges, vector<bool> &used, vector<uint> &answer)
+  {
+    used[v] = true;
+    for (uint to : edges[v])
+    {
+      
+        debug_log("edge %d -> %d ", v, to);
+      if (!used[to])
+        dfs(to, edges, used, answer);
+    }
+    answer.push_back(v);
+  }
+  static void topological_sort(std::vector<ecs::CallableDescription *> &systems)
+  {
+    vector<vector<uint>> edge(systems.size());
+    vector<bool> used(systems.size(), false);
+    vector<uint> answer;
+    answer.reserve(systems.size());
+    map<string, int> nameMap;
+    for (uint i = 0; i < systems.size(); i++)
+      if (!systems[i]->isQuery)
+        nameMap[systems[i]->name] = i;
+    for (uint i = 0; i < systems.size(); i++)
+    {
+      for (const string &before : systems[i]->before)
+      {
+        auto it = nameMap.find(before);
+        if (it != nameMap.end())
+        {
+          edge[it->second].push_back(i);
+        }
+        else
+        {
+          debug_error("%s didn't exist for before %s", before.c_str(), systems[i]->name.c_str());
+        }
+      }
+      for (const string &after : systems[i]->after)
+      {
+        auto it = nameMap.find(after);
+        if (it != nameMap.end())
+        {
+          edge[i].push_back(it->second);
+        }
+        else
+        {
+          debug_error("%s didn't exist for after %s", after.c_str(), systems[i]->name.c_str());
+        }
+      }
+    }
+    for (uint i = 0; i < systems.size(); i++)
+    {
+      if (!used[i])
+        dfs(i, edge, used, answer);
+    }
+    //reverse(answer.begin(), answer.end());
+    std::vector<ecs::CallableDescription *> rightOrder(systems.size());
+
+    for (uint i = 0; i < systems.size(); i++)
+    {
+      rightOrder[answer[i]] = systems[i];
+      debug_log("%s[%d]", rightOrder[answer[i]]->name.c_str(), i);
+    }
+    swap(systems, rightOrder);
+  }
+
   void SceneManager::start()
   {
     create_all_resources_from_metadata();
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    topological_sort(core().all_callable);
+
   }
   void SceneManager::sort_systems()
   {
     auto &systems = core().systems;
     std::sort(systems.begin(), systems.end(), system_comparator);
-    logic.begin = systems.begin();
-    logic.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::RENDER;});
-    render.begin = logic.end;
+    act.begin = systems.begin();
+    act.end = std::find_if(systems.begin(), systems.end(),
+      [](const SystemDescription *a){return a->stage >= stage::before_render;});
+    before_render.begin = act.end;
+    before_render.end = std::find_if(systems.begin(), systems.end(),
+      [](const SystemDescription *a){return a->stage >= stage::render;});
+    render.begin = act.end;
     render.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::UI;});
+      [](const SystemDescription *a){return a->stage >= stage::ui;});
     ui.begin = render.end;
     ui.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= (int)SystemOrder::UIMENU;});
+      [](const SystemDescription *a){return a->stage >= stage::ui_menu;});
     menu.begin = ui.end;
     menu.end = systems.end();
   }
@@ -51,24 +121,27 @@ namespace ecs
       auto &singleton = p.second;
       singleton.constructor(singleton.getSingleton());        
     } */
-    load_scene(currentScene.path);
+    load_scene(currentScene.rawScene);
     send_event(OnSceneCreated());
   }
   void SceneManager::swap_editor_game_scene()
   {
-    bool inEditor = core().currentSceneTags & ecs::SystemTag::Game;
-    uint32_t tags = core().currentSceneTags;
-    tags |= (inEditor ? ecs::SystemTag::Editor : ecs::SystemTag::Game);
-    tags &= (!inEditor ? ~ecs::SystemTag::Editor : ~ecs::SystemTag::Game);
     invalidate_cached_archetype();
-    start_scene(currentScene.path, tags);
+    currentScene.inEditor = !currentScene.inEditor;
+    init_scene();
   }
-  void SceneManager::start_scene(const string &path, uint newTags)
+  void SceneManager::start_scene(const string &path, bool inEditor)
   {
+    currentScene.rawScene = DataBlock(path);
     currentScene.path = path;
-    bool inEditor = newTags & ecs::SystemTag::Editor;
+    currentScene.inEditor = inEditor;
+    init_scene();
+  }
+  void SceneManager::init_scene()
+  {
+    bool inEditor = currentScene.inEditor;
     ecs::EntityContainer &curContainer = inEditor ? currentScene.editorScene : currentScene.gameScene;
-    core().currentSceneTags = newTags;
+    core().currentSceneTags = inEditor ? "editor" : "game";
     core().entityContainer = &curContainer;
     core().register_allowed_callable();
     sort_systems();
@@ -89,12 +162,13 @@ namespace ecs
       (*it)->execute();
     }
   }
-  void SceneManager::update_logic()
+  void SceneManager::update_act()
   {
-    update_range(logic);
+    update_range(act);
   }
   void SceneManager::update_render()
   {
+    update_range(before_render);
     ProfilerLabelGPU label("ecs_render");
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -124,7 +198,7 @@ namespace ecs
     string &sceneToLoad = core().sceneToLoad;
     if (sceneToLoad != "")
     {
-      start_scene(sceneToLoad, core().currentSceneTags);
+      start_scene(sceneToLoad, currentScene.inEditor);
       sceneToLoad = "";
     }
   }

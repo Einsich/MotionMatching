@@ -21,7 +21,8 @@ namespace ecs
     std::vector<std::function<void()>> events_cleaners;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
-    uint currentSceneTags;
+    uint applicationTags;
+    string currentSceneTags;
     std::string sceneToLoad;
     bool reloadScene;
     Core();
@@ -62,7 +63,8 @@ namespace ecs
       EventHandler broadcastEventHandler,
       SingleEventHandler unicastEventHandler,
       uint tags):
-      CallableDescription(name, std::move(require_args), std::move(require_not_args), std::move(scenes), tags),
+      CallableDescription(name, std::move(require_args), std::move(require_not_args),
+        std::move(scenes), {}, {}, tags),
       broadcastEventHandler(broadcastEventHandler),
       unicastEventHandler(unicastEventHandler)
     {

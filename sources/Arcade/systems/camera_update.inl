@@ -5,19 +5,19 @@
 
 template<typename Callable> void update_main_camera_position(Callable);
 
-SYSTEM(ecs::SystemOrder::RENDER-1, ecs::Tag mainHero) update_camera_pos_before_render(
+SYSTEM(stage=before_render; require=ecs::Tag mainHero) update_camera_pos_before_render(
   const Transform2D &transform)
 {
   vec2 heroPosition = transform.position;
   
-  QUERY(mat3 cameraProjection) update_main_camera_position([heroPosition](Transform2D &transform)
+  QUERY(require=mat3 cameraProjection) update_main_camera_position([heroPosition](Transform2D &transform)
   {
     transform.position = heroPosition;
   });
 }
 
 
-EVENT(mat3 cameraProjection) change_zoom(
+EVENT(require=mat3 cameraProjection) change_zoom(
   const MouseWheelEvent &event,
   Transform2D &transform,
   vec3 &zoom)

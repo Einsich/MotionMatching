@@ -6,7 +6,7 @@
 #include "game_structs.h"
 
 
-SYSTEM(ecs::SystemOrder::LOGIC, ecs::Tag target) controll_targets(
+SYSTEM(stage=act; require=ecs::Tag target) controll_targets(
   Transform2D &transform,
   vec2 &velocity
 )
@@ -25,7 +25,7 @@ SYSTEM(ecs::SystemOrder::LOGIC, ecs::Tag target) controll_targets(
 
 
 
-EVENT(ecs::Tag mainHero) look_at_mouse_position_when_mouse_moves(
+EVENT(require=ecs::Tag mainHero) look_at_mouse_position_when_mouse_moves(
   const MouseMoveEvent &event,
   const WorldRenderer &wr,
   Transform2D &transform)
@@ -50,7 +50,7 @@ void create_bullet(vec2 position, float rotation, float bulletVelocity, const Sp
     {"bullet", {}}
   );
 }
-EVENT(ecs::Tag mainHero) fire_when_mouse_click(
+EVENT(require=ecs::Tag mainHero) fire_when_mouse_click(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,
   const WorldRenderer &wr,
   const SpriteFactory &sf,
@@ -64,7 +64,7 @@ EVENT(ecs::Tag mainHero) fire_when_mouse_click(
   create_bullet(transform.position, atan2f(direction.y, direction.x), 25, sf.bullet);
 }
 
-EVENT(ecs::Tag mainHero) circle_attack(
+EVENT(require=ecs::Tag mainHero) circle_attack(
   const KeyDownEvent<SDLK_SPACE> &,
   const Transform2D &transform,
   const SpriteFactory &sf)
@@ -74,7 +74,8 @@ EVENT(ecs::Tag mainHero) circle_attack(
     create_bullet(transform.position, -transform.rotation + angle, 8, sf.bullet);
   }
 }
-SYSTEM(ecs::SystemOrder::LOGIC+1, ecs::Tag bullet) destroy_old_bullets(
+//stage=act+1
+SYSTEM(stage=act;require= ecs::Tag bullet) destroy_old_bullets(
   ecs::EntityId eid,
   float creationTime,
   float lifeTime
@@ -86,7 +87,7 @@ SYSTEM(ecs::SystemOrder::LOGIC+1, ecs::Tag bullet) destroy_old_bullets(
 }
 
 
-SYSTEM(ecs::SystemOrder::NO_ORDER, ecs::Tag mainHero) move_hero(
+SYSTEM(stage=act; require=ecs::Tag mainHero) move_hero(
   const Transform2D &transform,
   vec2 &velocity,
   bool isWinner)
