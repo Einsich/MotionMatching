@@ -1,4 +1,5 @@
 #include "file_dialog.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void open_dialog_func();

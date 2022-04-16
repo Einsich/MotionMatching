@@ -1,4 +1,5 @@
 #include "init_menu.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void start_game_button_func();

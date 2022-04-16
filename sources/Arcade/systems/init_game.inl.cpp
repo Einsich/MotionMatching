@@ -1,4 +1,5 @@
 #include "init_game.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void init_game_handler(const StartGameEvent &event);

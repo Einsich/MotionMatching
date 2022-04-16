@@ -1,4 +1,5 @@
 #include "init_scene.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void init_sprites_shaders_camera_handler(const ecs::OnSceneCreated &event);

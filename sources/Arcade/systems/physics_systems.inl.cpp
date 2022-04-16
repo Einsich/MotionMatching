@@ -1,4 +1,5 @@
 #include "physics_systems.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription gather_all_target_colliders_descr("gather_all_target_colliders", {
@@ -16,6 +17,23 @@ void gather_all_target_colliders(Callable lambda)
   (gather_all_target_colliders_descr, lambda);
 }
 
+
+void move_all_entity_with_velocity_func();
+
+ecs::SystemDescription move_all_entity_with_velocity_descr("move_all_entity_with_velocity", {
+  {ecs::get_type_description<Transform2D>("transform"), false},
+  {ecs::get_type_description<vec2>("velocity"), false},
+  {ecs::get_type_description<float>("rotationVelocity"), true}
+}, {
+}, {},
+move_all_entity_with_velocity_func, ecs::stage::act, ecs::tags::all,
+{},
+{});
+
+void move_all_entity_with_velocity_func()
+{
+  ecs::perform_system(move_all_entity_with_velocity_descr, move_all_entity_with_velocity);
+}
 
 void collision_detection_func();
 

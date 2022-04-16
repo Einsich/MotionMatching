@@ -22,8 +22,6 @@ namespace ecs
     used[v] = true;
     for (uint to : edges[v])
     {
-      
-        debug_log("edge %d -> %d ", v, to);
       if (!used[to])
         dfs(to, edges, used, answer);
     }
@@ -71,14 +69,11 @@ namespace ecs
       if (!used[i])
         dfs(i, edge, used, answer);
     }
-    //reverse(answer.begin(), answer.end());
     std::vector<ecs::CallableDescription *> rightOrder(systems.size());
 
     for (uint i = 0; i < systems.size(); i++)
-    {
       rightOrder[answer[i]] = systems[i];
-      debug_log("%s[%d]", rightOrder[answer[i]]->name.c_str(), i);
-    }
+
     swap(systems, rightOrder);
   }
 

@@ -1,4 +1,5 @@
 #include "render.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription gather_sprites_descr("gather_sprites", {

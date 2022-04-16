@@ -1,4 +1,5 @@
 #include "shader_reload.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription update_material_descr("update_material", {

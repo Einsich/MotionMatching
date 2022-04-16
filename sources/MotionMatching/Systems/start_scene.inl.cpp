@@ -1,4 +1,5 @@
 #include "start_scene.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void init_anim_settings_handler(const ecs::OnEntityCreated &event);

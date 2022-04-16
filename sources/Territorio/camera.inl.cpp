@@ -1,4 +1,5 @@
 #include "camera.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void camera_lerp_func();

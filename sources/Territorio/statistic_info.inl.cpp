@@ -1,4 +1,5 @@
 #include "statistic_info.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription gather_lands_descr("gather_lands", {

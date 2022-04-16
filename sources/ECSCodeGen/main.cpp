@@ -395,6 +395,7 @@ void process_inl_file(const fs::path& path)
   log_success(pathStr + ".cpp");
   outFile.open(pathStr + ".cpp", std::ios::out);
   outFile << "#include " << path.filename() << "\n";
+  outFile << "#include <ecs_perform.h>\n";
   outFile << "//Code-generator production\n\n";
 
   for (auto& query : queriesDescriptions)

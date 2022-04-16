@@ -1,4 +1,5 @@
 #include "ecs_camera.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription find_all_created_camera_descr("find_all_created_camera", {

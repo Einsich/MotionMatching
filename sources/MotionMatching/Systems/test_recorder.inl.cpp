@@ -1,4 +1,5 @@
 #include "test_recorder.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void recorder_ui_func();

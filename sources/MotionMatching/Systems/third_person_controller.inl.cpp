@@ -1,4 +1,5 @@
 #include "third_person_controller.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription update_attached_camera_descr("update_attached_camera", {

@@ -1,4 +1,5 @@
 #include "kills_statistic.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription gather_all_targets_descr("gather_all_targets", {

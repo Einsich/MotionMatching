@@ -1,4 +1,5 @@
 #include "tester_controller.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription get_tests_descr("get_tests", {

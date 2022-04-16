@@ -1,4 +1,5 @@
 #include "provinces.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription toggle_map_mode_descr("toggle_map_mode", {

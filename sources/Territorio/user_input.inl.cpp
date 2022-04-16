@@ -1,4 +1,5 @@
 #include "user_input.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription is_game_started_descr("is_game_started", {

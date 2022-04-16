@@ -1,4 +1,5 @@
 #include "test.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void ecs_update_func();

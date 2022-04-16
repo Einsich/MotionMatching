@@ -1,4 +1,5 @@
 #include "coin_effect.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void coin_move_func();

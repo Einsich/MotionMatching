@@ -1,4 +1,5 @@
 #include "land_logic.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription lands_economic_descr("lands_economic", {
@@ -109,6 +110,45 @@ update_bot_invasions_func, ecs::stage::act, ecs::tags::all,
 void update_bot_invasions_func()
 {
   ecs::perform_system(update_bot_invasions_descr, update_bot_invasions);
+}
+
+void map_update_func();
+
+ecs::SystemDescription map_update_descr("map_update", {
+  {ecs::get_type_description<float>("forceFromCell"), false},
+  {ecs::get_type_description<float>("forceFromPeople"), false},
+  {ecs::get_type_description<float>("maxForceFromCell"), false},
+  {ecs::get_type_description<float>("updatePeriod"), false},
+  {ecs::get_type_description<float>("updateTime"), false},
+  {ecs::get_type_description<MapArrays>("map_arrays"), false},
+  {ecs::get_type_description<bool>("mapWasChanged"), false},
+  {ecs::get_type_description<bool>("needUpdateBorder"), false},
+  {ecs::get_type_description<bool>("gameStarted"), false}
+}, {
+}, {},
+map_update_func, ecs::stage::act, ecs::tags::all,
+{},
+{});
+
+void map_update_func()
+{
+  ecs::perform_system(map_update_descr, map_update);
+}
+
+void border_update_func();
+
+ecs::SystemDescription border_update_descr("border_update", {
+  {ecs::get_type_description<MapArrays>("map_arrays"), false},
+  {ecs::get_type_description<bool>("needUpdateBorder"), false}
+}, {
+}, {},
+border_update_func, ecs::stage::act, ecs::tags::all,
+{},
+{});
+
+void border_update_func()
+{
+  ecs::perform_system(border_update_descr, border_update);
 }
 
 void game_started_handler(const OnGameStarted &event);

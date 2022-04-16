@@ -150,7 +150,7 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "dev",
     "Project": {
       "name": "Strategy",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"

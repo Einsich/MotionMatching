@@ -1,4 +1,5 @@
 #include "dagor_test.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void dag_ecs_update_func();

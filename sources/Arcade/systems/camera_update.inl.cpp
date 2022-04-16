@@ -1,4 +1,5 @@
 #include "camera_update.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription update_main_camera_position_descr("update_main_camera_position", {
@@ -14,6 +15,22 @@ void update_main_camera_position(Callable lambda)
   (update_main_camera_position_descr, lambda);
 }
 
+
+void update_camera_pos_before_render_func();
+
+ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
+  {ecs::get_type_description<Transform2D>("transform"), false},
+  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+}, {
+}, {},
+update_camera_pos_before_render_func, ecs::stage::before_render, ecs::tags::all,
+{},
+{});
+
+void update_camera_pos_before_render_func()
+{
+  ecs::perform_system(update_camera_pos_before_render_descr, update_camera_pos_before_render);
+}
 
 void change_zoom_handler(const MouseWheelEvent &event);
 void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid);

@@ -1,4 +1,5 @@
 #include "map_editor.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription toggle_water_descr("toggle_water", {

@@ -1,4 +1,5 @@
 #include "render.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription get_world_renderer_descr("get_world_renderer", {

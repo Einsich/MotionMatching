@@ -1,4 +1,5 @@
 #include "profiler.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void menu_profiler_func();

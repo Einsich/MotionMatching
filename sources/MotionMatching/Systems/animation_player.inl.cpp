@@ -1,4 +1,5 @@
 #include "animation_player.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void animation_player_update_func();

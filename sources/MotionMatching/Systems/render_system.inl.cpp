@@ -1,4 +1,5 @@
 #include "render_system.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void process_animation_func();

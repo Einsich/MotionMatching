@@ -1,4 +1,5 @@
 #include "person_controller.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void peson_controller_update_func();

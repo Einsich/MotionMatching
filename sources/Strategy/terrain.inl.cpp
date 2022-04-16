@@ -1,4 +1,5 @@
 #include "terrain.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription query_water_descr("query_water", {

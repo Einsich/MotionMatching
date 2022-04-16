@@ -1,4 +1,5 @@
 #include "core_logic.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void controll_targets_func();
@@ -16,6 +17,24 @@ controll_targets_func, ecs::stage::act, ecs::tags::all,
 void controll_targets_func()
 {
   ecs::perform_system(controll_targets_descr, controll_targets);
+}
+
+void destroy_old_bullets_func();
+
+ecs::SystemDescription destroy_old_bullets_descr("destroy_old_bullets", {
+  {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<float>("creationTime"), false},
+  {ecs::get_type_description<float>("lifeTime"), false},
+  {ecs::get_type_description<ecs::Tag>("bullet"), false}
+}, {
+}, {},
+destroy_old_bullets_func, ecs::stage::act, ecs::tags::all,
+{},
+{});
+
+void destroy_old_bullets_func()
+{
+  ecs::perform_system(destroy_old_bullets_descr, destroy_old_bullets);
 }
 
 void move_hero_func();

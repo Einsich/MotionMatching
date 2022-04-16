@@ -1,4 +1,5 @@
 #include "common_ui.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void fps_ui_func();

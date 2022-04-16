@@ -1,4 +1,5 @@
 #include "create_map.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void scene_created_handler(const ecs::OnSceneCreated &event);

@@ -186,7 +186,6 @@ EVENT(scene=game, editor) create_terrain(const ecs::OnSceneCreated&,
   MapRenderData &data
 )
 {
-    debug_error("terrain has invalid heights_texture");
   if (!heights_texture)
   {
     debug_error("terrain has invalid heights_texture");

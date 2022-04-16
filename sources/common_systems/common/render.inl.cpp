@@ -1,4 +1,5 @@
 #include "render.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription find_light_descr("find_light", {

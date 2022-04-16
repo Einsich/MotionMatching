@@ -29,6 +29,7 @@
                 "${workspaceFolder}/sources/MotionMatching",
                 "${workspaceFolder}/sources/Arcade",
                 "${workspaceFolder}/sources/Territorio",
+                "${workspaceFolder}/sources/Strategy",
             ],
             "group": {
                 "kind": "build",

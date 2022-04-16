@@ -1,4 +1,5 @@
 #include "create_map.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {

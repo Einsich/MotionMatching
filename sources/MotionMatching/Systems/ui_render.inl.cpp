@@ -1,4 +1,5 @@
 #include "ui_render.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void briefing_ui_func();

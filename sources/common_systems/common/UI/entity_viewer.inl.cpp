@@ -1,4 +1,5 @@
 #include "entity_viewer.inl"
+#include <ecs_perform.h>
 //Code-generator production
 
 void entity_viewer_func();
