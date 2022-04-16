@@ -9,7 +9,9 @@ ecs::EventDescription<ecs::OnEntityCreated> init_anim_settings_descr("init_anim_
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, init_anim_settings_handler, init_anim_settings_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+init_anim_settings_handler, init_anim_settings_singl_handler, ecs::SystemTag::Game);
 
 void init_anim_settings_handler(const ecs::OnEntityCreated &event)
 {
@@ -27,7 +29,9 @@ ecs::EventDescription<ecs::OnEntityDestroyed> scene_destroy_descr("scene_destroy
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
-}, scene_destroy_handler, scene_destroy_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+scene_destroy_handler, scene_destroy_singl_handler, ecs::SystemTag::Game);
 
 void scene_destroy_handler(const ecs::OnEntityDestroyed &event)
 {

@@ -5,6 +5,7 @@ ecs::QueryDescription gather_sprites_descr("gather_sprites", {
   {ecs::get_type_description<Sprite>("sprite"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec4>("color"), true}
+}, {
 });
 
 template<typename Callable>
@@ -21,7 +22,9 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<Transform2D>("transform"), false}
-}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
+}, {
+}, {},
+render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
 {},
 {});
 

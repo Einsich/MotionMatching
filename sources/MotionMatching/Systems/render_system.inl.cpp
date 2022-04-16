@@ -8,7 +8,9 @@ ecs::SystemDescription process_animation_descr("process_animation", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Settings>("settings"), false}
-}, process_animation_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
+}, {
+}, {},
+process_animation_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
 {},
 {});
 

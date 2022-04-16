@@ -3,6 +3,7 @@
 
 ecs::QueryDescription is_game_started_descr("is_game_started", {
   {ecs::get_type_description<bool>("gameStarted"), false}
+}, {
 });
 
 template<typename Callable>
@@ -15,6 +16,7 @@ void is_game_started(Callable lambda)
 
 ecs::QueryDescription select_map_query_descr("select_map_query", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
+}, {
 });
 
 template<typename Callable>
@@ -31,7 +33,9 @@ ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
   {ecs::get_type_description<float>("invasion_weight"), false},
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
-}, change_invasion_weight_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+}, {
+}, {},
+change_invasion_weight_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
 {},
 {});
 
@@ -43,7 +47,9 @@ void change_invasion_weight_func()
 void check_mouse_over_ui_func();
 
 ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
-}, check_mouse_over_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
+}, {
+}, {},
+check_mouse_over_ui_func, ecs::SystemOrder::UI, ecs::SystemTag::Game,
 {},
 {});
 
@@ -57,7 +63,9 @@ void start_game_singl_handler(const KeyDownEvent<SDLK_RETURN> &event, ecs::Entit
 
 ecs::EventDescription<KeyDownEvent<SDLK_RETURN>> start_game_descr("start_game", {
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
-}, start_game_handler, start_game_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+start_game_handler, start_game_singl_handler, ecs::SystemTag::Game);
 
 void start_game_handler(const KeyDownEvent<SDLK_RETURN> &event)
 {
@@ -74,7 +82,9 @@ void select_spawn_point_singl_handler(const MouseButtonDownEvent<MouseButton::Ri
 ecs::EventDescription<MouseButtonDownEvent<MouseButton::RightButton>> select_spawn_point_descr("select_spawn_point", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ecs::Tag>("player_spawning"), false}
-}, select_spawn_point_handler, select_spawn_point_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+select_spawn_point_handler, select_spawn_point_singl_handler, ecs::SystemTag::Game);
 
 void select_spawn_point_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event)
 {
@@ -96,7 +106,9 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> select_inva
   {ecs::get_type_description<vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<float>("invasion_weight"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
-}, select_invasion_handler, select_invasion_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+select_invasion_handler, select_invasion_singl_handler, ecs::SystemTag::Game);
 
 void select_invasion_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
 {

@@ -3,6 +3,7 @@
 
 ecs::QueryDescription get_world_renderer_descr("get_world_renderer", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
+}, {
 });
 
 template<typename Callable>
@@ -19,6 +20,7 @@ ecs::QueryDescription gather_sprites_descr("gather_sprites", {
   {ecs::get_type_description<Shader>("mapShader"), false},
   {ecs::get_type_description<vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<vec4>("color"), true}
+}, {
 });
 
 template<typename Callable>
@@ -35,7 +37,9 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
+}, {
+}, {},
+render_scene_func, ecs::SystemOrder::RENDER, ecs::SystemTag::Game,
 {},
 {});
 
@@ -50,7 +54,9 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
-}, update_map_textures_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+}, {
+}, {},
+update_map_textures_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
 {},
 {});
 

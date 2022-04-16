@@ -6,6 +6,7 @@ ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {
   {ecs::get_type_description<vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
+}, {
 });
 
 template<typename Callable>
@@ -28,7 +29,9 @@ ecs::EventDescription<ecs::OnEntityCreated> create_map_descr("create_map", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
   {ecs::get_type_description<vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<int>("botsCount"), false}
-}, create_map_handler, create_map_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+create_map_handler, create_map_singl_handler, ecs::SystemTag::Game);
 
 void create_map_handler(const ecs::OnEntityCreated &event)
 {

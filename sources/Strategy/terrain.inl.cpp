@@ -9,6 +9,7 @@ ecs::QueryDescription query_water_descr("query_water", {
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("isWater"), false}
+}, {
 });
 
 template<typename Callable>
@@ -23,7 +24,9 @@ void set_map_render_data_func();
 
 ecs::SystemDescription set_map_render_data_descr("set_map_render_data", {
   {ecs::get_type_description<MapRenderData>("data"), false}
-}, set_map_render_data_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
+}, {
+}, {} ,
+set_map_render_data_func, ecs::SystemOrder::RENDER, ecs::SystemTag::GameEditor,
 {},
 {});
 
@@ -36,7 +39,9 @@ void add_map_uniform_handler(const ecs::OnSceneCreated &event);
 void add_map_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_map_uniform_descr("add_map_uniform", {
-}, add_map_uniform_handler, add_map_uniform_singl_handler, ecs::SystemTag::GameEditor);
+}, {
+}, {},
+add_map_uniform_handler, add_map_uniform_singl_handler, ecs::SystemTag::GameEditor);
 
 void add_map_uniform_handler(const ecs::OnSceneCreated &event)
 {
@@ -75,7 +80,9 @@ ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain"
   {ecs::get_type_description<vec2>("map_size"), false},
   {ecs::get_type_description<HeightMap>("heigth_map"), false},
   {ecs::get_type_description<MapRenderData>("data"), false}
-}, create_terrain_handler, create_terrain_singl_handler, ecs::SystemTag::GameEditor);
+}, {
+}, {},
+create_terrain_handler, create_terrain_singl_handler, ecs::SystemTag::GameEditor);
 
 void create_terrain_handler(const ecs::OnSceneCreated &event)
 {

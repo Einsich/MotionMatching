@@ -7,7 +7,9 @@ ecs::SystemDescription camera_lerp_descr("camera_lerp", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<float>("lerpStrength"), false}
-}, camera_lerp_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+}, {
+}, {},
+camera_lerp_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
 {},
 {});
 
@@ -29,7 +31,9 @@ ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
-}, setup_camera_handler, setup_camera_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+setup_camera_handler, setup_camera_singl_handler, ecs::SystemTag::Game);
 
 void setup_camera_handler(const ecs::OnEntityCreated &event)
 {
@@ -48,7 +52,9 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<float>("zoomStrength"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
 
 void change_zoom_handler(const MouseWheelEvent &event)
 {
@@ -67,7 +73,9 @@ ecs::EventDescription<MouseMoveEvent> move_camera_descr("move_camera", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<bool>("cameraLocked"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, move_camera_handler, move_camera_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+move_camera_handler, move_camera_singl_handler, ecs::SystemTag::Game);
 
 void move_camera_handler(const MouseMoveEvent &event)
 {
@@ -84,7 +92,9 @@ void lock_unlock_camera_singl_handler(const MouseButtonDownEvent<MouseButton::Le
 ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> lock_unlock_camera_descr("lock_unlock_camera", {
   {ecs::get_type_description<bool>("cameraLocked"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, lock_unlock_camera_handler, lock_unlock_camera_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+lock_unlock_camera_handler, lock_unlock_camera_singl_handler, ecs::SystemTag::Game);
 
 void lock_unlock_camera_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
 {

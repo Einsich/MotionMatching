@@ -4,6 +4,7 @@
 ecs::QueryDescription toggle_water_descr("toggle_water", {
   {ecs::get_type_description<bool>("is_enabled"), false},
   {ecs::get_type_description<ecs::Tag>("isWater"), false}
+}, {
 });
 
 template<typename Callable>
@@ -19,7 +20,9 @@ void country_builder_func();
 ecs::SystemDescription country_builder_descr("country_builder", {
   {ecs::get_type_description<MapEditor>("editor"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
-}, country_builder_func, ecs::SystemOrder::UI,  ecs::SystemTag::Editor,
+}, {
+}, {},
+country_builder_func, ecs::SystemOrder::UI,  ecs::SystemTag::Editor,
 {},
 {});
 
@@ -37,7 +40,9 @@ ecs::EventDescription<MouseClickEvent> trace_province_descr("trace_province", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<HeightMap>("heightMap"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
-}, trace_province_handler, trace_province_singl_handler, ecs::SystemTag::Editor);
+}, {
+}, {},
+trace_province_handler, trace_province_singl_handler, ecs::SystemTag::Editor);
 
 void trace_province_handler(const MouseClickEvent &event)
 {
@@ -56,7 +61,9 @@ ecs::EventDescription<MouseClickEvent> selecte_descr("selecte", {
   {ecs::get_type_description<HeightMap>("heightMap"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
   {ecs::get_type_description<MapRenderData>("renderData"), false}
-}, selecte_handler, selecte_singl_handler, ecs::SystemTag::GameEditor);
+}, {
+}, {},
+selecte_handler, selecte_singl_handler, ecs::SystemTag::GameEditor);
 
 void selecte_handler(const MouseClickEvent &event)
 {

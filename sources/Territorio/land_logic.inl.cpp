@@ -5,6 +5,7 @@ ecs::QueryDescription lands_economic_descr("lands_economic", {
   {ecs::get_type_description<int>("landCount"), false},
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+}, {
 });
 
 template<typename Callable>
@@ -19,6 +20,7 @@ ecs::QueryDescription gather_invaders_descr("gather_invaders", {
   {ecs::get_type_description<vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<int>("landCount"), false}
+}, {
 });
 
 template<typename Callable>
@@ -34,6 +36,7 @@ ecs::QueryDescription gather_invaders2_descr("gather_invaders2", {
   {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
   {ecs::get_type_description<vector<uint>>("neighborsIdx"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+}, {
 });
 
 template<typename Callable>
@@ -48,6 +51,7 @@ ecs::QueryDescription query_victim2_descr("query_victim2", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<int>("landCount"), false}
+}, {
 });
 
 template<typename Callable>
@@ -62,6 +66,7 @@ ecs::QueryDescription query_neighbor_descr("query_neighbor", {
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<uint>("landIndex"), false}
+}, {
 });
 
 template<typename Callable>
@@ -76,6 +81,7 @@ ecs::QueryDescription query_victim_descr("query_victim", {
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<int>("landCount"), false}
+}, {
 });
 
 template<typename Callable>
@@ -94,7 +100,9 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
   {ecs::get_type_description<uint>("forces"), false}
-}, update_bot_invasions_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
+}, {
+}, {},
+update_bot_invasions_func, ecs::SystemOrder::NO_ORDER, ecs::SystemTag::Game,
 {},
 {});
 
@@ -115,7 +123,9 @@ ecs::SystemDescription map_update_descr("map_update", {
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false},
   {ecs::get_type_description<bool>("gameStarted"), false}
-}, map_update_func, ecs::SystemOrder::LOGIC+2, ecs::SystemTag::Game,
+}, {
+}, {},
+map_update_func, ecs::SystemOrder::LOGIC+2, ecs::SystemTag::Game,
 {},
 {});
 
@@ -129,7 +139,9 @@ void border_update_func();
 ecs::SystemDescription border_update_descr("border_update", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
-}, border_update_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
+}, {
+}, {},
+border_update_func, ecs::SystemOrder::LOGIC+1, ecs::SystemTag::Game,
 {},
 {});
 
@@ -146,7 +158,9 @@ ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
   {ecs::get_type_description<uint>("startForces"), false},
   {ecs::get_type_description<int>("landCount"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
-}, game_started_handler, game_started_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+game_started_handler, game_started_singl_handler, ecs::SystemTag::Game);
 
 void game_started_handler(const OnGameStarted &event)
 {

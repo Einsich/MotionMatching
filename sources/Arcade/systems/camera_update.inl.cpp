@@ -4,6 +4,7 @@
 ecs::QueryDescription update_main_camera_position_descr("update_main_camera_position", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
+}, {
 });
 
 template<typename Callable>
@@ -19,7 +20,9 @@ void update_camera_pos_before_render_func();
 ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
-}, update_camera_pos_before_render_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::Game,
+}, {
+}, {},
+update_camera_pos_before_render_func, ecs::SystemOrder::RENDER-1, ecs::SystemTag::Game,
 {},
 {});
 
@@ -35,7 +38,9 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
-}, change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
+}, {
+}, {},
+change_zoom_handler, change_zoom_singl_handler, ecs::SystemTag::Game);
 
 void change_zoom_handler(const MouseWheelEvent &event)
 {

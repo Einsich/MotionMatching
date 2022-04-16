@@ -4,6 +4,7 @@
 ecs::QueryDescription toggle_map_mode_descr("toggle_map_mode", {
   {ecs::get_type_description<bool>("is_enabled"), false},
   {ecs::get_type_description<ecs::Tag>("isTree"), false}
+}, {
 });
 
 template<typename Callable>
@@ -21,7 +22,9 @@ ecs::EventDescription<KeyDownEvent<SDLK_m>> change_terrain_mode_descr("change_te
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<Asset<Material>>("physycal_material"), false}
-}, change_terrain_mode_handler, change_terrain_mode_singl_handler, ecs::SystemTag::GameEditor);
+}, {
+}, {},
+change_terrain_mode_handler, change_terrain_mode_singl_handler, ecs::SystemTag::GameEditor);
 
 void change_terrain_mode_handler(const KeyDownEvent<SDLK_m> &event)
 {
@@ -43,7 +46,9 @@ ecs::EventDescription<ecs::OnSceneCreated> create_provinces_descr("create_provin
   {ecs::get_type_description<float>("pixel_scale"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
   {ecs::get_type_description<MapRenderData>("data"), false}
-}, create_provinces_handler, create_provinces_singl_handler, ecs::SystemTag::GameEditor);
+}, {
+}, {},
+create_provinces_handler, create_provinces_singl_handler, ecs::SystemTag::GameEditor);
 
 void create_provinces_handler(const ecs::OnSceneCreated &event)
 {
