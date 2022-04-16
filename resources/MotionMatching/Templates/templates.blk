@@ -26,6 +26,8 @@ animated_char {
     mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod3.fbx[0]"; }
   }
   transform:Transform {}
+  is_visible:b=true;
+  is_enabled:b=true;
 
   animationPlayer:AnimationPlayer {
     dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }

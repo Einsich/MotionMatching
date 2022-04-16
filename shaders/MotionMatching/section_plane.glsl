@@ -42,6 +42,6 @@ void main()
   vec3 texColor = addSection ? vec3(1, 1, 1) : texture(mainTex, vsOutput.UV).rgb;
   float shininess = material_inst.Shininess;
   float metallness = material_inst.Metallness;
-  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput, LightDirection, CameraPosition);
+  vec3 color = LightedColor(texColor, shininess, metallness, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }

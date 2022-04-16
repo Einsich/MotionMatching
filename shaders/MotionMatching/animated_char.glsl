@@ -38,6 +38,6 @@ void main()
   float shininess = material_inst.Shininess;
   float metallness = material_inst.Metallness;
   vec3 color = texture(mainTex, vsOutput.UV).rgb + material_inst.AdditionalColor;
-  color = LightedColor(color, shininess, metallness, vsOutput, LightDirection, CameraPosition);
+  color = LightedColor(color, shininess, metallness, vsOutput.WorldPosition, vsOutput.EyespaceNormal, LightDirection, CameraPosition);
   FragColor = vec4(color, 1.0);
 }
