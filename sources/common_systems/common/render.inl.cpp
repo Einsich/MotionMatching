@@ -29,19 +29,6 @@ void find_collidable_entity(Callable lambda)
 }
 
 
-ecs::QueryDescription find_matrices_descr("find_matrices", {
-  {ecs::get_type_description<Transform>("transform"), true}
-}, {
-});
-
-template<typename Callable>
-void find_matrices(ecs::EntityId eid, Callable lambda)
-{
-  ecs::perform_query<Transform*>
-  (find_matrices_descr, eid, lambda);
-}
-
-
 void render_submenu_func();
 
 ecs::SystemDescription render_submenu_descr("render_submenu", {
@@ -118,6 +105,7 @@ void process_mesh_position_func();
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<Asset<Material>>("material"), false},
+  {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<RenderQueue>("render"), false},
   {ecs::get_type_description<bool>("is_visible"), false},

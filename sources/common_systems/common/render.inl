@@ -72,7 +72,7 @@ SYSTEM(stage=render; before=frustum_culling; scene=game, editor) lod_selector(
     delta *= *lod_selector_axis;
   float distToCameraSq = length2(delta);
   uint lod = lods_meshes.size();
-  for (uint i = 0; i < lods_distances.size() && i < lods_meshes.size(); ++i)
+  for (uint i = 0, n = glm::min(lods_distances.size(), lods_meshes.size()); i < n; ++i)
   {
     if (distToCameraSq < lods_distances[i]*lods_distances[i])
     {
@@ -105,8 +105,21 @@ frustum_culling(
 struct RenderStuff
 {
   ecs::EntityId eid;
-  Asset<Material> material;
-  Asset<Mesh> mesh;
+  const Material *material;
+  const char *label;
+  const Mesh *mesh;
+  const Transform *transform;
+  RenderStuff(ecs::EntityId eid,
+    const Material *material,
+    const char *label,
+    const Mesh *mesh,
+    const Transform *transform):
+  eid(eid), 
+  material(material),
+  label(label),
+  mesh(mesh),
+  transform(transform)
+  {}
 };
 struct RenderQueue : ecs::Singleton
 {
@@ -116,6 +129,7 @@ struct RenderQueue : ecs::Singleton
 SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_mesh_position(
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
+  const Transform &transform,
   const ecs::EntityId &eid,
   RenderQueue &render,
   bool is_visible,
@@ -123,7 +137,7 @@ SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_me
 {
   if (is_enabled && is_visible && material && material->get_shader() && mesh)
   {
-    render.queue.emplace_back(RenderStuff{eid, material, mesh});
+    render.queue.emplace_back(eid, material.get(), material.asset_name().c_str(), mesh.get(), &transform);
   }
 }
 
@@ -160,18 +174,12 @@ static bool matComparer(const RenderStuff &a, const RenderStuff &b)
 template<typename Callable> 
 void find_matrices(ecs::EntityId, Callable);
 
-void set_matrices_to_buffer(ecs::EntityId eid, const ShaderBuffer &buffer, char *data)
+void set_matrices_to_buffer(const Transform &transform, const ShaderBuffer &buffer, char *data)
 {
-  QUERY() find_matrices(eid, [&](const Transform *transform)
-  {
-    if (transform)
-    {
-      if (buffer.Model.type)
-        copy_buffer_field(transform->get_transform(), data, buffer.Model);
-      if (buffer.Bones.type && !transform->get_bones().empty())
-        copy_buffer_field(transform->get_bones(), data, buffer.Bones);
-    }
-  });
+  if (buffer.Model.type)
+    copy_buffer_field(transform.get_transform(), data, buffer.Model);
+  if (buffer.Bones.type && !transform.get_bones().empty())
+    copy_buffer_field(transform.get_bones(), data, buffer.Bones);
 }
 
 SYSTEM(stage=render; scene=game, editor)
@@ -182,30 +190,30 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 
   std::sort(render.queue.begin(), render.queue.end(), matComparer);
 
-  if (render.queue.size() > 0)
+  if (!render.queue.empty())
   {
     uint instanceCount = 0;
     uint sp = 0;
     bool startTransparentPass = false;
     instanceData.bind();
     //debug_log("start");
-    for (uint i = 0; i < render.queue.size(); i++)
+    for (uint i = 0, n = render.queue.size(); i < n; i++)
     {
       const RenderStuff &stuff = render.queue[i];
+      const Shader &shader = stuff.material->get_shader();
       uint instanceSize = stuff.material->buffer_size();
       char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
-      memset(buffer, 0, instanceSize);
       stuff.material->set_data_to_buf(buffer);
-      set_matrices_to_buffer(stuff.eid, stuff.material->get_shader().get_instance_data(), buffer);
+      set_matrices_to_buffer(*stuff.transform, shader.get_instance_data(), buffer);
       instanceCount++;
-      bool needRender = i + 1 == render.queue.size() || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
+      bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
       if (needRender)
       {
-        ProfilerLabelGPU label(stuff.material.asset_name().c_str());
-        if (stuff.material->get_shader().get_shader_program() != sp)//need use new shader
+        ProfilerLabelGPU label(stuff.label);
+        if (shader.get_shader_program() != sp)//need use new shader
         {
-          stuff.material->get_shader().use();
-          sp = stuff.material->get_shader().get_shader_program();
+          shader.use();
+          sp = shader.get_shader_program();
           if (stuff.material->is_transparent() && !startTransparentPass)
           {
             glEnable(GL_BLEND);

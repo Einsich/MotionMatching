@@ -14,7 +14,7 @@ void add_buffer(const char *name, size_t size, int binding)
     uint uniformBuffer;
     glGenBuffers(1, &uniformBuffer);
     glBindBuffer(BUF_TYPE, uniformBuffer);
-    glBufferData(BUF_TYPE, size, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(BUF_TYPE, size, NULL, GL_STREAM_DRAW);
     glBindBuffer(BUF_TYPE, 0);
     nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, size, vector<char>(size), string(name));
   }
@@ -37,7 +37,7 @@ void UniformBuffer::update_buffer_and_flush(const void *data, size_t size) const
   glBindBufferBase(bufType, bindID, arrayID); 
   if (bufSize < size)
   {
-    glBufferData(bufType, size, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(bufType, size, NULL, GL_STREAM_DRAW);
     bufSize = size;
   }
   glBufferSubData(bufType, 0, size, data); 
@@ -55,7 +55,7 @@ void UniformBuffer::flush_buffer(size_t flush_size) const
 {
   if (bufSize < size()) 
   {
-    glBufferData(bufType, size(), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(bufType, size(), NULL, GL_STREAM_DRAW);
     bufSize = size();
   }
   glBufferSubData(bufType, 0, min(size(), flush_size), buffer.data());

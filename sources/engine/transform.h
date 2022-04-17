@@ -12,6 +12,8 @@ REFLECT(
   (mat4x4) (rotation),
   (vec3) (scale)
 )
+  mutable mat4 cachedTransform;
+  mutable bool calculated;
   vector<mat4> bones;
 public:
   Transform();
@@ -20,7 +22,7 @@ public:
 
   vec3& get_position();
   const vec3& get_position()const ;
-  mat4x4 get_transform() const;
+  const mat4x4 &get_transform() const;
   mat3 get_rotation() const;
   vec3 get_forward() const;
   vec3 get_right() const;
