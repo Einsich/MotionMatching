@@ -109,7 +109,7 @@
         "name": "MotionMatching",
         "value":{
           "name":"MotionMatching",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;"
         }
       },
       {
@@ -123,28 +123,28 @@
         "name": "ECSbenchmark",
         "value":{
           "name":"ECSbenchmark",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;"
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;"
         }
       },
       {
         "name": "Strategy",
         "value":{
           "name":"Strategy",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;"
         }
       },
       {
         "name": "Arcade",
         "value":{
           "name":"Arcade",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;"
         }
       },
       {
         "name": "Territorio",
         "value":{
           "name":"Territorio",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;"
         }
       }
     ]
@@ -153,7 +153,7 @@
     "BuildType": "dev",
     "Project": {
       "name": "Strategy",
-      "dependencies": "3rd_party/3d_application;3rd_party/imgui;ecs;engine;common_systems;"
+      "dependencies": "3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;"
     }
   },
   "cmake.configureOnOpen": false,
