@@ -4,6 +4,11 @@
 #include "resources/asset.h"
 class CubeMap : public Texture, public IAsset, public ISerializable
 {
+private:
+
+  unsigned char * images[6];
+  void load_stbi();
+  void init_3d();
 public:
 
   CubeMap();

@@ -16,7 +16,7 @@ struct thread_pool {
   std::vector<std::thread> workers;
   bool terminatePool;
 
-  void start_job(std::function<void()>&& f) {
+  void add_job(std::function<void()>&& f) {
     {
       std::unique_lock<std::mutex> l(m);
       tasks.push(std::move(f));
@@ -68,7 +68,7 @@ private:
 
 static thread_pool threadPool;
 
-void start_job(std::function<void()>&& f)
+void add_job(std::function<void()>&& f)
 {
-  threadPool.start_job(std::move(f));
+  threadPool.add_job(std::move(f));
 }

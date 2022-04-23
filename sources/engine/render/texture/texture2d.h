@@ -8,6 +8,7 @@ class Texture2D : public Texture, public IAsset, public ISerializable
   bool generateMips;
   void load_from_path(const filesystem::path &path);
   void create_from_pointer(const unsigned char*, int, int, size_t);
+  unsigned char *stbiData;
 public:
   Texture2D();
   Texture2D(string texture_path_from_textures_folder,

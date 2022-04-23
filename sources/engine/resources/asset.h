@@ -205,7 +205,8 @@ public:
   }
   bool try_load()
   {
-    asset->try_load();
+    if (asset->status != AssetStatus::Loaded)
+      asset->try_load();
     return asset->status == AssetStatus::Loaded;
   }
   void reload()

@@ -13,6 +13,7 @@
 #include <imgui.h>
 #include <profiler/profiler.h>
 #include <render/frustum.h>
+#include <parallel/thread_pool.h>
 
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Mesh>, Mesh)
 ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2D>, Texture2D)
@@ -81,11 +82,13 @@ SYSTEM(stage=render; before=frustum_culling; scene=game, editor) lod_selector(
     }
   }
   if (lod < lods_meshes.size())
+  {
     mesh = lods_meshes[lod];
+    if (mesh)
+      mesh.load();
+  }
   else
     mesh = Asset<Mesh>();//culled by dist
-  if (mesh)
-    mesh.load();
 }
 SYSTEM(stage=render; before=process_mesh_position; scene=game, editor; require=ecs::Tag useFrustumCulling)
 frustum_culling(
@@ -95,12 +98,11 @@ frustum_culling(
   bool &is_visible,
   bool is_enabled)
 {
-  if (mesh && is_enabled)
+  if (mesh && mesh.loaded() && is_enabled)
     is_visible = isOnFrustum(mainCamera.mainFrustum, transform.get_position(), 
         (transform.get_scale() * mesh->get_bounding_box().diagonal()).length() * 0.5f);
   else
     is_visible = false;
-
 }
 struct RenderStuff
 {
@@ -200,10 +202,11 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     for (uint i = 0, n = render.queue.size(); i < n; i++)
     {
       const RenderStuff &stuff = render.queue[i];
-      const Shader &shader = stuff.material->get_shader();
-      uint instanceSize = stuff.material->buffer_size();
+      const Material &material = *render.queue[i].material;
+      const Shader &shader = material.get_shader();
+      uint instanceSize = material.buffer_size();
       char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
-      stuff.material->set_data_to_buf(buffer);
+      material.set_data_to_buf(buffer);
       set_matrices_to_buffer(*stuff.transform, shader.get_instance_data(), buffer);
       instanceCount++;
       bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
@@ -214,7 +217,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
         {
           shader.use();
           sp = shader.get_shader_program();
-          if (stuff.material->is_transparent() && !startTransparentPass)
+          if (material.is_transparent() && !startTransparentPass)
           {
             glEnable(GL_BLEND);
             glDisable(GL_DEPTH_TEST);
@@ -222,11 +225,11 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
             startTransparentPass = true;
           }
         }
-        stuff.material->bind_textures_to_shader();
+        material.bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
         stuff.mesh->render_instances(instanceCount, wire_frame);
         //debug_log("draw instance = %d, instance size = %d, %s",
-        //    instanceCount, instanceSize, stuff.material->get_shader().get_name().c_str());
+        //    instanceCount, instanceSize, material.get_shader().get_name().c_str());
         instanceCount = 0;
       }
     }

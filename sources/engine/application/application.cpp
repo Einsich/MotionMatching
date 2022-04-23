@@ -94,6 +94,13 @@ void Application::main_loop()
     get_cpu_profiler().start_frame();
     PROFILER(main_loop);
     timer.update();
+    uint mainThreadJobsCount = mainThreadJobs.size();
+    if (mainThreadJobsCount > 0)
+    {
+      for (uint i = 0; i < mainThreadJobsCount; i++)
+        mainThreadJobs[i]();
+      mainThreadJobs.erase(mainThreadJobs.begin(), mainThreadJobs.begin() + mainThreadJobsCount);
+    }
     PROFILER(sdl_events) 
 		running = sdl_event_handler();
     sdl_events.stop();
@@ -160,6 +167,10 @@ string root_path()
   return Application::instance().root;
 }
 
+void add_main_thread_job(std::function<void()> &&job)
+{
+  Application::instance().mainThreadJobs.emplace_back(std::move(job));
+}
 
 std::pair<int,int> get_resolution()
 {

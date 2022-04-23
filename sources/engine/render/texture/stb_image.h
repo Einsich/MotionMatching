@@ -462,6 +462,7 @@ STBIDEF void stbi_convert_iphone_png_to_rgb(int flag_true_if_should_convert);
 
 // flip the image vertically, so the first pixel in the output array is the bottom left
 STBIDEF void stbi_set_flip_vertically_on_load(int flag_true_if_should_flip);
+STBIDEF void stbi__vertical_flip(void *image, int w, int h, int bytes_per_pixel);
 
 // ZLIB client - used by PNG, available for other purposes
 
@@ -1075,7 +1076,7 @@ static stbi__uint16 *stbi__convert_8_to_16(stbi_uc *orig, int w, int h, int chan
    return enlarged;
 }
 
-static void stbi__vertical_flip(void *image, int w, int h, int bytes_per_pixel)
+STBIDEF void stbi__vertical_flip(void *image, int w, int h, int bytes_per_pixel)
 {
    int row;
    size_t bytes_per_row = (size_t)w * bytes_per_pixel;

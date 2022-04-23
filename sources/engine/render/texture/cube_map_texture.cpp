@@ -2,6 +2,8 @@
 #include "stb_image.h"
 #include "resources/resource_registration.h"
 #include "component_editor.h"
+#include <parallel/thread_pool.h>
+
 CubeMap::CubeMap()
 {
   textureName = "empty cubemap";
@@ -24,27 +26,43 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   pixelFormat = pixel_format;  
   wrapping = TextureWrappFormat::Repeat;
   glGenTextures(1, &textureObject);
-  AssetStatus status;
-  load("", false, status);
+
+  load_stbi();
+  init_3d();
 }
 
 void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
 {
+  if (status != AssetStatus::Loaded)
+  {
+    add_job([this, &status]()
+    {
+      load_stbi();
+      add_main_thread_job([this, &status]()
+      {
+        init_3d();
+        status = AssetStatus::Loaded;
+      });
+    });
+    status = AssetStatus::Loading;
+  }
+}
 
-  stbi_uc * images[6];
+void CubeMap::load_stbi()
+{
   int size = -1;
   string path = root_path(textureName);
   for (int i = 0; i < 6; i++)
   {
     string fullpath = path + "/" + to_string(i) + ".jpg";
     int w, h, ch;
-    stbi_set_flip_vertically_on_load(false);
     images[i] = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
     if (!images[i])
     {
       debug_error("Can't load face[%d] %s for cubemap!", i, fullpath.c_str());
       continue;
     }
+    stbi__vertical_flip(images[i], w, h, ch);
     if (h != w)
     {
       debug_error("Cubmap face[%d] %s must have similar width and height (%d != %d) !", i, textureName.c_str(), w, h);
@@ -64,6 +82,10 @@ void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
   }
 
   textureWidth = textureHeight = size;
+}
+
+void CubeMap::init_3d()
+{
   glBindTexture(textureType, textureObject);
   for (int i = 0; i < 6; i++)
   {
@@ -79,7 +101,6 @@ void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
   glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
   
   glBindTexture(textureType, 0); 
-  status = AssetStatus::Loaded;
 }
 
 bool CubeMap::edit()

@@ -23,7 +23,7 @@ Context::Context(string window_name, int width, int height, bool full_screen)
 
   size_t window_flags = SDL_WINDOW_OPENGL;
   if (full_screen)
-    window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    window_flags |= SDL_WINDOW_MAXIMIZED | SDL_WINDOW_ALLOW_HIGHDPI ;
   window = SDL_CreateWindow(window_name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, resolution.width, resolution.height, (SDL_WindowFlags)(window_flags));
   gl_context = SDL_GL_CreateContext(window);
   SDL_GL_MakeCurrent(window, gl_context);

@@ -6,6 +6,8 @@
 #include "resources/resource_registration.h"
 #include "imgui.h"
 #include "component_editor.h"
+#include <parallel/thread_pool.h>
+
 Texture2D::Texture2D()
 {
   generateMips = false;
@@ -33,6 +35,11 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     
     glGenTextures(1, &textureObject);
     load_from_path(texture_path_from_textures_folder);
+    if (stbiData)
+    {
+      create_from_pointer(stbiData, textureHeight, textureWidth, sizeof(stbiData[0]));
+      stbi_image_free(stbiData);
+    }
   }
   Texture2D::Texture2D(int w, int h,
   TextureColorFormat color_format, 
@@ -54,10 +61,25 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
   }
   void Texture2D::load(const filesystem::path &path, bool , AssetStatus &status)
   {
-    filesystem::path tmp = path;
-    tmp.replace_extension("");
-    load_from_path(tmp);//without .meta
-    status = AssetStatus::Loaded;
+    if (status == AssetStatus::NotLoaded)
+    {
+      add_job([this, path, &status]()
+      {
+        filesystem::path tmp = path;
+        tmp.replace_extension("");
+        load_from_path(tmp);//without .meta
+        add_main_thread_job([this, &status]()
+        {
+          if (stbiData)
+          {
+            create_from_pointer(stbiData, textureHeight, textureWidth, sizeof(stbiData[0]));
+            stbi_image_free(stbiData);
+          }
+          status = AssetStatus::Loaded;
+        });
+      });
+      status = AssetStatus::Loading;
+    }
   }
   bool is_power_of_2(int x) 
   {
@@ -68,15 +90,11 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
   void Texture2D::load_from_path(const filesystem::path &path)
   {
     textureName = path.stem().string();
-    int w, h, ch;
+    int ch;
     stbi_set_flip_vertically_on_load(true);
-    auto image = stbi_load(path.string().c_str(), &w, &h, &ch, 0);
-    if (image)
-    {
-      create_from_pointer(image, h, w, sizeof(image[0]));
-      stbi_image_free(image);
-    }
-		else
+    stbiData = stbi_load(path.string().c_str(), &textureWidth, &textureHeight, &ch, 0);
+
+		if (!stbiData)
 		{
 			debug_error("Can't load texture %s!", textureName.c_str());
 		}

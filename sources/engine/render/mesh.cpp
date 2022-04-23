@@ -147,19 +147,10 @@ void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
   }
   else
   {
-    if (status == AssetStatus::AsyncLoadingFinished)
-    {
-      if (indices.size() && positions.size())
-      {
-        init(indices, positions, normals, uvs, weights, weightsIndex);
-      }
-      status = AssetStatus::Loaded;
-      return;
-    }
-    else if (status == AssetStatus::NotLoaded)
+    if (status == AssetStatus::NotLoaded)
     {
       debug_error("async mesh load %s", pathStr.c_str());
-      start_job([this, pathStr, &status](){
+      add_job([this, pathStr, &status](){
         const string &indexedName = pathStr;
         size_t bracketPosBegin = indexedName.find_last_of('[');
         size_t bracketPosEnd = indexedName.find_last_of(']');
@@ -185,7 +176,14 @@ void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
           return;
         }
         load_assimp(scene->mMeshes[ind]);
-        status = AssetStatus::AsyncLoadingFinished;
+        add_main_thread_job([this, &status]()
+        {
+          if (indices.size() && positions.size())
+          {
+            init(indices, positions, normals, uvs, weights, weightsIndex);
+          }
+          status = AssetStatus::Loaded;
+        });
       });
     }
     status = AssetStatus::Loading;
