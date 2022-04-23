@@ -52,11 +52,12 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     create_from_pointer(nullptr, h, w, 0);
 
   }
-  void Texture2D::load(const filesystem::path &path, bool )
+  void Texture2D::load(const filesystem::path &path, bool , AssetStatus &status)
   {
     filesystem::path tmp = path;
     tmp.replace_extension("");
     load_from_path(tmp);//without .meta
+    status = AssetStatus::Loaded;
   }
   bool is_power_of_2(int x) 
   {

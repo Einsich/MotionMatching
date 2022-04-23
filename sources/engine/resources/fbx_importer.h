@@ -10,7 +10,7 @@ class FBXMeta : public IAsset
   void create_assets() const;
   void read_file_info(const filesystem::path &path);
 public:
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   
-  virtual bool after_load(const filesystem::path &path) override;
+  virtual bool after_construct(const filesystem::path &path) override;
 };

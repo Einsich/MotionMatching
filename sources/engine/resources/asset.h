@@ -6,19 +6,28 @@
 #include <istream>
 #include <fstream>
 #include <filesystem>
+#include "application/time.h"
 #include "manager/compile_time_string.h"
 #include "serialization/serialization.h"
 #include "data_block/data_block.h"
 
+enum class AssetStatus
+{
+  NotLoaded,
+  Loading,
+  AsyncLoadingFinished,
+  Loaded
+};
+
 class IAsset
 {
 public:
-  virtual bool after_load(const filesystem::path &)
+  virtual bool after_construct(const filesystem::path &)
   {
     return false;
   }
   //called when this resource really needed - load data from disk 
-  virtual void load(const filesystem::path &path, bool reload) = 0;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) = 0;
   //dispose resource - called on application end, or when we can unload resource
   virtual void before_save()
   {
@@ -33,6 +42,10 @@ public:
   {
     return path.stem().string();
   }
+  virtual bool require_immediate_load() const
+  {
+    return false;
+  }
 };
 
 
@@ -46,7 +59,7 @@ Asset<T> create_asset_by_id(const string &name);
 class AssetStub : public  IAsset
 {
 public:
-  virtual void load(const filesystem::path &, bool) override{}
+  virtual void load(const filesystem::path &, bool, AssetStatus &) override{}
   virtual void before_save() override{}
   virtual bool edit() override{return false;}
 };
@@ -58,35 +71,38 @@ struct AssetImplementation
 {
   filesystem::path path;
   string name;
-  bool loaded, edited, isCopy, userPathUsage;
+  AssetStatus status;
+  bool edited, isCopy, userPathUsage;
   T asset;
   AssetImplementation() = default;
   AssetImplementation(const filesystem::path &path, const string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage, const T &asset):
   path(path), name(name),
-  loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
+  status(loaded ? AssetStatus::Loaded : AssetStatus::NotLoaded),
+  edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
   asset(asset)
   {    }
 template<typename ...Args>
   AssetImplementation(const filesystem::path &path, const string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage,  Args &&...args):
-  path(path), name(name), 
-  loaded(loaded), edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
+  path(path), name(name),
+  status(loaded ? AssetStatus::Loaded : AssetStatus::NotLoaded),
+  edited(edited), isCopy(isCopy), userPathUsage(userPathUsage),
   asset(args...)
   {    }
 
-  void load()
+  void try_load()
   {
-    if (!loaded)
+    if (status != AssetStatus::Loaded)
     {
-      asset.load(path, false);
-      loaded = true;
+      //TimeScope loadingScope(name.c_str());
+      asset.load(path, false, status);
     }
   }
   void reload()
   {
-    if (loaded)
-      asset.load(path, true);
+    if (status == AssetStatus::Loaded)
+      asset.load(path, true, status);
   }
 };
 template<typename T>
@@ -133,6 +149,11 @@ public:
     asset->name = asset->asset.asset_name(asset->path);
     if (!blk.get<bool>("new_asset", false))
       *this = create_asset_by_id<T>(asset->name);
+    else
+      asset->try_load();
+
+    if (!loaded() && asset->asset.require_immediate_load())
+      asset->try_load();
   }
   template<typename ...Args>
   Asset(const filesystem::path &path_or_name, Args &&...args) :
@@ -152,35 +173,40 @@ public:
   }
   explicit operator bool() const
   {
-    return asset != nullptr && (asset->loaded || asset->name != "");
+    return asset != nullptr && (asset->status == AssetStatus::Loaded || asset->name != "");
   }
   T* operator->()
   {
-    if (!asset->loaded)
-      asset->load();
     return &asset->asset;
   }
   const T* operator->() const 
   {
-    if (!asset->loaded)
-      asset->load();
+    return &asset->asset;
+  }
+  T* get()
+  {
+    return &asset->asset;
+  }
+  const T* get() const 
+  {
     return &asset->asset;
   }
   T &operator*()
   {
-    if (!asset->loaded)
-      asset->load();
     return asset->asset;
   }
   const T &operator*() const 
   {
-    if (!asset->loaded)
-      asset->load();
     return asset->asset;
   }
   void load()
   {
-    asset->load();
+    asset->try_load();
+  }
+  bool try_load()
+  {
+    asset->try_load();
+    return asset->status == AssetStatus::Loaded;
   }
   void reload()
   {
@@ -218,7 +244,7 @@ public:
   }
   bool loaded() const
   {
-    return asset->loaded;
+    return asset->status == AssetStatus::Loaded;
   }
   bool edited() const
   {

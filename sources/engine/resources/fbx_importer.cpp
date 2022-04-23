@@ -13,7 +13,7 @@ void FBXMeta::create_assets() const
   }
 }
 
-bool FBXMeta::after_load(const filesystem::path &path)
+bool FBXMeta::after_construct(const filesystem::path &path)
 {
   if (loaded)
   {
@@ -55,12 +55,13 @@ void FBXMeta::read_file_info(const filesystem::path &path)
 
 }
 
-void FBXMeta::load(const filesystem::path &path, bool reload)
+void FBXMeta::load(const filesystem::path &path, bool reload, AssetStatus &status)
 {
   if (reload || loaded)
     return;
   read_file_info(path);
   create_assets();
   loaded = true;
+  status = AssetStatus::Loaded;
 }
 ResourceRegister<FBXMeta> fbxImrorter({".fbx", ".dae"});

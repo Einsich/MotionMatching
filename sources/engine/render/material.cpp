@@ -104,7 +104,7 @@ BufferField Material::get_buffer_field(const char *name) const
   return BufferField();
 }
 
-void Material::load(const filesystem::path &path, bool reload)
+void Material::load(const filesystem::path &path, bool reload, AssetStatus &status)
 {
   if (!reload)
   {
@@ -144,12 +144,14 @@ void Material::load(const filesystem::path &path, bool reload)
       }
     }
     #define TYPE(T, _) for (const auto &p : T##savable) set_property(p.first.c_str(), p.second);
-    #define SAMPLER(T, smp) for (const auto &p : smp##savable) set_texture(p.first.c_str(), p.second);
+    #define SAMPLER(T, smp) for (auto &[name, tex] : smp##savable)\
+    { if (tex) tex.load(); set_texture(name.c_str(), tex);}
     TYPES
     SAMPLERS
     #undef TYPE
     #undef SAMPLER
   }
+  status = AssetStatus::Loaded;
 }
 void Material::before_save()
 {
@@ -240,7 +242,8 @@ bool Material::edit()
     if (shader.get_shader_program() != tempShader.get_shader_program())
     {
       shader = tempShader;
-      load("", false);
+      AssetStatus status;
+      load("", false, status);
     }
   }
   

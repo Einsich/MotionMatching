@@ -23,8 +23,9 @@ void update_material(Callable);
 EVENT(scene=editor,scene=game, scene=debug) reload_shaders(const KeyDownEvent<SDLK_F5> &)
 {
   recompile_shaders();
-  foreach_resources<Material>([](Asset<Material> m){m->load("", false);});
-  QUERY()update_material([](Asset<Material> &material){if (material.is_copy()) material->load("", false);});
+  AssetStatus status;
+  foreach_resources<Material>([&status](Asset<Material> m){m->load("", false, status);});
+  QUERY()update_material([&status](Asset<Material> &material){if (material.is_copy()) material->load("", false, status);});
   debug_log("shaders were recompiled");
 }
 

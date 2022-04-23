@@ -4,6 +4,7 @@
 #include <assimp/postprocess.h>
 #include "imgui.h"
 #include "glad/glad.h"
+#include <parallel/thread_pool.h>
 
 
 void Mesh::create_vertex_array()
@@ -38,6 +39,10 @@ void Mesh::init_channel(int index, size_t data_size, const void *data_ptr, int c
 Mesh::Mesh(const aiMesh *mesh)
 {
   load_assimp(mesh);
+  if (indices.size() && positions.size())
+  {
+    init(indices, positions, normals, uvs, weights, weightsIndex);
+  }
 }
 uint Mesh::get_vao() const
 {
@@ -117,15 +122,11 @@ void Mesh::load_assimp(const aiMesh *mesh)
       }
     }
   }
-  if (indices.size() && positions.size())
-  {
-    init(indices, positions, normals, uvs, weights, weightsIndex);
-  }
 }
 
-void Mesh::load(const filesystem::path &path, bool reload)
+void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
 {
-  if (reload)
+  if (reload || path.empty())
     return;
   string pathStr = path.string();
   
@@ -146,32 +147,51 @@ void Mesh::load(const filesystem::path &path, bool reload)
   }
   else
   {
-    string indexedName = path.string();
-    size_t bracketPosBegin = indexedName.find_last_of('[');
-    size_t bracketPosEnd = indexedName.find_last_of(']');
-    if (bracketPosBegin == string::npos || bracketPosEnd == string::npos || bracketPosBegin > bracketPosEnd)
+    if (status == AssetStatus::AsyncLoadingFinished)
     {
-      debug_error("bad mesh index in %s", indexedName.c_str());
+      if (indices.size() && positions.size())
+      {
+        init(indices, positions, normals, uvs, weights, weightsIndex);
+      }
+      status = AssetStatus::Loaded;
       return;
     }
-    int bracketCount = bracketPosEnd - bracketPosBegin - 1;
-    int ind = std::stoi(indexedName.substr(bracketPosBegin+1, bracketCount));
-    string strPath = root_path(indexedName.substr(0, bracketPosBegin));
-    Assimp::Importer importer;
-    importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-    importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-    
-    importer.ReadFile(strPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
-      aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
+    else if (status == AssetStatus::NotLoaded)
+    {
+      debug_error("async mesh load %s", pathStr.c_str());
+      start_job([this, pathStr, &status](){
+        const string &indexedName = pathStr;
+        size_t bracketPosBegin = indexedName.find_last_of('[');
+        size_t bracketPosEnd = indexedName.find_last_of(']');
+        if (bracketPosBegin == string::npos || bracketPosEnd == string::npos || bracketPosBegin > bracketPosEnd)
+        {
+          debug_error("bad mesh index in %s", indexedName.c_str());
+          return;
+        }
+        int bracketCount = bracketPosEnd - bracketPosBegin - 1;
+        int ind = std::stoi(indexedName.substr(bracketPosBegin+1, bracketCount));
+        string strPath = root_path(indexedName.substr(0, bracketPosBegin));
+        Assimp::Importer importer;
+        importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+        importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
+        
+        importer.ReadFile(strPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
+          aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
-    const aiScene* scene = importer.GetScene();
-    if (!scene)
-    {
-      debug_error("no asset in %s", strPath.c_str());
-      return;
+        const aiScene* scene = importer.GetScene();
+        if (!scene)
+        {
+          debug_error("no asset in %s", strPath.c_str());
+          return;
+        }
+        load_assimp(scene->mMeshes[ind]);
+        status = AssetStatus::AsyncLoadingFinished;
+      });
     }
-    load_assimp(scene->mMeshes[ind]);
+    status = AssetStatus::Loading;
+    return;
   }
+  status = AssetStatus::Loaded;
 }
 
 void Mesh::render(bool wire_frame) const

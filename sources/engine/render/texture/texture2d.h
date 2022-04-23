@@ -25,7 +25,7 @@ public:
 
   void update_sub_region(int level, int x_offset, int y_offset, int width, int height, const void *data);
   
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   virtual bool edit() override;
   
   virtual size_t serialize(std::ostream& os) const override;

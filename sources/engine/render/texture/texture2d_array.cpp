@@ -23,7 +23,7 @@ static vector<string> split(const string &s, char delim) {
       result.emplace_back(item);
   return result;
 }
-void Texture2DArray::load(const filesystem::path &path, bool )
+void Texture2DArray::load(const filesystem::path &path, bool , AssetStatus &status)
 {
   vector<string> names = split(path.string(), '+');
   if (!names.empty())
@@ -77,7 +77,8 @@ void Texture2DArray::load(const filesystem::path &path, bool )
     glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, minMagixelFormat);
     glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
   }
-  glBindTexture(textureType, 0); 
+  glBindTexture(textureType, 0);
+  status = AssetStatus::Loaded; 
 }
 
 

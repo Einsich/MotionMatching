@@ -52,7 +52,7 @@ public:
   }
 
   Mesh(const aiMesh *mesh);
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   virtual bool edit() override;
   virtual string asset_name(const filesystem::path &path) override;
   uint get_vao() const;

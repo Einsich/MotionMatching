@@ -24,10 +24,11 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
   pixelFormat = pixel_format;  
   wrapping = TextureWrappFormat::Repeat;
   glGenTextures(1, &textureObject);
-  load("", false);
+  AssetStatus status;
+  load("", false, status);
 }
 
-void CubeMap::load(const filesystem::path &, bool )
+void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
 {
 
   stbi_uc * images[6];
@@ -78,6 +79,7 @@ void CubeMap::load(const filesystem::path &, bool )
   glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
   
   glBindTexture(textureType, 0); 
+  status = AssetStatus::Loaded;
 }
 
 bool CubeMap::edit()

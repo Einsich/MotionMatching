@@ -12,7 +12,7 @@ public:
   TextureFormat texture_format = TextureFormat::UnsignedByte, 
   TexturePixelFormat pixelFormat = TexturePixelFormat::Linear);
   
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   virtual bool edit() override;
 
   virtual size_t serialize(std::ostream& os) const override;

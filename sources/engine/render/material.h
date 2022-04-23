@@ -52,7 +52,12 @@ public:
   {
     return isTransparent ? drawOrder : INT_MIN;
   }
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
+  
+  virtual bool require_immediate_load() const override
+  {
+    return true;
+  }
   virtual void before_save() override;
   virtual bool edit() override;
 
