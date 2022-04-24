@@ -152,7 +152,7 @@ public:
     else
       asset->try_load();
 
-    if (!loaded() && asset->asset.require_immediate_load())
+    if (!loaded() && !asset->path.empty() && asset->asset.require_immediate_load())
       asset->try_load();
   }
   template<typename ...Args>

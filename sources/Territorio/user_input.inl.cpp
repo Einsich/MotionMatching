@@ -36,9 +36,9 @@ ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
 }, {},
-change_invasion_weight_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+change_invasion_weight_func, ecs::stage::ui, ecs::tags::all, false);
 
 void change_invasion_weight_func()
 {
@@ -50,9 +50,9 @@ void check_mouse_over_ui_func();
 ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
 }, {
 }, {},
-check_mouse_over_ui_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+check_mouse_over_ui_func, ecs::stage::ui, ecs::tags::all, false);
 
 void check_mouse_over_ui_func()
 {
@@ -66,6 +66,8 @@ ecs::EventDescription<KeyDownEvent<SDLK_RETURN>> start_game_descr("start_game", 
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
 }, {},
+{},
+{},
 start_game_handler, start_game_singl_handler, ecs::tags::all);
 
 void start_game_handler(const KeyDownEvent<SDLK_RETURN> &event)
@@ -85,6 +87,8 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::RightButton>> select_spa
   {ecs::get_type_description<ecs::Tag>("player_spawning"), false}
 }, {
 }, {},
+{},
+{},
 select_spawn_point_handler, select_spawn_point_singl_handler, ecs::tags::all);
 
 void select_spawn_point_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event)
@@ -109,6 +113,8 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> select_inva
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
 }, {},
+{},
+{},
 select_invasion_handler, select_invasion_singl_handler, ecs::tags::all);
 
 void select_invasion_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)

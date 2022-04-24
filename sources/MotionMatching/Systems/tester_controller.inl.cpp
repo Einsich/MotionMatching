@@ -35,9 +35,9 @@ ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false}
 }, {
 }, {},
-tester_update_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+tester_update_func, ecs::stage::act, ecs::tags::all, false);
 
 void tester_update_func()
 {
@@ -52,9 +52,9 @@ ecs::SystemDescription test_count_descr("test_count", {
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {"game"},
-test_count_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+test_count_func, ecs::stage::act, ecs::tags::all, false);
 
 void test_count_func()
 {
@@ -71,6 +71,8 @@ ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {"game","editor"},
+{},
+{},
 start_test_handler, start_test_singl_handler, ecs::tags::all);
 
 void start_test_handler(const ecs::OnEntityCreated &event)

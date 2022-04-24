@@ -57,7 +57,7 @@ EVENT(scene=game, editor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &
   if (mesh)
     mesh.load();
 }
-SYSTEM(stage=render; before=frustum_culling; scene=game, editor) lod_selector(
+SYSTEM(stage=render; before=frustum_culling; scene=game, editor;job=true) lod_selector(
   const MainCamera &mainCamera,
   const Transform &transform,
   const vector<Asset<Mesh>> &lods_meshes,
@@ -90,7 +90,7 @@ SYSTEM(stage=render; before=frustum_culling; scene=game, editor) lod_selector(
   else
     mesh = Asset<Mesh>();//culled by dist
 }
-SYSTEM(stage=render; before=process_mesh_position; scene=game, editor; require=ecs::Tag useFrustumCulling)
+SYSTEM(stage=render; before=process_mesh_position; scene=game, editor; require=ecs::Tag useFrustumCulling;job=true)
 frustum_culling(
   const MainCamera &mainCamera,
   const Transform &transform,

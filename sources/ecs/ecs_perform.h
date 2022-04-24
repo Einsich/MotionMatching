@@ -1,5 +1,6 @@
 #pragma once
 #include "ecs_core.h"
+#include <parallel/thread_pool.h>
 
 namespace ecs
 {
@@ -112,7 +113,14 @@ namespace ecs
   void perform_system(const CallableDescription &descr, void(*function)(Args...))
   {
     perform_query<Args...>(descr, function);
+  } 
+  
+  template<typename ...Args>
+  void perform_job_system(const CallableDescription &descr, void(*function)(Args...))
+  {
+    add_job([&descr, function](){ perform_query<Args...>(descr, function); });
   }
+  
   template<typename E, typename Event, typename ...Args>
   void perform_event(const E &event, const CallableDescription &descr, void(*function)(Event, Args...))
   {

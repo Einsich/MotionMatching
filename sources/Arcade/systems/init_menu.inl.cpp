@@ -10,9 +10,9 @@ ecs::SystemDescription start_game_button_descr("start_game_button", {
   {ecs::get_type_description<ecs::Tag>("startGameButton"), false}
 }, {
 }, {},
-start_game_button_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+start_game_button_func, ecs::stage::ui, ecs::tags::all, false);
 
 void start_game_button_func()
 {
@@ -27,9 +27,9 @@ ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
   {ecs::get_type_description<ScoreBoard>("sb"), false}
 }, {
 }, {},
-exit_menu_button_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+exit_menu_button_func, ecs::stage::ui, ecs::tags::all, false);
 
 void exit_menu_button_func()
 {
@@ -46,6 +46,8 @@ ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
 }, {},
+{},
+{},
 setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
 
 void setup_camera_handler(const ecs::OnEntityCreated &event)

@@ -17,9 +17,9 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
 }, {},
-animation_player_update_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+animation_player_update_func, ecs::stage::act, ecs::tags::all, false);
 
 void animation_player_update_func()
 {
@@ -35,6 +35,8 @@ ecs::EventDescription<ecs::OnEntityCreated> init_animation_character_descr("init
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
 }, {
 }, {"game","editor"},
+{},
+{},
 init_animation_character_handler, init_animation_character_singl_handler, ecs::tags::all);
 
 void init_animation_character_handler(const ecs::OnEntityCreated &event)
@@ -53,6 +55,8 @@ ecs::EventDescription<ecs::OnEntityCreated> init_animation_material_descr("init_
   {ecs::get_type_description<Asset<Material>>("material"), false}
 }, {
 }, {"game"},
+{},
+{},
 init_animation_material_handler, init_animation_material_singl_handler, ecs::tags::all);
 
 void init_animation_material_handler(const ecs::OnEntityCreated &event)

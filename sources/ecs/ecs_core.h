@@ -60,11 +60,12 @@ namespace ecs
       std::vector<FunctionArgument> &&require_args,
       std::vector<FunctionArgument> &&require_not_args,
       std::vector<std::string> &&scenes,
+      std::vector<std::string> &&before, std::vector<std::string> &&after,
       EventHandler broadcastEventHandler,
       SingleEventHandler unicastEventHandler,
       uint tags):
       CallableDescription(name, std::move(require_args), std::move(require_not_args),
-        std::move(scenes), {}, {}, tags),
+        std::move(scenes), std::move(before), std::move(after), tags),
       broadcastEventHandler(broadcastEventHandler),
       unicastEventHandler(unicastEventHandler)
     {

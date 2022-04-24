@@ -7,9 +7,9 @@ void briefing_ui_func();
 ecs::SystemDescription briefing_ui_descr("briefing_ui", {
 }, {
 }, {},
-briefing_ui_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+briefing_ui_func, ecs::stage::ui, ecs::tags::all, false);
 
 void briefing_ui_func()
 {
@@ -25,9 +25,9 @@ ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statisti
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-motion_matching_statistic_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+motion_matching_statistic_func, ecs::stage::ui, ecs::tags::all, false);
 
 void motion_matching_statistic_func()
 {
@@ -41,9 +41,9 @@ ecs::SystemDescription current_anim_index_descr("current_anim_index", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
-current_anim_index_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+current_anim_index_func, ecs::stage::ui, ecs::tags::all, false);
 
 void current_anim_index_func()
 {
@@ -57,9 +57,9 @@ ecs::SystemDescription menu_ui_descr("menu_ui", {
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {
 }, {},
-menu_ui_func, ecs::stage::ui_menu, ecs::tags::all,
 {},
-{});
+{},
+menu_ui_func, ecs::stage::ui_menu, ecs::tags::all, false);
 
 void menu_ui_func()
 {
@@ -72,9 +72,9 @@ ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {},
-mm_early_text_perf_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+mm_early_text_perf_func, ecs::stage::ui, ecs::tags::all, false);
 
 void mm_early_text_perf_func()
 {

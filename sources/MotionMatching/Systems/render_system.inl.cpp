@@ -11,9 +11,9 @@ ecs::SystemDescription process_animation_descr("process_animation", {
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {"game","editor"},
-process_animation_func, ecs::stage::render, ecs::tags::all,
 {},
-{});
+{},
+process_animation_func, ecs::stage::render, ecs::tags::all, false);
 
 void process_animation_func()
 {

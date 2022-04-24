@@ -10,9 +10,9 @@ ecs::SystemDescription camera_lerp_descr("camera_lerp", {
   {ecs::get_type_description<float>("lerpStrength"), false}
 }, {
 }, {},
-camera_lerp_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+camera_lerp_func, ecs::stage::act, ecs::tags::all, false);
 
 void camera_lerp_func()
 {
@@ -34,6 +34,8 @@ ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
 }, {},
+{},
+{},
 setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
 
 void setup_camera_handler(const ecs::OnEntityCreated &event)
@@ -55,6 +57,8 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
 }, {},
+{},
+{},
 change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
 
 void change_zoom_handler(const MouseWheelEvent &event)
@@ -76,6 +80,8 @@ ecs::EventDescription<MouseMoveEvent> move_camera_descr("move_camera", {
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
 }, {},
+{},
+{},
 move_camera_handler, move_camera_singl_handler, ecs::tags::all);
 
 void move_camera_handler(const MouseMoveEvent &event)
@@ -95,6 +101,8 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> lock_unlock
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
 }, {},
+{},
+{},
 lock_unlock_camera_handler, lock_unlock_camera_singl_handler, ecs::tags::all);
 
 void lock_unlock_camera_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)

@@ -40,9 +40,9 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
 }, {},
-render_scene_func, ecs::stage::render, ecs::tags::all,
 {},
-{});
+{},
+render_scene_func, ecs::stage::render, ecs::tags::all, false);
 
 void render_scene_func()
 {
@@ -57,9 +57,9 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
 }, {
 }, {},
-update_map_textures_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+update_map_textures_func, ecs::stage::act, ecs::tags::all, false);
 
 void update_map_textures_func()
 {

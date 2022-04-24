@@ -136,8 +136,8 @@ void main()
 
   if (vsOutput.underWater < -0.02)
   {
-    //FragColor = vec4(colorMap, 1);
-    //return;
+    FragColor = vec4(colorMap, 1);
+    return;
   }
 #if MAP_MODE == POLITICAL_MODE
   colorMap = political_map(vsOutput.UV, material_inst.mapSize, colorMap).rgb;

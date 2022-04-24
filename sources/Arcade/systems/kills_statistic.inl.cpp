@@ -21,9 +21,9 @@ ecs::SystemDescription show_kill_stat_descr("show_kill_stat", {
   {ecs::get_type_description<int>("killsCount"), false}
 }, {
 }, {},
-show_kill_stat_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+show_kill_stat_func, ecs::stage::ui, ecs::tags::all, false);
 
 void show_kill_stat_func()
 {
@@ -37,9 +37,9 @@ ecs::SystemDescription check_winner_descr("check_winner", {
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
 }, {
 }, {},
-check_winner_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+check_winner_func, ecs::stage::act, ecs::tags::all, false);
 
 void check_winner_func()
 {
@@ -54,6 +54,8 @@ ecs::EventDescription<KillTargetEvent> collect_kills_descr("collect_kills", {
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
 }, {
 }, {},
+{},
+{},
 collect_kills_handler, collect_kills_singl_handler, ecs::tags::all);
 
 void collect_kills_handler(const KillTargetEvent &event)

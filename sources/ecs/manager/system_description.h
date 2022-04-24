@@ -46,13 +46,14 @@ namespace ecs
   {
     void (*function)();
     int stage;
+    bool isJob;
     SystemDescription(const char *name,
       std::vector<FunctionArgument> &&require_args,
       std::vector<FunctionArgument> &&require_not_args,
       std::vector<std::string> &&scenes,
+      std::vector<std::string> &&before, std::vector<std::string> &&after,
       void (*function_pointer)(),
-      int stage, uint tags,
-      std::vector<std::string> &&before, std::vector<std::string> &&after);
+      int stage, uint tags, bool is_job);
     void execute();
     void registration() override;
   };

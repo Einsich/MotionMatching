@@ -13,9 +13,9 @@ ecs::SystemDescription peson_controller_update_descr("peson_controller_update", 
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {
 }, {},
-peson_controller_update_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+peson_controller_update_func, ecs::stage::act, ecs::tags::all, false);
 
 void peson_controller_update_func()
 {
@@ -30,6 +30,8 @@ ecs::EventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_de
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {},
+{},
+{},
 controller_mouse_move_handler_handler, controller_mouse_move_handler_singl_handler, ecs::tags::all);
 
 void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event)
@@ -48,6 +50,8 @@ ecs::EventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_d
   {ecs::get_type_description<PersonController>("personController"), false}
 }, {
 }, {},
+{},
+{},
 controller_crouch_event_handler_handler, controller_crouch_event_handler_singl_handler, ecs::tags::all);
 
 void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &event)

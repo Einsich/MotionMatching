@@ -35,9 +35,9 @@ ecs::SystemDescription render_submenu_descr("render_submenu", {
   {ecs::get_type_description<EditorRenderSettings>("settings"), false}
 }, {
 }, {"editor"},
-render_submenu_func, ecs::stage::ui_menu, ecs::tags::all,
 {},
-{});
+{},
+render_submenu_func, ecs::stage::ui_menu, ecs::tags::all, false);
 
 void render_submenu_func()
 {
@@ -50,9 +50,9 @@ ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
 }, {"game","editor"},
-set_global_render_data_func, ecs::stage::render, ecs::tags::all,
 {},
-{});
+{},
+set_global_render_data_func, ecs::stage::render, ecs::tags::all, false);
 
 void set_global_render_data_func()
 {
@@ -71,13 +71,13 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<bool>("is_enabled"), false}
 }, {
 }, {"game","editor"},
-lod_selector_func, ecs::stage::render, ecs::tags::all,
 {"frustum_culling"},
-{});
+{},
+lod_selector_func, ecs::stage::render, ecs::tags::all, true);
 
 void lod_selector_func()
 {
-  ecs::perform_system(lod_selector_descr, lod_selector);
+  ecs::perform_job_system(lod_selector_descr, lod_selector);
 }
 
 void frustum_culling_func();
@@ -91,13 +91,13 @@ ecs::SystemDescription frustum_culling_descr("frustum_culling", {
   {ecs::get_type_description<ecs::Tag>("useFrustumCulling"), false}
 }, {
 }, {"game","editor"},
-frustum_culling_func, ecs::stage::render, ecs::tags::all,
 {"process_mesh_position"},
-{});
+{},
+frustum_culling_func, ecs::stage::render, ecs::tags::all, true);
 
 void frustum_culling_func()
 {
-  ecs::perform_system(frustum_culling_descr, frustum_culling);
+  ecs::perform_job_system(frustum_culling_descr, frustum_culling);
 }
 
 void process_mesh_position_func();
@@ -112,9 +112,9 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<bool>("is_enabled"), false}
 }, {
 }, {"game","editor"},
-process_mesh_position_func, ecs::stage::render, ecs::tags::all,
 {"main_instanced_render"},
-{});
+{},
+process_mesh_position_func, ecs::stage::render, ecs::tags::all, false);
 
 void process_mesh_position_func()
 {
@@ -127,9 +127,9 @@ ecs::SystemDescription render_sky_box_descr("render_sky_box", {
   {ecs::get_type_description<SkyBox>("skyBox"), false}
 }, {
 }, {"game","editor"},
-render_sky_box_func, ecs::stage::render, ecs::tags::all,
 {},
-{"main_instanced_render"});
+{"main_instanced_render"},
+render_sky_box_func, ecs::stage::render, ecs::tags::all, false);
 
 void render_sky_box_func()
 {
@@ -143,9 +143,9 @@ ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
 }, {
 }, {"game","editor"},
-render_debug_arrows_func, ecs::stage::render, ecs::tags::all,
 {},
-{"render_sky_box"});
+{"render_sky_box"},
+render_debug_arrows_func, ecs::stage::render, ecs::tags::all, false);
 
 void render_debug_arrows_func()
 {
@@ -159,9 +159,9 @@ ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
   {ecs::get_type_description<RenderQueue>("render"), false}
 }, {
 }, {"game","editor"},
-main_instanced_render_func, ecs::stage::render, ecs::tags::all,
 {},
-{});
+{},
+main_instanced_render_func, ecs::stage::render, ecs::tags::all, false);
 
 void main_instanced_render_func()
 {
@@ -174,9 +174,9 @@ ecs::SystemDescription render_collision_descr("render_collision", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
 }, {
 }, {"game","editor"},
-render_collision_func, ecs::stage::render, ecs::tags::all,
 {"render_sky_box"},
-{"process_mesh_position"});
+{"process_mesh_position"},
+render_collision_func, ecs::stage::render, ecs::tags::all, false);
 
 void render_collision_func()
 {
@@ -189,6 +189,8 @@ void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::Ent
 ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
 }, {
 }, {"game","editor"},
+{},
+{},
 add_global_uniform_handler, add_global_uniform_singl_handler, ecs::tags::all);
 
 void add_global_uniform_handler(const ecs::OnSceneCreated &event)
@@ -207,6 +209,8 @@ ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
 }, {
 }, {"game","editor"},
+{},
+{},
 mesh_loader_handler, mesh_loader_singl_handler, ecs::tags::all);
 
 void mesh_loader_handler(const ecs::OnEntityCreated &event)

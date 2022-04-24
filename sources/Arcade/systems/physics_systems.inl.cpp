@@ -26,9 +26,9 @@ ecs::SystemDescription move_all_entity_with_velocity_descr("move_all_entity_with
   {ecs::get_type_description<float>("rotationVelocity"), true}
 }, {
 }, {},
-move_all_entity_with_velocity_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+move_all_entity_with_velocity_func, ecs::stage::act, ecs::tags::all, false);
 
 void move_all_entity_with_velocity_func()
 {
@@ -43,9 +43,9 @@ ecs::SystemDescription collision_detection_descr("collision_detection", {
   {ecs::get_type_description<ecs::Tag>("bullet"), false}
 }, {
 }, {},
-collision_detection_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+collision_detection_func, ecs::stage::act, ecs::tags::all, false);
 
 void collision_detection_func()
 {

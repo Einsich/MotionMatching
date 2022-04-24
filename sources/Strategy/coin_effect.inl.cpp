@@ -13,9 +13,9 @@ ecs::SystemDescription coin_move_descr("coin_move", {
   {ecs::get_type_description<float>("life_period"), false}
 }, {
 }, {"game","editor","ecs::Tag coinEffect"},
-coin_move_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+coin_move_func, ecs::stage::act, ecs::tags::all, false);
 
 void coin_move_func()
 {
@@ -30,6 +30,8 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> spawn_coin_
   {ecs::get_type_description<HeightMap>("heightMap"), false}
 }, {
 }, {"game","editor"},
+{},
+{},
 spawn_coin_effect_handler, spawn_coin_effect_singl_handler, ecs::tags::all);
 
 void spawn_coin_effect_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)

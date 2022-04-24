@@ -8,9 +8,9 @@ ecs::SystemDescription entity_viewer_descr("entity_viewer", {
   {ecs::get_type_description<EditorUI>("ui"), false}
 }, {
 }, {"game","editor","scene","debug"},
-entity_viewer_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+entity_viewer_func, ecs::stage::ui, ecs::tags::all, false);
 
 void entity_viewer_func()
 {
@@ -24,6 +24,8 @@ ecs::EventDescription<ecs::OnSceneCreated> init_imgui_style_descr("init_imgui_st
   {ecs::get_type_description<EditorUI>("ui"), false}
 }, {
 }, {"game","editor","scene","debug"},
+{},
+{},
 init_imgui_style_handler, init_imgui_style_singl_handler, ecs::tags::all);
 
 void init_imgui_style_handler(const ecs::OnSceneCreated &event)

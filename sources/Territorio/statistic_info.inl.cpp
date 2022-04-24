@@ -24,9 +24,9 @@ ecs::SystemDescription show_statistic_descr("show_statistic", {
   {ecs::get_type_description<vector<vec3>>("land_colors"), false}
 }, {
 }, {},
-show_statistic_func, ecs::stage::ui, ecs::tags::all,
 {},
-{});
+{},
+show_statistic_func, ecs::stage::ui, ecs::tags::all, false);
 
 void show_statistic_func()
 {

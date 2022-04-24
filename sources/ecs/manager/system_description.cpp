@@ -34,13 +34,14 @@ namespace ecs
   SystemDescription::SystemDescription(const char *name, 
     std::vector<FunctionArgument> &&require_args,
     std::vector<FunctionArgument> &&require_not_args,
-    std::vector<std::string> &&scenes,
-    void (*function_pointer)(), int stage, uint tags, 
-    std::vector<std::string> &&before, std::vector<std::string> &&after):
+    std::vector<std::string> &&scenes, 
+    std::vector<std::string> &&before, std::vector<std::string> &&after,
+    void (*function_pointer)(), int stage, uint tags, bool is_job):
     CallableDescription(name, std::move(require_args), std::move(require_not_args),
       std::move(scenes), std::move(before), std::move(after), tags),
     function(function_pointer),
-    stage(stage)
+    stage(stage),
+    isJob(is_job)
   {
     add_callable(this);
   }

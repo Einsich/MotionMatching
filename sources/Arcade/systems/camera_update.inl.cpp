@@ -23,9 +23,9 @@ ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
 }, {
 }, {},
-update_camera_pos_before_render_func, ecs::stage::before_render, ecs::tags::all,
 {},
-{});
+{},
+update_camera_pos_before_render_func, ecs::stage::before_render, ecs::tags::all, false);
 
 void update_camera_pos_before_render_func()
 {
@@ -41,6 +41,8 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
 }, {},
+{},
+{},
 change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
 
 void change_zoom_handler(const MouseWheelEvent &event)

@@ -28,6 +28,7 @@ struct ParserSystemDescription
   std::string tags;
   std::vector<ParserFunctionArgument> args, req_args, req_not_args;
   std::vector<std::string> before, after, scenes;
+  std::string isJob;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
 #define NAME_SYM "a-zA-Z0-9_"
@@ -41,13 +42,11 @@ struct ParserSystemDescription
 #define NEW_SYSTEM_ARGS "[(][" SYSTEM_LEXEMA "=;]*[)]"
 #define VAR_NAME "[a-zA-Z]+[a-zA-Z0-9_]*"
 #define VAR_TYPE "[a-zA-Z]+[a-zA-Z0-9_:]*"
-#define ARG_TYPE "[a-zA-Z]+[a-zA-Z0-9_:<>,&*]*"
 #define TYPE_NAME VAR_TYPE SPACE VAR_NAME
 #define TYPE_REGEX1 "(" VAR_TYPE SPACE "<" SPACE VAR_TYPE "(" SPACE "," SPACE VAR_TYPE ")*" SPACE ">|" VAR_TYPE ")"
 #define TYPE_REGEX2 "(" VAR_TYPE SPACE "<" SPACE TYPE_REGEX1 "(" SPACE "," SPACE TYPE_REGEX1 ")*" SPACE ">|" VAR_TYPE ")" "|" VAR_NAME
 #define SYSTEM_ARG  "((" VAR_TYPE SPACE "<" SPACE TYPE_REGEX1 "(" SPACE "," SPACE TYPE_REGEX1 ")*" SPACE ">|" VAR_TYPE ")" SPACE VAR_NAME ")|" VAR_NAME
 
-#define EID_ARGS "[" NAME_SYM "" SPACE_SYM "]+"
 #define ARGS_L "[(]" ARGS "[)]"
 #define ARGS_R "[\\[]" ARGS "[\\]]"
 #define SYSTEM "SYSTEM" SPACE "[(]" SYSTEM_ANNOTATION "[)]"
@@ -64,7 +63,6 @@ static const std::regex event_full_regex(EVENT SPACE NAME SPACE ARGS_L);
 static const std::regex event_regex(EVENT);
 static const std::regex args_regex(ARGS_L);
 static const std::regex arg_regex("[" NAME_SYM "&*:<>" SPACE_SYM "]+");
-static const std::regex sys_definition_regex("[" NAME_SYM "&*:<>\\+\\-" SPACE_SYM "]+");
 
 static const std::regex new_system_args_regex(NEW_SYSTEM_ARGS);
 static const std::regex new_system_annotation_regex(LEXEMA_ANNOTATION);
@@ -218,7 +216,11 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
         {
           for (uint i = 1; i < args0.size(); i++)
             parserDescr.req_not_args.emplace_back(clear_arg(args0[i]));
-        } else
+        } else if (key == "job")
+        {
+          if (args0.size() > 1)
+            parserDescr.isJob = std::move(args0[1]);
+        }else
         {
           log_error("bad lexema " + arg);
         }
@@ -229,6 +231,8 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
     parserDescr.tags = "ecs::tags::all";
   if (parserDescr.stage.empty())
     parserDescr.stage = "ecs::stage::act";
+  if (parserDescr.isJob.empty())
+    parserDescr.isJob = "false";
 }
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
   const std::string &file, const std::string &file_path,
@@ -461,21 +465,20 @@ void process_inl_file(const fs::path& path)
     
     fill_arguments(outFile, system);
     fill_scenes(outFile, system);
-    write(outFile,
-    "%s, %s, %s,\n", sys_func.c_str(), system.stage.c_str(), system.tags.c_str());
-
     fill_array(outFile, system.before);
     write(outFile, ",\n");
     fill_array(outFile, system.after);
-    write(outFile, ");\n\n");
-  
+    write(outFile,
+    ",\n%s, %s, %s, %s);\n\n", sys_func.c_str(), system.stage.c_str(), system.tags.c_str(), system.isJob.c_str());
+
+    bool isJob = system.isJob == "true";
     write(outFile,
     "void %s()\n"
     "{\n"
-    "  ecs::perform_system(%s, %s);\n"
+    "  ecs::%s(%s, %s);\n"
     "}\n\n",
-    sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
-
+    sys_func.c_str(), isJob ? "perform_job_system" : "perform_system",
+    sys_descr.c_str(), system.sys_name.c_str());
   }
 
   for (auto& event : eventsDescriptions)
@@ -494,8 +497,11 @@ void process_inl_file(const fs::path& path)
 
     fill_arguments(outFile, event, true);
     fill_scenes(outFile, event);
+    fill_array(outFile, event.before);
+    write(outFile, ",\n");
+    fill_array(outFile, event.after);
     write(outFile, 
-    "%s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
+    ",\n%s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
 
     write(outFile,
     "void %s(const %s &event)\n"

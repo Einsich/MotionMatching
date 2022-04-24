@@ -103,9 +103,9 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<uint>("forces"), false}
 }, {
 }, {},
-update_bot_invasions_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+update_bot_invasions_func, ecs::stage::act, ecs::tags::all, false);
 
 void update_bot_invasions_func()
 {
@@ -126,9 +126,9 @@ ecs::SystemDescription map_update_descr("map_update", {
   {ecs::get_type_description<bool>("gameStarted"), false}
 }, {
 }, {},
-map_update_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+map_update_func, ecs::stage::act, ecs::tags::all, false);
 
 void map_update_func()
 {
@@ -142,9 +142,9 @@ ecs::SystemDescription border_update_descr("border_update", {
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
 }, {
 }, {},
-border_update_func, ecs::stage::act, ecs::tags::all,
 {},
-{});
+{},
+border_update_func, ecs::stage::act, ecs::tags::all, false);
 
 void border_update_func()
 {
@@ -161,6 +161,8 @@ ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
 }, {
 }, {},
+{},
+{},
 game_started_handler, game_started_singl_handler, ecs::tags::all);
 
 void game_started_handler(const OnGameStarted &event)

@@ -76,6 +76,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
             stbi_image_free(stbiData);
           }
           status = AssetStatus::Loaded;
+          debug_log("async loaded texture2d %s", textureName.c_str());
         });
       });
       status = AssetStatus::Loading;

@@ -123,7 +123,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "del /S *.meta",
+            "command": "", //"del /S *.meta",
             "args": [],
             "group": {
                 "kind": "build",
