@@ -149,7 +149,7 @@ void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
   {
     if (status == AssetStatus::NotLoaded)
     {
-      debug_log("async loaded mesh %s", pathStr.c_str());
+      //debug_log("async loaded mesh %s", pathStr.c_str());
       add_job([this, pathStr, &status](){
         const string &indexedName = pathStr;
         size_t bracketPosBegin = indexedName.find_last_of('[');

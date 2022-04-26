@@ -197,6 +197,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     uint instanceCount = 0;
     uint sp = 0;
     bool startTransparentPass = false;
+    bool zTestEnabled = true;
     instanceData.bind();
     //debug_log("start");
     for (uint i = 0, n = render.queue.size(); i < n; i++)
@@ -210,19 +211,33 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
       set_matrices_to_buffer(*stuff.transform, shader.get_instance_data(), buffer);
       instanceCount++;
       bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
-      if (needRender)
+      if (needRender || instanceCount >= 100)
       {
         ProfilerLabelGPU label(stuff.label);
         if (shader.get_shader_program() != sp)//need use new shader
         {
           shader.use();
           sp = shader.get_shader_program();
-          if (material.is_transparent() && !startTransparentPass)
+          if (startTransparentPass != material.is_transparent())
           {
-            glEnable(GL_BLEND);
-            glDisable(GL_DEPTH_TEST);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            startTransparentPass = true;
+            startTransparentPass = !startTransparentPass;
+            if (startTransparentPass)
+            {
+              glEnable(GL_BLEND);
+              glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            else
+            {
+              glDisable(GL_BLEND);
+            }
+          }
+          if (zTestEnabled != material.need_z_test())
+          {
+            zTestEnabled = !zTestEnabled;
+            if (zTestEnabled)
+              glEnable(GL_DEPTH_TEST);
+            else
+              glDisable(GL_DEPTH_TEST);
           }
         }
         material.bind_textures_to_shader();

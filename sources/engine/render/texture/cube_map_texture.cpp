@@ -42,7 +42,7 @@ void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
       {
         init_3d();
         status = AssetStatus::Loaded;
-        debug_log("async loaded cubemap %s", textureName.c_str());
+        //debug_log("async loaded cubemap %s", textureName.c_str());
       });
     });
     status = AssetStatus::Loading;

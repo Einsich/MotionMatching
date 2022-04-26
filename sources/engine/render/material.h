@@ -34,6 +34,7 @@ private:
   SAMPLERS
   (string) (shaderName),
   (bool) (isTransparent),
+  (bool) (disableZTest),
   (int) (drawOrder))
   #undef SAMPLER
   #undef TYPE
@@ -48,9 +49,13 @@ public:
   {
     return isTransparent;
   }
+  bool need_z_test() const
+  {
+    return !disableZTest;
+  }
   int draw_order() const
   {
-    return isTransparent ? drawOrder : INT_MIN;
+    return drawOrder;
   }
   virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   

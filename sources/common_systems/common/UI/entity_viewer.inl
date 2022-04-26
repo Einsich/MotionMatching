@@ -29,7 +29,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
   {
     if (ImGui::TreeNode(archetype->synonim.c_str()))
     {
-      for (int j = 0; j < archetype->count; ++j)
+      for (int j = 0, n = std::min(archetype->count, 200); j < n; ++j)
       {
         ecs::EntityId eid = ecs::find_entity(archetypeIndex, j);
         snprintf(buf, N, "entity[%d]", j);
