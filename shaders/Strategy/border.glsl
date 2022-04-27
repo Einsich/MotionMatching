@@ -1,13 +1,6 @@
 #shader border_shader
 
-struct Instance
-{
-  mat4 Model;
-};
-layout(std430, binding = 1) readonly buffer InstanceData 
-{
-    Instance instances[];
-};
+#include transforms
 
 struct VsOutput
 {
@@ -30,15 +23,15 @@ flat out uint borderIndex;
 uniform sampler2D heightMap;
 void main()
 {
-  mat4 tm = instances[gl_InstanceID].Model;
-  vec4 VertexPosition = tm * vec4(Position.x, 0, Position.y, 1);
-  vsOutput.EyespaceNormal = mat3(tm) * vec3(0,1,0);
+  mat3x4 tm = get_transform(gl_InstanceID);
+  vec3 VertexPosition = mul(tm, vec4(Position.x, 0, Position.y, 1));
+  vsOutput.EyespaceNormal = mul(tm, vec3(0,1,0));
 
   float height = texture(heightMap, mapSize.zw*VertexPosition.xz).y;
   VertexPosition.y += max(height, 94./255.) * 1.0+0.01;
 
-  gl_Position = ViewProjection * VertexPosition;
-  vsOutput.WorldPosition = VertexPosition.xyz;
+  gl_Position = ViewProjection * vec4(VertexPosition, 1);
+  vsOutput.WorldPosition = VertexPosition;
 
   vsOutput.UV = UV;
   borderIndex = BorderIndex;

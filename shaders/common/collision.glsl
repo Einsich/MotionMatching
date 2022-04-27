@@ -4,15 +4,7 @@
 
 layout(location = 0)in vec3 Position ;
 
-struct Instance
-{
-  mat4 Model;
-};
-
-layout(std430, binding = 1) readonly buffer InstanceData 
-{
-    Instance instances[];
-};
+#include transforms
 
 
 
@@ -20,7 +12,7 @@ layout(std430, binding = 1) readonly buffer InstanceData
 
 void main()
 {
-  gl_Position = ViewProjection * instances[gl_InstanceID].Model * vec4(Position, 1);
+  gl_Position = ViewProjection * vec4(mul(get_transform(gl_InstanceID), vec4(Position, 1)), 1);
 }
 
 #pixel_shader

@@ -17,16 +17,17 @@ void main()
 {
   #define instance instances[gl_InstanceID]
   vec3 vertex_position = Position;
-  mat4 tm = instance.Model;
-  tm[3].y = 0;
-  vec4 VertexPosition = tm * vec4(vertex_position, 1);
-  vsOutput.EyespaceNormal = mat3(instance.Model) * Normal;
 
-  float height = texture(heightMap, mapSize.zw*VertexPosition.xz).y;
-  VertexPosition.y += height * 1.0;
+  mat3x4 tm = get_transform(gl_InstanceID);
+  vec2 mapPos = vec2(tm[0].w, tm[2].w);
+  float height = texture(heightMap, mapSize.zw*mapPos).y;
+  tm[1].w = height * 1.0;
+  vec3 VertexPosition = mul(tm, vec4(vertex_position, 1));
+  vsOutput.EyespaceNormal = mul(tm, Normal);
 
-  gl_Position = ViewProjection * VertexPosition;
-  vsOutput.WorldPosition = VertexPosition.xyz;
+
+  gl_Position = ViewProjection * vec4(VertexPosition, 1);
+  vsOutput.WorldPosition = VertexPosition;
 
   vsOutput.UV = TexCoord;
 

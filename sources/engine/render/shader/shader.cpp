@@ -152,7 +152,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
     {
       buffer.binding = binding;
       buffer.size = size;
-      buffer.Model = buffer.Bones = BufferField();
+      buffer.Bones = BufferField();
     }
     else
     {
@@ -181,9 +181,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
       }
       else
       {
-        if (!strcmp(matterPart, "Model"))
-          buffer.Model = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
-        else if (!strcmp(matterPart, "Bones[0]"))
+        if (!strcmp(matterPart, "Bones[0]"))
           buffer.Bones = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
         else
         {

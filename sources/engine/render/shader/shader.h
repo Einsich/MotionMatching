@@ -55,6 +55,14 @@ public:
 	{
 		glUniform1fv(uniform_location, 1, &v);
   }
+	void set_int(const char*name, int v) const
+	{
+		glUniform1i(glGetUniformLocation(get_shader_program(), name), v);
+  }
+	void set_int(int uniform_location, int v) const
+	{
+		glUniform1i(uniform_location, v);
+  }
 
 	void set_vec2(const char*name, const vec2 &v) const
 	{

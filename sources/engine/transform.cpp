@@ -28,8 +28,16 @@ const mat4x4 &Transform::get_transform() const
   else
   {
     calculated = true;
-    return cachedTransform = glm::translate(mat4(1.f), position) * glm::scale(rotation, scale);
+    cachedTransform = glm::translate(mat4(1.f), position) * glm::scale(rotation, scale);
+    cached3x4Transform = transpose(cachedTransform);
+    return cachedTransform;
   }
+}
+const mat3x4 &Transform::get_3x4transform() const
+{
+  if (!calculated)
+    get_transform();
+  return cached3x4Transform;
 }
 mat3 Transform::get_rotation() const
 {

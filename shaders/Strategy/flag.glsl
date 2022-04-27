@@ -19,8 +19,9 @@ struct Material
 
 void main()
 {
+  mat3x4 tm = get_transform(gl_InstanceID);
   #define instance instances[gl_InstanceID]
-  vec3 worldPos = instance.Model[3].xyz;
+  vec3 worldPos = vec3(tm[0].w, tm[1].w, tm[2].w);
   float freeStrength = clamp(Position.x*0.1, 0.0,0.1);
   float xScale = 2;
   float yScale = 5;
@@ -29,9 +30,10 @@ void main()
   float dpdx = 1-sin(phase) * xScale * freeStrength;
   float dpdy = 1-sin(phase) * yScale * freeStrength;
   vec3 n = cross(vec3(1,0,dpdx), vec3(0,1, dpdy));
-  vsOutput.EyespaceNormal = mat3(instance.Model) * Normal;
-  gl_Position = ViewProjection * instance.Model * vec4(pos, 1);
-  vsOutput.WorldPosition = (instance.Model * vec4(pos, 1)).xyz;
+  vsOutput.EyespaceNormal = mul(tm, Normal);
+  pos = mul(tm, vec4(pos, 1));
+  gl_Position = ViewProjection * vec4(pos, 1);
+  vsOutput.WorldPosition = pos;
   vsOutput.UV = TexCoord;
   instanceID = gl_InstanceID;
 }

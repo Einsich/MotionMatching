@@ -25,6 +25,8 @@ EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<GlobalRenderData>("GlobalRenderData", 0);
   add_storage_buffer("InstanceData", 0, 1);
+  add_storage_buffer("DynamicTransforms", 0, 2);
+  add_storage_buffer("StaticTransforms", 0, 3);
 }
 
 SYSTEM(stage=ui_menu; scene=editor) render_submenu(EditorRenderSettings &settings)
@@ -178,8 +180,6 @@ void find_matrices(ecs::EntityId, Callable);
 
 void set_matrices_to_buffer(const Transform &transform, const ShaderBuffer &buffer, char *data)
 {
-  if (buffer.Model.type)
-    copy_buffer_field(transform.get_transform(), data, buffer.Model);
   if (buffer.Bones.type && !transform.get_bones().empty())
     copy_buffer_field(transform.get_bones(), data, buffer.Bones);
 }
@@ -194,7 +194,22 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 
   if (!render.queue.empty())
   {
-    uint instanceCount = 0;
+    //debug_log("start");
+    {
+      ProfilerLabel transforms_copy("transforms copy");
+      UniformBuffer &dynamicTransforms = get_buffer("DynamicTransforms");
+      const uint instanceSize = sizeof(mat3x4);
+      const uint n = render.queue.size();
+      dynamicTransforms.bind();
+      mat3x4 *buffer = (mat3x4*)dynamicTransforms.get_buffer(0, n * instanceSize);
+      for (uint i = 0; i < n; i++)
+      {
+        const mat3x4 &tm = render.queue[i].transform->get_3x4transform();
+        memcpy(buffer + i, &tm, instanceSize);
+      }
+      dynamicTransforms.flush_buffer(n * instanceSize);
+    }
+    uint instanceCount = 0, matrixOffset = 0;
     uint sp = 0;
     bool startTransparentPass = false;
     bool zTestEnabled = true;
@@ -211,7 +226,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
       set_matrices_to_buffer(*stuff.transform, shader.get_instance_data(), buffer);
       instanceCount++;
       bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
-      if (needRender || instanceCount >= 100)
+      if (needRender)
       {
         ProfilerLabelGPU label(stuff.label);
         if (shader.get_shader_program() != sp)//need use new shader
@@ -240,11 +255,13 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
               glDisable(GL_DEPTH_TEST);
           }
         }
+        shader.set_int("dynamicTransformsOffset", matrixOffset);
         material.bind_textures_to_shader();
         instanceData.flush_buffer(instanceCount * instanceSize);
         stuff.mesh->render_instances(instanceCount, wire_frame);
         //debug_log("draw instance = %d, instance size = %d, %s",
         //    instanceCount, instanceSize, material.get_shader().get_name().c_str());
+        matrixOffset += instanceCount;
         instanceCount = 0;
       }
     }
@@ -273,11 +290,9 @@ render_collision(const EditorRenderSettings &editorSettings)
   if (!cube || !collisionMat || !sphere)
     return;
 
-  const auto &instanceDescr = collisionMat->get_shader().get_instance_data();
-  if (!instanceDescr.Model.type)
-    return;
-  UniformBuffer &instanceData = get_buffer("InstanceData");
-  uint instanceSize = collisionMat->buffer_size();
+
+  UniformBuffer &dynamicTransforms = get_buffer("DynamicTransforms");
+  const uint instanceSize = sizeof(mat3x4);
   uint instanceCount = 0;
   QUERY()find_collidable_entity([&](const Transform &transform, const Asset<Mesh> &mesh)
   {
@@ -287,16 +302,16 @@ render_collision(const EditorRenderSettings &editorSettings)
     Transform tm = transform;
     tm.get_position() += tm.get_scale() * box.center();
     tm.set_scale(tm.get_scale() * box.diagonal() * 0.5f);
-    char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
-    copy_buffer_field(tm.get_transform(), buffer, instanceDescr.Model);
+    mat3x4 *buffer = (mat3x4*)dynamicTransforms.get_buffer(instanceCount * instanceSize, instanceSize);
+    *buffer = tm.get_transform();
     instanceCount++;
   });
   if (instanceCount == 0)
     return;
   ProfilerLabelGPU label("collision");
-  instanceData.bind();
+  dynamicTransforms.bind();
   collisionMat->get_shader().use();
-  instanceData.flush_buffer(instanceCount * instanceSize);
+  dynamicTransforms.flush_buffer(instanceCount * instanceSize);
   cube->render_instances(instanceCount, true);
   sphere->render_instances(instanceCount, true);
 }
