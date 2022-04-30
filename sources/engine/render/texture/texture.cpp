@@ -143,5 +143,6 @@ bool Texture::texture_edit()
   edited |= list_box<2, TexturePixelFormat>({"Point", "Linear"}, 
   {TexturePixelFormat::Pixel, TexturePixelFormat::Linear},
     "Pixel format", pixelFormat);
+  ImGui::Image((void*)(intptr_t)textureObject, ImVec2(200,200), ImVec2(0, 1), ImVec2(1, 0));
   return edited;
 }

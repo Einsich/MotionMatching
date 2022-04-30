@@ -1,8 +1,5 @@
 #include "texture2d.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_write.h"
 #include "resources/resource_registration.h"
 #include "imgui.h"
 #include "component_editor.h"
@@ -59,9 +56,9 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     create_from_pointer(nullptr, h, w, 0);
 
   }
-  void Texture2D::load(const filesystem::path &path, bool , AssetStatus &status)
+  void Texture2D::load(const filesystem::path &path, bool reload, AssetStatus &status)
   {
-    if (status == AssetStatus::NotLoaded)
+    if ((!reload && status == AssetStatus::NotLoaded) || reload)
     {
       add_job([this, path, &status]()
       {
@@ -95,6 +92,18 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     stbi_set_flip_vertically_on_load(true);
     stbiData = stbi_load(path.string().c_str(), &textureWidth, &textureHeight, &ch, 0);
 
+    switch (ch)
+    {
+      case 1: colorFormat = TextureColorFormat::R; break;
+      case 2: colorFormat = TextureColorFormat::RG; break;
+      case 3: colorFormat = TextureColorFormat::RGB; break;
+      case 4: colorFormat = TextureColorFormat::RGBA; break;
+    
+      default:
+        debug_error("Unsoported format for texture %s!", textureName.c_str());
+        break;
+    }
+    textureFormat = TextureFormat::UnsignedByte;
 		if (!stbiData)
 		{
 			debug_error("Can't load texture %s!", textureName.c_str());
@@ -120,7 +129,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
       case TextureFormat::UnsignedShort :
       case TextureFormat::HalfFloat :
       rightSizeOf = size == 2;
-      break;  
+        break;   
       case TextureFormat::Int :
       case TextureFormat::UnsignedInt :
       case TextureFormat::Float :
