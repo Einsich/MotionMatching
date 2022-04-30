@@ -4,7 +4,15 @@
 #include <resources/resources.h>
 #include <singleton.h>
 #include "editor_window.h"
+#include "editor.h"
+#include <render/texture/texture2d.h>
 
+
+EditorWidgets::EditorWidgets():
+back("back_button.png", vec2(25, 25))
+{
+  
+}
 struct SelectedAsset : ecs::Singleton
 {
   Asset<AssetStub> *asset = nullptr;
@@ -32,7 +40,7 @@ SYSTEM(stage=ui_menu; scene=editor) resources_menu(SelectedAsset &selectedAsset)
   }
 }
 
-SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui)
+SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];
@@ -91,8 +99,8 @@ SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const 
               selectedAsset.resourceType->createNewAsset(path);
             adding = false;
           }
-              
-          if (ImGui::Button("Back"))
+          
+          if (widgets.back.get())
           {
             adding = false;
             scroll = 0;
@@ -119,7 +127,7 @@ SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const 
       {
         if (selectedAsset.asset)
         {
-          if (ImGui::Button("Back"))
+          if (widgets.back.get())
           {
             selectedAsset.asset = nullptr;
             scroll *= -1;

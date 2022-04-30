@@ -1041,6 +1041,36 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
     return ImageButtonEx(id, user_texture_id, size, uv0, uv1, padding, bg_col, tint_col);
 }
 
+bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& hover_color, const ImVec4& active_color, const ImVec4& default_color, bool disabled)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    if (window->SkipItems)
+        return false;
+
+    // Default to using texture ID as ID. User can still push string/integer prefixes.
+    PushID((void*)(intptr_t)user_texture_id);
+    const ImGuiID id = window->GetID("#image");
+    PopID();
+
+    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
+    ItemSize(bb);
+    if (!ItemAdd(bb, id))
+        return false;
+
+    bool hovered = true, held = true;
+    bool pressed = disabled ? false : ButtonBehavior(bb, id, &hovered, &held);
+
+    // Render
+    const ImU32 col = ColorConvertFloat4ToU32((held && hovered) ? active_color : hovered ? hover_color : default_color);
+    RenderNavHighlight(bb, id);
+    if (disabled)
+        window->DrawList->AddRectFilled(bb.Min, bb.Max, col);
+    window->DrawList->AddImage(user_texture_id, bb.Min, bb.Max, uv0, uv1, col);
+
+    return pressed;
+}
+
 bool ImGui::Checkbox(const char* label, bool* v)
 {
     ImGuiWindow* window = GetCurrentWindow();

@@ -21,7 +21,8 @@ void asset_viewer_func();
 
 ecs::SystemDescription asset_viewer_descr("asset_viewer", {
   {ecs::get_type_description<SelectedAsset>("selectedAsset"), false},
-  {ecs::get_type_description<EditorUI>("ui"), false}
+  {ecs::get_type_description<EditorUI>("ui"), false},
+  {ecs::get_type_description<EditorWidgets>("widgets"), false}
 }, {
 }, {"editor"},
 {},
