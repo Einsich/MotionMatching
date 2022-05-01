@@ -47,8 +47,7 @@
                 "ECSCodeGen",
                 "rel",
                 "\"\"",
-                "yes",
-                "no"
+                "yes"
             ],
             "windows": {
                 "command": "Tools\\build_script.bat"
@@ -69,8 +68,7 @@
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "\"${config:launchOption.currentConfig.Project.dependencies}\"",
-                "yes",
-                "no"
+                "yes"
             ],
             "windows": {
                 "command": "Tools\\build_script.bat"
@@ -83,6 +81,28 @@
         },
         {
             "type": "shell",
+            "label": "Deploy release",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./Tools/create_release.sh",
+            "args": [
+                "${config:launchOption.currentConfig.Project.name}",
+                "${config:launchOption.currentConfig.Project.delpoy_only_project_folder}",
+                "${workspaceFolder}",
+                "D:\\Releases"
+            ],
+            "windows": {
+                "command": "Tools\\create_release.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn":["ecs code generation", "Build release project"]
+        },
+        {
+            "type": "shell",
             "label": "Build project",
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -92,8 +112,29 @@
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
                 "\"${config:launchOption.currentConfig.Project.dependencies}\"",
-                "no",
-                "no"
+                "yes"
+            ],
+            "windows": {
+                "command": "Tools\\build_script.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn":["ecs code generation"]
+        },
+        {
+            "type": "shell",
+            "label": "Build release project",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./Tools/build_script.sh",
+            "args": [
+                "${config:launchOption.currentConfig.Project.name}",
+                "rel",
+                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
+                "yes"
             ],
             "windows": {
                 "command": "Tools\\build_script.bat"
