@@ -1,6 +1,7 @@
 #include <ecs.h> 
 #include <render/shader/shader.h>
 #include <render/texture/texture2d.h>
+#include <render/mesh.h>
 #include <transform2d.h>
 #include "map_arrays.h"
 #include "world_render.h"
@@ -27,7 +28,7 @@ SYSTEM(stage=render) render_scene(
 {
   static vector<uint> indices = {0,1,2,0,2,3};
   static vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
-  static VertexArrayObject squadVao(indices, corners);
+  static Mesh squadVao(indices, corners);
   wr.screenToWorld = transform.get_matrix();
   mat3 viewProjection = cameraProjection * glm::inverse(wr.screenToWorld);
   QUERY() gather_sprites([&](
