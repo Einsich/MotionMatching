@@ -237,6 +237,8 @@ EVENT(scene=game, editor) create_terrain(const ecs::OnSceneCreated&,
     mat.set_property("material.texelSize", vec2(1.f / w, 1.f / h));
     mat.before_save();
   };
+  political_material.try_load();
+  physycal_material.try_load();
   materialSetter(*political_material);
   materialSetter(*physycal_material);
   material = political_material;

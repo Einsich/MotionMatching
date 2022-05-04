@@ -61,7 +61,7 @@ public:
   
   virtual bool require_immediate_load() const override
   {
-    return true;
+    return false;
   }
   virtual void before_save() override;
   virtual bool edit() override;

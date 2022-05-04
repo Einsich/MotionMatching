@@ -33,7 +33,7 @@ CubeMap::CubeMap(string cubemap_path_from_textures_folder,
 
 void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
 {
-  if (status != AssetStatus::Loaded)
+  if (status == AssetStatus::NotLoaded)
   {
     add_job([this, &status]()
     {

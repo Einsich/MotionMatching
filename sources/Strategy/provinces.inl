@@ -96,7 +96,7 @@ EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
   //stbi_flip_vertically_on_write(1);
   //stbi_write_tga(root_path("resources/Strategy/Content/provinces.tga").c_str(), w, h, 4, provincesMap.data());
 
-  
+  political_material.try_load();
   political_material->set_property("material.stateColor[0]", countriesColors);
   political_material->set_property("material.provincesInfo[0]", provincesInfo);
   political_material->set_texture("provincesMap", provinces_texture);

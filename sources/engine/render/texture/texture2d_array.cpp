@@ -2,6 +2,8 @@
 #include "stb_image.h"
 #include "imgui.h"
 #include "component_editor.h"
+#include <parallel/thread_pool.h>
+
 Texture2DArray::Texture2DArray()
 {
   generateMips = true;
@@ -25,60 +27,83 @@ static vector<string> split(const string &s, char delim) {
 }
 void Texture2DArray::load(const filesystem::path &path, bool , AssetStatus &status)
 {
-  vector<string> names = split(path.string(), '+');
-  if (!names.empty())
-    textureName = names[0];
 
-
-  glBindTexture(textureType, textureObject);
-
-  int layerCount = names.size() - 1;
-  int mipLevelCount = 5;
-  stbi_set_flip_vertically_on_load(true);
-  for (uint i = 1; i < names.size(); i++)
+  if (status == AssetStatus::NotLoaded)
   {
-    int w, h, ch;
-    string fullPath = root_path(names[i]);
-    auto image = stbi_load(fullPath.c_str(), &w, &h, &ch, 0);
-    if (i == 1)
+    add_job([this, &status, path]()
     {
-      glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_RGBA8, w, h, layerCount);
-      textureWidth = w;
-      textureHeight = h;
-    }
-    if (image)
-    {
-      if (w == textureWidth && h == textureHeight)
-        glTexSubImage3D(textureType, 0, 0, 0, i-1, w, h, 1, colorFormat, textureFormat, image);
+      vector<string> names = split(path.string(), '+');
+      if (!names.empty())
+        textureName = names[0];
+      vector<unsigned char*> images;
+      bool haveErrors = false;
+      for (uint i = 1; i < names.size(); i++)
+      {
+        int w, h, ch;
+        string fullPath = root_path(names[i]);
+        auto image = stbi_load(fullPath.c_str(), &w, &h, &ch, 0);
+        if (i == 1)
+        {
+          textureWidth = w;
+          textureHeight = h;
+        }
+        if (image)
+        {
+          images.push_back(image);
+          if (!(w == textureWidth && h == textureHeight))
+          {
+            haveErrors = true;
+            debug_error("bad size of %s [%dx%d] need [%dx%d] for %s texture2D array",
+              names[i].c_str(), textureWidth, textureHeight, w, h, names[0].c_str());
+            break;
+          }
+        }
+        else
+          debug_error("can't load %s texture for %s texture2D array", names[i].c_str(), names[0].c_str());
+      }
+      if (haveErrors)
+        for (auto image : images)
+          stbi_image_free(image);
       else
-        debug_error("bad size of %s [%dx%d] need [%dx%d] for %s texture2D array",
-          names[i].c_str(), textureWidth, textureHeight, w, h, names[0].c_str());
-      stbi_image_free(image);
-    }
-    else
-      debug_error("can't load %s texture for %s texture2D array", names[i].c_str(), names[0].c_str());
-  }
+      add_main_thread_job([this, &status, images]()
+      {
+        int layerCount = images.size();
+        int mipLevelCount = 5;
+        glBindTexture(textureType, textureObject);
 
-  glTexParameteri(textureType, GL_TEXTURE_WRAP_S, TextureWrappFormat::Repeat);
-  glTexParameteri(textureType, GL_TEXTURE_WRAP_T, TextureWrappFormat::Repeat);
-  
-  if (generateMips)
-  {
-    glGenerateMipmap(textureType);
-    GLenum mipmapMinPixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST;
-    GLenum mipmapMagPixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR : GL_NEAREST;
-    
-    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, mipmapMinPixelFormat);
-    glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, mipmapMagPixelFormat);
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_RGBA8, textureWidth, textureHeight, layerCount);
+        for (uint i = 0; i < images.size(); i++)
+        {
+          glTexSubImage3D(textureType, 0, 0, 0, i, textureWidth, textureHeight, 1, colorFormat, textureFormat, images[i]);
+          if (images[i])
+            stbi_image_free(images[i]);
+        }
+
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_S, TextureWrappFormat::Repeat);
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_T, TextureWrappFormat::Repeat);
+        
+        if (generateMips)
+        {
+          glGenerateMipmap(textureType);
+          GLenum mipmapMinPixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST;
+          GLenum mipmapMagPixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR : GL_NEAREST;
+          
+          glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, mipmapMinPixelFormat);
+          glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, mipmapMagPixelFormat);
+        }
+        else
+        {
+          GLenum minMagixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR : GL_NEAREST;
+          glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, minMagixelFormat);
+          glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
+        }
+        glBindTexture(textureType, 0);
+        status = AssetStatus::Loaded;
+        //debug_log("async loaded cubemap %s", textureName.c_str());
+      });
+    });
+    status = AssetStatus::Loading;
   }
-  else
-  {
-    GLenum minMagixelFormat = pixelFormat == TexturePixelFormat::Linear ? GL_LINEAR : GL_NEAREST;
-    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, minMagixelFormat);
-    glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, minMagixelFormat);
-  }
-  glBindTexture(textureType, 0);
-  status = AssetStatus::Loaded; 
 }
 
 

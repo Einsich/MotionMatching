@@ -139,7 +139,7 @@ SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_me
   bool is_visible,
   bool is_enabled)
 {
-  if (is_enabled && is_visible && material && material->get_shader() && mesh)
+  if (is_enabled && is_visible && material && material.try_load() && material->get_shader() && mesh)
   {
     render.queue.emplace_back(eid, material.get(), material.asset_name().c_str(), mesh.get(), &transform);
   }
@@ -148,8 +148,11 @@ SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_me
 SYSTEM(stage=render; after=main_instanced_render; scene=game, editor)
 render_sky_box(SkyBox &skyBox)
 {
-  ProfilerLabelGPU label("skybox");
-  skyBox.render();
+	if ((skyBox.material && skyBox.material.try_load()))
+  {
+    ProfilerLabelGPU label("skybox");
+    skyBox.render();
+  }
 }
 // after skybox
 SYSTEM(stage=render; after=render_sky_box; scene=game, editor) 

@@ -24,7 +24,7 @@ public:
   std::vector<CoverTree> coverTrees;
 
   int cadr_count() const;
-  virtual void load(const filesystem::path &path, bool reload) override;
+  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   virtual bool edit() override; 
 };
 

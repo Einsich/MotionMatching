@@ -30,7 +30,7 @@ void reload_tree(AnimationTreeData &tree, const filesystem::path &path)
 
 void animation_preprocess(AnimationDataBase &data_base);
 
-void AnimationDataBase::load(const filesystem::path &, bool reload)
+void AnimationDataBase::load(const filesystem::path &, bool reload, AssetStatus &status)
 {
   if (!reload)
   {
@@ -43,6 +43,7 @@ void AnimationDataBase::load(const filesystem::path &, bool reload)
   {
     acceleration_structs();    
   }
+  status = AssetStatus::Loaded;
 }
 bool AnimationDataBase::edit()
 {

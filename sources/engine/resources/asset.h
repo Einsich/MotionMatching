@@ -93,7 +93,7 @@ template<typename ...Args>
 
   void try_load()
   {
-    if (status != AssetStatus::Loaded)
+    if (status == AssetStatus::NotLoaded)
     {
       //TimeScope loadingScope(name.c_str());
       asset.load(path, false, status);
@@ -205,7 +205,7 @@ public:
   }
   bool try_load()
   {
-    if (asset->status != AssetStatus::Loaded)
+    if (asset->status == AssetStatus::NotLoaded)
       asset->try_load();
     return asset->status == AssetStatus::Loaded;
   }

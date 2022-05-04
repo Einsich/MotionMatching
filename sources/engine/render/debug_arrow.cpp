@@ -94,7 +94,7 @@ void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &a
 }
 void DebugArrow::render(UniformBuffer &instanceData, bool wire_frame)
 {
-  if (instanceData.size() && arrowMaterial)
+  if (instanceData.size() && arrowMaterial && arrowMaterial.try_load())
   {
     const Shader &arrowShader = arrowMaterial->get_shader();
     arrowShader.use();

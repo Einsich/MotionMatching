@@ -36,8 +36,6 @@ SkyBox::SkyBox()
 
 void SkyBox::render() const
 {
-	if (!material)
-		return;
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	material->get_shader().use();
