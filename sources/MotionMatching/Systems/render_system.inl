@@ -19,10 +19,10 @@ SYSTEM(stage=render;scene=game, editor) process_animation(
     const AnimationTree &tree = animationPlayer.tree;
   
     curTransform.resize(mesh->bonesMap.size());
-    for (uint i = 0; i < tree.nodes.size(); i++)
+    for (uint i = 0, n = std::min(tree.nodes.size(), animationPlayer.treeBoneToMesh.size()); i < n; i++)
     {
       int idx = animationPlayer.treeBoneToMesh[i];
-      if (idx >= 0)
+      if (idx >= 0 && idx < curTransform.size())
         curTransform[idx] = tree.get_bone_transform(i);
     }
   }

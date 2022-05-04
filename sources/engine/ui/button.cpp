@@ -13,7 +13,8 @@ namespace ui
   disabled(false)
   {
     image = get_resource<Texture2D>(name);
-    image.load();
+    if (image)
+      image.load();
   }
   bool Button::get() const
   {

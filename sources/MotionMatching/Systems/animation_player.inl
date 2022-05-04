@@ -63,8 +63,6 @@ SYSTEM(stage=act) animation_player_update(
 
 EVENT(scene=game, editor) init_animation_character(
   const ecs::OnEntityCreated &,
-  Asset<Mesh> &mesh,
-  const vector<Asset<Mesh>> *lods_meshes,
   AnimationPlayer &animationPlayer)
 {
   if (animationPlayer.dataBase)
@@ -82,14 +80,24 @@ EVENT(scene=game, editor) init_animation_character(
   AnimationTree &tree = animationPlayer.tree;
   tree.set_cadr(animationPlayer.currentCadr);
   tree.calculate_bone_transforms();
-  if (lods_meshes && !lods_meshes->empty())
-    mesh = (*lods_meshes)[0];
-  animationPlayer.treeBoneToMesh.resize(tree.nodes.size());
-  for (uint i = 0, n = tree.nodes.size(); i < n && mesh; i++)
+}
+
+SYSTEM(scene=game, editor; stage=act) update_bone_remap(
+  AnimationPlayer &animationPlayer,
+  const Asset<Mesh> &mesh,
+  bool &bone_remaped)
+{
+  if (!bone_remaped && mesh.loaded())
   {
-    auto it2 = mesh->bonesMap.find(tree.nodes[i].get_name());
-    animationPlayer.treeBoneToMesh[i] = 
-      (it2 != mesh->bonesMap.end()) ? it2->second : -1;
+    const AnimationTree &tree = animationPlayer.tree;
+    animationPlayer.treeBoneToMesh.resize(tree.nodes.size());
+    for (uint i = 0, n = tree.nodes.size(); i < n && mesh; i++)
+    {
+      auto it2 = mesh->bonesMap.find(tree.nodes[i].get_name());
+      animationPlayer.treeBoneToMesh[i] = 
+        (it2 != mesh->bonesMap.end()) ? it2->second : -1;
+    }
+    bone_remaped = true;
   }
 }
 EVENT(scene=game) init_animation_material(

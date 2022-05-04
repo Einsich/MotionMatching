@@ -32,6 +32,7 @@ animated_char {
   animationPlayer:AnimationPlayer {
     dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
   }
+  bone_remaped:b=false;
   personController:PersonController { }
   updateMMStatistic:b = false;
   motionMatchingSolver:i=2;
