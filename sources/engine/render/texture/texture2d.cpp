@@ -60,23 +60,23 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
   {
     if ((!reload && status == AssetStatus::NotLoaded) || reload)
     {
-      add_job([this, path, &status]()
+      add_job([this, path]()
       {
         filesystem::path tmp = path;
         tmp.replace_extension("");
         load_from_path(tmp);//without .meta
-        add_main_thread_job([this, &status]()
+        add_main_thread_job([this]()
         {
           if (stbiData)
           {
             create_from_pointer(stbiData, textureHeight, textureWidth, sizeof(stbiData[0]));
             stbi_image_free(stbiData);
           }
-          status = AssetStatus::Loaded;
           //debug_log("async loaded texture2d %s", textureName.c_str());
         });
       });
-      status = AssetStatus::Loading;
+      //status = AssetStatus::Loading;
+      status = AssetStatus::Loaded;//workaround to avoid memory corruption
     }
   }
   bool is_power_of_2(int x) 

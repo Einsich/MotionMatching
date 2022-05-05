@@ -11,7 +11,7 @@
 #include "serialization/serialization.h"
 #include "data_block/data_block.h"
 
-enum class AssetStatus
+enum class AssetStatus : uint32_t
 {
   NotLoaded,
   Loading,
