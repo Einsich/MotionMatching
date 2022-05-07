@@ -30,32 +30,22 @@ AnimationIndex solve_motion_matching_cover_tree(
 
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index):
 dataBase(dataBase), index(index), skip_time(0), lod(0)
-{
-  if (!dataBase)
-    return;
-  
-  if (dataBase->matchingScore.empty())
-  {
-    dataBase->matchingScore.resize(dataBase->clips.size());
-    for (uint i = 0; i < dataBase->matchingScore.size(); i++)
-      dataBase->matchingScore[i].resize(dataBase->clips[i].duration, 0);
-  }
+{  
 }
 AnimationLerpedIndex MotionMatching::get_index() const
 {
   return index;
 }
 
-static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal &goal, float pathErrorTolerance, float rotationErrorTolerance)
+static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal &goal, const MotionMatchingSettings &mmsettings, float pathErrorTolerance)
 {
   const AnimationClip &clip = index.get_clip();
   int frame = index.get_cadr_index();
   if (has_goal_tags(goal.tags, clip.tags))
   {
     const AnimationTrajectory &trajectory = clip.features[frame].trajectory;
-    float trajectory_cost = goal_path_norma(trajectory, goal.feature.trajectory);
-    float rotation_cost = rotation_norma(trajectory, goal.feature.trajectory);
-    return trajectory_cost < pathErrorTolerance && rotation_cost < rotationErrorTolerance;
+    float path_cost = path_norma(trajectory, goal.feature.trajectory, mmsettings);
+    return path_cost < pathErrorTolerance;
   }
   return false;
 }
@@ -84,7 +74,7 @@ void MotionMatching::update(float dt, MotionMatchingSolverType solver_type, Anim
     {
       skip_time -= lodSkipTime;
       if (optimisationSettings.trajectoryErrorToleranceTest &&
-          trajection_tolerance_test(currentIndex, goal, optimisationSettings.pathErrorTolerance, optimisationSettings.rotationErrorTolerance))
+          trajection_tolerance_test(currentIndex, goal, mmsettings, optimisationSettings.pathErrorTolerance))
       {
         settings.earlyTestMMCount++;
         return;

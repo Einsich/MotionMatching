@@ -6,7 +6,6 @@ void init_anim_settings_handler(const ecs::OnEntityCreated &event);
 void init_anim_settings_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> init_anim_settings_descr("init_anim_settings", {
-  {ecs::get_type_description<AnimationDataBasePtr>("dataBase"), false},
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}

@@ -31,7 +31,6 @@ struct thread_pool {
     {
       workers.emplace_back(std::thread(&thread_pool::infinite_loop, this));
     }
-  printf("workers %d\n", num_threads);
   }
 
   ~thread_pool() {

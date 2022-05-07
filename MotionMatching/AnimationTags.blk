@@ -1,3 +1,5 @@
+tags:t="Idle|Crouch";
+
 MOB1_Crouch_Idle { tags:t="Idle|Crouch"; }
 MOB1_Crouch_Idle_V2 { tags:t="Idle|Crouch"; }
 MOB1_Crouch_L_135 { tags:t="Crouch"; }
@@ -50,9 +52,9 @@ MOB1_CrouchWalk_R_To_Crouch_RU { tags:t="Crouch"; next:t="MOB1_Crouch_Idle_V2"; 
 MOB1_Jog_BL_BkPd_Loop { tags:t="Crouch"; }
 MOB1_Jog_B_Loop { tags:t="Crouch"; }
 MOB1_Jog_BR_BkPd_Loop { tags:t="Crouch"; }
-MOB1_Jog_B_To_Stand_Relaxed { unused:i=1; }
-MOB1_Jog_B_To_Stand_Relaxed_LU { unused:i=1; }
-MOB1_Jog_B_To_Stand_Relaxed_RU { unused:i=1; }
+MOB1_Jog_B_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Jog_B_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Jog_B_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Jog_F_Jump { unused:i=1; }
 MOB1_Jog_F_Jump_LU { unused:i=1; }
 MOB1_Jog_F_Jump_RU { unused:i=1; }
@@ -62,8 +64,8 @@ MOB1_Jog_FR_Loop { }
 MOB1_Jog_F_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Jog_F_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Jog_F_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
-MOB1_Jog_L_180 { unused:i=1; }
-MOB1_Jog_L_90 { unused:i=1; }
+MOB1_Jog_L_180 { next:t="MOB1_Jog_F_Loop"; }
+MOB1_Jog_L_90 { next:t="MOB1_Jog_F_Loop"; }
 MOB1_Jog_L_BkPd_Loop { }
 MOB1_Jog_L_CIR_Loop { }
 MOB1_Jog_L_Jump { unused:i=1; }
@@ -73,8 +75,8 @@ MOB1_Jog_L_Loop { }
 MOB1_Jog_L_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Jog_L_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Jog_L_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
-MOB1_Jog_R_180 { unused:i=1; }
-MOB1_Jog_R_90 { unused:i=1; }
+MOB1_Jog_R_180 { next:t="MOB1_Jog_F_Loop"; }
+MOB1_Jog_R_90 { next:t="MOB1_Jog_F_Loop"; }
 MOB1_Jog_R_BkPd_Loop { }
 MOB1_Jog_R_CIR_Loop { }
 MOB1_Jog_R_Jump { unused:i=1; }
@@ -90,30 +92,30 @@ MOB1_Run_F_Jump_RU { unused:i=1; }
 MOB1_Run_FL_Loop { }
 MOB1_Run_F_Loop { }
 MOB1_Run_FR_Loop { }
-MOB1_Run_F_To_Stand_Relaxed { unused:i=1; }
-MOB1_Run_F_To_Stand_Relaxed_LU { unused:i=1; }
-MOB1_Run_F_To_Stand_Relaxed_RU { unused:i=1; }
-MOB1_Run_L_180 { unused:i=1; }
-MOB1_Run_L_90 { unused:i=1; }
+MOB1_Run_F_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_F_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_F_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_L_180 { next:t="MOB1_Run_F_Loop"; }
+MOB1_Run_L_90 { next:t="MOB1_Run_F_Loop"; }
 MOB1_Run_L_CIR_Loop { }
 MOB1_Run_L_Jump_LU { unused:i=1; }
 MOB1_Run_L_Jump_RU { unused:i=1; }
 MOB1_Run_L_Loop { }
-MOB1_Run_L_To_Stand_Relaxed { unused:i=1; }
-MOB1_Run_L_To_Stand_Relaxed_LU { unused:i=1; }
-MOB1_Run_L_To_Stand_Relaxed_RU { unused:i=1; }
-MOB1_Run_R_180 { unused:i=1; }
-MOB1_Run_R_90 { unused:i=1; }
+MOB1_Run_L_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_L_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_L_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_R_180 { next:t="MOB1_Run_F_Loop"; }
+MOB1_Run_R_90 { next:t="MOB1_Run_F_Loop"; }
 MOB1_Run_R_CIR_Loop { }
 MOB1_Run_R_Jump_LU { unused:i=1; }
 MOB1_Run_R_Jump_RU { unused:i=1; }
 MOB1_Run_R_Loop { }
-MOB1_Run_R_To_Stand_Relaxed { unused:i=1; }
-MOB1_Run_R_To_Stand_Relaxed_LU { unused:i=1; }
-MOB1_Run_R_To_Stand_Relaxed_RU { unused:i=1; }
-MOB1_Stand_Relaxed_Conv_v1 { }
-MOB1_Stand_Relaxed_Conv_v2 { }
-MOB1_Stand_Relaxed_Conv_v4 { }
+MOB1_Run_R_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_R_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Run_R_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
+MOB1_Stand_Relaxed_Conv_v1 { unused:i=1; }
+MOB1_Stand_Relaxed_Conv_v2 { unused:i=1; }
+MOB1_Stand_Relaxed_Conv_v4 {unused:i=1; }
 MOB1_Stand_Relaxed_Fgt_v1 { unused:i=1; }
 MOB1_Stand_Relaxed_Fgt_v2 { unused:i=1; }
 MOB1_Stand_Relaxed_Fgt_v3 { unused:i=1; }
@@ -129,14 +131,14 @@ MOB1_Stand_Relaxed_Jump { unused:i=1; }
 MOB1_Stand_Relaxed_Jump_F { unused:i=1; }
 MOB1_Stand_Relaxed_Jump_L { unused:i=1; }
 MOB1_Stand_Relaxed_Jump_R { unused:i=1; }
-MOB1_Stand_Relaxed_L_135 { unused:i=1; }
-MOB1_Stand_Relaxed_L_180 { unused:i=1; }
-MOB1_Stand_Relaxed_L_45 { unused:i=1; }
-MOB1_Stand_Relaxed_L_90 { unused:i=1; }
-MOB1_Stand_Relaxed_R_135 { unused:i=1; }
-MOB1_Stand_Relaxed_R_180 { unused:i=1; }
-MOB1_Stand_Relaxed_R_45 { unused:i=1; }
-MOB1_Stand_Relaxed_R_90 { unused:i=1; }
+MOB1_Stand_Relaxed_L_135 { }
+MOB1_Stand_Relaxed_L_180 { }
+MOB1_Stand_Relaxed_L_45 { }
+MOB1_Stand_Relaxed_L_90 { }
+MOB1_Stand_Relaxed_R_135 { }
+MOB1_Stand_Relaxed_R_180 { }
+MOB1_Stand_Relaxed_R_45 { }
+MOB1_Stand_Relaxed_R_90 { }
 MOB1_Stand_Relaxed_To_Crouch { next:t="MOB1_Crouch_Idle_V2"; }
 MOB1_Stand_Relaxed_To_Jog_B { next:t="MOB1_Jog_B_Loop"; }
 MOB1_Stand_Relaxed_To_Jog_F { next:t="MOB1_Jog_F_Loop"; }
@@ -150,17 +152,17 @@ MOB1_Stand_Relaxed_To_Jog_R180_Fwd { next:t="MOB1_Jog_F_Loop"; }
 MOB1_Stand_Relaxed_To_Jog_R45_Fwd { next:t="MOB1_Jog_F_Loop"; }
 MOB1_Stand_Relaxed_To_Jog_R90_Fwd { next:t="MOB1_Jog_F_Loop"; }
 MOB1_Stand_Relaxed_To_Jog_R { next:t="MOB1_Jog_R_Loop"; }
-MOB1_Stand_Relaxed_To_Run_F { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_L135_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_L180_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_L45_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_L90_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_L { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_R135_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_R180_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_R45_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_R90_Fwd { unused:i=1; }
-MOB1_Stand_Relaxed_To_Run_R { unused:i=1; }
+MOB1_Stand_Relaxed_To_Run_F { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_L135_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_L180_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_L45_Fwd {next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_L90_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_L { next:t="MOB1_Run_FL_Loop"; }
+MOB1_Stand_Relaxed_To_Run_R135_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_R180_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_R45_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_R90_Fwd { next:t="MOB1_Run_F_Loop"; }
+MOB1_Stand_Relaxed_To_Run_R { next:t="MOB1_Run_FR_Loop"; }
 MOB1_Stand_Relaxed_To_Walk_B { next:t="MOB1_Walk_B_Loop"; }
 MOB1_Stand_Relaxed_To_Walk_F { next:t="MOB1_Walk_F_Loop"; }
 MOB1_Stand_Relaxed_To_Walk_L135_Fwd { next:t="MOB1_Walk_F_Loop"; }
@@ -193,8 +195,8 @@ MOB1_Walk_FR_Loop { }
 MOB1_Walk_F_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Walk_F_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Walk_F_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
-MOB1_Walk_L_180 { }
-MOB1_Walk_L_90 { }
+MOB1_Walk_L_180 { next:t="MOB1_Walk_F_Loop"; }
+MOB1_Walk_L_90 { next:t="MOB1_Walk_F_Loop"; }
 MOB1_Walk_L_BkPd_Loop { }
 MOB1_Walk_L_CIR_Loop { }
 MOB1_Walk_L_Jump { unused:i=1; }
@@ -204,8 +206,8 @@ MOB1_Walk_L_Loop { }
 MOB1_Walk_L_To_Stand_Relaxed { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Walk_L_To_Stand_Relaxed_LU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
 MOB1_Walk_L_To_Stand_Relaxed_RU { next:t="MOB1_Stand_Relaxed_Idle_v2"; }
-MOB1_Walk_R_180 { }
-MOB1_Walk_R_90 { }
+MOB1_Walk_R_180 { next:t="MOB1_Walk_F_Loop"; }
+MOB1_Walk_R_90 { next:t="MOB1_Walk_F_Loop"; }
 MOB1_Walk_R_BkPd_Loop { }
 MOB1_Walk_R_CIR_Loop { }
 MOB1_Walk_R_Jump { unused:i=1; }

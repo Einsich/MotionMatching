@@ -47,7 +47,7 @@ struct AnimationGoal
 
 struct MatchingScores
 {
-  float pose, goal_tag, goal_rotation, goal_path, trajectory_v, trajectory_w;
+  float pose, goal_tag, goal_path, trajectory_v, trajectory_w;
   float full_score;
 };
 struct MotionMatchingSettings;
@@ -55,12 +55,13 @@ struct MotionMatchingSettings;
 float pose_matching_norma(const NodeFeatures& feature1, const NodeFeatures& feature2, const MotionMatchingSettings &settings);
 
 float goal_tag_norma(AnimationTags goal, AnimationTags clips_tag);
-float rotation_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal);
 float goal_path_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal);
 
 float next_cadr_norma(int cur_anim, int cur_cadr, int next_anim, int next_cadr, int clip_lenght);
 
 MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature &goal_feature, const MotionMatchingSettings &settings);
+
+float path_norma(const AnimationTrajectory& clip_feature, const AnimationTrajectory &goal_feature, const MotionMatchingSettings &settings);
 
 bool has_goal_tags(AnimationTags goal, AnimationTags clips_tag);
 

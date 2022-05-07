@@ -33,7 +33,7 @@ CoverTree::CoverTree(AnimationTags tag, std::vector<Node> &&points_, std::functi
   std::sort(points.begin(), points.end(), [&](const CoverTree::Node &a, const CoverTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
   maxRadius = norma(*root, *points.back().p);
   build_tree(points.begin(), points.begin()+1, points.end(), maxRadius * 0.5f, norma);
-  debug_log("point = %d tags = %d max dist = %f", points.size(), tag.tags, maxRadius);
+  debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
 }
 
 template<typename It>

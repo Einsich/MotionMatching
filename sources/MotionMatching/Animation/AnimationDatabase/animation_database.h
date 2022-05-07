@@ -14,7 +14,8 @@ public:
   AnimationTreeData tree;
   REFLECT(AnimationDataBase,
     (vector<AnimationClip>) (clips),
-    (Asset<FBXMeta>) (treeSource)
+    (Asset<FBXMeta>) (treeSource),
+    (vector<string>) (tagsNames)
   )
   void acceleration_structs(bool check_existance = false);
   bool needForceReload;

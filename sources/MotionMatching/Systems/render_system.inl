@@ -22,7 +22,7 @@ SYSTEM(stage=render;scene=game, editor) process_animation(
     for (uint i = 0, n = std::min(tree.nodes.size(), animationPlayer.treeBoneToMesh.size()); i < n; i++)
     {
       int idx = animationPlayer.treeBoneToMesh[i];
-      if (idx >= 0 && idx < curTransform.size())
+      if (idx >= 0 && idx < (int)curTransform.size())
         curTransform[idx] = tree.get_bone_transform(i);
     }
   }
@@ -99,7 +99,6 @@ SYSTEM(stage=render;scene=game, editor) process_animation(
   {
     constexpr float dirLength = 0.3f;
     constexpr vec3 colors[2] = {vec3(0,1,0), vec3(1,0,0)};
-    constexpr float lenghts[2] = {0.3f, 0.3f};
     const AnimationTrajectory &trajectory = index.current_index().get_trajectory();
 
     const std::array<TrajectoryPoint, AnimationTrajectory::PathLength> *trajectories[2] = {&trajectory.trajectory, &animationPlayer.inputGoal.feature.trajectory.trajectory};
@@ -108,7 +107,7 @@ SYSTEM(stage=render;scene=game, editor) process_animation(
       for (const TrajectoryPoint &p: *trajectories[i])
       {
         vec3 v = vec3(transformation * vec4(p.point, 1.f));
-        vec3 w = vec3(transformation * vec4(quat(vec3(0, p.rotation, 0)) * vec3(0, 0, dirLength * lenghts[i]), 0.f));
+        vec3 w = vec3(transformation * vec4(p.velocity * dirLength, 0.f));
         draw_arrow(v, v + w, colors[i], 0.02f, false);
       }
     }

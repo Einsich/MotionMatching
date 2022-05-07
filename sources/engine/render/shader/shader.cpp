@@ -156,7 +156,7 @@ void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
     }
     else
     {
-      debug_error("Shader %s contains %s uniform buffer. Allow only instance uniform buffer", shader_name.c_str(), name);
+      //debug_error("Shader %s contains %s uniform buffer. Allow only instance uniform buffer", shader_name.c_str(), name);
       continue;
     }
     vector<BufferField> &fields = buffer.materialFields;

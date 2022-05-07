@@ -54,16 +54,15 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, Anim
   }
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
   ImVec2 corner = ImGui::GetWindowPos();
-  constexpr int N = 5;
+  constexpr int N = 4;
   float scores[N];
   const char*names[N];
-  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f)};
+  vec3 colors[N] = {vec3(0.5f,0,0.7f), vec3(0.1f, 0.1f, 0.8f), vec3(0.7f, 0.3f, 0.f), vec3(0.2f, 0.8f, 0.5f)};
   #define ADD_SCORE(i, SCORE) scores[i] = score.SCORE / score.full_score; names[i] = #SCORE;
   ADD_SCORE(0, pose)
   ADD_SCORE(1, goal_path)
-  ADD_SCORE(2, goal_rotation)
-  ADD_SCORE(3, trajectory_v)
-  ADD_SCORE(4, trajectory_w)
+  ADD_SCORE(2, trajectory_v)
+  ADD_SCORE(3, trajectory_w)
   
   auto index = mm.get_index().current_index();
 

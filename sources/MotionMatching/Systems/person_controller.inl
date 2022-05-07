@@ -108,9 +108,10 @@ SYSTEM(stage=act) peson_controller_update(
     //debug_log("[%f]", input.get_key(SDLK_w));
   }
   
-  //bool onlySideway = abs(speed.z) < 0.1f && abs(speed.x) > 0.f;
+  bool onlySideway = abs(speed.z) < 0.1f && abs(speed.x) > 0.f;
   bool moveForward = speed.z >= 0.f;
-  float sidewayRotation = moveForward ? safe_2d_signed_angle(speed, vec3(0,0,1)) : safe_2d_signed_angle(-speed, vec3(0,0,1));
+  float sidewayRotation = onlySideway ? safe_2d_signed_angle(speed, vec3(0,0,1)) : 0;
+  //moveForward ? safe_2d_signed_angle(speed, vec3(0,0,1)) : safe_2d_signed_angle(-speed, vec3(0,0,1));
 
   float wantedRotation = personController.wantedRotation - sidewayRotation;
   float nextRootRotation = personController.realRotation - animationPlayer.rootDeltaRotation * dt;
@@ -145,10 +146,9 @@ SYSTEM(stage=act) peson_controller_update(
     float timeDelay = AnimationTrajectory::timeDelays[i]  - (i == 0 ? 0.f : AnimationTrajectory::timeDelays[i - 1]);
     prevDesiredPoint += timeDelay * desiredSpeed;
     trajectory[i].point = prevDesiredPoint;
-    float dangle = onPlace ? lerp_angle(0, -desiredOrientation, percentage) :
-      moveForward ? safe_2d_signed_angle(desiredSpeed, glm::rotateY(vec3(0,0,1), -personController.realRotation)) : 
-      safe_2d_signed_angle(desiredSpeed, glm::rotateY(vec3(0,0,1), PI-personController.realRotation));
-    trajectory[i].rotation = dangle;
+    trajectory[i].velocity = desiredSpeed;
+    float dangle = lerp_angle(0, -desiredOrientation, percentage);
+    trajectory[i].angularVelocity = dangle / AnimationTrajectory::timeDelays[i];
     onPlaceError += length(timeDelay * desiredSpeed);
   
   }
@@ -158,7 +158,10 @@ SYSTEM(stage=act) peson_controller_update(
     v1.y = 0;
   personController.desiredTrajectory[0] += (v1 - v0) * dt;
   for (int i = 0; i < AnimationTrajectory::PathLength; i++)
+  {
     trajectory[i].point = glm::rotateY(trajectory[i].point, personController.realRotation);
+    trajectory[i].velocity = glm::rotateY(trajectory[i].velocity, personController.realRotation);
+  }
 
 
   animationPlayer.inputGoal.tags.clear();

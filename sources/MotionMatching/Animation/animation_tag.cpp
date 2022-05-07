@@ -1,21 +1,25 @@
 #include "animation_tag.h"
 #include <map>
+#include <common.h>
 
 static std::map<std::string, Tag> tagMap;
 
-static Tag get_tag(const std::string &tag, bool added = true)
+void register_tags(const std::vector<std::string> &tags)
+{
+  tagMap.clear();
+  for (const std::string &tag : tags)
+  {
+    Tag result = 1ull << tagMap.size();
+    tagMap.try_emplace(tag, result);
+  }
+}
+static Tag get_tag(const std::string &tag)
 {
   auto it = tagMap.find(tag);
   if (it == tagMap.end())
   {
-    if (added)
-    {
-      Tag result = 1u << tagMap.size();
-      tagMap.try_emplace(tag, result);
-      return result;
-    }
-    else
-      return 0;
+    debug_error("unsupported tag %s", tag.c_str());
+    return 0;
   }
   else
     return it->second;
@@ -29,7 +33,7 @@ AnimationTags::AnimationTags(const std::vector<std::string> &tags) : tags(0)
 
 bool AnimationTags::contains(const std::string &tag) const
 {
-  return (tags & get_tag(tag, false)) != 0;
+  return (tags & get_tag(tag)) != 0;
 }
 
 void AnimationTags::add(const std::string &tag)

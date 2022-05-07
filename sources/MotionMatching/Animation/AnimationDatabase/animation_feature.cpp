@@ -64,18 +64,6 @@ float goal_tag_norma(AnimationTags /* goal */, AnimationTags /* clips_tag */)
   return 0;
 }
 
-float rotation_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
-{
-  float rotation_norma = 0.f;
-  for (uint i = 0; i < AnimationTrajectory::PathLength; i++)
-  {
-    float r = abs(path.trajectory[i].rotation - goal.trajectory[i].rotation);
-    r -= (int)(r / PITWO)*PITWO;
-    r = r > PI ? PITWO - r : r;
-    rotation_norma += r;
-  }
-  return rotation_norma;
-}
 float goal_path_norma(const AnimationTrajectory &path, const AnimationTrajectory &goal)
 {
   float path_norma = 0.f;
@@ -104,12 +92,18 @@ MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& g
   MatchingScores score{0, 0, 0, 0, 0};
   score.pose = pose_matching_norma(clip_feature.features, goal_feature.features, settings);
   score.goal_path = goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight;
-  score.goal_rotation = rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight;
   score.trajectory_v = trajectory_v_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalVelocityWeight;
   score.trajectory_w = trajectory_w_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalAngularVelocityWeight;
-  score.full_score = score.pose * settings.realism + (score.goal_path + score.goal_rotation);
+  score.full_score = score.pose * settings.realism + (score.goal_path + score.trajectory_v + score.trajectory_w);
 
   return score;
+}
+
+float path_norma(const AnimationTrajectory& clip_feature, const AnimationTrajectory &goal_feature, const MotionMatchingSettings &settings)
+{
+  return goal_path_norma(clip_feature, goal_feature) * settings.goalPathMatchingWeight+
+    trajectory_v_norma(clip_feature, goal_feature) * settings.goalVelocityWeight+
+    trajectory_w_norma(clip_feature, goal_feature) * settings.goalAngularVelocityWeight;
 }
 
 float FrameMetric::distance(const FrameFeature& clip_feature, const FrameFeature &goal_feature) const
@@ -118,8 +112,6 @@ float FrameMetric::distance(const FrameFeature& clip_feature, const FrameFeature
   pose_matching_norma(clip_feature.features, goal_feature.features, settings) * settings.realism
     +
   goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight
-    +
-  rotation_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalRotationMatchingWeight
     +
   trajectory_v_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalVelocityWeight
     +

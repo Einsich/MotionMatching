@@ -48,10 +48,10 @@ struct ClipProperty
   bool loopable;
   string nextClip;
 };
-map<string, ClipProperty> read_tag_map(const string &path)
+
+vector<pair<string, ClipProperty>> read_clips(const DataBlock &clips)
 {
-  map<string, ClipProperty> propertyMap;
-  DataBlock clips(path);
+  vector<pair<string, ClipProperty>> propertyMap;
   for (size_t i = 0, n = clips.blockCount(); i < n; i++)
   {
     const DataBlock *clip = clips.getBlock(i);
@@ -61,7 +61,7 @@ map<string, ClipProperty> read_tag_map(const string &path)
       prop.tags = AnimationTags(split(clip->get<string>("tags", ""), '|'));
       prop.nextClip = clip->get<string>("next", "");
       prop.loopable = prop.nextClip == "";
-      propertyMap.try_emplace(clip->name(), prop);
+      propertyMap.emplace_back(clip->name(), prop);
     }
   }
   return propertyMap;
@@ -124,7 +124,11 @@ void animation_preprocess(AnimationDataBase &animDatabase)
     TimeScope scope("Animation Reading from fbx file");
     string path = project_path("Animation/Root_Motion");
     
-    for (const auto & entry : read_tag_map(project_path("AnimationTags.blk")))
+  DataBlock clips(project_path("AnimationTags.blk"));
+  animDatabase.tagsNames = split(clips.get<string>("tags", ""), '|');
+  register_tags(animDatabase.tagsNames);
+
+    for (const auto & entry : read_clips(clips))
     {
       const string& nextPath = path + "/" + entry.first + ".fbx";
 

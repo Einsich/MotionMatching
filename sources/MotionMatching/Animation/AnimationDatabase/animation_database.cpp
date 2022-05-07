@@ -38,7 +38,14 @@ void AnimationDataBase::load(const filesystem::path &, bool reload, AssetStatus 
   }
   if (needForceReload)
     animation_preprocess(*this);
+  register_tags(tagsNames);
 
+  if (matchingScore.empty() || needForceReload)
+  {
+    matchingScore.resize(clips.size());
+    for (uint i = 0; i < matchingScore.size(); i++)
+      matchingScore[i].resize(clips[i].duration, 0);
+  }
   if (needForceReload || !reload)
   {
     acceleration_structs();    
@@ -51,6 +58,12 @@ bool AnimationDataBase::edit()
   if (changeTree)
     reload_tree(tree, treeSource.asset_path());
   needForceReload = ImGui::Button("force reload");
+
+  for (auto &clip : clips)
+  {
+    ImGui::Text("%s tags = %s, duration = %d",
+    clip.name.c_str(), clip.tags.to_string().c_str(), clip.duration);
+  }
 
   return changeTree | needForceReload;
 }; 

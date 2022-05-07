@@ -245,7 +245,7 @@ public:
   }
   bool loaded() const
   {
-    return asset->status == AssetStatus::Loaded;
+    return asset && asset->status == AssetStatus::Loaded;
   }
   bool edited() const
   {

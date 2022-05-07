@@ -22,11 +22,11 @@ static float sort_with_metric(It begin, It end, const std::function<float(const 
   return maxDist;
 }
 
-VPTree::VPTree(AnimationTags tag, std::vector<Node> &&points, std::function<float(const T&, const T&)> &&norma):
-  tag(tag), points(std::move(points)), norma(norma)
+VPTree::VPTree(AnimationTags tag, std::vector<Node> &&m_points, std::function<float(const T&, const T&)> &&norma):
+  tag(tag), points(std::move(m_points)), norma(norma)
 {
-  maxRadius = sort_with_metric(this->points.begin(), this->points.end(), norma);
-  debug_log("point = %d tags = %d max dist = %f", points.size(), tag.tags, maxRadius);
+  maxRadius = sort_with_metric(this->points.begin(), points.end(), norma);
+  debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
 }
 
 template<typename It>

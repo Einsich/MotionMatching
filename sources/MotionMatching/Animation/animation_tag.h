@@ -14,3 +14,5 @@ struct AnimationTags
   void clear();
   std::string to_string() const;
 };
+
+void register_tags(const std::vector<std::string> &tags);
