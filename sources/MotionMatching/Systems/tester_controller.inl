@@ -13,6 +13,7 @@ void get_tests2(Callable);
 
 SYSTEM(stage=act) tester_update(
   ecs::EntityId eid,
+  int &testerSeed,
   AnimationTester &animationTester)
 {
   QUERY()get_tests([&](const vector<AnimationTest> &tests)
@@ -51,6 +52,7 @@ SYSTEM(stage=act) tester_update(
     }
     if (test.totalTime <= animationTester.curTime)
     {
+      testerSeed+=9687;
       ecs::send_event(eid, ecs::OnEntityCreated());
     }
   });
@@ -61,10 +63,12 @@ EVENT(scene=game, editor) start_test(
   AnimationTester &animationTester,
   Transform &transform,
   PersonController &personController,
+  int testerSeed,
   const Settings &settings)
 {
   QUERY()get_tests2([&](const vector<AnimationTest> &tests)
   {
+    srand(testerSeed);
     float edge = sqrt((float)settings.testCount) * settings.testDensity;
     int maxTest = tests.size();
     animationTester.testInd = rand() % maxTest;
@@ -88,11 +92,14 @@ SYSTEM(scene=game) test_count(
   int d = settings.testCount - testers.size();
   if (d > 0)
   {
+    int n = testers.size();
     testers.reserve(settings.testCount);
     const ecs::Template *testerTmpl = ecs::get_template("tester_char");
     for (int i = 0; !tests.empty() && i < d; ++i)
     {
-      testers.emplace_back(ecs::create_entity(testerTmpl));
+      ecs::ComponentInitializerList list;
+      list.set("testerSeed", n + i);
+      testers.emplace_back(ecs::create_entity(testerTmpl, std::move(list)));
     }
   }
   if (d < 0)

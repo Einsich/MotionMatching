@@ -89,7 +89,7 @@ float trajectory_w_norma(const AnimationTrajectory &path, const AnimationTraject
 MatchingScores get_score(const FrameFeature& clip_feature, const FrameFeature& goal_feature,
   const MotionMatchingSettings &settings)
 {
-  MatchingScores score{0, 0, 0, 0, 0};
+  MatchingScores score{0, 0, 0, 0, 0, 0};
   score.pose = pose_matching_norma(clip_feature.features, goal_feature.features, settings);
   score.goal_path = goal_path_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalPathMatchingWeight;
   score.trajectory_v = trajectory_v_norma(clip_feature.trajectory, goal_feature.trajectory) * settings.goalVelocityWeight;

@@ -8,6 +8,7 @@ enum class MotionMatchingSolverType
   BruteForce,
   VPTree,
   CoverTree,
+  Count
 };
 
 struct Settings;
@@ -25,10 +26,6 @@ public:
   MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index);
   MotionMatching() = default;
   AnimationLerpedIndex get_index() const;
-  void update(float dt, MotionMatchingSolverType solver_type, AnimationGoal &goal,
-    const MotionMatchingSettings &mmsettings,
-    const MotionMatchingOptimisationSettings &optimisationSettings,
-    bool updateStatistic,
-    Settings &settings);
+
   AnimationDataBasePtr get_data_base() const;
 };

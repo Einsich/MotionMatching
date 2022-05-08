@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
 
 using Tag = uint64_t;//can be changed to bitvector
 
@@ -16,3 +17,4 @@ struct AnimationTags
 };
 
 void register_tags(const std::vector<std::string> &tags);
+const std::map<std::string, Tag>& get_tag_map();

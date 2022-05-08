@@ -5,16 +5,8 @@
 void animation_player_update_func();
 
 ecs::SystemDescription animation_player_update_descr("animation_player_update", {
-  {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Asset<Material>>("material"), false},
-  {ecs::get_type_description<int>("mmIndex"), true},
-  {ecs::get_type_description<int>("mmOptimisationIndex"), true},
-  {ecs::get_type_description<bool>("updateMMStatistic"), false},
-  {ecs::get_type_description<int>("motionMatchingSolver"), false},
-  {ecs::get_type_description<Settings>("settings"), false},
-  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+  {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {},
 {},

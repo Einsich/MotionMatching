@@ -250,10 +250,16 @@ SYSTEM(stage=ui_menu) menu_ui(
 }
 
 
-SYSTEM(stage=ui) mm_early_text_perf(Settings &settings)
+SYSTEM(stage=ui) mm_early_text_perf(const Settings &settings)
 {
 
-  ImGui::Begin("Early mm test");
-  ImGui::Text("perf = %f %%", 100.f * (float)settings.earlyTestMMCount / settings.MMCount);
+  ImGui::Begin("Trivial optimization");
+  float lodTest = (float)settings.afterLodOptimization / settings.TotalMMCount;
+  float toleranceTest = (float)settings.afterTrajectoryToleranceTest / settings.afterLodOptimization;
+  float generalTest = (float)settings.afterTrajectoryToleranceTest / settings.TotalMMCount;
+  
+  ImGui::Text("lod test impact = %f %%", 100.f * lodTest);
+  ImGui::Text("trajectory tolerance test impact = %f %%", 100.f * toleranceTest);
+  ImGui::Text("lod and trajectory test impact = %f %%", 100.f * generalTest);
   ImGui::End();
 }

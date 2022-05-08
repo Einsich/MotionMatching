@@ -52,9 +52,14 @@ std::string AnimationTags::to_string() const
   for (const auto &p : tagMap)
   {
     if ((p.second & tags) != 0)
-      result += p.first + "|";
+      result += p.first + "+";
   }
   if (!result.empty())
     result.erase(result.cend() - 1);
   return result;
+}
+
+const std::map<std::string, Tag>& get_tag_map()
+{
+  return tagMap;
 }

@@ -31,18 +31,16 @@ class ProfileTrack
 {
 private:
   time_point start;
-  ProfileTracker &tracker;
 public:
-  ProfileTrack(ProfileTracker &tracker):
-    start(std::chrono::high_resolution_clock::now()), tracker(tracker)
+  ProfileTrack():
+    start(std::chrono::high_resolution_clock::now())
   {
 
   }
-  ~ProfileTrack()
+  float delta() const
   {
     time_point end = std::chrono::high_resolution_clock::now();
-    float delta = duration_cast<std::chrono::duration<float>>(end - start).count();
-    tracker.update(delta);
+    return duration_cast<std::chrono::duration<float>>(end - start).count();
   }
 };
 #define PROFILE_TRACK(path, frameCount)\

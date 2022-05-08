@@ -35,7 +35,7 @@ animated_char {
   bone_remaped:b=false;
   personController:PersonController { }
   updateMMStatistic:b = false;
-  motionMatchingSolver:i=2;
+  motionMatchingSolver:i=1;
 }
 
 
@@ -55,4 +55,5 @@ fps_char {
 tester_char {
   _extends:t = "animated_char";
   animationTester:AnimationTester {}
+  testerSeed:i=0;
 }

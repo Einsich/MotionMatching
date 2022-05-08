@@ -5,8 +5,9 @@
 #include "singleton.h"
 struct Settings : ecs::Singleton
 {
-  int earlyTestMMCount = 0;
-  int MMCount = 0;
+  int TotalMMCount = 0;
+  int afterLodOptimization = 0;
+  int afterTrajectoryToleranceTest = 0;
 
 REFLECT(
     Settings,

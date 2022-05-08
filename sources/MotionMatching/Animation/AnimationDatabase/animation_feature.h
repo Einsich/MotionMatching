@@ -19,7 +19,7 @@ public:
 struct TrajectoryPoint
 {
   vec3 point, velocity;
-  float rotation, angularVelocity;
+  float padding, angularVelocity;
 };
 
 class AnimationTrajectory

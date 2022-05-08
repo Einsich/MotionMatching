@@ -32,6 +32,7 @@ void tester_update_func();
 
 ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
+  {ecs::get_type_description<int>("testerSeed"), false},
   {ecs::get_type_description<AnimationTester>("animationTester"), false}
 }, {
 }, {},
@@ -68,6 +69,7 @@ ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
+  {ecs::get_type_description<int>("testerSeed"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
 }, {"game","editor"},

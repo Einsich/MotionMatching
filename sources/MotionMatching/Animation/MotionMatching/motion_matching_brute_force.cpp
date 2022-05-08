@@ -27,7 +27,7 @@ AnimationIndex solve_motion_matching(
   
   ArgMin best = {INFINITY, curClip, curCadr, best_score};
   #pragma omp declare reduction(mm_min: ArgMin: omp_out=mm_min2(omp_out, omp_in))\
-    initializer(omp_priv={INFINITY, 0, 0,{0,0,0,0,0}})
+    initializer(omp_priv={INFINITY, 0, 0,{0,0,0,0,0,0}})
   #pragma omp parallel for reduction(mm_min:best)
   for (uint nextClip = 0; nextClip < dataBase->clips.size(); nextClip++)
   {

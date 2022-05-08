@@ -109,7 +109,7 @@ SYSTEM(stage=act) peson_controller_update(
   }
   
   bool onlySideway = abs(speed.z) < 0.1f && abs(speed.x) > 0.f;
-  bool moveForward = speed.z >= 0.f;
+  //bool moveForward = speed.z >= 0.f;
   float sidewayRotation = onlySideway ? safe_2d_signed_angle(speed, vec3(0,0,1)) : 0;
   //moveForward ? safe_2d_signed_angle(speed, vec3(0,0,1)) : safe_2d_signed_angle(-speed, vec3(0,0,1));
 

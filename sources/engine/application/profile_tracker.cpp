@@ -5,6 +5,8 @@
 
 void ProfileTracker::stop()
 {
+  if (stopped)
+    return;
   stopped = true;
   string file_name = path.substr(0, path.size() - 4);//without .csv
   string histo_path = file_name + "_histogramm.csv";
@@ -27,28 +29,18 @@ void ProfileTracker::stop()
   {
     filesystem::create_directories(p);
   }
-  constexpr float maxMsTime = 5.f;
+  float maxMsTime = times[0];
+  constexpr int BinsCount = 75;
+  for (size_t i = 0; i < times.size(); i++)
   {
-    ofstream os(path);
-
-    os << "frame;time;average\n";
-    double sum = 0;
-    os << 0 << ";" << maxMsTime << ";" << 0.f << '\n';
-    for (size_t i = 0; i < times.size(); i++)
-    {
-      float dt = times[i] * 1000.f;//in ms
-      if (dt >= maxMsTime)
-        dt = maxMsTime;
-      times[i] = dt;
-      sum += dt;
-      os << i+1 << ";" << dt << ";" << sum / (i+1) << '\n';
-    }
+    times[i] *= 1000.f;//in ns
+    maxMsTime = std::max(maxMsTime, times[i]);
   }
+  
   {
     ofstream os(histo_path);
 
     os << "time;count\n";
-    constexpr int BinsCount = 500;
     vector<int> histogramm(BinsCount, 0);
     for (size_t i = 0; i < times.size(); i++)
     {
@@ -59,8 +51,30 @@ void ProfileTracker::stop()
 
     for (size_t i = 0; i < BinsCount; i++)
     {
-      float time = maxMsTime * i / BinsCount;
+      float time = maxMsTime * (i+1) / BinsCount;
       os << time << ";" << histogramm[i] << '\n';
+    }
+  }
+  {
+    ofstream os(path);
+    os << "frame;time;average\n";
+    double sum = 0;
+    int maxSamples = std::min(BinsCount, (int)times.size());
+    int binSize = times.size() / maxSamples;
+    for (int i = 0; i < maxSamples; i++)
+    {
+      float t = 0;
+      for (int j = 0; j < binSize; j++)
+      {
+        t += times[i * binSize + j];
+      }
+      times[i] = t / maxSamples;
+    }
+    for (int i = 0; i < maxSamples; i++)
+    {
+      float dt = times[i];
+      sum += dt;
+      os << 10000*(i+1)/maxSamples << ";" << dt << ";" << sum / (i+1) << '\n';
     }
   }
   debug_log("ProfileTrack wrote to %s", path.c_str());
