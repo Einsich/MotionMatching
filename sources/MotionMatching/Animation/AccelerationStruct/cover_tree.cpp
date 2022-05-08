@@ -9,7 +9,7 @@ static void build_tree(It node, It from, It to, float bound_radius, Norma norma)
   while (from != to)
   {
     size_t dist = to - from;
-    const CoverTree::T *root = (from + rand()%dist)->p;
+    const CoverTree::T *root = (from + dist/2)->p;
     std::sort(from, to, [&](const CoverTree::Node &a, const CoverTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
     It head = from;
     ++from;

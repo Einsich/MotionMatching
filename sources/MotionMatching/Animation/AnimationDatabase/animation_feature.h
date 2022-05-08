@@ -6,13 +6,14 @@
 #include "../animation_tag.h"
 #include "serialization/serialization.h"
 #include "../settings.h"
+#include "animation_feature.h"
 
 class NodeFeatures 
 {
 public:
-  vector<vec3> nodes;
-  vector<vec3> nodesVelocity;
-  NodeFeatures();
+  array<vec3, (int)AnimationFeaturesNode::Count> nodes;
+  array<vec3, (int)AnimationFeaturesNode::Count> nodesVelocity;
+
   void set_feature(const string& name, vec3 feature);
 };
 

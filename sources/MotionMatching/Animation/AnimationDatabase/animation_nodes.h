@@ -1,7 +1,6 @@
 #pragma once
 
 #define NODES\
-  NODE(Hips)\
   NODE(LeftHand)\
   NODE(RightHand)\
   NODE(LeftToeBase)\

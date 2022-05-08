@@ -32,6 +32,7 @@ EVENT(scene=game, editor) init_animation_character(
   if (animationPlayer.dataBase)
   {
     animationPlayer.dataBase.load();
+    animationPlayer.dataBase->acceleration_structs(true);
     animationPlayer.index = AnimationLerpedIndex(animationPlayer.dataBase, animationPlayer.clip, animationPlayer.frame);
     if (animationPlayer.index)
       animationPlayer.currentCadr = AnimationCadr(animationPlayer.index.get_lerped_cadr());

@@ -8,7 +8,6 @@
 #define FEATURE(node) {#node, (int)AnimationFeaturesNode::node}, {#node "Speed",(int)AnimationFeaturesNode::Count + (int)AnimationFeaturesNode::node}
     
 std::map<std::string, int> featureMap = {
-  FEATURE(Hips),
   FEATURE(LeftHand),
   FEATURE(RightHand),
   FEATURE(LeftToeBase),
@@ -16,8 +15,6 @@ std::map<std::string, int> featureMap = {
 };
 #undef FEATURE
 
-NodeFeatures::NodeFeatures():
-  nodes((int)AnimationFeaturesNode::Count, vec3(NAN)), nodesVelocity((int)AnimationFeaturesNode::Count, vec3(NAN)){}
 
 size_t FrameFeature::serialize(std::ostream& os) const
 {

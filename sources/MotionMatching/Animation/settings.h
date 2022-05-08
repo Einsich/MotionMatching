@@ -60,15 +60,14 @@ struct MotionMatchingSettings
     (float) (goalPathMatchingWeight),
     (float) (goalVelocityWeight),
     (float) (goalAngularVelocityWeight),
-    NODE(Hips),
     NODE(LeftHand),
     NODE(RightHand),
     NODE(LeftToeBase),
     NODE(RightToeBase)
   )
   #undef NODE
-  std::reference_wrapper<float> nodeWeights[(int)AnimationFeaturesNode::Count] = {Hips, LeftHand, RightHand, LeftToeBase, RightToeBase};
-  std::reference_wrapper<float> velocitiesWeights[(int)AnimationFeaturesNode::Count] = {HipsSpeed, LeftHandSpeed, RightHandSpeed, LeftToeBaseSpeed, RightToeBaseSpeed};
+  std::reference_wrapper<float> nodeWeights[(int)AnimationFeaturesNode::Count] = {LeftHand, RightHand, LeftToeBase, RightToeBase};
+  std::reference_wrapper<float> velocitiesWeights[(int)AnimationFeaturesNode::Count] = {LeftHandSpeed, RightHandSpeed, LeftToeBaseSpeed, RightToeBaseSpeed};
   void update_refs()
   {
     int i = 0;

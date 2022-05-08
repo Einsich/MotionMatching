@@ -71,7 +71,6 @@ SYSTEM(stage=render;scene=game, editor) process_animation(
     DEBUG_NODE(AnimationFeaturesNode::LeftHand)
     DEBUG_NODE(AnimationFeaturesNode::RightToeBase)
     DEBUG_NODE(AnimationFeaturesNode::RightHand)
-    DEBUG_NODE(AnimationFeaturesNode::Hips)
   }
 /* 
   if (false)

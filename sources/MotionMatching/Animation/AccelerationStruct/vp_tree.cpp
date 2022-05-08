@@ -6,7 +6,7 @@ static float sort_with_metric(It begin, It end, const std::function<float(const 
   size_t dist = end - begin;
   if (dist == 1)
     return 0;
-  const VPTree::T *root = (begin + dist/2)->p;
+  const VPTree::T *root = (begin + rand()%dist)->p;
   std::sort(begin, end, [&](const VPTree::Node &a, const VPTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
   float maxDist = norma(*(end - 1)->p, *begin->p);
   size_t count = dist - 1;

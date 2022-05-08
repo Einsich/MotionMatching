@@ -46,10 +46,7 @@ void AnimationDataBase::load(const filesystem::path &, bool reload, AssetStatus 
     for (uint i = 0; i < matchingScore.size(); i++)
       matchingScore[i].resize(clips[i].duration, 0);
   }
-  if (needForceReload || !reload)
-  {
-    acceleration_structs();    
-  }
+
   status = AssetStatus::Loaded;
 }
 bool AnimationDataBase::edit()
