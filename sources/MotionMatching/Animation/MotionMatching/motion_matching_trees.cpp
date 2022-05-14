@@ -13,7 +13,7 @@ AnimationIndex solve_motion_matching_vp_tree(
   {
     if (has_goal_tags(goal.tags, tree.tag))
     {
-      auto [clip, frame] = tree.find_closect(goal.feature, tolerance_error);
+      auto [clip, frame] = tree.find_closest(goal.feature, tolerance_error);
       return AnimationIndex(dataBase, clip, frame);
     }
   }
@@ -32,7 +32,26 @@ AnimationIndex solve_motion_matching_cover_tree(
   {
     if (has_goal_tags(goal.tags, tree.tag))
     {
-      auto [clip, frame] = tree.find_closect(goal.feature, tolerance_error);
+      auto [clip, frame] = tree.find_closest(goal.feature, tolerance_error);
+      return AnimationIndex(dataBase, clip, frame);
+    }
+  }
+  return AnimationIndex();
+}
+
+AnimationIndex solve_motion_matching_kd_tree(
+  AnimationDataBasePtr dataBase,
+  const AnimationGoal &goal,
+  float tolerance_error)
+{
+  if (!dataBase)
+    return AnimationIndex();
+  
+  for (const auto &tree : dataBase->kdTrees)
+  {
+    if (has_goal_tags(goal.tags, tree.tag))
+    {
+      auto [clip, frame] = tree.find_closest(goal.feature, tolerance_error);
       return AnimationIndex(dataBase, clip, frame);
     }
   }

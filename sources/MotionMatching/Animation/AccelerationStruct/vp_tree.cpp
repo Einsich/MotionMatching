@@ -45,28 +45,37 @@ struct Solver
    point(point), search_radius(0), tolerance_erorr(tolerance_erorr), counter(0), norma(norma)
   {}
 
-  bool find_closect(It &out, int &counter, float &search_radius)
+  bool find_closest(It &out, int &counter, float &search_radius)
   {
     this->search_radius = search_radius;
-    bool result = find_closect(begin, end);
+    this->counter = 0;
+    bool result = find_closest(begin, end);
     out = this->out;
     counter = this->counter;
     search_radius = this->search_radius;
     return result;
   }
+  void find_closest_approx(int &counter, float &search_radius)
+  {
+    this->search_radius = search_radius;
+    this->counter = 0;
+    find_closest_approx(begin, end);
+    counter = this->counter;
+    search_radius = this->search_radius;
+  }
 private:
-  bool find_closect(It begin, It end)
+  bool find_closest(It begin, It end)
   {
     if (search_radius <= 0)
       return false;
     size_t dist = end - begin;
     float rootNorma = norma(*begin->p, point);
-    bool hasRoot = rootNorma < search_radius;
+    bool hasRoot = rootNorma <= search_radius;
     counter++;
     if (hasRoot)
     {
       out = begin;
-      search_radius = rootNorma;
+      search_radius = std::min(rootNorma, search_radius);
       if (rootNorma < tolerance_erorr)
       {
         search_radius = 0;
@@ -81,43 +90,72 @@ private:
     It leftBegin = begin + 1;
     bool childSearch = false;
 
-    if (rootNorma + search_radius < begin->bound || leftCount == count)
+    if (rootNorma + search_radius <= begin->bound || leftCount == count)
     {
-      childSearch = find_closect(leftBegin, leftBegin + leftCount);
+      childSearch = find_closest(leftBegin, leftBegin + leftCount);
     }
     else
     {
-      if (begin->bound + search_radius < rootNorma)
+      if (begin->bound + search_radius <= rootNorma)
       {
-        childSearch = find_closect(leftBegin + leftCount, end);
+        childSearch = find_closest(leftBegin + leftCount, end);
       }
       else
       {
-        bool leftSearch = find_closect(leftBegin, leftBegin + leftCount);
-        childSearch = (!leftSearch && find_closect(leftBegin + leftCount, end)) ||
-            (leftSearch && rootNorma + search_radius >= begin->bound && find_closect(leftBegin + leftCount, end));
+        bool leftSearch = find_closest(leftBegin, leftBegin + leftCount);
+        childSearch = (!leftSearch && find_closest(leftBegin + leftCount, end)) ||
+            (leftSearch && rootNorma + search_radius >= begin->bound && find_closest(leftBegin + leftCount, end));
+        childSearch |= leftSearch; 
       }
     }
     return hasRoot || childSearch;
   }
+  
+  void find_closest_approx(It begin, It end)
+  {
+    size_t dist = end - begin;
+    if (dist == 0)
+      return;
+    float rootNorma = norma(*begin->p, point);
+    counter++;
+    search_radius = std::min(rootNorma, search_radius);
+    size_t count = dist - 1;
+    size_t leftCount = (count + 1) >> 1u;
+    It leftBegin = begin + 1;
+
+    if (rootNorma < begin->bound || leftCount == count)
+    {
+      find_closest_approx(leftBegin, leftBegin + leftCount);
+    }
+    else
+    {
+      find_closest_approx(leftBegin + leftCount, end);
+    }
+  }
 };
 
-std::pair<uint, uint> VPTree::find_closect(const T &point, float tolerance_error) const
+std::pair<uint, uint> VPTree::find_closest(const T &point, float tolerance_error) const
 {
-  float searchRadius = 100000.f;//glm::max(maxRadius, 100.f);
+  float searchRadius = 100000.f;
   auto out = points.cend();
-  int counter = 0;
-  static uint64_t count = 0, sum = 0, sumX = 0;
+  int counter = 0, cnt_aprx=0;
+  static uint64_t count = 0, sum = 0, sumX = 0, sumAprx=0;
   count++;
   Solver solver(points.cbegin(), points.cend(), point, tolerance_error, norma);
-  if (solver.find_closect(out, counter, searchRadius))
+
+  solver.find_closest_approx(cnt_aprx, searchRadius);
+
+  if (solver.find_closest(out, counter, searchRadius))
   {
     sum += counter;
+    sumAprx += cnt_aprx;
     sumX += points.size();
     if ((count & (count - 1)) == 0)
-      debug_log("average perf %f",  (double)sum / sumX);
+      debug_log("average perf %f %f",  (double)sum / sumX, (double)sumAprx / sumX);
+
     return {out->clip, out->frame};
   }
+  debug_log("-");
   
   float minRes = norma(*points[0].p, point);
   uint bestInd = 0;

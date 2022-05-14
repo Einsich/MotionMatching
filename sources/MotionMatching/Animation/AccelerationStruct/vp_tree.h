@@ -16,5 +16,5 @@ struct VPTree
   float maxRadius; 
   std::function<float(const T&, const T&)> norma;
   VPTree(AnimationTags tag, std::vector<Node> &&points, std::function<float(const T&, const T&)> &&norma);
-  std::pair<uint, uint> find_closect(const T &point, float tolerance_error) const;
+  std::pair<uint, uint> find_closest(const T &point, float tolerance_error) const;
 };

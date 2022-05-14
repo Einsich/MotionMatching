@@ -4,23 +4,30 @@
 template<typename It, typename Norma>
 static void build_tree(It node, It from, It to, float bound_radius, Norma norma)
 {
-  node->bound = norma(*node->p, *(to-1)->p);
+  if (from == to)
+  {
+    node->bound = 0;
+    node->nearestNeighbor = 100000000;
+    return;
+  }
+  node->bound = bound_radius;
   node->nearestNeighbor = norma(*node->p, *from->p);
   while (from != to)
   {
     size_t dist = to - from;
-    const CoverTree::T *root = (from + dist/2)->p;
+    const CoverTree::T *root = (from + dist-1)->p;
     std::sort(from, to, [&](const CoverTree::Node &a, const CoverTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
     It head = from;
     ++from;
-    head->bound = norma(*head->p, *(to-1)->p)+0.00001f;
+    float radius = bound_radius*0.4f;
     auto lowerBound = std::lower_bound(from, to, *head, 
-        [&](const CoverTree::Node &a, const CoverTree::Node &){return norma(*root, *a.p) < bound_radius;});
-    if (lowerBound != to)
-    {
-      build_tree(head, from, lowerBound, bound_radius * 0.5f, norma);
-      from = lowerBound;
-    }
+        [&](const CoverTree::Node &a, const CoverTree::Node &){return norma(*root, *a.p) < radius;});
+
+    
+    float bound = norma(*root, *(lowerBound-1)->p);
+    build_tree(head, from, lowerBound, bound, norma);
+    from = lowerBound;
+
     node->childs.emplace_back(head - node);
   }
 }
@@ -32,7 +39,7 @@ CoverTree::CoverTree(AnimationTags tag, std::vector<Node> &&points_, std::functi
   const CoverTree::T *root = (points.begin() + points.size()/2)->p;
   std::sort(points.begin(), points.end(), [&](const CoverTree::Node &a, const CoverTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
   maxRadius = norma(*root, *points.back().p);
-  build_tree(points.begin(), points.begin()+1, points.end(), maxRadius * 0.5f, norma);
+  build_tree(points.begin(), points.begin()+1, points.end(), maxRadius, norma);
   debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
 }
 
@@ -52,17 +59,40 @@ struct Solver
    point(point), search_radius(0), tolerance_erorr(tolerance_erorr), counter(0), norma(norma)
   {}
 
-  bool find_closect(It &out, int &counter, float &search_radius)
+  void find_closest_approx(int &counter, float &search_radius)
   {
     this->search_radius = search_radius;
-    bool result = find_closect(begin);
+    this->counter = 0;
+    find_closest_approx(begin);
+    counter = this->counter;
+    search_radius = this->search_radius;
+  }
+  bool find_closest(It &out, int &counter, float &search_radius)
+  {
+    this->search_radius = search_radius;
+    this->counter = 0;
+    bool result = find_closest(begin);
     out = this->out;
     counter = this->counter;
     search_radius = this->search_radius;
     return result;
   }
 private:
-  bool find_closect(It begin)
+  void find_closest_approx(It begin)
+  {
+    float rootNorma = norma(*begin->p, point);
+    counter++;
+    if (rootNorma < begin->bound)
+    {
+      search_radius = std::min(rootNorma, search_radius);
+      for (uint childDiff: begin->childs)
+      {
+        It child = begin + childDiff;
+        find_closest_approx(child);
+      }
+    }
+  }
+  bool find_closest(It begin)
   {
     if (search_radius <= 0)
       return false;
@@ -72,7 +102,7 @@ private:
     if (rootInside)
     {
       out = begin;
-      search_radius = rootNorma;
+      search_radius = std::min(rootNorma, search_radius);
       if (rootNorma < tolerance_erorr)
       {
         search_radius = 0;
@@ -88,26 +118,35 @@ private:
     for (uint childDiff: begin->childs)
     {
       It child = begin + childDiff;
-      result |= find_closect(child);
+      result |= find_closest(child);
     }
     return result;
   }
 };
 
-std::pair<uint, uint> CoverTree::find_closect(const T &point, float tolerance_error) const
+std::pair<uint, uint> CoverTree::find_closest(const T &point, float tolerance_error) const
 {
   float searchRadius = 100000.f;//glm::max(maxRadius, 100.f);
   auto out = points.cend();
-  int counter = 0;
-  static uint64_t count = 0, sum = 0, sumX = 0;
+  int counter = 0,cnt_aprx=0;
+  static uint64_t count = 0, sum = 0, sumX = 0, sumAprx=0;
   count++;
   Solver solver(points.cbegin(), points.cend(), point, tolerance_error, norma);
-  if (solver.find_closect(out, counter, searchRadius))
+  int sampleCount = points.size()*0.005f;
+  for (int i = 0; i < sampleCount; i++)
+  {
+    searchRadius = std::min(norma(*points[rand()%points.size()].p, point), searchRadius);
+  }    
+  cnt_aprx+=sampleCount;
+  //solver.find_closest_approx(cnt_aprx, searchRadius);
+
+  if (solver.find_closest(out, counter, searchRadius))
   {
     sum += counter;
+    sumAprx += cnt_aprx;
     sumX += points.size();
     if ((count & (count - 1)) == 0)
-      debug_log("average perf %f",  (double)sum / sumX);
+      debug_log("average perf %f %f",  (double)sum / sumX, (double)sumAprx / sumX);
     return {out->clip, out->frame};
   }
   
@@ -124,7 +163,7 @@ std::pair<uint, uint> CoverTree::find_closect(const T &point, float tolerance_er
   }
   float error = glm::abs(searchRadius - norma(*points[bestInd].p, point));
   if (error > 0.1f)
-    debug_log("error %f vp tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
+    debug_log("error %f cover tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
 
   return {points[bestInd].clip, points[bestInd].frame};
 }

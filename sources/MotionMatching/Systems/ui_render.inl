@@ -258,8 +258,8 @@ SYSTEM(stage=ui) mm_early_text_perf(const Settings &settings)
   float toleranceTest = (float)settings.afterTrajectoryToleranceTest / settings.afterLodOptimization;
   float generalTest = (float)settings.afterTrajectoryToleranceTest / settings.TotalMMCount;
   
-  ImGui::Text("lod test impact = %f %%", 100.f * lodTest);
-  ImGui::Text("trajectory tolerance test impact = %f %%", 100.f * toleranceTest);
-  ImGui::Text("lod and trajectory test impact = %f %%", 100.f * generalTest);
+  ImGui::Text("lod test impact = %f %%", 100.f * (1.f-lodTest));
+  ImGui::Text("trajectory tolerance test impact = %f %%", 100.f * (1.f-toleranceTest));
+  ImGui::Text("lod and trajectory test impact = %f %%", 100.f * (1.f-generalTest));
   ImGui::End();
 }

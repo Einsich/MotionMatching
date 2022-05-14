@@ -30,6 +30,11 @@ AnimationIndex solve_motion_matching_cover_tree(
   const AnimationGoal &goal,
   float tolerance_erorr);
 
+AnimationIndex solve_motion_matching_kd_tree(
+  AnimationDataBasePtr dataBase,
+  const AnimationGoal &goal,
+  float tolerance_error);
+
 MotionMatching::MotionMatching(AnimationDataBasePtr dataBase, AnimationLerpedIndex index):
 dataBase(dataBase), index(index), skip_time(0), lod(0)
 {  
@@ -72,6 +77,7 @@ struct MMProfiler : ecs::Singleton
       case (int)MotionMatchingSolverType::BruteForce: solverName = "brute_force"; break;
       case (int)MotionMatchingSolverType::VPTree : solverName = "vp_tree"; break;
       case (int)MotionMatchingSolverType::CoverTree: solverName = "cover_tree"; break;
+      case (int)MotionMatchingSolverType::KDTree: solverName = "kd_tree"; break;
       
       default:
         break;
@@ -187,11 +193,16 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
         case MotionMatchingSolverType::CoverTree :
           best_index = solve_motion_matching_cover_tree(dataBase, goal, OptimisationSettings.vpTreeErrorTolerance);
           break;
+        case MotionMatchingSolverType::KDTree :
+          best_index = solve_motion_matching_kd_tree(dataBase, goal, OptimisationSettings.vpTreeErrorTolerance);
+          break;
         }
-        float delta = track.delta();
-        profiler.get_avg_tracker(motionMatchingSolver).update(delta);
-        profiler.get_tracker(motionMatchingSolver, goal.tags.tags).update(delta);
-        
+        if (false)
+        {
+          float delta = track.delta();
+          profiler.get_avg_tracker(motionMatchingSolver).update(delta);
+          profiler.get_tracker(motionMatchingSolver, goal.tags.tags).update(delta);
+        }
         bool can_jump = true;
         for (const AnimationIndex &index : index.get_indexes())
           can_jump &= AnimationIndex::can_jump(index, best_index);

@@ -16,23 +16,6 @@ std::map<std::string, int> featureMap = {
 #undef FEATURE
 
 
-size_t FrameFeature::serialize(std::ostream& os) const
-{
-  size_t size = 0;
-  size += write(os, features.nodes);
-  size += write(os, features.nodesVelocity);
-  size += write(os, trajectory.trajectory);
-  return size;
-}
-size_t FrameFeature::deserialize(std::istream& is)
-{
-  size_t size = 0;
-  size += read(is, features.nodes);
-  size += read(is, features.nodesVelocity);
-  size += read(is, trajectory.trajectory);
-  return size;
-}
-
 
 void NodeFeatures::set_feature(const string& name, vec3 feature)
 {

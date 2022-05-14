@@ -69,12 +69,13 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
 {
   if (check_existance)
   {
-    if (!vpTrees.empty() && !coverTrees.empty())
+    if (!vpTrees.empty() && !coverTrees.empty() && !kdTrees.empty())
       return;
   }
   
   vpTrees.clear();
   coverTrees.clear();
+  kdTrees.clear();
   if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())
     return;
   TimeScope scope("Creating acceleration structs");
@@ -91,6 +92,7 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
   }
   vector<vector<VPTree::Node>> nodes(tagMap.size());
   vector<vector<CoverTree::Node>> nodes2(tagMap.size());
+  vector<vector<KdTree::Node>> nodes3(tagMap.size());
 
   for (uint i = 0; i < clips.size(); i++)
   {
@@ -99,17 +101,20 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
     {
       nodes[j].emplace_back(VPTree::Node{&clips[i].features[k], i, k, 0.f, 0.f});
       nodes2[j].emplace_back(CoverTree::Node{{}, &clips[i].features[k], i, k, 0.f, 0.f});
+      nodes3[j].emplace_back(KdTree::Node{&clips[i].features[k], i, k});
     }
   }
   vpTrees.reserve(nodes.size());
+  const auto &settings = ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second;
   auto f = [&](const FrameFeature &a, const FrameFeature &b)
   {
-    return get_score(a, b, ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second).full_score;
+    return get_score(a, b, settings).full_score;
   };
   for (uint i = 0; i < nodes.size(); i++)
   {
     vpTrees.emplace_back(treeTags[i], std::move(nodes[i]), f);
     coverTrees.emplace_back( treeTags[i], std::move(nodes2[i]), f);
+    kdTrees.emplace_back(settings, treeTags[i], std::move(nodes3[i]), f);
   }
 }
 

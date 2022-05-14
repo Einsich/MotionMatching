@@ -7,6 +7,7 @@
 #include <resources/fbx_importer.h>
 #include "../AccelerationStruct/vp_tree.h"
 #include "../AccelerationStruct/cover_tree.h"
+#include "../AccelerationStruct/kd_tree.h"
 
 class AnimationDataBase : public  IAsset
 {
@@ -23,6 +24,7 @@ public:
 
   std::vector<VPTree> vpTrees;
   std::vector<CoverTree> coverTrees;
+  std::vector<KdTree> kdTrees;
 
   int cadr_count() const;
   virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;

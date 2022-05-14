@@ -20,7 +20,7 @@ public:
 struct TrajectoryPoint
 {
   vec3 point, velocity;
-  float padding, angularVelocity;
+  float angularVelocity;
 };
 
 class AnimationTrajectory
@@ -31,13 +31,11 @@ public:
   array<TrajectoryPoint, PathLength> trajectory;
 };
 
-struct FrameFeature final : public ISerializable
+struct FrameFeature
 {
 public:
   NodeFeatures features;
   AnimationTrajectory trajectory;
-  virtual size_t serialize(std::ostream& os) const override;
-  virtual size_t deserialize(std::istream& is) override;
 };
 
 struct AnimationGoal
