@@ -121,8 +121,8 @@ void animation_preprocess(AnimationDataBase &animDatabase)
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
 
-    TimeScope scope("Animation Reading from fbx file");
-    string path = project_path("Animation/Root_Motion");
+  TimeScope scope("Animation Reading from fbx file");
+  string path = root_path("resources/Animations/Root_Motion");
     
   DataBlock clips(project_path("AnimationTags.blk"));
   animDatabase.tagsNames = split(clips.get<string>("tags", ""), '|');

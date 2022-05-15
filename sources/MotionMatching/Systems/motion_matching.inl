@@ -57,17 +57,17 @@ static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal 
   return false;
 }
 
-constexpr int MAX_SAMPLES = 10000;
+constexpr int MAX_SAMPLES = 20000;
 struct MMProfiler : ecs::Singleton
 {
-  vector<ProfileTracker> trackers;
+  //vector<ProfileTracker> trackers;
   vector<ProfileTracker> avgTrackers;
-  Tag tagsCount;
+  //Tag tagsCount;
   bool stopped = false;
   std::array<int, (int)MotionMatchingSolverType::Count> counter;
   MMProfiler()
   {
-    tagsCount = 1ull << get_tag_map().size();
+    //tagsCount = 1ull << get_tag_map().size();
     int solverCount = (int)MotionMatchingSolverType::Count;
     for (int solver = 0; solver < solverCount; solver++)
     {
@@ -83,30 +83,16 @@ struct MMProfiler : ecs::Singleton
         break;
       }
       avgTrackers.emplace_back(project_path("profile/" + solverName + "/Average.csv"), MAX_SAMPLES);
-      AnimationTags tag;
+/*       AnimationTags tag;
       
       for (tag.tags = 0; tag.tags < tagsCount; tag.tags++)
       {
         string name = tag.tags == 0 ? "Locomotion" : tag.to_string();
         trackers.emplace_back(project_path("profile/" + solverName + "/" + name + ".csv"), MAX_SAMPLES);
-      }
+      } */
     }
   }
-  ProfileTracker &get_tracker(int solver, Tag tag)
-  {
-    if(!stopped && counter[solver]++ > MAX_SAMPLES)
-    {
-      for (Tag tag = 0; tag < tagsCount; tag++)
-      {
-        trackers[solver * tagsCount + tag].stop();
-      }
-      avgTrackers[solver].stop();
-      debug_log("profiling stopped");
-      stopped = true;
-    }
-    return trackers[solver * tagsCount + tag];
-  }
-  ProfileTracker &get_avg_tracker(int solver)
+  ProfileTracker &get_tracker(int solver)
   {
     return avgTrackers[solver];
   }
@@ -119,7 +105,7 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
   int *mmIndex,
   int *mmOptimisationIndex,
   bool updateMMStatistic,
-  int motionMatchingSolver,
+  int &motionMatchingSolver,
   Settings &settings,
   SettingsContainer &settingsContainer,
   MMProfiler &profiler,
@@ -200,8 +186,10 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
         if (false)
         {
           float delta = track.delta();
-          profiler.get_avg_tracker(motionMatchingSolver).update(delta);
-          profiler.get_tracker(motionMatchingSolver, goal.tags.tags).update(delta);
+          auto &tracker = profiler.get_tracker(motionMatchingSolver);
+          tracker.update(delta);
+          if (tracker.was_stopped())
+            motionMatchingSolver = (motionMatchingSolver + 1) % (int)MotionMatchingSolverType::Count;
         }
         bool can_jump = true;
         for (const AnimationIndex &index : index.get_indexes())

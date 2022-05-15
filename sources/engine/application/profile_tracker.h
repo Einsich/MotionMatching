@@ -25,6 +25,14 @@ public:
         stop();
     }
   }
+  bool was_stopped() const
+  {
+    return stopped;
+  }
+  float progress() const
+  {
+    return (float)times.size() / frameCount;
+  }
 };
 
 class ProfileTrack
