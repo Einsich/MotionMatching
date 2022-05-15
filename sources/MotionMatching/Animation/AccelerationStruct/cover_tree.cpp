@@ -40,7 +40,7 @@ CoverTree::CoverTree(AnimationTags tag, std::vector<Node> &&points_, std::functi
   std::sort(points.begin(), points.end(), [&](const CoverTree::Node &a, const CoverTree::Node &b){return norma(*root, *a.p) < norma(*root, *b.p);});
   maxRadius = norma(*root, *points.back().p);
   build_tree(points.begin(), points.begin()+1, points.end(), maxRadius, norma);
-  debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
+  //debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
 }
 
 template<typename It>
@@ -124,13 +124,13 @@ private:
   }
 };
 
+static uint64_t sum = 0, sumX = 0, sumAprx=0;
+
 std::pair<uint, uint> CoverTree::find_closest(const T &point, float tolerance_error) const
 {
   float searchRadius = 100000.f;//glm::max(maxRadius, 100.f);
   auto out = points.cend();
   int counter = 0,cnt_aprx=0;
-  static uint64_t count = 0, sum = 0, sumX = 0, sumAprx=0;
-  count++;
   Solver solver(points.cbegin(), points.cend(), point, tolerance_error, norma);
   int sampleCount = points.size()*0.005f;
   for (int i = 0; i < sampleCount; i++)
@@ -145,8 +145,6 @@ std::pair<uint, uint> CoverTree::find_closest(const T &point, float tolerance_er
     sum += counter;
     sumAprx += cnt_aprx;
     sumX += points.size();
-    if ((count & (count - 1)) == 0)
-      debug_log("average perf %f %f",  (double)sum / sumX, (double)sumAprx / sumX);
     return {out->clip, out->frame};
   }
   
@@ -166,4 +164,8 @@ std::pair<uint, uint> CoverTree::find_closest(const T &point, float tolerance_er
     debug_log("error %f cover tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
 
   return {points[bestInd].clip, points[bestInd].frame};
+}
+float CoverTree::average_perf() const
+{
+  return (double)sum / sumX;
 }

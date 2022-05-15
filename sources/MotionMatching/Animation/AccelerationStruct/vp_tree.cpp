@@ -26,7 +26,7 @@ VPTree::VPTree(AnimationTags tag, std::vector<Node> &&m_points, std::function<fl
   tag(tag), points(std::move(m_points)), norma(norma)
 {
   maxRadius = sort_with_metric(this->points.begin(), points.end(), norma);
-  debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
+  //debug_log("point = %d tags = %s max dist = %f", points.size(), tag.to_string().c_str(), maxRadius);
 }
 
 template<typename It>
@@ -134,13 +134,13 @@ private:
   }
 };
 
+static uint64_t sum = 0, sumX = 0, sumAprx=0;
+
 std::pair<uint, uint> VPTree::find_closest(const T &point, float tolerance_error) const
 {
   float searchRadius = 100000.f;
   auto out = points.cend();
   int counter = 0, cnt_aprx=0;
-  static uint64_t count = 0, sum = 0, sumX = 0, sumAprx=0;
-  count++;
   Solver solver(points.cbegin(), points.cend(), point, tolerance_error, norma);
 
   solver.find_closest_approx(cnt_aprx, searchRadius);
@@ -150,8 +150,6 @@ std::pair<uint, uint> VPTree::find_closest(const T &point, float tolerance_error
     sum += counter;
     sumAprx += cnt_aprx;
     sumX += points.size();
-    if ((count & (count - 1)) == 0)
-      debug_log("average perf %f %f",  (double)sum / sumX, (double)sumAprx / sumX);
 
     return {out->clip, out->frame};
   }
@@ -173,4 +171,8 @@ std::pair<uint, uint> VPTree::find_closest(const T &point, float tolerance_error
     debug_log("error %f vp tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
 
   return {points[bestInd].clip, points[bestInd].frame};
+}
+float VPTree::average_perf() const
+{
+  return (double)sum / sumX;
 }

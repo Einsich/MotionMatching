@@ -76,6 +76,8 @@ void ProfileTracker::stop()
       sum += dt;
       os << 10000*(i+1)/maxSamples << ";" << dt << ";" << sum / (i+1) << '\n';
     }
+    maxTime = maxMsTime;
+    averageTime = sum / maxSamples;
   }
   debug_log("ProfileTrack wrote to %s", path.c_str());
 }

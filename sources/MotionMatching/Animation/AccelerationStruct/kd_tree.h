@@ -22,4 +22,5 @@ struct KdTree
   
   KdTree(const MotionMatchingSettings &settings, AnimationTags tag, std::vector<Node> &&points, std::function<float(const T&, const T&)> &&norma);
   std::pair<uint, uint> find_closest(const T &point, float tolerance_error) const;
+  float average_perf() const;
 };

@@ -107,6 +107,7 @@ struct Solver
   bool find_closest(It &out, int &counter, float &search_radius)
   {
     this->search_radius = search_radius;
+    this->counter = 0;
     bool result = find_closest(begin, end, NodesDimensions);
     out = this->out;
     counter = this->counter;
@@ -143,7 +144,7 @@ private:
     size_t count = dist - 1;
     size_t leftCount = count >> 1u;
     It leftBegin = begin + 1;
-    if (search_radius < d)
+    if (search_radius <= d)
     {
       return ((y < x) ?
         (leftCount > 0 ? find_closest(leftBegin, leftBegin + leftCount, dimension) : false):
@@ -155,32 +156,29 @@ private:
       if (y < x)
       {
         result |= leftCount > 0 ? find_closest(leftBegin, leftBegin + leftCount, dimension) : false;
-        result |= search_radius >= d ? find_closest(leftBegin + leftCount, end, dimension) : false;
+        result |= search_radius > d ? find_closest(leftBegin + leftCount, end, dimension) : false;
       }
       else
       {
         result |= find_closest(leftBegin + leftCount, end, dimension);
-        result |= search_radius >= d && leftCount > 0 ? find_closest(leftBegin, leftBegin + leftCount, dimension) : false;
+        result |= search_radius > d && leftCount > 0 ? find_closest(leftBegin, leftBegin + leftCount, dimension) : false;
       }
       return result || hasRoot;
     }
   }
 };
 
+static uint64_t sum = 0, sumX = 0;\
 std::pair<uint, uint> KdTree::find_closest(const T &point, float tolerance_error) const
 {
   float searchRadius = 100000.f;
   auto out = points.cend();
   int counter = 0;
-  static uint64_t count = 0, sum = 0, sumX = 0;
-  count++;
   Solver solver(points.cbegin(), points.cend(), point, weights, weightsId, tolerance_error, norma);
   if (solver.find_closest(out, counter, searchRadius))
   {
     sum += counter;
     sumX += points.size();
-    if ((count & (count - 1)) == 0)
-      debug_log("average perf %f",  (double)sum / sumX);
     return {out->clip, out->frame};
   }
   
@@ -200,4 +198,9 @@ std::pair<uint, uint> KdTree::find_closest(const T &point, float tolerance_error
     debug_log("error %f kd tree[%d] brute force[%d]", error, out - points.cbegin(), bestInd);
 
   return {points[bestInd].clip, points[bestInd].frame};
+}
+
+float KdTree::average_perf() const
+{
+  return (double)sum / sumX;
 }

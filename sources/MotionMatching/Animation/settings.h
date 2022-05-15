@@ -20,6 +20,7 @@ REFLECT(
   (bool) (debugTrajectory),
   (bool) (debugBones),
   (bool) (MatchingStatistic),
+  (bool) (startTesting),
   (int) (testCount),
   (float) (testDensity))
 
@@ -81,6 +82,7 @@ struct MotionMatchingOptimisationSettings
 {  
   REFLECT(
     MotionMatchingOptimisationSettings,
+    (int) (solverType),
     (bool)  (trajectoryErrorToleranceTest),
     (float) (pathErrorTolerance),
     (float) (vpTreeErrorTolerance),

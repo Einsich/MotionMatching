@@ -9,6 +9,7 @@ private:
   size_t frameCount; 
   bool stopped;
 public:
+  float maxTime, averageTime;
   ProfileTracker(const string &path, size_t frame_count):
     path(path), frameCount(frame_count), stopped(false)
   {

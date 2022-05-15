@@ -57,39 +57,26 @@ static bool trajection_tolerance_test(AnimationIndex index, const AnimationGoal 
   return false;
 }
 
-constexpr int MAX_SAMPLES = 20000;
+constexpr int MAX_SAMPLES = 10000;
 struct MMProfiler : ecs::Singleton
 {
   //vector<ProfileTracker> trackers;
   vector<ProfileTracker> avgTrackers;
   //Tag tagsCount;
   bool stopped = false;
-  std::array<int, (int)MotionMatchingSolverType::Count> counter;
-  MMProfiler()
+  bool inited = false;
+  std::vector<int> counter;
+  MMProfiler()=default;
+  void init(const std::vector<std::pair<std::string, MotionMatchingOptimisationSettings>>&settings)
   {
-    //tagsCount = 1ull << get_tag_map().size();
-    int solverCount = (int)MotionMatchingSolverType::Count;
-    for (int solver = 0; solver < solverCount; solver++)
+    if (inited)
+      return;
+    inited = true;
+    counter.resize(settings.size(), 0);
+
+    for (const auto &[name, s] :settings)
     {
-      string solverName;
-      switch (solver)
-      {
-      case (int)MotionMatchingSolverType::BruteForce: solverName = "brute_force"; break;
-      case (int)MotionMatchingSolverType::VPTree : solverName = "vp_tree"; break;
-      case (int)MotionMatchingSolverType::CoverTree: solverName = "cover_tree"; break;
-      case (int)MotionMatchingSolverType::KDTree: solverName = "kd_tree"; break;
-      
-      default:
-        break;
-      }
-      avgTrackers.emplace_back(project_path("profile/" + solverName + "/Average.csv"), MAX_SAMPLES);
-/*       AnimationTags tag;
-      
-      for (tag.tags = 0; tag.tags < tagsCount; tag.tags++)
-      {
-        string name = tag.tags == 0 ? "Locomotion" : tag.to_string();
-        trackers.emplace_back(project_path("profile/" + solverName + "/" + name + ".csv"), MAX_SAMPLES);
-      } */
+      avgTrackers.emplace_back(project_path("profile/" + name + ".csv"), MAX_SAMPLES);
     }
   }
   ProfileTracker &get_tracker(int solver)
@@ -103,9 +90,8 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
   AnimationPlayer &animationPlayer,
   Asset<Material> &material,
   int *mmIndex,
-  int *mmOptimisationIndex,
+  int &mmOptimisationIndex,
   bool updateMMStatistic,
-  int &motionMatchingSolver,
   Settings &settings,
   SettingsContainer &settingsContainer,
   MMProfiler &profiler,
@@ -115,10 +101,11 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
   
   if (animationPlayer.playerType ==  AnimationPlayerType::MotionMatching)
   {
+    profiler.init(settingsContainer.motionMatchingOptimisationSettings);
     MotionMatching &matching = animationPlayer.motionMatching;
     const MotionMatchingSettings &mmsettings = settingsContainer.motionMatchingSettings[mmIndex ? *mmIndex : 0].second;
     const MotionMatchingOptimisationSettings &OptimisationSettings = 
-      settingsContainer.motionMatchingOptimisationSettings[mmOptimisationIndex ? *mmOptimisationIndex : 0].second;
+      settingsContainer.motionMatchingOptimisationSettings[mmOptimisationIndex].second;
     float dist = length(mainCamera.position - transform.get_position());
 
     int j = 0;
@@ -142,19 +129,22 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
     AnimationIndex currentIndex = index.current_index();
     if (saveIndex != currentIndex)
     {
+      ProfileTrack track;
       auto &goal = animationPlayer.inputGoal;
       auto dataBase = matching.dataBase;
       settings.TotalMMCount++;
       matching.lod = OptimisationSettings.lodOptimisation ? matching.lod : 0;
       float lodSkipTime = OptimisationSettings.lodSkipSeconds[matching.lod];
-      if (matching.skip_time >= lodSkipTime)
+      if (!OptimisationSettings.lodOptimisation || matching.skip_time >= lodSkipTime)
       {
         settings.afterLodOptimization++;
         matching.skip_time -= lodSkipTime;
+        if (!OptimisationSettings.lodOptimisation)
+          matching.skip_time = 0;
         if (OptimisationSettings.trajectoryErrorToleranceTest &&
             trajection_tolerance_test(currentIndex, goal, mmsettings, OptimisationSettings.pathErrorTolerance))
         {
-          return;
+          goto afterMM;
         }
         settings.afterTrajectoryToleranceTest++;
         goal.feature.features = currentIndex.get_feature();
@@ -165,9 +155,8 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
         matching.bestScore = {0,0,0,0,0,0};
         AnimationIndex best_index;
 
-        ProfileTrack track;
 
-        switch ((MotionMatchingSolverType)motionMatchingSolver)
+        switch ((MotionMatchingSolverType)OptimisationSettings.solverType)
         {
         default: 
         case MotionMatchingSolverType::BruteForce :
@@ -183,20 +172,42 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
           best_index = solve_motion_matching_kd_tree(dataBase, goal, OptimisationSettings.vpTreeErrorTolerance);
           break;
         }
-        if (false)
-        {
-          float delta = track.delta();
-          auto &tracker = profiler.get_tracker(motionMatchingSolver);
-          tracker.update(delta);
-          if (tracker.was_stopped())
-            motionMatchingSolver = (motionMatchingSolver + 1) % (int)MotionMatchingSolverType::Count;
-        }
         bool can_jump = true;
         for (const AnimationIndex &index : index.get_indexes())
           can_jump &= AnimationIndex::can_jump(index, best_index);
         if (can_jump)
         {
           index.play_lerped(best_index, settings.maxLerpIndex);
+        }
+      }
+afterMM:
+      if (settings.startTesting)
+      {
+        float delta = track.delta();
+        auto &tracker = profiler.get_tracker(mmOptimisationIndex);
+        tracker.update(delta);
+        if (tracker.was_stopped())
+        {
+          mmOptimisationIndex++;
+          if (mmOptimisationIndex >= (int)settingsContainer.motionMatchingOptimisationSettings.size())
+          {
+            settings.startTesting = false;
+            ofstream os(project_path("profile/average.txt"));
+            os << "name;average;max;avg_ratio;max_ratio\n";
+            const auto &tracker = profiler.get_tracker(0);
+            float avgBruteForce = tracker.averageTime;
+            float maxBruteForce = tracker.maxTime;
+            for (int i = 0; i < mmOptimisationIndex; i++)
+            {
+              const auto &tracker = profiler.get_tracker(i);
+              os << settingsContainer.motionMatchingOptimisationSettings[i].first
+               << ";" << tracker.averageTime << ";" << tracker.maxTime 
+               << ";" << avgBruteForce / tracker.averageTime << ";" << maxBruteForce/ tracker.maxTime 
+               << '\n';
+
+            }
+            debug_log("profiling finished");
+          }
         }
       }
     }

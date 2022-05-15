@@ -17,4 +17,5 @@ struct VPTree
   std::function<float(const T&, const T&)> norma;
   VPTree(AnimationTags tag, std::vector<Node> &&points, std::function<float(const T&, const T&)> &&norma);
   std::pair<uint, uint> find_closest(const T &point, float tolerance_error) const;
+  float average_perf() const;
 };
