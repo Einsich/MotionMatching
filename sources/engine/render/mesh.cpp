@@ -104,7 +104,7 @@ void Mesh::load_assimp(const aiMesh *mesh)
   }
   if (mesh->HasBones())
   {
-    weights.resize(numVert);
+    weights.resize(numVert, vec4(0.f));
     weightsIndex.resize(numVert);
     int numBones = mesh->mNumBones;
     vector<int> weightsOffset(numVert, 0);
@@ -120,6 +120,13 @@ void Mesh::load_assimp(const aiMesh *mesh)
         weights[vertex][offset] = bone->mWeights[j].mWeight;
         weightsIndex[vertex][offset] = i;
       }
+    }
+    //the sum of weights not 1 (((
+    for (int i = 0; i < numVert; i++)
+    {
+      vec4 w = weights[i];
+      float s = w.x + w.y + w.z + w.w;
+      weights[i] *= 1.f / s;
     }
   }
 }

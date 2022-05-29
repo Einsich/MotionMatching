@@ -2,9 +2,13 @@
 
 mat3x4 tm = get_transform(gl_InstanceID);
 #ifdef BONES
-mat4 BoneTransform = mat4(0);
-for (int i = 0; i < 4; i++)
-  BoneTransform += instance.Bones[BoneIndex[i]] * BoneWeights[i];
+
+mat4 BoneTransform =
+  instance.Bones[BoneIndex.x] * BoneWeights.x +
+  instance.Bones[BoneIndex.y] * BoneWeights.y +
+  instance.Bones[BoneIndex.z] * BoneWeights.z +
+  instance.Bones[BoneIndex.w] * BoneWeights.w;
+
 vec3 VertexPosition = mul(tm, BoneTransform * vec4(vertex_position, 1));
 vsOutput.EyespaceNormal = mul(tm, mat3(BoneTransform) * Normal);
 #else
