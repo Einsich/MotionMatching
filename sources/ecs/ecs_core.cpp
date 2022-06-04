@@ -66,7 +66,7 @@ namespace ecs
       cleaner();
     for (CallableDescription *callable : all_callable)
     {
-      if ((callable->tags & applicationTags) == applicationTags &&
+      if ((callable->tags & applicationTags) == callable->tags &&
         (callable->isQuery ||
           (callable->scenes.empty() && currentSceneTags != "editor") || 
         std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)

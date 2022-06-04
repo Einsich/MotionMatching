@@ -9,7 +9,7 @@ namespace ecs
   {
     constexpr uint32_t 
     debug = 1u << 0,
-    all = 0xffffffff
+    all = 0
     ;
   }
 }
