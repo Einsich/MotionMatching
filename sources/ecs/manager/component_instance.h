@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "type_info.h"
 #include "type_description.h"
 
@@ -16,6 +17,7 @@ private:
       return *(T*)(instanceData.data());
     }
   public:
+    std::function<void(void*)> initManager;
     const ecs::TypeInfo *typeInfo;
     string name;
     string_hash nameHash, typeNameHash;

@@ -262,10 +262,29 @@ namespace ecs
             break;
           }
         }
+        void *rawMem = container->add_component();
         if (j == m)
-          container->add_component(instance.get_data());
+        {
+          if (instance.initManager)
+          {
+            instance.initManager(rawMem);
+          }
+          else
+          {
+            container->copy_constructor(instance.get_data(), rawMem);
+          }
+        }
         else
-          container->add_component(init_list[j].get_data());
+        {
+          if (init_list[j].initManager)
+          {
+            init_list[j].initManager(rawMem);
+          }
+          else
+          {
+            container->move_constructor(init_list[j].get_data(), rawMem);
+          }
+        }
       }
       found_archetype->count++;
     }

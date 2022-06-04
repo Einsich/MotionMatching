@@ -79,7 +79,7 @@ const vector<const char*>get_shaders_names()
   return shadersNames;
 }
 
-void read_shader_info(const std::string &shader_name, ShaderInfo &shader)
+void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
 {
   GLuint program = shader.program;
   if (!program)

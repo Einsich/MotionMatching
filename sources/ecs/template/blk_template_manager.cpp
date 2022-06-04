@@ -197,7 +197,10 @@ namespace ecs
       {
         const ecs::TypeInfo &typeInfo = it->second;
         components.emplace_back(typeInfo, property->name());
-        typeInfo.blkReader(*property, components.back().get_data());
+        components.back().initManager = [property, reader = typeInfo.blkReader](void *raw_data) {
+          reader(*property, raw_data);
+        };
+       ;
       }
       else
       {
