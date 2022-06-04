@@ -49,5 +49,17 @@ namespace ecs
     void* add_component();
     void copy_components(const ComponentContainer &other);
     ~ComponentContainer();
+    void operator=(const ComponentContainer& other) = delete;
+    void operator=(ComponentContainer&&other)
+    {
+      memcpy(this, &other, sizeof(ComponentContainer));
+      memset(&other, 0, sizeof(ComponentContainer));
+    }
+    ComponentContainer(const ComponentContainer &other) = delete;
+    ComponentContainer(ComponentContainer &&other)
+    {
+      memcpy(this, &other, sizeof(ComponentContainer));
+      memset(&other, 0, sizeof(ComponentContainer));
+    }
   };
 }

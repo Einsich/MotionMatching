@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_map>
+#include <eastl/vector_map.h>
 #include <vector>
 #include "component_container.h"
 #include "component_instance.h"
@@ -9,7 +9,7 @@ namespace ecs
   {
   public: 
     int index;
-    std::unordered_map<uint, ComponentContainer> components;
+    eastl::vector_map<uint, ComponentContainer> components;
     int count, capacity;
     std::vector<FullTypeDescription*> fullTypeDescriptions;
     string synonim;

@@ -6,7 +6,7 @@ namespace ecs
 
   ComponentContainer::ComponentContainer():
   data(), typeHash(-1), count(0)
-  {  }
+  { debug_log("ComponentContainer()"); }
   ComponentContainer::ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity):
   data((capacity + binSize - 1) >> binPow),
   typeHash(type_info.hashId),
@@ -19,11 +19,19 @@ namespace ecs
   move_constructor(type_info.move_constructor),
   destructor(type_info.destructor)
   { 
+    debug_log("ComponentContainer(...)");
     for (uint i = 0; i < data.size(); ++i)
       data[i] = malloc(sizeOf << binPow);
+    for (uint i = 0; i < data.size(); ++i)
+    debug_log("data[%d] = %p", i, data[i]);
   }
   ComponentContainer::~ComponentContainer()
   {
+    debug_log("~ComponentContainer()");
+    
+    for (uint i = 0; i < data.size(); ++i)
+    debug_log("data[%d] = %p", i, data[i]);
+    fflush(stdout);
     for (uint i = 0, j = 0; (i << binPow) + j < count;)
     {
       void *removed = (char*)data[i] + sizeOf * j;

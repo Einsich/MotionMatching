@@ -35,7 +35,7 @@ animated_char {
   bone_remaped:b=false;
   personController:PersonController { }
   updateMMStatistic:b = false;
-  mmOptimisationIndex:i=0;
+  mmOptimisationIndex:i=4;
 }
 
 

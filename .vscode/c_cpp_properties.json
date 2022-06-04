@@ -10,6 +10,7 @@
                 "${workspaceFolder}/sources/ECSbenchmark/**",
                 "${workspaceFolder}/sources/3rd_party/3d_application/**",
                 "${workspaceFolder}/sources/3rd_party/imgui/**",
+                "${workspaceFolder}/sources/3rd_party/eastl/include/**",
             ],
             "defines": [],
             "cStandard": "c17",

@@ -19,7 +19,11 @@ namespace ecs
       auto typeIt = TypeInfo::types().find(it->second.typeHash);
       assert(typeIt->first && "Don't found this type");
       fullTypeDescriptions.push_back(&it->second);
-      components.try_emplace(typeNameHash, typeIt->second, typeNameHash, capacity);
+      auto result = components.insert(typeNameHash);
+      if (result.second)
+      {
+        result.first->second = ComponentContainer(typeIt->second, typeNameHash, capacity);
+      }
     }    
   }
 

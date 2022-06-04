@@ -40,7 +40,28 @@
 		}
 
 	} // namespace eastl
+#define UNUSED(x) (void)(x);
+	void* operator new[](size_t size, const char* pName, int flags, unsigned debugFlags, const char* file, int line)
+	{
+		return new char[size];
+		UNUSED(pName);
+		UNUSED(flags);
+		UNUSED(debugFlags);
+		UNUSED(file);
+		UNUSED(line);
+	}
+	void* operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* pName, int flags, unsigned debugFlags, const char* file, int line)
+	{
+		return new char[size];
+		UNUSED(alignment);
+		UNUSED(alignmentOffset);
+		UNUSED(pName);
+		UNUSED(flags);
+		UNUSED(debugFlags);
+		UNUSED(file);
+		UNUSED(line);
 
+	}
 
 #endif // EASTL_USER_DEFINED_ALLOCATOR
 
