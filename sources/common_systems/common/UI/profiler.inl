@@ -1,7 +1,9 @@
 #include <ecs.h>
 #include <profiler/profiler.h>
-#include <stack>
+
 #include <3dmath.h>
+#include <eastl/stack.h>
+#include <memory/tmp_allocator.h>
 
 void profiler(Profiler &profiler)
 {
@@ -16,7 +18,7 @@ void profiler(Profiler &profiler)
   //float height = 10.f;
   float maxdt = profiler.get_averange(history.back());
 
-  stack<float> openTimes;
+  eastl::stack<float, eastl::vector<float, tmp_allocator>> openTimes;
   openTimes.push(0.f);
 
   //ImDrawList* draw_list = ImGui::GetWindowDrawList();

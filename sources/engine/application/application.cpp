@@ -9,7 +9,7 @@
 #include "template/blk_template.h"
 #include "ecs_scene.h"
 #include "application_metainfo.h"
-
+#include "memory/tmp_allocator.h"
 namespace ecs
 {
   void load_templates_from_blk();
@@ -90,7 +90,9 @@ bool Application::sdl_event_handler()
 void Application::main_loop()
 {
   bool running = true;
-  while(running){
+  while (running)
+  {
+    clear_tmp_allocation();
     get_cpu_profiler().start_frame();
     PROFILER(main_loop);
     timer.update();

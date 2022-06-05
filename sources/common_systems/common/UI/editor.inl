@@ -6,6 +6,8 @@
 #include "editor_window.h"
 #include "editor.h"
 #include <render/texture/texture2d.h>
+#include <eastl/vector.h>
+#include <memory/tmp_allocator.h>
 
 
 EditorWidgets::EditorWidgets():
@@ -74,7 +76,7 @@ SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const 
               searchString.assign(buf);
             }
             static int curCopy = -1;
-            vector<const char *> names;
+            eastl::vector<const char *, tmp_allocator> names;
             
             for (auto &asset : selectedAsset.resourceType->resources)
             {
