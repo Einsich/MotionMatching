@@ -31,12 +31,8 @@ struct memory_slice
   }
 };
 
-inline unsigned int __fastcall bsr (unsigned int x)
-{
-  _asm { bsr eax, x }
-}
 
-constexpr unsigned int DEFAULT_PAGE_SIZE = 2u << 10u;
+constexpr unsigned int DEFAULT_PAGE_SIZE = 10u << 10u;//10 kb
 struct tmp_allocation_manager
 {
   eastl::vector<memory_slice> memorySlices;
@@ -51,15 +47,14 @@ struct tmp_allocation_manager
     {
       if (!(memorySlices[lastPage].used + n + alignment < memorySlices[lastPage].size))
       {
-        size_t pageSize = eastl::max(bsr(n + alignment), DEFAULT_PAGE_SIZE);
-        memorySlices.emplace_back(pageSize);
         lastPage++;
+        if (lastPage >= (int)memorySlices.size())
+          memorySlices.emplace_back(DEFAULT_PAGE_SIZE);
       }
     }
     else
     {
-      size_t pageSize = eastl::max(bsr(n+alignment), DEFAULT_PAGE_SIZE);
-      memorySlices.emplace_back(pageSize);
+      memorySlices.emplace_back(DEFAULT_PAGE_SIZE);
     }
     memory_slice &slice = memorySlices[lastPage];
     slice.used = (slice.used + alignment - 1) & ~(alignment - 1);
@@ -79,9 +74,9 @@ struct tmp_allocation_manager
       return;
 #if TMP_ALLOCATOR_LOG
     frameId++;
-    if ((frameId % 1000 == 0)
+    if (frameId % 10 == 0)
     {
-      debug_log("allocation per frame %d", allocationCount);
+      debug_log("allocation per frame = %d, slices %d", allocationCount, memorySlices.size());
       for (const memory_slice &slice: memorySlices)
       {
         debug_log("memory %p, %d / %d", slice.memory, slice.used, slice.size);
@@ -106,17 +101,40 @@ tmp_allocator::tmp_allocator(const char* /* pName */)
 
 void* tmp_allocator::allocate(size_t n, int /* flags */)
 {
-  return tmpAllocationManager.allocate(n, 4);
+  if ((n >> 1u) < DEFAULT_PAGE_SIZE)
+  {
+    return tmpAllocationManager.allocate(n, 4);
+  }
+  else
+  {
+    debug_error("so huge allocation for tmp_allocator %d bytes. used default allocation", n);
+    return new char[n];
+  }
 }
 
 void* tmp_allocator::allocate(size_t n, size_t alignment, size_t /* offset */, int /* flags */)
 {
-  return tmpAllocationManager.allocate(n, alignment);
+  if ((n >> 1u) < DEFAULT_PAGE_SIZE)
+  {
+    return tmpAllocationManager.allocate(n, alignment);
+  }
+  else
+  {
+    debug_error("so huge allocation for tmp_allocator %d bytes. used default allocation", n);
+    return new char[n];
+  }
 }
 
 void tmp_allocator::deallocate(void* p, size_t n)
 {
-  tmpAllocationManager.deallocate(p, n);
+  if ((n >> 1u) < DEFAULT_PAGE_SIZE)
+  {
+    tmpAllocationManager.deallocate(p, n);
+  }
+  else
+  {
+    delete[] (char*)p;
+  }
 }
 
 void clear_tmp_allocation()

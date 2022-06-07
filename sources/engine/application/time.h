@@ -65,12 +65,14 @@ public:
   TimeScope(const char *message):
     start(std::chrono::high_resolution_clock::now()), message(message), stopped(false)
   { }
-  void stop()
+  float stop(bool silence = false)
   {
     time_point end = std::chrono::high_resolution_clock::now();
     float delta = duration_cast<std::chrono::duration<float>>(end - start).count();
-    debug_log("%s\nspend %f seconds", message, delta);
+    if (!silence)
+      debug_log("%s\nspend %f seconds", message, delta);
     stopped = true;
+    return delta;
   }
   ~TimeScope()
   {
