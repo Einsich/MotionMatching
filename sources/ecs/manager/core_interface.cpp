@@ -5,19 +5,19 @@ namespace ecs
 {
   uint type_sizeof(uint type)
   {
-    return TypeInfo::types()[type].sizeOf;
+    return TypeInfo::types()[type]->rtti.sizeOf;
   }
   Constructor copy_constructor(uint type)
   {
-    return TypeInfo::types()[type].constructor;
+    return TypeInfo::types()[type]->rtti.constructor;
   }
   CopyConstructor type_copy_constructor(uint type)
   {
-    return TypeInfo::types()[type].copy_constructor;
+    return TypeInfo::types()[type]->rtti.copy_constructor;
   }
   Destructor type_destructor(uint type)
   {
-    return TypeInfo::types()[type].destructor;
+    return TypeInfo::types()[type]->rtti.destructor;
   }
 
   void add_callable(CallableDescription *callable_description)
@@ -49,7 +49,7 @@ namespace ecs
       for (const auto &descr : archetype->components)
       {
         auto &ecsType = core().types[descr.first];
-        auto &cppType = TypeInfo::types()[descr.second.typeHash];
+        auto &cppType = *TypeInfo::types()[descr.second.typeHash];
         printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
       }
 

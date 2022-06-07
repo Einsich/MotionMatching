@@ -34,7 +34,7 @@ public:
   }
   static float time()
   { 
-    return timer->seconds;
+    return timer ? timer->seconds : 0;
   }
   static float delta_time()
   {

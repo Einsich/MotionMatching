@@ -22,7 +22,7 @@ namespace ecs
       auto result = components.insert(typeNameHash);
       if (result.second)
       {
-        result.first->second = ComponentContainer(typeIt->second, typeNameHash, capacity);
+        result.first->second = ComponentContainer(*typeIt->second, typeNameHash, capacity);
       }
     }    
   }
@@ -118,7 +118,7 @@ namespace ecs
         size += write(os, typeInfo.name, fullDesc->name);
         if (fullDesc->typeHash != eidTypeHash)
           for (int i = 0; i < archetype->count; ++i)
-            size += typeInfo.serialiser(os, container.get_component<void>(i));
+            size += typeInfo.userInfo.serialiser(os, container.get_component<void>(i));
         else
           for (int i = 0; i < archetype->count; ++i)
           {

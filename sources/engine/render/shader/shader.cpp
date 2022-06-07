@@ -2,10 +2,9 @@
 #include <iostream>
 #include <map>
 #include "shader_gen.h"
-#include "manager/type_info.h"
+#include "type_registration.h"
 
-ECS_DECLARE_TYPE(Shader)
-
+ECS_REGISTER_TYPE(shader, Shader, true, true);
 struct ShaderInfo
 {
   GLuint program;

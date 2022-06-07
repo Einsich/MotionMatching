@@ -2,11 +2,12 @@
 #include <ecs.h>
 #include <input.h>
 #include <application/application_data.h>
+#include <type_registration.h>
 
 bool edit_component(Camera &camera, const char *name, bool view_only);
-ECS_DECLARE_TYPE_EXT(Camera)
-ECS_DECLARE_TYPE_EXT(FreeCamera)
-ECS_DECLARE_TYPE_EXT(ArcballCamera)
+ECS_REGISTER_TYPE(camera, Camera, true, true);
+ECS_REGISTER_TYPE(FreeCamera, FreeCamera, true, true);
+ECS_REGISTER_TYPE(ArcballCamera, ArcballCamera, true, true);
 // CameraManager
 
 template<typename Callable>

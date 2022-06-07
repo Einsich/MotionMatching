@@ -4,7 +4,8 @@
 #include "constanta.h"
 #include "data_block/data_block.h"
 #include "transform.h"
-ECS_DECLARE_TYPE_EXT(Data)
+
+ECS_REGISTER_TYPE(Data, Data, true, true)
 
 struct TestClass
 {

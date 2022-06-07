@@ -1,6 +1,7 @@
 #include <ecs.h>
 #include <application/file_dialog.h>
 #include "editor_window.h"
+#include <imgui.h>
 
 SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
 {

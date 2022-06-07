@@ -71,7 +71,7 @@ static constexpr std::enable_if_t<is_vector<T>::value, std::string_view> impl() 
   return join_v<_vec_begin, nameOf<typename T::value_type>::value, _vec_end>;
 }
 
-#define MACRO(NAME, T) \
+#define MACRO(NAME, T, bool1, bool2) \
 template<> constexpr std::string_view impl<T>() noexcept\
 { return std::string_view(#NAME); }
 

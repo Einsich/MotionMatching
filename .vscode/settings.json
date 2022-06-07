@@ -154,9 +154,9 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "rel",
+    "BuildType": "dev",
     "Project": {
-      "name": "MotionMatching",
+      "name": "Strategy",
       "dependencies": "3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
       "delpoy_only_project_folder": "false"
     }

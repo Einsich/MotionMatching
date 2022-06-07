@@ -1,4 +1,5 @@
 #include <ecs.h>
+#include <type_registration.h>
 #include <render/debug_arrow.h>
 #include <resources/resource_registration.h>
 #include "Animation/AnimationDatabase/animation_database.h"
@@ -9,18 +10,18 @@
 #include "Animation/Test/animation_test.h"
 #include "Animation/settings.h"
 
-#define CUSTOM_TYPE \
+#define CUSTOM_TYPES \
 MACRO(PersonController)\
-MACRO(DebugArrow)
+MACRO(DebugArrow)\
+MACRO(AnimationPlayer)\
+MACRO(AnimationTester)\
+MACRO(ThirdPersonController)\
+MACRO(AnimationDataBasePtr)
 
-#define MACRO(T) ECS_DECLARE_TYPE(T)
+#define MACRO(T) ECS_REGISTER_TYPE(T, T, false, false)
+CUSTOM_TYPES
+#undef MACRO
 
-CUSTOM_TYPE
-
-ECS_DECLARE_TYPE(AnimationPlayer)
-ECS_DECLARE_TYPE(AnimationTester)
-ECS_DECLARE_TYPE(ThirdPersonController)
-ECS_DECLARE_TYPE(AnimationDataBasePtr)
 
 
 EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,

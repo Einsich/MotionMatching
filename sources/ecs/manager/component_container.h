@@ -14,11 +14,8 @@ namespace ecs
   public:
     std::vector<void*> data;
     string_hash typeHash, typeNameHash;
-    uint count, capacity, sizeOf;
-    Constructor constructor = nullptr;
-    CopyConstructor copy_constructor = nullptr;
-    MoveConstructor move_constructor = nullptr;
-    Destructor destructor = nullptr;
+    uint count, capacity;
+    TypeRTTI rtti;
     ComponentContainer();
     ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity);
     template<typename T>
@@ -28,7 +25,7 @@ namespace ecs
       {
         int j = i >> binPow;
         i &= binMask;
-        return (T*)((char*)data[j] + i * sizeOf);
+        return (T*)((char*)data[j] + i * rtti.sizeOf);
       }
       return nullptr;
     }
@@ -39,7 +36,7 @@ namespace ecs
       {
         int j = i >> binPow;
         i &= binMask;
-        return (T*)((char*)data[j] + i * sizeOf);
+        return (T*)((char*)data[j] + i * rtti.sizeOf);
       }
       return nullptr;
     }

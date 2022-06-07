@@ -14,12 +14,13 @@
 #include <profiler/profiler.h>
 #include <render/frustum.h>
 #include <parallel/thread_pool.h>
+#include <type_registration.h>
 
-ECS_DECLARE_NAMED_TYPE_EXT(Asset<Mesh>, Mesh)
-ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2D>, Texture2D)
-ECS_DECLARE_NAMED_TYPE_EXT(Asset<Texture2DArray>, Texture2DArray)
-ECS_DECLARE_NAMED_TYPE_EXT(Asset<CubeMap>, CubeMap)
-ECS_DECLARE_NAMED_TYPE_EXT(Asset<Material>, Material)
+ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>, false, false);
+ECS_REGISTER_TYPE(Texture2D, Asset<Texture2D>, false, false);
+ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>, false, false);
+ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>, false, false);
+ECS_REGISTER_TYPE(Material, Asset<Material>, false, false);
 
 EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
 {

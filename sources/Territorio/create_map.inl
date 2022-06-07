@@ -1,9 +1,11 @@
 #include <ecs.h> 
+#include <type_registration.h>
 #include <transform2d.h>
 #include <render/texture/texture2d.h>
 #include "map_arrays.h"
 
-ECS_DECLARE_TYPE(MapArrays)
+ECS_REGISTER_TYPE(MapArrays, MapArrays, false, false)
+
 
 static vector<ivec2> get_player_start_points(int h, int w, int n)
 { 

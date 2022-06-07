@@ -93,6 +93,12 @@ void ArcballCamera::calculate_transform(Transform &transform)
   transform.set_rotation(PI*0.5-curRotation.x, -curRotation.y, 0);
 }
 FreeCamera::FreeCamera():
+  curRotation(0.f),
+  wantedRotation(0.f),
+  curPosition(0.f),
+  wantedPosition(0.f),
+  rotationable(false),
+  screenSpaceMovable(false),
   minSpeed(5),
   maxSpeed(50),
   lerpStrength(10),

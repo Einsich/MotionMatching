@@ -12,7 +12,7 @@ namespace ecs
   {
     auto it = TypeInfo::types().find(typeHash);
     assert(it != TypeInfo::types().end());
-    return it->second;
+    return *it->second;
   }
   TypeDescription::TypeDescription(string_hash name_hash, string_hash type_hash):
     typeNameHash(hash(name_hash, type_hash)){}

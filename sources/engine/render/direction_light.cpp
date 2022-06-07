@@ -1,4 +1,4 @@
-#include "ecs.h"
 #include "direction_light.h"
+#include <type_registration.h>
 
-ECS_DECLARE_TYPE(DirectionLight)
+ECS_REGISTER_TYPE(DirectionLight, DirectionLight, true, true)

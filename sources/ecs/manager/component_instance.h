@@ -31,7 +31,7 @@ private:
     instanceData(sizeof(TT)), typeInfo(&typeInfo), name(name)
     , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
     {
-      typeInfo.constructor(instanceData.data());
+      typeInfo.rtti.constructor(instanceData.data());
       get_instance<TT>() = instance;
     }    
     template<typename T, typename TT = std::remove_cvref_t<T>>
@@ -39,11 +39,11 @@ private:
     instanceData(sizeof(TT)), typeInfo(&typeInfo), name(name)
     , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
     {
-      typeInfo.constructor(instanceData.data());
+      typeInfo.rtti.constructor(instanceData.data());
       get_instance<TT>() = instance;
     }
     ComponentInstance(const ecs::TypeInfo &typeInfo, const string &name) : 
-    instanceData(typeInfo.sizeOf), typeInfo(&typeInfo), name(name)
+    instanceData(typeInfo.rtti.sizeOf), typeInfo(&typeInfo), name(name)
     , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
     {
       
@@ -79,7 +79,7 @@ private:
       auto it = types.find(hash);
       if (it != types.end())
       {
-        components.emplace_back(it->second, name, value);
+        components.emplace_back(*it->second, name, value);
       }
     }
   };

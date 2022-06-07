@@ -1,5 +1,6 @@
 #include <set>
 #include <ecs.h>
+#include <type_registration.h>
 #include <application/time.h>
 #include "map_arrays.h"
 #include "game_events.h"
@@ -7,7 +8,7 @@
 #include "profiler/profiler.h"
 
 
-ECS_DECLARE_TYPE_EXT(Invasion)
+ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion, false, false);
 
 
 template<typename Callable>

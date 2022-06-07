@@ -1,6 +1,7 @@
 #include <ecs.h> 
 #include <render/render.h> 
 #include <transform.h> 
+#include <resources/resources.h>
 
 Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w) 
 { 

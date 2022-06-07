@@ -56,7 +56,7 @@ namespace ecs
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
     constexpr string_hash hash = HashedString(nameOf<T>::value);
-    return ComponentInstance(ecs::TypeInfo::types()[hash], property.name, blk.get<T>(property));
+    return ComponentInstance(*ecs::TypeInfo::types()[hash], property.name, blk.get<T>(property));
   }
   GET_FUNCTIONS(instantiate, create_instance)
 
@@ -195,9 +195,9 @@ namespace ecs
       auto it = typeMap.find(HashedString(property->type()));
       if (it != typeMap.end())
       {
-        const ecs::TypeInfo &typeInfo = it->second;
+        const ecs::TypeInfo &typeInfo = *it->second;
         components.emplace_back(typeInfo, property->name());
-        components.back().initManager = [property, reader = typeInfo.blkReader](void *raw_data) {
+        components.back().initManager = [property, reader = typeInfo.userInfo.blkReader](void *raw_data) {
           reader(*property, raw_data);
         };
        ;
@@ -216,7 +216,7 @@ namespace ecs
     const auto &typeMap = ecs::TypeInfo::types();
     auto it = typeMap.find(HashedString("EntityId"));
     assert(it != typeMap.end());//we should know EntityId
-    components.emplace_back(ComponentInstance(it->second, "eid"));
+    components.emplace_back(ComponentInstance(*it->second, "eid"));
   }
 
 

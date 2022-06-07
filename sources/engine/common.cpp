@@ -1,5 +1,4 @@
 #include "common.h"
-
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "application/time.h"
@@ -11,7 +10,12 @@ struct Message
   string message;
   bool status;
 };
-list<Message> q;
+list<Message> &messages_list()
+{
+  static list<Message> q;
+  return q;
+}
+
 constexpr int messageLen = 1024, timeLen = 20;
 char messageBuf[messageLen], timeBuf[timeLen];
 
@@ -19,7 +23,7 @@ void debug_common(const char *fmt, int status, va_list args)
 {
   vsnprintf(messageBuf, messageLen, fmt, args);
   snprintf(timeBuf, timeLen, "[%.2f] ", Time::time());
-  
+  auto &q = messages_list();
   if (q.size() >= MaxQueueSize)
   {
     q.pop_front();
@@ -53,6 +57,6 @@ void debug_log(const char *fmt, ...)
 
 void debug_show()
 {
-  for (const Message &m: q)
+  for (const Message &m: messages_list())
     ImGui::TextColored(m.status ? ImVec4(1,1,1,1) : ImVec4(1,0.1f,0.1f,1) , "%s", m.message.c_str());
 }

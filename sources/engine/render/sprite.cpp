@@ -1,4 +1,5 @@
 #include "sprite.h"
-#include "manager/type_info.h"
+#include <type_registration.h>
 
-ECS_DECLARE_TYPE(Sprite)
+ECS_REGISTER_TYPE(Sprite, Sprite, true, true)
+

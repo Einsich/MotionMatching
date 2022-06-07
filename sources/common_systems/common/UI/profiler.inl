@@ -4,6 +4,7 @@
 #include <3dmath.h>
 #include <eastl/stack.h>
 #include <memory/tmp_allocator.h>
+#include <imgui.h>
 
 void profiler(Profiler &profiler)
 {

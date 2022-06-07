@@ -245,7 +245,7 @@ namespace ecs
     int archetype_ind = found_archetype->index;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
     constexpr string_hash eidHash = HashedString(nameOf<EntityId>::value);
-    static TypeInfo &eidInfo = TypeInfo::types()[eidHash];
+    static TypeInfo &eidInfo = *TypeInfo::types()[eidHash];
     list.components.emplace_back(eidInfo, "eid", eid);
     {
       const vector<ComponentInstance> &template_list = blkTemplate->components;
@@ -271,7 +271,7 @@ namespace ecs
           }
           else
           {
-            container->copy_constructor(instance.get_data(), rawMem);
+            container->rtti.copy_constructor(instance.get_data(), rawMem);
           }
         }
         else
@@ -282,7 +282,7 @@ namespace ecs
           }
           else
           {
-            container->move_constructor(init_list[j].get_data(), rawMem);
+            container->rtti.move_constructor(init_list[j].get_data(), rawMem);
           }
         }
       }
@@ -319,7 +319,7 @@ namespace ecs
         for (const auto &component : archetype.archetype->components)
         {
           auto &ecsType = core().types[component.first];
-          auto &cppType = TypeInfo::types()[ecsType.typeHash];
+          auto &cppType = *TypeInfo::types()[ecsType.typeHash];
           printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
         }
       }

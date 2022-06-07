@@ -19,7 +19,7 @@ namespace ecs
   {
     return std::array<char*__restrict, N> {
       (archetype.containers[Is] ?
-      ((char*)(archetype.containers[Is]->data[binIndex]) + archetype.containers[Is]->sizeOf * inBinIndex)
+      ((char*)(archetype.containers[Is]->data[binIndex]) + archetype.containers[Is]->rtti.sizeOf * inBinIndex)
       : nullptr)...};
   }
   
