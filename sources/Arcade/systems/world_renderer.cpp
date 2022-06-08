@@ -4,7 +4,7 @@ WorldRenderer::WorldRenderer()
 {
   vector<uint> indices = {0,1,2,0,2,3};
   vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
-  spriteVao = VertexArrayObject(indices, corners);
+  spriteVao = Mesh(indices, corners);
 }
 
 Texture2D *WorldRenderer::add_texture(Texture2D *texture)

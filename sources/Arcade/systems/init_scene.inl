@@ -8,8 +8,7 @@
 EVENT() init_sprites_shaders_camera(
   const ecs::OnSceneCreated &,
   WorldRenderer &wr,
-  SpriteFactory &sf,
-  ScoreBoard &sb)
+  SpriteFactory &sf)
 {
   //feed in project_resources_path relative path from Arcada/Projects/ArcadeSample/Resources/**my_path**
   Texture2D *figuresTex = 
@@ -29,11 +28,9 @@ EVENT() init_sprites_shaders_camera(
 
   wr.spriteShader = get_shader("standart_sprite");
   
-  sb.curentLevel = 0;
-  ecs::send_event<LoadSceneEvent>(LoadSceneEvent());
 }
 
 EVENT() load_scene_event(const LoadSceneEvent &)
 {
-  ecs::create_scene(root_path("resources/Arcade/game_scene.blk"));
+  ecs::create_scene(root_path("resources/Arcade/Scenes/game_scene.blk"));
 }

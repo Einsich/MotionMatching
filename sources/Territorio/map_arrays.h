@@ -1,6 +1,6 @@
 #pragma once
 #include "array2d.h"
-
+#include <set>
 inline bool operator<(const ivec2&a, const ivec2&b)
 {
   return a.x == b.x ? a.y < b.y : a.x < b.x;

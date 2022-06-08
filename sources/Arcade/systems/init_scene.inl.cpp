@@ -7,8 +7,7 @@ void init_sprites_shaders_camera_singl_handler(const ecs::OnSceneCreated &event,
 
 ecs::EventDescription<ecs::OnSceneCreated> init_sprites_shaders_camera_descr("init_sprites_shaders_camera", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
-  {ecs::get_type_description<SpriteFactory>("sf"), false},
-  {ecs::get_type_description<ScoreBoard>("sb"), false}
+  {ecs::get_type_description<SpriteFactory>("sf"), false}
 }, {
 }, {},
 {},

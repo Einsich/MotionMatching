@@ -2,6 +2,7 @@
 #include <transform2d.h>
 #include <input.h>
 #include <application/time.h>
+#include <application/application.h>
 #include "world_render.h"
 
 EVENT() setup_camera(

@@ -16,6 +16,6 @@ struct SpriteFactory : ecs::Singleton
 
 struct ScoreBoard : ecs::Singleton
 {
-  int curentLevel;
+  int curentLevel = 0;
   std::vector<int> kills;
 };
