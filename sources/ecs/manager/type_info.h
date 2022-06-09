@@ -93,6 +93,9 @@ namespace ecs
     return &get_singleton<T>();
   }
 
-  
+  template<typename T>
+  uint32_t type_hash();
 
+  template<typename T>
+  const char* type_name();
 }

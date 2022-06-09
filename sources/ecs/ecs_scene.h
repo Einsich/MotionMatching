@@ -4,6 +4,7 @@
 #include "manager/system_description.h"
 #include "input.h"
 #include "manager/entity_container.h"
+#include <data_block/data_block.h>
 
 namespace ecs
 {

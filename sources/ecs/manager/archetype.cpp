@@ -1,6 +1,7 @@
 #include "archetype.h"
 #include "serialization/serialization.h"
 #include "entity_pull.h"
+#include "core_interface.h"
 #include "../ecs_event.h"
 namespace ecs
 {

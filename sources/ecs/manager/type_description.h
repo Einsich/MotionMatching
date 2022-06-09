@@ -33,19 +33,12 @@ namespace ecs
     template<typename T>
     static uint typeDescriptionHash(const char *name)
     {
-      constexpr std::string_view str = nameOf<T>::value;
-      return hash(HashedString(name), HashedString(str));
+      return hash(HashedString(name), ecs::type_hash<T>());
     }
 
     uint type_name_hash() const;
     bool operator==(const TypeDescription &other);
   };
-  struct ComponentTypes
-  {
-    std::vector<TypeDescription> componentsTypes;
-  };
-
-
 
   template<typename T>
   string_hash register_type_description(const char *name)
@@ -56,8 +49,7 @@ namespace ecs
     }
     else
     {
-      constexpr std::string_view type = nameOf<T>::value;
-      constexpr string_hash typeHash = HashedString(type);
+      string_hash typeHash = type_hash<T>();
       string_hash typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
       auto it = full_description().find(typeNameHash);
       if (it == full_description().end())
@@ -78,7 +70,7 @@ namespace ecs
     }
     else
     {
-      return TypeDescription::hash(HashedString(name), HashedString(nameOf<T>::value));
+      return TypeDescription::hash(HashedString(name), ecs::type_hash<T>());
     }
   }
 }

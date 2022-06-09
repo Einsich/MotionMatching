@@ -5,6 +5,7 @@
 #include "common.h"
 #include "manager/entity_container.h"
 #include "template/blk_template.h"
+#include "manager/core_interface.h"
 
 #define ECS_DEBUG_INFO 0
 namespace ecs
