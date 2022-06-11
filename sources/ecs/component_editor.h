@@ -1,9 +1,11 @@
 #pragma once
-#include "manager/is_vector.h"
+#include "utils/is_vector.h"
 #include "imgui.h"
 #include "serialization/reflection.h"
 #include "resources/asset.h"
 #include "resources/resources.h"
+#include "manager/entity_id.h"
+#include "utils/compile_time_string.h"
 
 template<typename T>
 std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, const char *, bool view_only)

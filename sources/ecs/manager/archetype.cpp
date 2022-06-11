@@ -2,6 +2,8 @@
 #include "serialization/serialization.h"
 #include "entity_pull.h"
 #include "core_interface.h"
+#include "entity_id.h"
+#include "string_hash.h"
 #include "../ecs_event.h"
 namespace ecs
 {
@@ -10,10 +12,10 @@ namespace ecs
     index(index), components(), count(count), capacity(count), fullTypeDescriptions(type_count), synonim(synonim), dontSave(false)
   {}
   
-  Archetype::Archetype(int index, const vector<string_hash> &type_hashes, int capacity, const string &synonim):
+  Archetype::Archetype(int index, const vector<uint> &type_hashes, int capacity, const string &synonim):
     index(index), components(), count(0), capacity(capacity), fullTypeDescriptions(), synonim(synonim), dontSave(false)
   {
-    for (string_hash typeNameHash : type_hashes)
+    for (uint typeNameHash : type_hashes)
     {
       auto it = full_description().find(typeNameHash);
       assert(it->first && "Don't found full descr for type in Archetype");
@@ -28,11 +30,11 @@ namespace ecs
     }    
   }
 
-  bool Archetype::in_archetype(const vector<string_hash> &type_hashes) const
+  bool Archetype::in_archetype(const vector<uint> &type_hashes) const
   {
     if (type_hashes.size() != components.size())
       return false;
-    for (string_hash descr : type_hashes)
+    for (uint descr : type_hashes)
     {
       auto it = components.find(descr);
       if (it == components.end())
@@ -52,7 +54,7 @@ namespace ecs
     return it == components.end() ? nullptr : &it->second;
   }
 
-  vector<void*> Archetype::get_entity_data(const vector<string_hash> &type_hashes)
+  vector<void*> Archetype::get_entity_data(const vector<uint> &type_hashes)
   {
     vector<void*> data(type_hashes.size());
     for (uint i = 0; i < type_hashes.size(); i++)
@@ -91,8 +93,8 @@ namespace ecs
   }
   void save(std::ostream& os, const std::vector<Archetype*> &archetypes)
   {
-    constexpr string_hash eidTypeHash = HashedString(nameOf<EntityId>::value);
-    //constexpr string_hash eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
+    constexpr uint eidTypeHash = HashedString("EntityId");
+    //constexpr uint eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
     size_t archetypeToSave = 0;
     vector<int> archetypeRemap(archetypes.size());
     for (uint i = 0; i < archetypes.size(); ++i)

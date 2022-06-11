@@ -1,15 +1,8 @@
 #pragma once
 #include "common.h"
-#include "data_block/data_block.h"
-#include "component_function.h"
 #include <unordered_map>
 namespace ecs
 {
-  uint type_sizeof(uint type);
-  Constructor copy_constructor(uint type);
-  CopyConstructor type_copy_constructor(uint type);
-  Destructor type_destructor(uint type);
-
 
   struct CallableDescription;
   void add_callable(CallableDescription *system_description);

@@ -2,7 +2,8 @@
 #include <functional>
 #include "type_info.h"
 #include "type_description.h"
-
+#include "string_hash.h"
+#include <assert.h>
 namespace ecs
 {
   struct ComponentInstance 
@@ -20,7 +21,7 @@ private:
     std::function<void(void*)> initManager;
     const ecs::TypeInfo *typeInfo;
     string name;
-    string_hash nameHash, typeNameHash;
+    uint nameHash, typeNameHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
     ComponentInstance(ComponentInstance const&) = default;
@@ -74,7 +75,7 @@ private:
     template<typename T, typename TT = std::remove_cvref_t<T>>
     void set(const char *name, T &&value)
     {
-      constexpr string_hash hash = HashedString(nameOf<TT>::value);
+      uint hash = type_hash<TT>();
       const auto &types = ecs::TypeInfo::types();
       auto it = types.find(hash);
       if (it != types.end())

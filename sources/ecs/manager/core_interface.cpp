@@ -3,22 +3,6 @@
 #include "entity_container.h"
 namespace ecs
 {
-  uint type_sizeof(uint type)
-  {
-    return TypeInfo::types()[type]->rtti.sizeOf;
-  }
-  Constructor copy_constructor(uint type)
-  {
-    return TypeInfo::types()[type]->rtti.constructor;
-  }
-  CopyConstructor type_copy_constructor(uint type)
-  {
-    return TypeInfo::types()[type]->rtti.copy_constructor;
-  }
-  Destructor type_destructor(uint type)
-  {
-    return TypeInfo::types()[type]->rtti.destructor;
-  }
 
   void add_callable(CallableDescription *callable_description)
   {

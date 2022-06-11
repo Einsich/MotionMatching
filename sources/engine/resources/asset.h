@@ -7,7 +7,7 @@
 #include <fstream>
 #include <filesystem>
 #include "application/time.h"
-#include "manager/compile_time_string.h"
+#include "utils/compile_time_string.h"
 #include "serialization/serialization.h"
 #include "data_block/data_block.h"
 

@@ -6,6 +6,7 @@
 #include "manager/entity_container.h"
 #include "template/blk_template.h"
 #include "manager/core_interface.h"
+#include "ecs_tag.h"
 
 #define ECS_DEBUG_INFO 0
 namespace ecs
@@ -94,20 +95,6 @@ namespace ecs
   }
 
 
-  
- /*  template<typename T>
-  T* get_component(const EntityId &entity, const char *name)
-  {
-    if (entity)
-    {
-      Archetype& archetype = *core().archetypes[entity.archetype_index()];
-      
-      ComponentContainer *container = archetype.components[TypeDescription::typeDescriptionHash<T>(name)];
-      return container ? container->get_component<T>(entity.array_index()) : nullptr;
-    }
-    return nullptr;
-  } */
-
 
   static void register_archetype_to(CallableDescription &query, Archetype *archetype)
   {
@@ -169,7 +156,7 @@ namespace ecs
       register_archetype_to(*system, archetype);
     
   }
-  Archetype *add_archetype(const vector<string_hash> &type_hashes, int capacity, const string &synonim)
+  Archetype *add_archetype(const vector<uint> &type_hashes, int capacity, const string &synonim)
   {
     Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), type_hashes, capacity, synonim);
     core().entityContainer->archetypes.push_back(archetype);
@@ -181,7 +168,7 @@ namespace ecs
 
   
 
-  pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes)
+  pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes)
   {
     Archetype *found_archetype = nullptr;
     int archetype_ind = 0;
@@ -215,7 +202,7 @@ namespace ecs
     {
       size_t templateComponentsCount = blkTemplate->components.size();
     
-      vector<string_hash> typeHashes(templateComponentsCount);
+      vector<uint> typeHashes(templateComponentsCount);
       
       for (uint i = 0; i < templateComponentsCount; ++i)
         typeHashes[i] = blkTemplate->components[i].typeNameHash;
@@ -245,7 +232,7 @@ namespace ecs
     int index = found_archetype->count;
     int archetype_ind = found_archetype->index;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
-    constexpr string_hash eidHash = HashedString(nameOf<EntityId>::value);
+    constexpr uint eidHash = HashedString("EntityId");
     static TypeInfo &eidInfo = *TypeInfo::types()[eidHash];
     list.components.emplace_back(eidInfo, "eid", eid);
     {

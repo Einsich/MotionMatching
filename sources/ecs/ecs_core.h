@@ -3,6 +3,7 @@
 #include <queue>
 #include <functional>
 #include "manager/system_description.h"
+#include "manager/entity_id.h"
 #include "template/blk_template.h"
 namespace ecs
 {
@@ -85,7 +86,7 @@ namespace ecs
     const T & component;
   };
   template<typename T>
-  string_hash component_initializer_hash(const ComponentInitializer<T> &component)
+  uint component_initializer_hash(const ComponentInitializer<T> &component)
   {
     return register_type_description<T>(component.name);
   }
@@ -102,11 +103,11 @@ namespace ecs
       component_initializer_copy<N+1>(data, args...);
   }
   
-  pair<EntityId, Archetype&> add_entity(const vector<string_hash> & type_hashes);
+  pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes);
   template<typename ...Args>
   EntityId create_entity(const ComponentInitializer<Args> &...args)
   {
-    vector<string_hash> typeHashes = 
+    vector<uint> typeHashes = 
       {register_type_description<EntityId>("eid"), component_initializer_hash(args)... };
     auto [eid, archetype] = add_entity(typeHashes);
     vector<void*> data = archetype.get_entity_data(typeHashes);

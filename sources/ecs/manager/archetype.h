@@ -17,13 +17,13 @@ namespace ecs
 
     //after this constructor need to feel components and fullTypeDescriptions correctly
     Archetype(int index, int count, const string &synonim, int type_count);
-    Archetype(int index, const vector<string_hash> &type_hashes, int count, const string &synonim);
-    bool in_archetype(const vector<string_hash> &type_hashes) const;
+    Archetype(int index, const vector<uint> &type_hashes, int count, const string &synonim);
+    bool in_archetype(const vector<uint> &type_hashes) const;
 
     ComponentContainer *get_container(const TypeDescription &type);
     template<typename T>
     ComponentContainer *get_container(const char *name);
-    vector<void*> get_entity_data(const vector<string_hash> &type_hashes);
+    vector<void*> get_entity_data(const vector<uint> &type_hashes);
     void destroy_entity(int index, bool with_swap);
     ~Archetype() = default;
     void copy(const Archetype *src);

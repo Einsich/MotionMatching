@@ -7,7 +7,7 @@ namespace ecs
   ComponentContainer::ComponentContainer():
   data(), typeHash(-1), count(0)
   { }
-  ComponentContainer::ComponentContainer(const TypeInfo &type_info, string_hash type_name_hash, int capacity):
+  ComponentContainer::ComponentContainer(const TypeInfo &type_info, uint type_name_hash, int capacity):
   data((capacity + binSize - 1) >> binPow),
   typeHash(type_info.hashId),
   typeNameHash(type_name_hash),

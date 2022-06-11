@@ -1,5 +1,5 @@
 #include "application_metainfo.h"
-#include "manager/compile_time_string.h"
+#include "utils/compile_time_string.h"
 #include "data_block/data_block_serialization.h"
 
 

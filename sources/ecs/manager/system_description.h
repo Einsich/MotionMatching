@@ -1,12 +1,11 @@
 #pragma once
-#include <iterator>
 #include "archetype.h"
 
 namespace ecs
 {
   struct FunctionArgument
   {
-    string_hash descr;
+    uint descr;
     bool optional = false;
   };
   struct SystemCashedArchetype

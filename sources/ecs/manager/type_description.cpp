@@ -1,9 +1,10 @@
 #include "type_description.h"
 #include "common.h"
+#include <assert.h>
 namespace ecs
 {
  
-  FullTypeDescription::FullTypeDescription(const char *name, string_hash type_hash, string_hash hash):
+  FullTypeDescription::FullTypeDescription(const char *name, uint type_hash, uint hash):
   name(name),
   typeHash(type_hash),hash(hash)
   {
@@ -14,7 +15,7 @@ namespace ecs
     assert(it != TypeInfo::types().end());
     return *it->second;
   }
-  TypeDescription::TypeDescription(string_hash name_hash, string_hash type_hash):
+  TypeDescription::TypeDescription(uint name_hash, uint type_hash):
     typeNameHash(hash(name_hash, type_hash)){}
 
   TypeDescription::TypeDescription(uint type_name_hash):

@@ -2,7 +2,7 @@
 
 #include <string>
 
-typedef uint32_t string_hash;
+typedef uint32_t uint;
 
 static constexpr unsigned int crc_table[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -51,7 +51,7 @@ static constexpr unsigned int crc_table[256] = {
 };
 
 
-constexpr string_hash HashedString(const char *s)
+constexpr uint HashedString(const char *s)
 {
   uint32_t crc = 0xffffffff;
     for (uint32_t i = 0; s[i]; ++i)
@@ -59,7 +59,7 @@ constexpr string_hash HashedString(const char *s)
     return crc ^ 0xffffffff;
 }
 
-constexpr string_hash HashedString(const std::string_view& str)
+constexpr uint HashedString(const std::string_view& str)
 {
   uint32_t crc = 0xffffffff;
     for (uint32_t i = 0; i < str.size(); ++i)

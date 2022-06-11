@@ -1,32 +1,32 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <typeinfo>
 #include "type_info.h"
 #include "core_interface.h"
+#include "string_hash.h"
 
 namespace ecs
 {
   struct FullTypeDescription
   {
     std::string name; 
-    string_hash typeHash, hash;
-    FullTypeDescription(const char *name, string_hash typeHash, string_hash hash);
+    uint typeHash, hash;
+    FullTypeDescription(const char *name, uint typeHash, uint hash);
     FullTypeDescription(){}
     const TypeInfo &get_type_info() const;
   };
   struct TypeDescription
   {
   private:
-    string_hash typeNameHash;
+    uint typeNameHash;
   public:
   
-    constexpr static string_hash hash(string_hash name_hash, string_hash type_hash)
+    constexpr static uint hash(uint name_hash, uint type_hash)
     {
       return name_hash ^ (type_hash * 16397816463u);
     }
-    TypeDescription(string_hash name_hash, string_hash type_hash);
-    TypeDescription(string_hash type_hash);
+    TypeDescription(uint name_hash, uint type_hash);
+    TypeDescription(uint type_hash);
 
     const FullTypeDescription &get_full_description() const;
 
@@ -41,7 +41,7 @@ namespace ecs
   };
 
   template<typename T>
-  string_hash register_type_description(const char *name)
+  uint register_type_description(const char *name)
   {
     if constexpr (is_singleton<T>::value)
     {
@@ -49,8 +49,8 @@ namespace ecs
     }
     else
     {
-      string_hash typeHash = type_hash<T>();
-      string_hash typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
+      uint typeHash = type_hash<T>();
+      uint typeNameHash = TypeDescription::hash(HashedString(name), typeHash);
       auto it = full_description().find(typeNameHash);
       if (it == full_description().end())
       {
@@ -62,7 +62,7 @@ namespace ecs
     }
   }
   template<typename T>
-  constexpr string_hash get_type_description(const char *name)
+  constexpr uint get_type_description(const char *name)
   {
     if constexpr (is_singleton<T>::value)
     {

@@ -55,7 +55,7 @@ namespace ecs
   template<typename T>
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
-    constexpr string_hash hash = HashedString(nameOf<T>::value);
+    uint hash = ecs::type_hash<T>();
     return ComponentInstance(*ecs::TypeInfo::types()[hash], property.name, blk.get<T>(property));
   }
   GET_FUNCTIONS(instantiate, create_instance)
