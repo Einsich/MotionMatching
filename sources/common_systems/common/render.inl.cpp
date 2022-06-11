@@ -183,8 +183,8 @@ void render_collision_func()
   ecs::perform_system(render_collision_descr, render_collision);
 }
 
-void add_global_uniform_handler(const ecs::OnSceneCreated &event);
-void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void add_global_uniform_handler(const ecs::Event &event);
+void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
 }, {
@@ -193,17 +193,17 @@ ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_
 {},
 add_global_uniform_handler, add_global_uniform_singl_handler, ecs::tags::all);
 
-void add_global_uniform_handler(const ecs::OnSceneCreated &event)
+void add_global_uniform_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, add_global_uniform_descr, add_global_uniform);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, add_global_uniform_descr, add_global_uniform);
 }
-void add_global_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, add_global_uniform_descr, eid, add_global_uniform);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, add_global_uniform_descr, eid, add_global_uniform);
 }
 
-void mesh_loader_handler(const ecs::OnEntityCreated &event);
-void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void mesh_loader_handler(const ecs::Event &event);
+void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
@@ -213,13 +213,13 @@ ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
 {},
 mesh_loader_handler, mesh_loader_singl_handler, ecs::tags::all);
 
-void mesh_loader_handler(const ecs::OnEntityCreated &event)
+void mesh_loader_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, mesh_loader_descr, mesh_loader);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, mesh_loader_descr, mesh_loader);
 }
-void mesh_loader_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, mesh_loader_descr, eid, mesh_loader);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, mesh_loader_descr, eid, mesh_loader);
 }
 
 

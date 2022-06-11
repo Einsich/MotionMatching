@@ -15,8 +15,8 @@ void update_material(Callable lambda)
 }
 
 
-void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event);
-void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::EntityId eid);
+void reload_shaders_handler(const ecs::Event &event);
+void reload_shaders_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_descr("reload_shaders", {
 }, {
@@ -25,17 +25,17 @@ ecs::EventDescription<KeyDownEvent<SDLK_F5>> reload_shaders_descr("reload_shader
 {},
 reload_shaders_handler, reload_shaders_singl_handler, ecs::tags::all);
 
-void reload_shaders_handler(const KeyDownEvent<SDLK_F5> &event)
+void reload_shaders_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, reload_shaders_descr, reload_shaders);
+  ecs::perform_event((const KeyDownEvent<SDLK_F5>&)event, reload_shaders_descr, reload_shaders);
 }
-void reload_shaders_singl_handler(const KeyDownEvent<SDLK_F5> &event, ecs::EntityId eid)
+void reload_shaders_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, reload_shaders_descr, eid, reload_shaders);
+  ecs::perform_event((const KeyDownEvent<SDLK_F5>&)event, reload_shaders_descr, eid, reload_shaders);
 }
 
-void load_directional_light_handler(const ecs::OnEntityCreated &event);
-void load_directional_light_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void load_directional_light_handler(const ecs::Event &event);
+void load_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> load_directional_light_descr("load_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
@@ -45,17 +45,17 @@ ecs::EventDescription<ecs::OnEntityCreated> load_directional_light_descr("load_d
 {},
 load_directional_light_handler, load_directional_light_singl_handler, ecs::tags::all);
 
-void load_directional_light_handler(const ecs::OnEntityCreated &event)
+void load_directional_light_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, load_directional_light_descr, load_directional_light);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, load_directional_light_descr, load_directional_light);
 }
-void load_directional_light_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void load_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, load_directional_light_descr, eid, load_directional_light);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, load_directional_light_descr, eid, load_directional_light);
 }
 
-void reload_directional_light_handler(const ecs::OnEntityEdited &event);
-void reload_directional_light_singl_handler(const ecs::OnEntityEdited &event, ecs::EntityId eid);
+void reload_directional_light_handler(const ecs::Event &event);
+void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityEdited> reload_directional_light_descr("reload_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
@@ -65,13 +65,13 @@ ecs::EventDescription<ecs::OnEntityEdited> reload_directional_light_descr("reloa
 {},
 reload_directional_light_handler, reload_directional_light_singl_handler, ecs::tags::all);
 
-void reload_directional_light_handler(const ecs::OnEntityEdited &event)
+void reload_directional_light_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, reload_directional_light_descr, reload_directional_light);
+  ecs::perform_event((const ecs::OnEntityEdited&)event, reload_directional_light_descr, reload_directional_light);
 }
-void reload_directional_light_singl_handler(const ecs::OnEntityEdited &event, ecs::EntityId eid)
+void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, reload_directional_light_descr, eid, reload_directional_light);
+  ecs::perform_event((const ecs::OnEntityEdited&)event, reload_directional_light_descr, eid, reload_directional_light);
 }
 
 

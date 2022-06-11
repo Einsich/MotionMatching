@@ -20,8 +20,8 @@ void recorder_ui_func()
   ecs::perform_system(recorder_ui_descr, recorder_ui);
 }
 
-void listener_keybord_handler(const KeyEventAnyActionKey &event);
-void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::EntityId eid);
+void listener_keybord_handler(const ecs::Event &event);
+void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_keybord", {
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
@@ -34,17 +34,17 @@ ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_key
 {},
 listener_keybord_handler, listener_keybord_singl_handler, ecs::tags::all);
 
-void listener_keybord_handler(const KeyEventAnyActionKey &event)
+void listener_keybord_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, listener_keybord_descr, listener_keybord);
+  ecs::perform_event((const KeyEventAnyActionKey&)event, listener_keybord_descr, listener_keybord);
 }
-void listener_keybord_singl_handler(const KeyEventAnyActionKey &event, ecs::EntityId eid)
+void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, listener_keybord_descr, eid, listener_keybord);
+  ecs::perform_event((const KeyEventAnyActionKey&)event, listener_keybord_descr, eid, listener_keybord);
 }
 
-void listener_mousemove_handler(const MouseMoveEvent &event);
-void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::EntityId eid);
+void listener_mousemove_handler(const ecs::Event &event);
+void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemove", {
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
@@ -57,13 +57,13 @@ ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemo
 {},
 listener_mousemove_handler, listener_mousemove_singl_handler, ecs::tags::all);
 
-void listener_mousemove_handler(const MouseMoveEvent &event)
+void listener_mousemove_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, listener_mousemove_descr, listener_mousemove);
+  ecs::perform_event((const MouseMoveEvent&)event, listener_mousemove_descr, listener_mousemove);
 }
-void listener_mousemove_singl_handler(const MouseMoveEvent &event, ecs::EntityId eid)
+void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, listener_mousemove_descr, eid, listener_mousemove);
+  ecs::perform_event((const MouseMoveEvent&)event, listener_mousemove_descr, eid, listener_mousemove);
 }
 
 

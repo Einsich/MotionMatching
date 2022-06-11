@@ -36,8 +36,8 @@ void exit_menu_button_func()
   ecs::perform_system(exit_menu_button_descr, exit_menu_button);
 }
 
-void setup_camera_handler(const ecs::OnEntityCreated &event);
-void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void setup_camera_handler(const ecs::Event &event);
+void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
@@ -50,13 +50,13 @@ ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
 {},
 setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
 
-void setup_camera_handler(const ecs::OnEntityCreated &event)
+void setup_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, setup_camera_descr, setup_camera);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, setup_camera);
 }
-void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, setup_camera_descr, eid, setup_camera);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, eid, setup_camera);
 }
 
 

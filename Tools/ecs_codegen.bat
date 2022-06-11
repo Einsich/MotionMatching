@@ -3,5 +3,5 @@ set PROJECT=%1
 
 set CWD=%cd%
 cd ECSCodeGen
-ECSCodeGen.exe %CWD%/sources/common_systems %CWD%/sources/%PROJECT%
+ECSCodeGen-rel.exe %CWD%/sources/common_systems %CWD%/sources/%PROJECT%
 cd ..

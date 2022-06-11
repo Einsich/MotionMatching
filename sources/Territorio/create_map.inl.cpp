@@ -18,8 +18,8 @@ void spawn_player_query(Callable lambda)
 }
 
 
-void create_map_handler(const ecs::OnEntityCreated &event);
-void create_map_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void create_map_handler(const ecs::Event &event);
+void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> create_map_descr("create_map", {
   {ecs::get_type_description<int>("width"), false},
@@ -36,13 +36,13 @@ ecs::EventDescription<ecs::OnEntityCreated> create_map_descr("create_map", {
 {},
 create_map_handler, create_map_singl_handler, ecs::tags::all);
 
-void create_map_handler(const ecs::OnEntityCreated &event)
+void create_map_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, create_map_descr, create_map);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, create_map_descr, create_map);
 }
-void create_map_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, create_map_descr, eid, create_map);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, create_map_descr, eid, create_map);
 }
 
 

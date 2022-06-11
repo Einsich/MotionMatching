@@ -55,8 +55,8 @@ namespace ecs
   struct EventDescription final : CallableDescription
   {
     static_assert(std::is_base_of<Event, E>::value);
-    typedef  void (*EventHandler)(const E&);
-    typedef  void (*SingleEventHandler)(const E&, ecs::EntityId);
+    typedef  void (*EventHandler)(const Event&);
+    typedef  void (*SingleEventHandler)(const Event&, ecs::EntityId);
     EventHandler broadcastEventHandler;
     SingleEventHandler unicastEventHandler;
     EventDescription(const char *name, 

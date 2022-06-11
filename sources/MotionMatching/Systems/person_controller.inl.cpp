@@ -22,8 +22,8 @@ void peson_controller_update_func()
   ecs::perform_system(peson_controller_update_descr, peson_controller_update);
 }
 
-void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event);
-void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent &event, ecs::EntityId eid);
+void controller_mouse_move_handler_handler(const ecs::Event &event);
+void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_descr("controller_mouse_move_handler", {
   {ecs::get_type_description<PersonController>("personController"), false},
@@ -34,17 +34,17 @@ ecs::EventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_de
 {},
 controller_mouse_move_handler_handler, controller_mouse_move_handler_singl_handler, ecs::tags::all);
 
-void controller_mouse_move_handler_handler(const ControllerMouseMoveEvent &event)
+void controller_mouse_move_handler_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, controller_mouse_move_handler_descr, controller_mouse_move_handler);
+  ecs::perform_event((const ControllerMouseMoveEvent&)event, controller_mouse_move_handler_descr, controller_mouse_move_handler);
 }
-void controller_mouse_move_handler_singl_handler(const ControllerMouseMoveEvent &event, ecs::EntityId eid)
+void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, controller_mouse_move_handler_descr, eid, controller_mouse_move_handler);
+  ecs::perform_event((const ControllerMouseMoveEvent&)event, controller_mouse_move_handler_descr, eid, controller_mouse_move_handler);
 }
 
-void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &event);
-void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent &event, ecs::EntityId eid);
+void controller_crouch_event_handler_handler(const ecs::Event &event);
+void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_descr("controller_crouch_event_handler", {
   {ecs::get_type_description<PersonController>("personController"), false}
@@ -54,13 +54,13 @@ ecs::EventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_d
 {},
 controller_crouch_event_handler_handler, controller_crouch_event_handler_singl_handler, ecs::tags::all);
 
-void controller_crouch_event_handler_handler(const ControllerKeyBoardEvent &event)
+void controller_crouch_event_handler_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, controller_crouch_event_handler_descr, controller_crouch_event_handler);
+  ecs::perform_event((const ControllerKeyBoardEvent&)event, controller_crouch_event_handler_descr, controller_crouch_event_handler);
 }
-void controller_crouch_event_handler_singl_handler(const ControllerKeyBoardEvent &event, ecs::EntityId eid)
+void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, controller_crouch_event_handler_descr, eid, controller_crouch_event_handler);
+  ecs::perform_event((const ControllerKeyBoardEvent&)event, controller_crouch_event_handler_descr, eid, controller_crouch_event_handler);
 }
 
 

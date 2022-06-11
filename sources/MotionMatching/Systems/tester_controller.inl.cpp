@@ -62,8 +62,8 @@ void test_count_func()
   ecs::perform_system(test_count_descr, test_count);
 }
 
-void start_test_handler(const ecs::OnEntityCreated &event);
-void start_test_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void start_test_handler(const ecs::Event &event);
+void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
@@ -77,13 +77,13 @@ ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
 {},
 start_test_handler, start_test_singl_handler, ecs::tags::all);
 
-void start_test_handler(const ecs::OnEntityCreated &event)
+void start_test_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, start_test_descr, start_test);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, start_test_descr, start_test);
 }
-void start_test_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, start_test_descr, eid, start_test);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, start_test_descr, eid, start_test);
 }
 
 

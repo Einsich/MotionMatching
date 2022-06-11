@@ -202,8 +202,8 @@ void prune_cache6_func()
   ecs::perform_system(prune_cache6_descr, prune_cache6);
 }
 
-void dag_init_handler(const ecs::OnSceneCreated &event);
-void dag_init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void dag_init_handler(const ecs::Event &event);
+void dag_init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> dag_init_descr("dag_init", {
 }, {
@@ -212,13 +212,13 @@ ecs::EventDescription<ecs::OnSceneCreated> dag_init_descr("dag_init", {
 {},
 dag_init_handler, dag_init_singl_handler, ecs::tags::all);
 
-void dag_init_handler(const ecs::OnSceneCreated &event)
+void dag_init_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, dag_init_descr, dag_init);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, dag_init_descr, dag_init);
 }
-void dag_init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void dag_init_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, dag_init_descr, eid, dag_init);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, dag_init_descr, eid, dag_init);
 }
 
 

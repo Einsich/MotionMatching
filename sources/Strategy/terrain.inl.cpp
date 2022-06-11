@@ -36,8 +36,8 @@ void set_map_render_data_func()
   ecs::perform_system(set_map_render_data_descr, set_map_render_data);
 }
 
-void add_map_uniform_handler(const ecs::OnSceneCreated &event);
-void add_map_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void add_map_uniform_handler(const ecs::Event &event);
+void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> add_map_uniform_descr("add_map_uniform", {
 }, {
@@ -46,17 +46,17 @@ ecs::EventDescription<ecs::OnSceneCreated> add_map_uniform_descr("add_map_unifor
 {},
 add_map_uniform_handler, add_map_uniform_singl_handler, ecs::tags::all);
 
-void add_map_uniform_handler(const ecs::OnSceneCreated &event)
+void add_map_uniform_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, add_map_uniform_descr, add_map_uniform);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, add_map_uniform_descr, add_map_uniform);
 }
-void add_map_uniform_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, add_map_uniform_descr, eid, add_map_uniform);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, add_map_uniform_descr, eid, add_map_uniform);
 }
 
-void create_terrain_handler(const ecs::OnSceneCreated &event);
-void create_terrain_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void create_terrain_handler(const ecs::Event &event);
+void create_terrain_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain", {
   {ecs::get_type_description<Asset<Texture2D>>("heights_texture"), false},
@@ -89,13 +89,13 @@ ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain"
 {},
 create_terrain_handler, create_terrain_singl_handler, ecs::tags::all);
 
-void create_terrain_handler(const ecs::OnSceneCreated &event)
+void create_terrain_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, create_terrain_descr, create_terrain);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, create_terrain_descr, create_terrain);
 }
-void create_terrain_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void create_terrain_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, create_terrain_descr, eid, create_terrain);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, create_terrain_descr, eid, create_terrain);
 }
 
 

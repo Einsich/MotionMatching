@@ -59,8 +59,8 @@ void check_mouse_over_ui_func()
   ecs::perform_system(check_mouse_over_ui_descr, check_mouse_over_ui);
 }
 
-void start_game_handler(const KeyDownEvent<SDLK_RETURN> &event);
-void start_game_singl_handler(const KeyDownEvent<SDLK_RETURN> &event, ecs::EntityId eid);
+void start_game_handler(const ecs::Event &event);
+void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<KeyDownEvent<SDLK_RETURN>> start_game_descr("start_game", {
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
@@ -70,17 +70,17 @@ ecs::EventDescription<KeyDownEvent<SDLK_RETURN>> start_game_descr("start_game", 
 {},
 start_game_handler, start_game_singl_handler, ecs::tags::all);
 
-void start_game_handler(const KeyDownEvent<SDLK_RETURN> &event)
+void start_game_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, start_game_descr, start_game);
+  ecs::perform_event((const KeyDownEvent<SDLK_RETURN>&)event, start_game_descr, start_game);
 }
-void start_game_singl_handler(const KeyDownEvent<SDLK_RETURN> &event, ecs::EntityId eid)
+void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, start_game_descr, eid, start_game);
+  ecs::perform_event((const KeyDownEvent<SDLK_RETURN>&)event, start_game_descr, eid, start_game);
 }
 
-void select_spawn_point_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event);
-void select_spawn_point_singl_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event, ecs::EntityId eid);
+void select_spawn_point_handler(const ecs::Event &event);
+void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseButtonDownEvent<MouseButton::RightButton>> select_spawn_point_descr("select_spawn_point", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
@@ -91,17 +91,17 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::RightButton>> select_spa
 {},
 select_spawn_point_handler, select_spawn_point_singl_handler, ecs::tags::all);
 
-void select_spawn_point_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event)
+void select_spawn_point_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, select_spawn_point_descr, select_spawn_point);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::RightButton>&)event, select_spawn_point_descr, select_spawn_point);
 }
-void select_spawn_point_singl_handler(const MouseButtonDownEvent<MouseButton::RightButton> &event, ecs::EntityId eid)
+void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, select_spawn_point_descr, eid, select_spawn_point);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::RightButton>&)event, select_spawn_point_descr, eid, select_spawn_point);
 }
 
-void select_invasion_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event);
-void select_invasion_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid);
+void select_invasion_handler(const ecs::Event &event);
+void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> select_invasion_descr("select_invasion", {
   {ecs::get_type_description<uint>("landIndex"), false},
@@ -117,13 +117,13 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> select_inva
 {},
 select_invasion_handler, select_invasion_singl_handler, ecs::tags::all);
 
-void select_invasion_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
+void select_invasion_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, select_invasion_descr, select_invasion);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, select_invasion_descr, select_invasion);
 }
-void select_invasion_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid)
+void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, select_invasion_descr, eid, select_invasion);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, select_invasion_descr, eid, select_invasion);
 }
 
 

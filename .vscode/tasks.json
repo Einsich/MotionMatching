@@ -22,7 +22,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "${workspaceFolder}/ECSCodeGen/ECSCodeGen.exe",
+            "command": "${workspaceFolder}/ECSCodeGen/ECSCodeGen-rel.exe",
             "args": [
                 "${workspaceFolder}/sources/common_systems",
                 "${workspaceFolder}/sources/ECSbenchmark",

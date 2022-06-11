@@ -46,8 +46,8 @@ void check_winner_func()
   ecs::perform_system(check_winner_descr, check_winner);
 }
 
-void collect_kills_handler(const KillTargetEvent &event);
-void collect_kills_singl_handler(const KillTargetEvent &event, ecs::EntityId eid);
+void collect_kills_handler(const ecs::Event &event);
+void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<KillTargetEvent> collect_kills_descr("collect_kills", {
   {ecs::get_type_description<int>("killsCount"), false},
@@ -58,13 +58,13 @@ ecs::EventDescription<KillTargetEvent> collect_kills_descr("collect_kills", {
 {},
 collect_kills_handler, collect_kills_singl_handler, ecs::tags::all);
 
-void collect_kills_handler(const KillTargetEvent &event)
+void collect_kills_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, collect_kills_descr, collect_kills);
+  ecs::perform_event((const KillTargetEvent&)event, collect_kills_descr, collect_kills);
 }
-void collect_kills_singl_handler(const KillTargetEvent &event, ecs::EntityId eid)
+void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, collect_kills_descr, eid, collect_kills);
+  ecs::perform_event((const KillTargetEvent&)event, collect_kills_descr, eid, collect_kills);
 }
 
 

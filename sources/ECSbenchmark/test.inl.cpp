@@ -48,8 +48,8 @@ void vector_pointers_update_func()
   ecs::perform_system(vector_pointers_update_descr, vector_pointers_update);
 }
 
-void init_handler(const ecs::OnSceneCreated &event);
-void init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid);
+void init_handler(const ecs::Event &event);
+void init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnSceneCreated> init_descr("init", {
 }, {
@@ -58,13 +58,13 @@ ecs::EventDescription<ecs::OnSceneCreated> init_descr("init", {
 {},
 init_handler, init_singl_handler, ecs::tags::all);
 
-void init_handler(const ecs::OnSceneCreated &event)
+void init_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, init_descr, init);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, init_descr, init);
 }
-void init_singl_handler(const ecs::OnSceneCreated &event, ecs::EntityId eid)
+void init_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, init_descr, eid, init);
+  ecs::perform_event((const ecs::OnSceneCreated&)event, init_descr, eid, init);
 }
 
 

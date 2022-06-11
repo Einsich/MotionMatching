@@ -2,8 +2,8 @@
 #include <ecs_perform.h>
 //Code-generator production
 
-void init_game_handler(const StartGameEvent &event);
-void init_game_singl_handler(const StartGameEvent &event, ecs::EntityId eid);
+void init_game_handler(const ecs::Event &event);
+void init_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<StartGameEvent> init_game_descr("init_game", {
   {ecs::get_type_description<SpriteFactory>("sf"), false},
@@ -14,13 +14,13 @@ ecs::EventDescription<StartGameEvent> init_game_descr("init_game", {
 {},
 init_game_handler, init_game_singl_handler, ecs::tags::all);
 
-void init_game_handler(const StartGameEvent &event)
+void init_game_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, init_game_descr, init_game);
+  ecs::perform_event((const StartGameEvent&)event, init_game_descr, init_game);
 }
-void init_game_singl_handler(const StartGameEvent &event, ecs::EntityId eid)
+void init_game_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, init_game_descr, eid, init_game);
+  ecs::perform_event((const StartGameEvent&)event, init_game_descr, eid, init_game);
 }
 
 

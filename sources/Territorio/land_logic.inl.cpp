@@ -151,8 +151,8 @@ void border_update_func()
   ecs::perform_system(border_update_descr, border_update);
 }
 
-void game_started_handler(const OnGameStarted &event);
-void game_started_singl_handler(const OnGameStarted &event, ecs::EntityId eid);
+void game_started_handler(const ecs::Event &event);
+void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
   {ecs::get_type_description<uint>("forces"), false},
@@ -165,13 +165,13 @@ ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
 {},
 game_started_handler, game_started_singl_handler, ecs::tags::all);
 
-void game_started_handler(const OnGameStarted &event)
+void game_started_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, game_started_descr, game_started);
+  ecs::perform_event((const OnGameStarted&)event, game_started_descr, game_started);
 }
-void game_started_singl_handler(const OnGameStarted &event, ecs::EntityId eid)
+void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, game_started_descr, eid, game_started);
+  ecs::perform_event((const OnGameStarted&)event, game_started_descr, eid, game_started);
 }
 
 

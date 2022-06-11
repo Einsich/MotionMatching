@@ -488,11 +488,11 @@ void process_inl_file(const fs::path& path)
     std::string event_singl_handler = event.sys_name + "_singl_handler";
     std::string event_type = event.args[0].type;
     write(outFile,
-    "void %s(const %s &event);\n"
-    "void %s(const %s &event, ecs::EntityId eid);\n\n"
+    "void %s(const ecs::Event &event);\n"
+    "void %s(const ecs::Event &event, ecs::EntityId eid);\n\n"
     "ecs::EventDescription<%s> %s(\"%s\", {\n",
-    event_handler.c_str(), event_type.c_str(),
-    event_singl_handler.c_str(), event_type.c_str(),
+    event_handler.c_str(),
+    event_singl_handler.c_str(),
     event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
     fill_arguments(outFile, event, true);
@@ -504,16 +504,16 @@ void process_inl_file(const fs::path& path)
     ",\n%s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
 
     write(outFile,
-    "void %s(const %s &event)\n"
+    "void %s(const ecs::Event &event)\n"
     "{\n"
-    "  ecs::perform_event(event, %s, %s);\n"
+    "  ecs::perform_event((const %s&)event, %s, %s);\n"
     "}\n",
     event_handler.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
 
     write(outFile,
-    "void %s(const %s &event, ecs::EntityId eid)\n"
+    "void %s(const ecs::Event &event, ecs::EntityId eid)\n"
     "{\n"
-    "  ecs::perform_event(event, %s, eid, %s);\n"
+    "  ecs::perform_event((const %s&)event, %s, eid, %s);\n"
     "}\n\n",
     event_singl_handler.c_str(), event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
   }

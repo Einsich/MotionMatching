@@ -19,8 +19,8 @@ void camera_lerp_func()
   ecs::perform_system(camera_lerp_descr, camera_lerp);
 }
 
-void setup_camera_handler(const ecs::OnEntityCreated &event);
-void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid);
+void setup_camera_handler(const ecs::Event &event);
+void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
@@ -38,17 +38,17 @@ ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
 {},
 setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
 
-void setup_camera_handler(const ecs::OnEntityCreated &event)
+void setup_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, setup_camera_descr, setup_camera);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, setup_camera);
 }
-void setup_camera_singl_handler(const ecs::OnEntityCreated &event, ecs::EntityId eid)
+void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, setup_camera_descr, eid, setup_camera);
+  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, eid, setup_camera);
 }
 
-void change_zoom_handler(const MouseWheelEvent &event);
-void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid);
+void change_zoom_handler(const ecs::Event &event);
+void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
@@ -61,17 +61,17 @@ ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
 {},
 change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
 
-void change_zoom_handler(const MouseWheelEvent &event)
+void change_zoom_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, change_zoom_descr, change_zoom);
+  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, change_zoom);
 }
-void change_zoom_singl_handler(const MouseWheelEvent &event, ecs::EntityId eid)
+void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, change_zoom_descr, eid, change_zoom);
+  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, eid, change_zoom);
 }
 
-void move_camera_handler(const MouseMoveEvent &event);
-void move_camera_singl_handler(const MouseMoveEvent &event, ecs::EntityId eid);
+void move_camera_handler(const ecs::Event &event);
+void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseMoveEvent> move_camera_descr("move_camera", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
@@ -84,17 +84,17 @@ ecs::EventDescription<MouseMoveEvent> move_camera_descr("move_camera", {
 {},
 move_camera_handler, move_camera_singl_handler, ecs::tags::all);
 
-void move_camera_handler(const MouseMoveEvent &event)
+void move_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, move_camera_descr, move_camera);
+  ecs::perform_event((const MouseMoveEvent&)event, move_camera_descr, move_camera);
 }
-void move_camera_singl_handler(const MouseMoveEvent &event, ecs::EntityId eid)
+void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, move_camera_descr, eid, move_camera);
+  ecs::perform_event((const MouseMoveEvent&)event, move_camera_descr, eid, move_camera);
 }
 
-void lock_unlock_camera_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event);
-void lock_unlock_camera_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid);
+void lock_unlock_camera_handler(const ecs::Event &event);
+void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> lock_unlock_camera_descr("lock_unlock_camera", {
   {ecs::get_type_description<bool>("cameraLocked"), false},
@@ -105,13 +105,13 @@ ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> lock_unlock
 {},
 lock_unlock_camera_handler, lock_unlock_camera_singl_handler, ecs::tags::all);
 
-void lock_unlock_camera_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event)
+void lock_unlock_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event(event, lock_unlock_camera_descr, lock_unlock_camera);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, lock_unlock_camera_descr, lock_unlock_camera);
 }
-void lock_unlock_camera_singl_handler(const MouseButtonDownEvent<MouseButton::LeftButton> &event, ecs::EntityId eid)
+void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event(event, lock_unlock_camera_descr, eid, lock_unlock_camera);
+  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, lock_unlock_camera_descr, eid, lock_unlock_camera);
 }
 
 
