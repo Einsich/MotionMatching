@@ -12,10 +12,6 @@ namespace ecs
   {
     core().systems.push_back(system_description);
   }
-  void add_query(QueryDescription *query_description)
-  {
-    core().queries.push_back(query_description);
-  }
 
 
 

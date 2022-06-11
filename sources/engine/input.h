@@ -3,6 +3,7 @@
 #include <map>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>
+#include "ecs_event.h"
 enum class MouseButton
 {
   LeftButton,
@@ -16,14 +17,14 @@ enum class MouseAction
 };
 
 template<MouseButton buttonType>
-struct MouseButtonDownEvent
+struct MouseButtonDownEvent : public ecs::Event
 {
   MouseAction action;
   int x, y;
   float time;
 };
 
-struct MouseClickEvent
+struct MouseClickEvent : public ecs::Event
 {
   MouseButton buttonType;
   MouseAction action;
@@ -31,13 +32,13 @@ struct MouseClickEvent
   float time;
 };
 
-struct MouseMoveEvent
+struct MouseMoveEvent : public ecs::Event
 {
   int x, y;
   int dx, dy;
   float time;
 };
-struct MouseWheelEvent
+struct MouseWheelEvent : public ecs::Event
 {
   int wheel;
   float time;
@@ -51,34 +52,34 @@ enum class KeyAction
 };
 
 template<SDL_Keycode Key>
-struct KeyDownEvent
+struct KeyDownEvent : public ecs::Event
 {
   float time;
 };
 template<SDL_Keycode Key>
-struct KeyUpEvent
+struct KeyUpEvent : public ecs::Event
 {
   float time;
 };
 template<SDL_Keycode Key>
-struct KeyPressEvent
+struct KeyPressEvent : public ecs::Event
 {
   float time;
 };
 template<SDL_Keycode Key>
-struct KeyEventAnyAction
+struct KeyEventAnyAction : public ecs::Event
 {
   KeyAction action;
   float time;
 };
 template<KeyAction Action>
-struct KeyEventAnyKey
+struct KeyEventAnyKey : public ecs::Event
 {
   SDL_Keycode keycode;
   float time;
 };
 
-struct KeyEventAnyActionKey
+struct KeyEventAnyActionKey : public ecs::Event
 {
   SDL_Keycode keycode;
   KeyAction action;

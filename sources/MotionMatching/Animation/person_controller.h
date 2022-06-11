@@ -2,6 +2,7 @@
 #include "3dmath.h"
 #include "AnimationDatabase/animation_feature.h"
 #include "serialization/reflection.h"
+#include <ecs_event.h>
 class AnimationPlayer;
 class Transform;
 class PersonController
@@ -26,12 +27,12 @@ public:
 };
 struct KeyEventAnyActionKey;
 struct MouseMoveEvent;
-struct ControllerKeyBoardEvent
+struct ControllerKeyBoardEvent : public ecs::Event
 {
   KeyEventAnyActionKey e;
   ControllerKeyBoardEvent(const KeyEventAnyActionKey &e):e(e){}
 };
-struct ControllerMouseMoveEvent
+struct ControllerMouseMoveEvent : public ecs::Event
 {
   MouseMoveEvent e;
   ControllerMouseMoveEvent(const MouseMoveEvent &e):e(e){}

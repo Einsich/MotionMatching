@@ -1,11 +1,12 @@
 #pragma once
 #include <render/sprite.h>
+#include <ecs_event.h>
 
-struct LoadSceneEvent{};
+struct LoadSceneEvent : public ecs::Event{};
 
-struct StartGameEvent{};
+struct StartGameEvent : public ecs::Event{};
 
-struct KillTargetEvent{};
+struct KillTargetEvent : public ecs::Event{};
 
 constexpr int FigureCount = 6;
 struct SpriteFactory : ecs::Singleton

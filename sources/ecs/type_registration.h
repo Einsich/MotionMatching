@@ -43,6 +43,9 @@ namespace ecs{\
   template<>\
   const char* type_name<TYPE>()\
   { return #TYPE; }\
+  template<>\
+  const ecs::TypeInfo &type_info<TYPE>()\
+  { return type_##VAR_NAME; }\
 }
 
 #define ECS_REGISTER_TYPE_AND_VECTOR(VAR_NAME, TYPE, TRIVIAL_COPY, TRIVIAL_MOVE)\

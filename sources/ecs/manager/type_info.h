@@ -58,4 +58,7 @@ namespace ecs
 
   template<typename T>
   const char* type_name();
+
+  template<typename T>
+  const TypeInfo &type_info();
 }

@@ -62,15 +62,13 @@ namespace ecs
   void Core::register_allowed_callable()
   {
     systems.clear();
-    queries.clear();
     event_queries.clear();
     for (const auto &cleaner : events_cleaners)
       cleaner();
     for (CallableDescription *callable : all_callable)
     {
       if ((callable->tags & applicationTags) == callable->tags &&
-        (callable->isQuery ||
-          (callable->scenes.empty() && currentSceneTags != "editor") || 
+        ((callable->scenes.empty() && currentSceneTags != "editor") || 
         std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)
           != callable->scenes.end()))
           callable->registration();
@@ -83,7 +81,7 @@ namespace ecs
   void Core::update_systems_subscribes()
   {
     core().events = {};
-    for (QueryDescription *query: core().queries)
+    for (QueryDescription *query: ecs::all_queries())
       query->archetypes.clear();
     for (SystemDescription *system: core().systems)
       system->archetypes.clear();
@@ -148,7 +146,7 @@ namespace ecs
       debug_log("  %s %s",cppType.name.c_str(), ecsType.name.c_str());
     }
 #endif
-    for (QueryDescription *query: core().queries)
+    for (QueryDescription *query: ecs::all_queries())
       register_archetype_to(*query, archetype);
     for (SystemDescription *system: core().systems)
       register_archetype_to(*system, archetype);
@@ -232,8 +230,9 @@ namespace ecs
     int index = found_archetype->count;
     int archetype_ind = found_archetype->index;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
-    constexpr uint eidHash = HashedString("EntityId");
-    static TypeInfo &eidInfo = *TypeInfo::types()[eidHash];
+
+    const TypeInfo &eidInfo = ecs::type_info<EntityId>();
+
     list.components.emplace_back(eidInfo, "eid", eid);
     {
       const vector<ComponentInstance> &template_list = blkTemplate->components;

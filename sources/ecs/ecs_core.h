@@ -7,16 +7,17 @@
 #include "template/blk_template.h"
 namespace ecs
 {
+  struct Event;
   template<typename E>
   struct EventDescription;
 
   struct EntityContainer;
+  std::vector<QueryDescription*> &all_queries();
   struct Core
   {
     std::unordered_map<uint, FullTypeDescription> types;
     std::vector<CallableDescription*> all_callable;
     std::vector<SystemDescription*> systems;
-    std::vector<QueryDescription*> queries;
     std::vector<CallableDescription*> event_queries;
     EntityContainer *entityContainer;
     std::vector<std::function<void()>> events_cleaners;
@@ -53,6 +54,7 @@ namespace ecs
   template<typename E>
   struct EventDescription final : CallableDescription
   {
+    static_assert(std::is_base_of<Event, E>::value);
     typedef  void (*EventHandler)(const E&);
     typedef  void (*SingleEventHandler)(const E&, ecs::EntityId);
     EventHandler broadcastEventHandler;

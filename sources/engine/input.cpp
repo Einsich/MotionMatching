@@ -56,11 +56,11 @@ void Input::event_process(const SDL_KeyboardEvent& event, float time)
   if (!eventable)
     return;
 
-  ecs::send_event(KeyEventAnyActionKey{key, action, time});
-  #define MACRO(key, Action) case key: ecs::send_event(Key## Action ##Event<key>{time}); break;
+  ecs::send_event(KeyEventAnyActionKey{{}, key, action, time});
+  #define MACRO(key, Action) case key: ecs::send_event(Key## Action ##Event<key>{{}, time}); break;
 
   #define KEY_ACTION_CASE(Action) case KeyAction::Action: \
-  ecs::send_event(KeyEventAnyKey<KeyAction::Action>{key, time}); \
+  ecs::send_event(KeyEventAnyKey<KeyAction::Action>{{}, key, time}); \
     switch (key) { \
       KEY_CODE_SWITCH(Action) \
       default: debug_error("KeyAction::" #Action " unknown keyCode %d", key); break;} break; 
@@ -74,7 +74,7 @@ void Input::event_process(const SDL_KeyboardEvent& event, float time)
   default:debug_error("unknown KeyAction %d", (int)action);break;
   }
   #undef MACRO
-  #define MACRO(Key, Action) case Key: ecs::send_event(KeyEventAnyAction<Key>{action, time}); break;
+  #define MACRO(Key, Action) case Key: ecs::send_event(KeyEventAnyAction<Key>{{}, action, time}); break;
   switch (key)
   {
     KEY_CODE_SWITCH(_)
@@ -104,12 +104,12 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
   }
   if (!eventable)
     return;
-  ecs::send_event(MouseClickEvent{button, action, x, y, time});
+  ecs::send_event(MouseClickEvent{{}, button, action, x, y, time});
 
   #define BUTTON_SWITCH(Action) \
     MACRO(LeftButton, Action) MACRO(RightButton, Action) MACRO(MiddleButton, Action)
   
-  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseButtonDownEvent<MouseButton::Button>{action, x, y, time}); break;
+  #define MACRO(Button, Action) case MouseButton::Button: ecs::send_event(MouseButtonDownEvent<MouseButton::Button>{{}, action, x, y, time}); break;
   switch (button)
   {
     BUTTON_SWITCH(_)
@@ -119,7 +119,7 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
   if (eventable)
-    ecs::send_event(MouseMoveEvent {event.x, event.y, event.xrel, event.yrel, time});
+    ecs::send_event(MouseMoveEvent {{}, event.x, event.y, event.xrel, event.yrel, time});
 }
 void Input::event_process(const SDL_MouseWheelEvent& event, float time)
 {
@@ -137,7 +137,7 @@ void Input::event_process(const SDL_MouseWheelEvent& event, float time)
   
   wheelData.lastTime = Time::time();
   if (eventable)
-    ecs::send_event(MouseWheelEvent{wheel, time});
+    ecs::send_event(MouseWheelEvent{{}, wheel, time});
 }
 
 float Input::get_key_impl(SDL_Keycode keycode, float reaction_time)

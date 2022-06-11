@@ -33,6 +33,10 @@ namespace ecs
       std::vector<std::string> &&after,
       uint tags);
     virtual void registration() = 0;
+    CallableDescription(const CallableDescription &) = delete;
+    CallableDescription(CallableDescription &&) = delete;
+    CallableDescription& operator= (const CallableDescription &) = delete;
+    CallableDescription& operator= (CallableDescription &&) = delete;
   };
   struct QueryDescription final : CallableDescription
   {

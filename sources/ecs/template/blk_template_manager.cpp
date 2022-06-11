@@ -2,6 +2,7 @@
 #include "serialization/serialization.h"
 #include "application/application_data.h"
 #include "data_block/data_block.h"
+#include "manager/entity_id.h"
 #include <filesystem>
 #include <map>
 namespace fs = filesystem;
@@ -55,8 +56,7 @@ namespace ecs
   template<typename T>
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
-    uint hash = ecs::type_hash<T>();
-    return ComponentInstance(*ecs::TypeInfo::types()[hash], property.name, blk.get<T>(property));
+    return ComponentInstance(ecs::type_info<T>(), property.name, blk.get<T>(property));
   }
   GET_FUNCTIONS(instantiate, create_instance)
 
@@ -212,11 +212,7 @@ namespace ecs
   static void init_components(const RawTemplate &rawTemplate, vector<ComponentInstance> &components)
   {
     init_components_from_blk(rawTemplate.blk, components);
-    
-    const auto &typeMap = ecs::TypeInfo::types();
-    auto it = typeMap.find(HashedString("EntityId"));
-    assert(it != typeMap.end());//we should know EntityId
-    components.emplace_back(ComponentInstance(*it->second, "eid"));
+    components.emplace_back(ComponentInstance(ecs::type_info<ecs::EntityId>(), "eid"));
   }
 
 

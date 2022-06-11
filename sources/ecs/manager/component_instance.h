@@ -75,13 +75,8 @@ private:
     template<typename T, typename TT = std::remove_cvref_t<T>>
     void set(const char *name, T &&value)
     {
-      uint hash = type_hash<TT>();
-      const auto &types = ecs::TypeInfo::types();
-      auto it = types.find(hash);
-      if (it != types.end())
-      {
-        components.emplace_back(*it->second, name, value);
-      }
+      const TypeInfo &typeInfo = ecs::type_info<TT>();
+      components.emplace_back(typeInfo, name, value);
     }
   };
 

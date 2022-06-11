@@ -2,20 +2,24 @@
 
 namespace ecs
 {
-  // send after creating scene
-  struct OnSceneCreated
+  struct Event
   {
 
   };
-  struct OnEntityCreated
+  // send after creating scene
+  struct OnSceneCreated : public Event
+  {
+
+  };
+  struct OnEntityCreated : public Event
   {
 
   }; 
-  struct OnEntityEdited
+  struct OnEntityEdited : public Event
   {
 
   };
-  struct OnEntityDestroyed
+  struct OnEntityDestroyed : public Event
   {
 
   };

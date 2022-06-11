@@ -54,17 +54,21 @@ namespace ecs
     function();
   }
 
+  std::vector<QueryDescription*> &all_queries()
+  {
+    static std::vector<QueryDescription*> queries;
+    return queries;
+  }
 
   QueryDescription::QueryDescription(const char *name, 
     std::vector<FunctionArgument> &&require_args,
     std::vector<FunctionArgument> &&require_not_args):
     CallableDescription(name, std::move(require_args), std::move(require_not_args), {}, {}, {}, tags::all)
   {
-    add_callable(this);
+    all_queries().push_back(this);
     isQuery = true;
   }
   void QueryDescription::registration()
   {
-    add_query(this);
   }
 }

@@ -12,16 +12,14 @@
 
 #define CUSTOM_TYPES \
 MACRO(PersonController)\
-MACRO(DebugArrow)\
 MACRO(AnimationPlayer)\
 MACRO(AnimationTester)\
-MACRO(ThirdPersonController)\
-MACRO(AnimationDataBasePtr)
+MACRO(ThirdPersonController)
 
 #define MACRO(T) ECS_REGISTER_TYPE(T, T, false, false)
 CUSTOM_TYPES
 #undef MACRO
-
+ECS_REGISTER_TYPE(AnimationDataBase, Asset<AnimationDataBase>, false, false)
 
 
 EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,
