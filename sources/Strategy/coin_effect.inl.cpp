@@ -25,7 +25,8 @@ void coin_move_func()
 void spawn_coin_effect_handler(const ecs::Event &event);
 void spawn_coin_effect_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> spawn_coin_effect_descr("spawn_coin_effect", {
+ecs::EventDescription spawn_coin_effect_descr(
+  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "spawn_coin_effect", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<HeightMap>("heightMap"), false}
 }, {

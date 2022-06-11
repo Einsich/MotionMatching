@@ -65,7 +65,8 @@ void test_count_func()
 void start_test_handler(const ecs::Event &event);
 void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> start_test_descr("start_test", {
+ecs::EventDescription start_test_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "start_test", {
   {ecs::get_type_description<AnimationTester>("animationTester"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<PersonController>("personController"), false},

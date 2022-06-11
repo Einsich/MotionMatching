@@ -186,7 +186,8 @@ void render_collision_func()
 void add_global_uniform_handler(const ecs::Event &event);
 void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> add_global_uniform_descr("add_global_uniform", {
+ecs::EventDescription add_global_uniform_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_global_uniform", {
 }, {
 }, {"game","editor"},
 {},
@@ -205,7 +206,8 @@ void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid
 void mesh_loader_handler(const ecs::Event &event);
 void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> mesh_loader_descr("mesh_loader", {
+ecs::EventDescription mesh_loader_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
 }, {
 }, {"game","editor"},

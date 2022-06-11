@@ -8,7 +8,6 @@
 namespace ecs
 {
   struct Event;
-  template<typename E>
   struct EventDescription;
 
   struct EntityContainer;
@@ -16,11 +15,7 @@ namespace ecs
   struct Core
   {
     std::unordered_map<uint, FullTypeDescription> types;
-    std::vector<CallableDescription*> all_callable;
-    std::vector<SystemDescription*> systems;
-    std::vector<CallableDescription*> event_queries;
     EntityContainer *entityContainer;
-    std::vector<std::function<void()>> events_cleaners;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint applicationTags;
@@ -30,20 +25,6 @@ namespace ecs
     Core();
     ~Core();
     
-    struct EventsCleaner
-    {
-      EventsCleaner(std::function<void()> &&cleaner, Core &core)
-      {
-        core.events_cleaners.emplace_back(std::move(cleaner));
-      }
-    };
-    template<typename E>
-    std::vector<EventDescription<E>*> &events_handler()
-    {
-      static std::vector<EventDescription<E>*> handlers;
-      static EventsCleaner cleaner([&](){handlers.clear();}, *this);
-      return handlers;
-    }
     void destroy_all_entities();
     void destroy_entities_from_destroy_queue(bool with_swap_last_element);
     void update_systems_subscribes();
@@ -51,35 +32,7 @@ namespace ecs
   };
   Core &core();
 
-  template<typename E>
-  struct EventDescription final : CallableDescription
-  {
-    static_assert(std::is_base_of<Event, E>::value);
-    typedef  void (*EventHandler)(const Event&);
-    typedef  void (*SingleEventHandler)(const Event&, ecs::EntityId);
-    EventHandler broadcastEventHandler;
-    SingleEventHandler unicastEventHandler;
-    EventDescription(const char *name, 
-      std::vector<FunctionArgument> &&require_args,
-      std::vector<FunctionArgument> &&require_not_args,
-      std::vector<std::string> &&scenes,
-      std::vector<std::string> &&before, std::vector<std::string> &&after,
-      EventHandler broadcastEventHandler,
-      SingleEventHandler unicastEventHandler,
-      uint tags):
-      CallableDescription(name, std::move(require_args), std::move(require_not_args),
-        std::move(scenes), std::move(before), std::move(after), tags),
-      broadcastEventHandler(broadcastEventHandler),
-      unicastEventHandler(unicastEventHandler)
-    {
-      core().all_callable.push_back(this);
-    }
-    void registration() override
-    {
-      core().events_handler<E>().push_back(this);
-      core().event_queries.push_back((CallableDescription*)this);
-    }
-  };
+
 
   template<typename T>
   struct ComponentInitializer
@@ -128,19 +81,20 @@ namespace ecs
   void create_scene(const string &path, bool reload = true);
 
 
+  template<typename T>
+  void unicast_event(const ecs::Event &event, ecs::EntityId eid);
+  template<typename T>
+  void broadcast_event(const ecs::Event &event);
+
   template<typename E>
   void send_event(const E &event)
   {
-    core().events.push([event](){
-      for (EventDescription<E> *descr : core().events_handler<E>())
-        descr->broadcastEventHandler(event);
-    });
+    core().events.push([event](){ broadcast_event<E>(event); });
   }
   template<typename E>
   void send_event_immediate(const E &event)
   {
-    for (EventDescription<E> *descr : core().events_handler<E>())
-      descr->broadcastEventHandler(event);
+    broadcast_event<E>(event);
   }
 
   template<typename E>
@@ -148,10 +102,7 @@ namespace ecs
   {
     if (eid)
     {
-      core().events.push([eid, event](){
-        for (EventDescription<E> *descr : core().events_handler<E>())
-          descr->unicastEventHandler(event, eid);
-      });
+      core().events.push([event, eid](){ unicast_event<E>(event, eid); });
     }
   }
   template<typename E>
@@ -159,8 +110,7 @@ namespace ecs
   {
     if (eid)
     {
-      for (EventDescription<E> *descr : core().events_handler<E>())
-        descr->unicastEventHandler(event, eid);
+      unicast_event<E>(event, eid);
     }
   }
 

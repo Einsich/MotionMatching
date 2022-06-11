@@ -4,18 +4,6 @@
 namespace ecs
 {
 
-  void add_callable(CallableDescription *callable_description)
-  {
-    core().all_callable.push_back(callable_description);
-  }
-  void add_system(SystemDescription *system_description)
-  {
-    core().systems.push_back(system_description);
-  }
-
-
-
-
   std::unordered_map<uint, FullTypeDescription> &full_description()
   {
     return core().types;

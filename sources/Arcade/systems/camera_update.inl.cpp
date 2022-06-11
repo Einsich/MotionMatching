@@ -35,7 +35,8 @@ void update_camera_pos_before_render_func()
 void change_zoom_handler(const ecs::Event &event);
 void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
+ecs::EventDescription change_zoom_descr(
+  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}

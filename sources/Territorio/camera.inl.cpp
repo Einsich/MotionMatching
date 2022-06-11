@@ -22,7 +22,8 @@ void camera_lerp_func()
 void setup_camera_handler(const ecs::Event &event);
 void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
+ecs::EventDescription setup_camera_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "setup_camera", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<float>("pixelPerUnit"), false},
@@ -50,7 +51,8 @@ void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void change_zoom_handler(const ecs::Event &event);
 void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseWheelEvent> change_zoom_descr("change_zoom", {
+ecs::EventDescription change_zoom_descr(
+  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<float>("zoomStrength"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
@@ -73,7 +75,8 @@ void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void move_camera_handler(const ecs::Event &event);
 void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseMoveEvent> move_camera_descr("move_camera", {
+ecs::EventDescription move_camera_descr(
+  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "move_camera", {
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<bool>("cameraLocked"), false},
@@ -96,7 +99,8 @@ void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void lock_unlock_camera_handler(const ecs::Event &event);
 void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> lock_unlock_camera_descr("lock_unlock_camera", {
+ecs::EventDescription lock_unlock_camera_descr(
+  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "lock_unlock_camera", {
   {ecs::get_type_description<bool>("cameraLocked"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {

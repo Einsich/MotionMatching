@@ -62,7 +62,8 @@ void check_mouse_over_ui_func()
 void start_game_handler(const ecs::Event &event);
 void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyDownEvent<SDLK_RETURN>> start_game_descr("start_game", {
+ecs::EventDescription start_game_descr(
+  ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_RETURN>>(), "start_game", {
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
 }, {},
@@ -82,7 +83,8 @@ void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void select_spawn_point_handler(const ecs::Event &event);
 void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::RightButton>> select_spawn_point_descr("select_spawn_point", {
+ecs::EventDescription select_spawn_point_descr(
+  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::RightButton>>(), "select_spawn_point", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ecs::Tag>("player_spawning"), false}
 }, {
@@ -103,7 +105,8 @@ void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid
 void select_invasion_handler(const ecs::Event &event);
 void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> select_invasion_descr("select_invasion", {
+ecs::EventDescription select_invasion_descr(
+  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "select_invasion", {
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},

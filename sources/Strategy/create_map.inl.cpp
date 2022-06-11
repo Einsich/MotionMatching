@@ -5,7 +5,8 @@
 void scene_created_handler(const ecs::Event &event);
 void scene_created_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> scene_created_descr("scene_created", {
+ecs::EventDescription scene_created_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "scene_created", {
 }, {
 }, {},
 {},
@@ -24,7 +25,8 @@ void scene_created_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void spawn_buildings_handler(const ecs::Event &event);
 void spawn_buildings_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> spawn_buildings_descr("spawn_buildings", {
+ecs::EventDescription spawn_buildings_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "spawn_buildings", {
   {ecs::get_type_description<vector<string>>("items_templates"), false},
   {ecs::get_type_description<vec3>("center"), false},
   {ecs::get_type_description<float>("step_length"), false},

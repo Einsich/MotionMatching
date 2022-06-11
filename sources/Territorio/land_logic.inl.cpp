@@ -154,7 +154,8 @@ void border_update_func()
 void game_started_handler(const ecs::Event &event);
 void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<OnGameStarted> game_started_descr("game_started", {
+ecs::EventDescription game_started_descr(
+  ecs::get_mutable_event_handlers<OnGameStarted>(), "game_started", {
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<uint>("startForces"), false},
   {ecs::get_type_description<int>("landCount"), false},

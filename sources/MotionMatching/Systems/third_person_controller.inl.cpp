@@ -35,7 +35,8 @@ void third_peson_controller_update_func()
 void third_controller_appear_handler(const ecs::Event &event);
 void third_controller_appear_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> third_controller_appear_descr("third_controller_appear", {
+ecs::EventDescription third_controller_appear_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "third_controller_appear", {
   {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
@@ -56,7 +57,8 @@ void third_controller_appear_singl_handler(const ecs::Event &event, ecs::EntityI
 void mouse_move_handler_handler(const ecs::Event &event);
 void mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseMoveEvent> mouse_move_handler_descr("mouse_move_handler", {
+ecs::EventDescription mouse_move_handler_descr(
+  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "mouse_move_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false},
   {ecs::get_type_description<PersonController>("personController"), false},
@@ -79,7 +81,8 @@ void mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid
 void mouse_wheel_handler_handler(const ecs::Event &event);
 void mouse_wheel_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseWheelEvent> mouse_wheel_handler_descr("mouse_wheel_handler", {
+ecs::EventDescription mouse_wheel_handler_descr(
+  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "mouse_wheel_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
 }, {},
@@ -99,7 +102,8 @@ void mouse_wheel_handler_singl_handler(const ecs::Event &event, ecs::EntityId ei
 void crouch_event_handler_handler(const ecs::Event &event);
 void crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyEventAnyActionKey> crouch_event_handler_descr("crouch_event_handler", {
+ecs::EventDescription crouch_event_handler_descr(
+  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "crouch_event_handler", {
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
@@ -120,7 +124,8 @@ void crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId e
 void animation_player_handler_handler(const ecs::Event &event);
 void animation_player_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyEventAnyActionKey> animation_player_handler_descr("animation_player_handler", {
+ecs::EventDescription animation_player_handler_descr(
+  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "animation_player_handler", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {

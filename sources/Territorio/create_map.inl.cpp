@@ -21,7 +21,8 @@ void spawn_player_query(Callable lambda)
 void create_map_handler(const ecs::Event &event);
 void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> create_map_descr("create_map", {
+ecs::EventDescription create_map_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "create_map", {
   {ecs::get_type_description<int>("width"), false},
   {ecs::get_type_description<int>("height"), false},
   {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},

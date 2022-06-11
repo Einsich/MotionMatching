@@ -39,7 +39,8 @@ void exit_menu_button_func()
 void setup_camera_handler(const ecs::Event &event);
 void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> setup_camera_descr("setup_camera", {
+ecs::EventDescription setup_camera_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "setup_camera", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},

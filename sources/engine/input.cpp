@@ -115,6 +115,7 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
     BUTTON_SWITCH(_)
     default: debug_error("unknown mouse button  %d", button); break;
   }
+  #undef MACRO
 }
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
@@ -186,4 +187,27 @@ float Input::get_wheel_impl()
   }
   return wheel;
 }
+#include "ecs_event_registration.h"
 
+ECS_EVENT_REGISTER(KeyEventAnyActionKey, KeyEventAnyActionKey)
+ECS_EVENT_REGISTER(KeyEventAnyKeyPress, KeyEventAnyKey<KeyAction::Press>)
+ECS_EVENT_REGISTER(KeyEventAnyKeyDown, KeyEventAnyKey<KeyAction::Down>)
+ECS_EVENT_REGISTER(KeyEventAnyKeyUp, KeyEventAnyKey<KeyAction::Up>)
+
+#define MACRO(key, Action) ECS_EVENT_REGISTER(Key## Action ##Event ##key, Key## Action ##Event<key>)
+
+KEY_CODE_SWITCH(Press)
+KEY_CODE_SWITCH(Down)
+KEY_CODE_SWITCH(Up)
+#undef MACRO
+
+#define MACRO(Key, Action) ECS_EVENT_REGISTER(KeyEventAnyAction##Key, KeyEventAnyAction<Key>)
+KEY_CODE_SWITCH(_)
+#undef MACRO
+
+ECS_EVENT_REGISTER(MouseButtonDownEventLeftButton, MouseButtonDownEvent<MouseButton::LeftButton>)
+ECS_EVENT_REGISTER(MouseButtonDownEventRightButton, MouseButtonDownEvent<MouseButton::RightButton>)
+ECS_EVENT_REGISTER(MouseButtonDownEventMiddleButton, MouseButtonDownEvent<MouseButton::MiddleButton>)
+ECS_EVENT_REGISTER(MouseClickEvent, MouseClickEvent)
+ECS_EVENT_REGISTER(MouseMoveEvent, MouseMoveEvent)
+ECS_EVENT_REGISTER(MouseWheelEvent, MouseWheelEvent)

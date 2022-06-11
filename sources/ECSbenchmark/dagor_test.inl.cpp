@@ -205,7 +205,8 @@ void prune_cache6_func()
 void dag_init_handler(const ecs::Event &event);
 void dag_init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> dag_init_descr("dag_init", {
+ecs::EventDescription dag_init_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "dag_init", {
 }, {
 }, {"game","editor"},
 {},

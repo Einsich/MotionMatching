@@ -49,7 +49,8 @@ void check_winner_func()
 void collect_kills_handler(const ecs::Event &event);
 void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KillTargetEvent> collect_kills_descr("collect_kills", {
+ecs::EventDescription collect_kills_descr(
+  ecs::get_mutable_event_handlers<KillTargetEvent>(), "collect_kills", {
   {ecs::get_type_description<int>("killsCount"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
 }, {

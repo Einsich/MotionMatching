@@ -23,7 +23,8 @@ void recorder_ui_func()
 void listener_keybord_handler(const ecs::Event &event);
 void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyEventAnyActionKey> listener_keybord_descr("listener_keybord", {
+ecs::EventDescription listener_keybord_descr(
+  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "listener_keybord", {
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},
@@ -46,7 +47,8 @@ void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void listener_mousemove_handler(const ecs::Event &event);
 void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseMoveEvent> listener_mousemove_descr("listener_mousemove", {
+ecs::EventDescription listener_mousemove_descr(
+  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "listener_mousemove", {
   {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<int>("recordedTest"), false},
   {ecs::get_type_description<int>("recordedState"), false},

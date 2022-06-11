@@ -490,10 +490,13 @@ void process_inl_file(const fs::path& path)
     write(outFile,
     "void %s(const ecs::Event &event);\n"
     "void %s(const ecs::Event &event, ecs::EntityId eid);\n\n"
-    "ecs::EventDescription<%s> %s(\"%s\", {\n",
+    "ecs::EventDescription %s(\n"
+    "  ecs::get_mutable_event_handlers<%s>(), \"%s\", {\n",
     event_handler.c_str(),
     event_singl_handler.c_str(),
-    event_type.c_str(), event_descr.c_str(), event.sys_name.c_str());
+    event_descr.c_str(),
+    event_type.c_str(),
+    event.sys_name.c_str());
 
     fill_arguments(outFile, event, true);
     fill_scenes(outFile, event);

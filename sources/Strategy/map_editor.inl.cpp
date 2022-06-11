@@ -35,7 +35,8 @@ void country_builder_func()
 void trace_province_handler(const ecs::Event &event);
 void trace_province_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseClickEvent> trace_province_descr("trace_province", {
+ecs::EventDescription trace_province_descr(
+  ecs::get_mutable_event_handlers<MouseClickEvent>(), "trace_province", {
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<MapEditor>("editor"), false},
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
@@ -59,7 +60,8 @@ void trace_province_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void selecte_handler(const ecs::Event &event);
 void selecte_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseClickEvent> selecte_descr("selecte", {
+ecs::EventDescription selecte_descr(
+  ecs::get_mutable_event_handlers<MouseClickEvent>(), "selecte", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<HeightMap>("heightMap"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},

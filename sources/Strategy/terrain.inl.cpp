@@ -39,7 +39,8 @@ void set_map_render_data_func()
 void add_map_uniform_handler(const ecs::Event &event);
 void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> add_map_uniform_descr("add_map_uniform", {
+ecs::EventDescription add_map_uniform_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_map_uniform", {
 }, {
 }, {"game","editor"},
 {},
@@ -58,7 +59,8 @@ void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 void create_terrain_handler(const ecs::Event &event);
 void create_terrain_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> create_terrain_descr("create_terrain", {
+ecs::EventDescription create_terrain_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "create_terrain", {
   {ecs::get_type_description<Asset<Texture2D>>("heights_texture"), false},
   {ecs::get_type_description<Asset<Texture2D>>("normal_texture"), false},
   {ecs::get_type_description<Asset<Texture2DArray>>("terrain_diffuse_array"), false},

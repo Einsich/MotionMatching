@@ -19,7 +19,8 @@ void toggle_map_mode(Callable lambda)
 void change_terrain_mode_handler(const ecs::Event &event);
 void change_terrain_mode_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyDownEvent<SDLK_m>> change_terrain_mode_descr("change_terrain_mode", {
+ecs::EventDescription change_terrain_mode_descr(
+  ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_m>>(), "change_terrain_mode", {
   {ecs::get_type_description<Asset<Material>>("material"), false},
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<Asset<Material>>("physycal_material"), false}
@@ -41,7 +42,8 @@ void change_terrain_mode_singl_handler(const ecs::Event &event, ecs::EntityId ei
 void create_provinces_handler(const ecs::Event &event);
 void create_provinces_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> create_provinces_descr("create_provinces", {
+ecs::EventDescription create_provinces_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "create_provinces", {
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<Asset<Texture2D>>("provinces_texture"), false},
   {ecs::get_type_description<string>("provinces_texture_name"), false},

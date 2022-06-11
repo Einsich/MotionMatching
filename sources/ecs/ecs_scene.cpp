@@ -1,5 +1,6 @@
 #include "ecs_scene.h"
 #include "ecs.h"
+#include "ecs_event_impl.h"
 #include "manager/entity_container.h"
 #include "glad/glad.h"
 #include "profiler/profiler.h"
@@ -27,7 +28,8 @@ namespace ecs
     }
     answer.push_back(v);
   }
-  static void topological_sort(std::vector<ecs::CallableDescription *> &systems)
+  template<typename Description>
+  static void topological_sort(std::vector<Description *> &systems)
   {
     vector<vector<uint>> edge(systems.size());
     vector<bool> used(systems.size(), false);
@@ -69,7 +71,7 @@ namespace ecs
       if (!used[i])
         dfs(i, edge, used, answer);
     }
-    std::vector<ecs::CallableDescription *> rightOrder(systems.size());
+    std::vector<Description *> rightOrder(systems.size());
 
     for (uint i = 0; i < systems.size(); i++)
       rightOrder[answer[i]] = systems[i];
@@ -82,12 +84,16 @@ namespace ecs
     create_all_resources_from_metadata();
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    topological_sort(core().all_callable);
+    topological_sort(get_all_systems());
+    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
+    {
+      topological_sort(filteredHandlers);
+    }
 
   }
   void SceneManager::sort_systems()
   {
-    auto &systems = core().systems;
+    auto &systems = ecs::get_all_systems();
     std::sort(systems.begin(), systems.end(), system_comparator);
     act.begin = systems.begin();
     act.end = std::find_if(systems.begin(), systems.end(),

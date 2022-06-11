@@ -5,7 +5,8 @@
 void init_sprites_shaders_camera_handler(const ecs::Event &event);
 void init_sprites_shaders_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> init_sprites_shaders_camera_descr("init_sprites_shaders_camera", {
+ecs::EventDescription init_sprites_shaders_camera_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "init_sprites_shaders_camera", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<SpriteFactory>("sf"), false}
 }, {
@@ -26,7 +27,8 @@ void init_sprites_shaders_camera_singl_handler(const ecs::Event &event, ecs::Ent
 void load_scene_event_handler(const ecs::Event &event);
 void load_scene_event_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<LoadSceneEvent> load_scene_event_descr("load_scene_event", {
+ecs::EventDescription load_scene_event_descr(
+  ecs::get_mutable_event_handlers<LoadSceneEvent>(), "load_scene_event", {
 }, {
 }, {},
 {},

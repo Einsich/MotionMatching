@@ -7,7 +7,7 @@
 #include "template/blk_template.h"
 #include "manager/core_interface.h"
 #include "ecs_tag.h"
-
+#include "ecs_event_impl.h"
 #define ECS_DEBUG_INFO 0
 namespace ecs
 {
@@ -61,17 +61,26 @@ namespace ecs
   
   void Core::register_allowed_callable()
   {
-    systems.clear();
-    event_queries.clear();
-    for (const auto &cleaner : events_cleaners)
-      cleaner();
-    for (CallableDescription *callable : all_callable)
+    get_all_systems().clear();
+    bool isEditor = currentSceneTags != "editor";
+    auto callableTest = [isEditor, this](const CallableDescription *callable)
     {
-      if ((callable->tags & applicationTags) == callable->tags &&
-        ((callable->scenes.empty() && currentSceneTags != "editor") || 
+      return (callable->tags & applicationTags) == callable->tags &&
+        ((callable->scenes.empty() && isEditor) || 
         std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)
-          != callable->scenes.end()))
-          callable->registration();
+          != callable->scenes.end());
+    };
+    for (SystemDescription *callable : get_all_mutable_systems())
+    {
+      if (callableTest(callable))
+        get_all_systems().push_back(callable);
+    }
+    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
+    {
+      filteredHandlers.clear();
+      for (EventDescription *handler : srcHandlers)
+        if (callableTest(handler))
+          filteredHandlers.push_back(handler);
     }
       
   }
@@ -83,10 +92,14 @@ namespace ecs
     core().events = {};
     for (QueryDescription *query: ecs::all_queries())
       query->archetypes.clear();
-    for (SystemDescription *system: core().systems)
+    for (SystemDescription *system: ecs::get_all_systems())
       system->archetypes.clear();
-    for (CallableDescription *system: core().event_queries)
-      system->archetypes.clear();
+      
+    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
+    {
+      for (EventDescription *handler : filteredHandlers)
+        handler->archetypes.clear();
+    }
 
     for (Archetype *archetype : entityContainer->archetypes)
       register_archetype(archetype);
@@ -148,10 +161,14 @@ namespace ecs
 #endif
     for (QueryDescription *query: ecs::all_queries())
       register_archetype_to(*query, archetype);
-    for (SystemDescription *system: core().systems)
+    for (SystemDescription *system: ecs::get_all_systems())
       register_archetype_to(*system, archetype);
-    for (CallableDescription *system: core().event_queries)
-      register_archetype_to(*system, archetype);
+
+    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
+    {
+      for (EventDescription *handler : filteredHandlers)
+        register_archetype_to(*handler, archetype);
+    }
     
   }
   Archetype *add_archetype(const vector<uint> &type_hashes, int capacity, const string &synonim)
@@ -295,7 +312,7 @@ namespace ecs
   void system_statistic()
   {
     debug_log("\nSystems statistics");
-    for (const SystemDescription *descr : core().systems)
+    for (const SystemDescription *descr : ecs::get_all_systems())
     {
       int archetypesCount = descr->archetypes.size();
       debug_log("%s has %d archetypes", descr->name.c_str(), archetypesCount);

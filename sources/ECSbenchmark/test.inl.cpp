@@ -51,7 +51,8 @@ void vector_pointers_update_func()
 void init_handler(const ecs::Event &event);
 void init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnSceneCreated> init_descr("init", {
+ecs::EventDescription init_descr(
+  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "init", {
 }, {
 }, {"game","editor"},
 {},

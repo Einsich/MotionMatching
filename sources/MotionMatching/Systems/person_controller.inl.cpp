@@ -25,7 +25,8 @@ void peson_controller_update_func()
 void controller_mouse_move_handler_handler(const ecs::Event &event);
 void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ControllerMouseMoveEvent> controller_mouse_move_handler_descr("controller_mouse_move_handler", {
+ecs::EventDescription controller_mouse_move_handler_descr(
+  ecs::get_mutable_event_handlers<ControllerMouseMoveEvent>(), "controller_mouse_move_handler", {
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
@@ -46,7 +47,8 @@ void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::E
 void controller_crouch_event_handler_handler(const ecs::Event &event);
 void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ControllerKeyBoardEvent> controller_crouch_event_handler_descr("controller_crouch_event_handler", {
+ecs::EventDescription controller_crouch_event_handler_descr(
+  ecs::get_mutable_event_handlers<ControllerKeyBoardEvent>(), "controller_crouch_event_handler", {
   {ecs::get_type_description<PersonController>("personController"), false}
 }, {
 }, {},

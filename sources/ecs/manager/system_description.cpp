@@ -43,11 +43,10 @@ namespace ecs
     stage(stage),
     isJob(is_job)
   {
-    add_callable(this);
+    get_all_mutable_systems().push_back(this);
   }
   void SystemDescription::registration()
   {
-    add_system(this);
   }
   void SystemDescription::execute()
   {
@@ -70,5 +69,16 @@ namespace ecs
   }
   void QueryDescription::registration()
   {
+  }
+  
+  std::vector<SystemDescription *> &get_all_mutable_systems()
+  {
+    static std::vector<SystemDescription *> systems;
+    return systems;
+  }
+  std::vector<SystemDescription *> &get_all_systems()
+  {
+    static std::vector<SystemDescription *> systems;
+    return systems;
   }
 }

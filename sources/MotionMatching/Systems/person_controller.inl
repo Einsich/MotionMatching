@@ -7,6 +7,10 @@
 #include <transform.h>
 #include "Animation/Test/animation_tester.h"
 #include <render/debug_arrow.h>
+#include <ecs_event_registration.h>
+
+ECS_EVENT_REGISTER(ControllerKeyBoardEvent, ControllerKeyBoardEvent)
+ECS_EVENT_REGISTER(ControllerMouseMoveEvent, ControllerMouseMoveEvent)
 
 constexpr float lerp_strength = 4.f;
 

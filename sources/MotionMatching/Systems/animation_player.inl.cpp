@@ -38,7 +38,8 @@ void update_bone_remap_func()
 void init_animation_character_handler(const ecs::Event &event);
 void init_animation_character_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> init_animation_character_descr("init_animation_character", {
+ecs::EventDescription init_animation_character_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_character", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
 }, {
 }, {"game","editor"},
@@ -58,7 +59,8 @@ void init_animation_character_singl_handler(const ecs::Event &event, ecs::Entity
 void init_animation_material_handler(const ecs::Event &event);
 void init_animation_material_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<ecs::OnEntityCreated> init_animation_material_descr("init_animation_material", {
+ecs::EventDescription init_animation_material_descr(
+  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_material", {
   {ecs::get_type_description<Asset<Material>>("material"), false}
 }, {
 }, {"game"},

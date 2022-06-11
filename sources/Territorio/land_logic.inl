@@ -6,7 +6,9 @@
 #include "game_events.h"
 #include "game_structs.h"
 #include "profiler/profiler.h"
+#include <ecs_event_registration.h>
 
+ECS_EVENT_REGISTER(OnGameStarted, OnGameStarted)
 
 ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion, false, false);
 

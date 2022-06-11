@@ -4,6 +4,11 @@
 #include <imgui.h>
 #include <application/application_data.h>
 #include "game_structs.h"
+#include <ecs_event_registration.h>
+
+ECS_EVENT_REGISTER(StartGameEvent, StartGameEvent)
+ECS_EVENT_REGISTER(LoadSceneEvent, LoadSceneEvent)
+ECS_EVENT_REGISTER(KillTargetEvent, KillTargetEvent)
 
 EVENT() setup_camera(
   const ecs::OnEntityCreated &,

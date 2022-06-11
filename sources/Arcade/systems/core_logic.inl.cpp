@@ -58,7 +58,8 @@ void move_hero_func()
 void look_at_mouse_position_when_mouse_moves_handler(const ecs::Event &event);
 void look_at_mouse_position_when_mouse_moves_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseMoveEvent> look_at_mouse_position_when_mouse_moves_descr("look_at_mouse_position_when_mouse_moves", {
+ecs::EventDescription look_at_mouse_position_when_mouse_moves_descr(
+  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "look_at_mouse_position_when_mouse_moves", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
@@ -80,7 +81,8 @@ void look_at_mouse_position_when_mouse_moves_singl_handler(const ecs::Event &eve
 void fire_when_mouse_click_handler(const ecs::Event &event);
 void fire_when_mouse_click_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<MouseButtonDownEvent<MouseButton::LeftButton>> fire_when_mouse_click_descr("fire_when_mouse_click", {
+ecs::EventDescription fire_when_mouse_click_descr(
+  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "fire_when_mouse_click", {
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<SpriteFactory>("sf"), false},
   {ecs::get_type_description<Transform2D>("transform"), false},
@@ -104,7 +106,8 @@ void fire_when_mouse_click_singl_handler(const ecs::Event &event, ecs::EntityId 
 void circle_attack_handler(const ecs::Event &event);
 void circle_attack_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
-ecs::EventDescription<KeyDownEvent<SDLK_SPACE>> circle_attack_descr("circle_attack", {
+ecs::EventDescription circle_attack_descr(
+  ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_SPACE>>(), "circle_attack", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<SpriteFactory>("sf"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}

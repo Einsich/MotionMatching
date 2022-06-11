@@ -1,5 +1,6 @@
 #pragma once
 #include "ecs_core.h"
+#include "ecs_event_impl.h"
 #include <parallel/thread_pool.h>
 
 namespace ecs
