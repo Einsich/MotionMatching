@@ -1,4 +1,4 @@
-#include "blk_template.h"
+#include "template.h"
 #include "serialization/serialization.h"
 #include "application/application_data.h"
 #include "data_block/data_block.h"
@@ -21,38 +21,10 @@ namespace ecs
   {
     string name;
     const DataBlock* blk;
+    vector<ComponentInstance> components;
     vector<string> extends;
     vector<size_t> extendsIdx;
   };
-  struct BlkTemplateManager
-  {
-    vector<TemplateFile> templatesFiles;
-    vector<Template> templates;
-    map<string, int> templateMap;
-    static BlkTemplateManager &instance() 
-    {
-      static BlkTemplateManager manager;
-      return manager;
-    }
-    const Template *find(const char *name)
-    {
-      auto it = templateMap.find(name);
-      return it != templateMap.end() ? &templates[it->second] : nullptr;
-    }
-  };
-
-  const Template* get_template(const char *name)
-  {
-    return BlkTemplateManager::instance().find(name);
-  }
-  void invalidate_cached_archetype()
-  {
-    for (Template &t : BlkTemplateManager::instance().templates)
-    {
-      t.archetype = nullptr;
-      t.containers.clear();
-    }
-  }
   template<typename T>
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
@@ -157,22 +129,17 @@ namespace ecs
     templates.erase(templates.begin() + first, templates.end());
   }
 
-  static void init_templates(map<string, int> &templateMap, vector<RawTemplate> &rawTemplates, vector<Template> &templates)
+  static void init_templates(vector<RawTemplate> &rawTemplates)
   {
-    templateMap.clear();
-    templates.clear();
-    templates.resize(rawTemplates.size());
-    for (size_t i = 0, n = rawTemplates.size(); i < n; ++i)
-      templateMap.emplace(rawTemplates[i].name, i);
-
-    for (size_t i = 0, n = rawTemplates.size(); i < n; ++i)
+    for (RawTemplate &rawTmpl : rawTemplates)
     {
-      templates[i].name = rawTemplates[i].name;
-      for (const string &extends : rawTemplates[i].extends)
+      for (const string &extends : rawTmpl.extends)
       {
-        auto it = templateMap.find(extends);
-        if (it != templateMap.end())
-          rawTemplates[i].extendsIdx.emplace_back(it->second);
+        auto it = find_if(rawTemplates.begin(), rawTemplates.end(), [&](const RawTemplate&tmpl) {return tmpl.name == extends;});
+        if (it != rawTemplates.end())
+          rawTmpl.extendsIdx.emplace_back(it - rawTemplates.begin());
+        else
+          debug_error("undefined extend %s in %s", extends.c_str(), rawTmpl.name.c_str());
       }
     }
   }
@@ -217,19 +184,16 @@ namespace ecs
 
 
 
-  static void linearize_extends(
-      const vector<RawTemplate> &rawTemplates,
-      vector<Template> &templates,
-      size_t templateId)
+  static void linearize_extends(vector<RawTemplate> &rawTemplates, size_t templateId)
   {
-    Template &blkTemplate = templates[templateId];
+    RawTemplate &blkTemplate = rawTemplates[templateId];
     if (!blkTemplate.components.empty())
       return;
     
     for (size_t i : rawTemplates[templateId].extendsIdx)
     {
-      linearize_extends(rawTemplates, templates, i);
-      patch_components(blkTemplate.components, templates[i].components);
+      linearize_extends(rawTemplates, i);
+      patch_components(blkTemplate.components, rawTemplates[i].components);
     }
     vector<ComponentInstance> components;
     init_components(rawTemplates[templateId], components);
@@ -237,27 +201,30 @@ namespace ecs
 
   }
 
-  static void linearize_extends(vector<RawTemplate> &rawTemplates, vector<Template> &templates)
+  static void linearize_extends(vector<RawTemplate> &rawTemplates)
   {
-    for (size_t i = 0, n = templates.size(); i < n; ++i)
+    for (size_t i = 0, n = rawTemplates.size(); i < n; ++i)
     {
-      linearize_extends(rawTemplates, templates, i);
+      linearize_extends(rawTemplates, i);
     }
   }
 
   void load_templates_from_blk()
   {
-    BlkTemplateManager &manager = BlkTemplateManager::instance();
-    
-    collect_template_files(manager.templatesFiles);
+    static vector<TemplateFile> templatesFiles;
+    templatesFiles.clear();
+    collect_template_files(templatesFiles);
 
     vector<RawTemplate> rawTemplates;
-    fill_raw_template(manager.templatesFiles, rawTemplates);
+    fill_raw_template(templatesFiles, rawTemplates);
   
     validate_templates(rawTemplates);//remove cyclic dependencies
   
-    init_templates(manager.templateMap, rawTemplates, manager.templates);
+    init_templates(rawTemplates);
 
-    linearize_extends(rawTemplates, manager.templates);
+    linearize_extends(rawTemplates);
+
+    for (RawTemplate &tmpl : rawTemplates)
+      ecs::create_template(tmpl.name.c_str(), std::move(tmpl.components));
   }
 }

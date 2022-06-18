@@ -24,9 +24,19 @@ plane {
   is_enabled:b=true;
 }
 
-free_camera {
+base_camera {
   camera:Camera {}
-  freeCamera:FreeCamera {}
   transform:Transform {}
   isMainCamera:b = false;
+}
+
+free_camera {
+  _extends:t="base_camera";
+  freeCamera:FreeCamera {}
+}
+
+arcball_camera {
+  _extends:t="base_camera";
+  arcballCamera:ArcballCamera {}
+  arcballCameraTarget:EntityId {}
 }

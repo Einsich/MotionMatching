@@ -18,7 +18,9 @@ namespace ecs
     //after this constructor need to feel components and fullTypeDescriptions correctly
     Archetype(int index, int count, const string &synonim, int type_count);
     Archetype(int index, const vector<uint> &type_hashes, int count, const string &synonim);
+    Archetype(int index, const vector<ComponentInstance> &type_hashes, int count, const string &synonim);
     bool in_archetype(const vector<uint> &type_hashes) const;
+    bool in_archetype(const vector<ComponentInstance> &instances) const;
 
     ComponentContainer *get_container(const TypeDescription &type);
     template<typename T>

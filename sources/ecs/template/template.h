@@ -10,9 +10,12 @@ namespace ecs
   {
     string name;
     vector<ComponentInstance> components;
-    mutable vector<ComponentContainer*> containers;
-    mutable Archetype *archetype = nullptr;
+    vector<ComponentContainer*> containers;
+    Archetype *archetype;
+    Template(const char *name, vector<ComponentInstance> &&components);
   };
 
   const Template* get_template(const char *name);
+  Template *create_template(const char *name, vector<ComponentInstance> &&components);
+  void invalidate_cached_archetype();
 }

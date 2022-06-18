@@ -4,7 +4,7 @@
 #include <functional>
 #include "manager/system_description.h"
 #include "manager/entity_id.h"
-#include "template/blk_template.h"
+#include "template/template.h"
 namespace ecs
 {
   struct Event;
@@ -72,8 +72,8 @@ namespace ecs
     return eid;
   }
   struct Template;
-  EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
-  EntityId create_entity(const Template *temp);
+  EntityId create_entity(const Template *temp, ComponentInitializerList &&list = {});
+  EntityId create_entity(const char *template_name, ComponentInitializerList &&list = {});
   EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
 

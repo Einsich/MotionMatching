@@ -6,7 +6,7 @@
 #include "imgui_impl_sdl.h"
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
-#include "template/blk_template.h"
+#include "template/template.h"
 #include "ecs_scene.h"
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"

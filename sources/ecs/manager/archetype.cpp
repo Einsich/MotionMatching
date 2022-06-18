@@ -30,6 +30,23 @@ namespace ecs
     }    
   }
 
+  Archetype::Archetype(int index, const vector<ComponentInstance> &type_hashes, int capacity, const string &synonim):
+    index(index), components(), count(0), capacity(capacity), fullTypeDescriptions(), synonim(synonim), dontSave(false)
+  {
+    for (const ComponentInstance &instance : type_hashes)
+    {
+      auto it = full_description().find(instance.typeNameHash);
+      assert(it->first && "Don't found full descr for type in Archetype");
+      auto typeIt = TypeInfo::types().find(it->second.typeHash);
+      assert(typeIt->first && "Don't found this type");
+      fullTypeDescriptions.push_back(&it->second);
+      auto result = components.insert(instance.typeNameHash);
+      if (result.second)
+      {
+        result.first->second = ComponentContainer(*typeIt->second, instance.typeNameHash, capacity);
+      }
+    }    
+  }
   bool Archetype::in_archetype(const vector<uint> &type_hashes) const
   {
     if (type_hashes.size() != components.size())
@@ -42,6 +59,21 @@ namespace ecs
     }
     return true;
   }
+
+  
+  bool Archetype::in_archetype(const vector<ComponentInstance> &instances) const
+  {
+    if (instances.size() != components.size())
+      return false;
+    for (const ComponentInstance &descr : instances)
+    {
+      auto it = components.find(descr.typeNameHash);
+      if (it == components.end())
+        return false;
+    }
+    return true;
+  }
+
   ComponentContainer *Archetype::get_container(const TypeDescription &type)
   {
     auto it = components.find(type.type_name_hash());

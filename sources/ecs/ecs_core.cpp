@@ -4,7 +4,7 @@
 #include "manager/system_description.h"
 #include "common.h"
 #include "manager/entity_container.h"
-#include "template/blk_template.h"
+#include "template/template.h"
 #include "manager/core_interface.h"
 #include "ecs_tag.h"
 #include "ecs_event_impl.h"
@@ -171,6 +171,20 @@ namespace ecs
     }
     
   }
+  
+  Archetype *add_archetype(const Template &tmpl)
+  {
+    auto &fullDecr = full_description();
+    for (const ComponentInstance &t: tmpl.components)
+      fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeInfo->hashId, t.typeNameHash);
+
+    Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), tmpl.components, 1, tmpl.name);
+    core().entityContainer->archetypes.push_back(archetype);
+
+    register_archetype(archetype);
+    
+    return archetype;
+  }
   Archetype *add_archetype(const vector<uint> &type_hashes, int capacity, const string &synonim)
   {
     Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), type_hashes, capacity, synonim);
@@ -203,9 +217,9 @@ namespace ecs
     int index = found_archetype->count++;
     return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
   }
-  EntityId create_entity(const Template *blkTemplate)
+  EntityId create_entity(const char *template_name, ComponentInitializerList &&list)
   {
-    return create_entity(blkTemplate, {});
+    return create_entity(ecs::get_template(template_name), std::move(list));
   }
 
   EntityId create_entity(const Template *blkTemplate, ComponentInitializerList &&list)
@@ -215,34 +229,7 @@ namespace ecs
     Archetype *found_archetype = blkTemplate->archetype;
     if (!blkTemplate->archetype)
     {
-      size_t templateComponentsCount = blkTemplate->components.size();
-    
-      vector<uint> typeHashes(templateComponentsCount);
-      
-      for (uint i = 0; i < templateComponentsCount; ++i)
-        typeHashes[i] = blkTemplate->components[i].typeNameHash;
-
-      for (Archetype *archetype : core().entityContainer->archetypes)
-      {
-        if (archetype->in_archetype(typeHashes))
-        {
-          found_archetype = archetype;
-          break;
-        }
-      }
-      if (!found_archetype)
-      {
-        auto &fullDecr = full_description();
-        for (const ComponentInstance &t: blkTemplate->components)
-          fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeInfo->hashId, t.typeNameHash);
-        blkTemplate->archetype  = found_archetype = add_archetype(typeHashes, 1, blkTemplate->name);
-      }
-      size_t count = blkTemplate->components.size();
-      blkTemplate->containers.reserve(count);
-      for (const ComponentInstance &instance : blkTemplate->components)
-      {
-        blkTemplate->containers.emplace_back(&found_archetype->components[instance.typeNameHash]);
-      }
+      assert(0);
     }
     int index = found_archetype->count;
     int archetype_ind = found_archetype->index;

@@ -1,4 +1,4 @@
-#include "blk_template.h"
+#include "template.h"
 #include "manager/entity_id.h"
 
 namespace ecs
