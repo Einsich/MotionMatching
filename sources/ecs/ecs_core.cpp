@@ -176,7 +176,7 @@ namespace ecs
   {
     auto &fullDecr = full_description();
     for (const ComponentInstance &t: tmpl.components)
-      fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeInfo->hashId, t.typeNameHash);
+      fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeHash, t.typeNameHash);
 
     Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), tmpl.components, 1, tmpl.name);
     core().entityContainer->archetypes.push_back(archetype);
@@ -235,20 +235,18 @@ namespace ecs
     int archetype_ind = found_archetype->index;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
 
-    const TypeInfo &eidInfo = ecs::type_info<EntityId>();
 
-    list.components.emplace_back(eidInfo, "eid", eid);
+    list.emplace_back("eid", EntityId(eid));
     {
       const vector<ComponentInstance> &template_list = blkTemplate->components;
-      vector<ComponentInstance> &&init_list = std::move(list.components);
       for (size_t i = 0, n = template_list.size(); i < n; ++i)
       {
         const ComponentInstance &instance = template_list[i];
         ComponentContainer *container = blkTemplate->containers[i];
-        size_t j = 0, m = init_list.size();
+        size_t j = 0, m = list.size();
         for (; j < m; ++j)
         {
-          if (instance.typeNameHash == init_list[j].typeNameHash)
+          if (instance.typeNameHash == list[j].typeNameHash)
           {
             break;
           }
@@ -267,13 +265,13 @@ namespace ecs
         }
         else
         {
-          if (init_list[j].initManager)
+          if (list[j].initManager)
           {
-            init_list[j].initManager(rawMem);
+            list[j].initManager(rawMem);
           }
           else
           {
-            container->rtti.move_constructor(init_list[j].get_data(), rawMem);
+            container->rtti.move_constructor(list[j].get_data(), rawMem);
           }
         }
       }

@@ -58,7 +58,7 @@ namespace ecs
       component_initializer_copy<N+1>(data, args...);
   }
   
-  pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes);
+/*   pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes);
   template<typename ...Args>
   EntityId create_entity(const ComponentInitializer<Args> &...args)
   {
@@ -70,7 +70,7 @@ namespace ecs
     component_initializer_copy<1>(data, args...);
     send_event_immediate(eid, OnEntityCreated());
     return eid;
-  }
+  } */
   struct Template;
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list = {});
   EntityId create_entity(const char *template_name, ComponentInitializerList &&list = {});

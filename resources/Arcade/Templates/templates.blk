@@ -32,3 +32,12 @@ main_camera {
 start_game_button {
   startGameButton:Tag {}
 }
+
+bullet {
+  sprite:Sprite {}
+  transform:Transform2D {}
+  velocity:f2 = 0,0;
+  creationTime:f=0;
+  lifeTime:f=2;
+  bullet:Tag {}
+}

@@ -10,76 +10,75 @@ namespace ecs
   {
 private:
     vector<char> instanceData;
-    
-    template<typename T>
-    T& get_instance()
-    {
-      assert(instanceData.size() == sizeof(T));
-      return *(T*)(instanceData.data());
-    }
   public:
+    const TypeInfo *typeInfo;
     std::function<void(void*)> initManager;
-    const ecs::TypeInfo *typeInfo;
     string name;
-    uint nameHash, typeNameHash;
+    uint nameHash, typeHash, typeNameHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
-    ComponentInstance(ComponentInstance const&) = default;
-    ComponentInstance& operator=(ComponentInstance const&) = default;
+    
+    ComponentInstance(const ComponentInstance &other):
+    instanceData(), typeInfo(other.typeInfo), initManager(other.initManager), name(other.name),
+    nameHash(other.nameHash), typeHash(other.typeHash), typeNameHash(other.typeNameHash)
+    {
+      if (!initManager)
+      {
+        instanceData.resize(typeInfo->rtti.sizeOf);
+        typeInfo->rtti.copy_constructor(other.get_data(), get_data());
+      }      
+    }
+    ComponentInstance& operator=(const ComponentInstance &other)
+    {
+      assert(typeHash == other.typeHash);
+      if (!instanceData.empty())
+        typeInfo->rtti.destructor(get_data());
+      if (other.initManager)
+      {
+        initManager = other.initManager;
+        instanceData.clear();
+      }
+      else
+      {
+        instanceData.resize(typeInfo->rtti.sizeOf);
+        typeInfo->rtti.copy_constructor(other.get_data(), get_data());
+      }
+      return *this;
+    }
 
     template<typename T, typename TT = std::remove_cvref_t<T>>
-    ComponentInstance(const ecs::TypeInfo &typeInfo, const string &name, const T &instance) : 
-    instanceData(sizeof(TT)), typeInfo(&typeInfo), name(name)
-    , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
+    ComponentInstance(const string &name, const T &instance) : 
+    instanceData(sizeof(TT)), typeInfo(&type_info<TT>()), name(name)
+    , nameHash(HashedString(name)), typeHash(type_hash<TT>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<TT>()))
     {
-      typeInfo.rtti.constructor(instanceData.data());
-      get_instance<TT>() = instance;
+      typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
     template<typename T, typename TT = std::remove_cvref_t<T>>
-    ComponentInstance(const ecs::TypeInfo &typeInfo, const string &name, T &&instance) : 
-    instanceData(sizeof(TT)), typeInfo(&typeInfo), name(name)
-    , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
+    ComponentInstance(const string &name, T &&instance) : 
+    instanceData(sizeof(TT)), typeInfo(&type_info<TT>()), name(name)
+    , nameHash(HashedString(name)), typeHash(type_hash<TT>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<TT>()))
     {
-      typeInfo.rtti.constructor(instanceData.data());
-      get_instance<TT>() = instance;
+      typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }
-    ComponentInstance(const ecs::TypeInfo &typeInfo, const string &name) : 
-    instanceData(typeInfo.rtti.sizeOf), typeInfo(&typeInfo), name(name)
-    , nameHash(HashedString(name)), typeNameHash(TypeDescription::hash(nameHash, typeInfo.hashId))
+    ComponentInstance(const TypeInfo &info, const string &name, std::function<void(void*)> &&initManager) : 
+    instanceData(), typeInfo(&info), initManager(initManager), name(name)
+    , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(TypeDescription::hash(nameHash, info.hashId))
     {
-      
     }
-    template<typename T, typename TT = std::remove_cvref_t<T>>
-    void update(const T &instance)
-    {
-      get_instance<TT>() = instance;
-    }    
-    template<typename T, typename TT = std::remove_cvref_t<T>>
-    void update(T &&instance)
-    {
-      get_instance<TT>() = instance;
-    }    
+   
     void *get_data()
     {
+      assert(!instanceData.empty());
       return instanceData.data();
     }   
     const void *get_data() const 
     {
+      assert(!instanceData.empty());
       return instanceData.data();
     }    
   };
+  using ComponentInitializerList = vector<ComponentInstance>;
 
-  struct ComponentInitializerList
-  {
-    vector<ComponentInstance> components;
-    template<typename T, typename TT = std::remove_cvref_t<T>>
-    void set(const char *name, T &&value)
-    {
-      const TypeInfo &typeInfo = ecs::type_info<TT>();
-      components.emplace_back(typeInfo, name, value);
-    }
-  };
-
-  
   void patch_components(vector<ComponentInstance> &components, const vector<ComponentInstance> &patch);
+  void patch_components(vector<ComponentInstance> &components, vector<ComponentInstance> &&patch);
 }

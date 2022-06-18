@@ -66,3 +66,7 @@ constexpr uint HashedString(const std::string_view& str)
         crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str[i])) & 0xff];
     return crc ^ 0xffffffff;
 }
+
+constexpr uint operator"" _hs(const char *str, std::size_t) noexcept {
+    return HashedString(str);
+}

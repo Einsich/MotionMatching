@@ -28,7 +28,7 @@ namespace ecs
   template<typename T>
   static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
-    return ComponentInstance(ecs::type_info<T>(), property.name, blk.get<T>(property));
+    return ComponentInstance(property.name, blk.get<T>(property));
   }
   GET_FUNCTIONS(instantiate, create_instance)
 
@@ -163,10 +163,10 @@ namespace ecs
       if (it != typeMap.end())
       {
         const ecs::TypeInfo &typeInfo = *it->second;
-        components.emplace_back(typeInfo, property->name());
-        components.back().initManager = [property, reader = typeInfo.userInfo.blkReader](void *raw_data) {
+        components.emplace_back(typeInfo, property->name(),
+          [property, reader = typeInfo.userInfo.blkReader](void *raw_data) {
           reader(*property, raw_data);
-        };
+        });
        ;
       }
       else
@@ -179,7 +179,7 @@ namespace ecs
   static void init_components(const RawTemplate &rawTemplate, vector<ComponentInstance> &components)
   {
     init_components_from_blk(rawTemplate.blk, components);
-    components.emplace_back(ComponentInstance(ecs::type_info<ecs::EntityId>(), "eid"));
+    components.emplace_back(ComponentInstance("eid", ecs::EntityId()));
   }
 
 

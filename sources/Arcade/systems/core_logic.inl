@@ -38,17 +38,13 @@ EVENT(require=ecs::Tag mainHero) look_at_mouse_position_when_mouse_moves(
 void create_bullet(vec2 position, float rotation, float bulletVelocity, const Sprite &bulletSpite)
 {
   vec2 velocity = vec2(cos(rotation), sin(rotation));
-  constexpr float bulletLifeTime = 2.f;
   float curTime = Time::time();
-
-  ecs::create_entity<Sprite, Transform2D, vec2, float, float, ecs::Tag>(
+  ecs::create_entity("bullet", {
     {"sprite", bulletSpite},
     {"transform", Transform2D(position, vec2(0.5f), -rotation)},
     {"velocity", velocity * bulletVelocity},
-    {"creationTime", curTime},
-    {"lifeTime", bulletLifeTime},
-    {"bullet", {}}
-  );
+    {"creationTime", curTime}
+  });
 }
 EVENT(require=ecs::Tag mainHero) fire_when_mouse_click(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,

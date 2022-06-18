@@ -42,10 +42,11 @@ ecs::EntityId spawn_player(const ecs::Template *player_template, ivec2 start_poi
       if (map_arrays.color_indices.test(p.y + d.y, p.x + d.x))  
         borders.insert(p+d);
     land_colors[i] = rand_vec3(0, 1);
-    ecs::ComponentInitializerList list;
-    list.set("spawnPoint", p);
-    list.set("landIndex", (uint)i);
-    result = ecs::create_entity(player_template, std::move(list));
+
+    result = ecs::create_entity(player_template, {
+      {"spawnPoint", p},
+      {"landIndex", (uint)i}
+    });
     needUpdateBorder = mapWasChanged = true;
   });
   return result;
@@ -75,14 +76,11 @@ EVENT() create_map(
     for (int j = 0; j < width; j++)
       color_indices[i][j] = grayLandIdx;
   land_colors.resize(MAX_COLORS, vec3(0.7f));
-  ecs::EntityId grayLand;
-  {
-    const ecs::Template *landTemplate = ecs::get_template("land");
-    ecs::ComponentInitializerList list;
-    list.set("landIndex", grayLandIdx);
-    list.set("landCount", height*width - botsCount);
-    grayLand = ecs::create_entity(landTemplate, std::move(list));
-  }
+
+  ecs::create_entity("land", {
+    {"landIndex", grayLandIdx},
+    {"landCount", height*width - botsCount}
+  });
 
   vector<ivec2> startPoints = get_player_start_points(width, height, botsCount);
   const ecs::Template *botTemplate = ecs::get_template("bot");

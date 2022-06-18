@@ -97,9 +97,7 @@ SYSTEM(scene=game) test_count(
     const ecs::Template *testerTmpl = ecs::get_template("tester_char");
     for (int i = 0; !tests.empty() && i < d; ++i)
     {
-      ecs::ComponentInitializerList list;
-      list.set("testerSeed", n + i);
-      testers.emplace_back(ecs::create_entity(testerTmpl, std::move(list)));
+      testers.emplace_back(ecs::create_entity(testerTmpl, {{"testerSeed", n + i}}));
     }
   }
   if (d < 0)

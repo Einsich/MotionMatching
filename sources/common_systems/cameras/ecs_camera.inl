@@ -46,10 +46,10 @@ EVENT(scene=editor) find_main_camera_editor(
   {
     Camera camera;
     camera.set_perspective(90.f, 0.01f, 5000.f);
-    ecs::ComponentInitializerList list;
-    list.set("camera", camera);
-    list.set("isMainCamera", true);
-    editorCamera = ecs::create_entity("free_camera", std::move(list));
+    editorCamera = ecs::create_entity("free_camera", {
+      {"camera", camera},
+      {"isMainCamera", true}
+    });
   }
   editorCameraManager.camera = editorCamera;
 }
@@ -265,39 +265,39 @@ ecs::EntityId create_arcball_camera(float dist, vec2 rotation, vec3 target)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
-  ecs::ComponentInitializerList list;
-  list.set("camera", camera);
-  list.set("arcballCamera", ArcballCamera(dist, rotation, target));
-  return ecs::create_entity("arcball_camera", std::move(list));
+  return ecs::create_entity("arcball_camera", {
+    {"camera", camera},
+    {"arcballCamera", ArcballCamera(dist, rotation, target)}
+  });
 }
 ecs::EntityId create_arcball_camera(float dist, vec2 rotation, ecs::EntityId target)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
-  ecs::ComponentInitializerList list;
-  list.set("camera", camera);
-  list.set("arcballCamera", ArcballCamera(dist, rotation));
-  list.set("arcballCameraTarget", target);
-  return ecs::create_entity("arcball_camera", std::move(list));
+  return ecs::create_entity("arcball_camera", {
+    {"camera", camera},
+    {"arcballCamera", ArcballCamera(dist, rotation)},
+    {"arcballCameraTarget", target}
+  });
 }
 
 ecs::EntityId create_free_camera(vec3 position, vec2 rotation)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
-  ecs::ComponentInitializerList list;
-  list.set("camera", camera);
-  list.set("transform", Transform(position, vec3(rotation, 0)));
-  return ecs::create_entity("free_camera", std::move(list));
+  return ecs::create_entity("free_camera", {
+    {"camera", camera},
+    {"transform", Transform(position, vec3(rotation, 0))}
+  });
 }
 
 ecs::EntityId create_camera(vec3 position, vec2 rotation, bool main_camera)
 {
   Camera camera;
   camera.set_perspective(90.f, 0.01f, 5000.f);
-  ecs::ComponentInitializerList list;
-  list.set("camera", camera);
-  list.set("transform", Transform(position, vec3(rotation, 0)));
-  list.set("isMainCamera", main_camera);
-  return ecs::create_entity("base_camera", std::move(list));
+  return ecs::create_entity("base_camera", {
+    {"camera", camera},
+    {"transform", Transform(position, vec3(rotation, 0))},
+    {"isMainCamera", main_camera}
+  });
 }

@@ -27,7 +27,7 @@ namespace ecs
         continue;
       }
       ComponentInitializerList overrides;
-      init_components_from_blk(entity, overrides.components);
+      init_components_from_blk(entity, overrides);
       create_entity(templateInst, std::move(overrides));
     }
   }

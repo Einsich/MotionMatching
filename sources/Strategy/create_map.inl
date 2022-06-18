@@ -49,13 +49,17 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
   return;
   Asset<Mesh> flag = create_flag(1, 2, 1.5f, 0.02f); 
   Asset<Material> flag_mat = get_resource<Material>("flag");
-   
+  const ecs::Template *flagTemplate = ecs::create_template("flag", {
+      {"transform", Transform()},
+      {"mesh", flag},
+      {"material", flag_mat}
+  });
+
   uint N = 5; 
   for (uint i = 0; i < N; i++) 
     for (uint j = 0; j < N; j++) 
     {
-      ecs::create_entity<Transform, Asset<Mesh>, Asset<Material>>
-       ({"transform", Transform(vec3(j,0,i)* 5.f)}, {"mesh", flag}, {"material", flag_mat}); 
+      ecs::create_entity(flagTemplate, {{"transform", Transform(vec3(j,0,i)* 5.f)}});
     } 
  
 } 
@@ -87,8 +91,7 @@ EVENT(scene=game, editor) spawn_buildings(const ecs::OnEntityCreated&,
     int x = i / row_count;
     int y = i % row_count;
     transform.set_position(center + vec3(x, 0, y) * step_length);
-    list.set("transform", transform);
-    ecs::create_entity(t, std::move(list));
+    ecs::create_entity(t, {{"transform", transform}});
     i++;
   }
 }

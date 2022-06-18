@@ -53,11 +53,11 @@ EVENT(scene=game, editor) spawn_coin_effect(
 
     for (int i = 0; i < 25; i++)
     {
-      ecs::ComponentInitializerList list;
-      list.set("transform", Transform(worldPos, vec3(0), vec3(0.1f)));
-      list.set("linear_velocity", (vec3(0,3.5,0)+ rand_vec3()) * 1.5f);
-      list.set("angular_velocity", rand_vec3() * 1.5f);
-      ecs::create_entity(t, std::move(list));
+      ecs::create_entity(t, {
+        {"transform", Transform(worldPos, vec3(0), vec3(0.1f))},
+        {"linear_velocity", (vec3(0,3.5,0)+ rand_vec3()) * 1.5f},
+        {"angular_velocity", rand_vec3() * 1.5f}
+      });
     }
   }
 }

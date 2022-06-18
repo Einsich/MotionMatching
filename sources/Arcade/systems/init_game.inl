@@ -10,21 +10,17 @@ EVENT() init_game(const StartGameEvent &, const SpriteFactory &sf, const ScoreBo
   float minSize = 0.5f, maxSize = 1.5f;
   const ecs::Template *targets = ecs::get_template("targets");
   for (int i = 0; i < targetCount; i++)
-  {
-    ecs::ComponentInitializerList list;
-    list.set("sprite", sf.figures[rand_int(FigureCount)]);
-    list.set("transform", Transform2D(rand_vec2() * areaRadius,
+  {                                
+    ecs::create_entity(targets, {
+      {"sprite", sf.figures[rand_int(FigureCount)]},
+      {"transform", Transform2D(rand_vec2() * areaRadius,
                                 vec2(rand_float(minSize, maxSize)),
-                                rand_float() * PITWO));
-    list.set("velocity", rand_vec2());
-    list.set("rotationVelocity", rand_float()*PI);
-    list.set("color", vec4(rand_vec3(0.f, 1.f), 1));
-                                
-    ecs::create_entity(targets, std::move(list));
+                                rand_float() * PITWO)},
+      {"velocity", rand_vec2()},
+      {"rotationVelocity", rand_float()*PI},
+      {"color", vec4(rand_vec3(0.f, 1.f), 1)}
+    });
   }
-  const ecs::Template *mainHero = ecs::get_template("main_hero");
-  ecs::ComponentInitializerList list;
-  list.set("sprite", sf.arrow);
-  ecs::create_entity(mainHero, std::move(list));
+  ecs::create_entity("main_hero", {{"sprite", sf.arrow}});
 
 }

@@ -2,7 +2,8 @@
 
 namespace ecs
 {  
-  void patch_components(vector<ComponentInstance> &components, const vector<ComponentInstance> &patch)
+  template<typename T>
+  void patch_components_impl(vector<ComponentInstance> &components, T patch)
   {
     for (size_t i = 0, n = patch.size(); i < n; ++i)
     {
@@ -19,5 +20,13 @@ namespace ecs
       if (!patched)
         components.emplace_back(patch[i]);
     }
+  }
+  void patch_components(vector<ComponentInstance> &components, const vector<ComponentInstance> &patch)
+  {
+    patch_components_impl(components, patch);
+  }
+  void patch_components(vector<ComponentInstance> &components, vector<ComponentInstance> &&patch)
+  {
+    patch_components_impl(components, std::move(patch));
   }
 }

@@ -145,10 +145,10 @@ static void spawn_tress(
 
         if (onLand && height_map.is_land(p, height))
         {
-          ecs::ComponentInitializerList list;
-          list.set("transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale)));
-          list.set("is_enabled", false);
-          ecs::create_entity(treeTempalte, std::move(list));
+          ecs::create_entity(treeTempalte, {
+            {"transform", Transform(vec3(p.x, height, p.y), vec3(rand_float() * PI,0,0), vec3(tree_scale))},
+            {"is_enabled", false}
+          });
         }
       }
     }

@@ -103,10 +103,7 @@ EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
   
 
   {
-    const ecs::Template *borders = ecs::get_template("borders");
-    ecs::ComponentInitializerList list;
-    list.set("mesh", build_borders(politicalMap, pixel_scale));
-    ecs::create_entity(borders, std::move(list));
+    ecs::create_entity("borders", {{"mesh", build_borders(politicalMap, pixel_scale)}});
     for (auto [key, value] : politicalMap.borderIndexes)
     {
       uint prov0 = key & PoliticalMap::PROVINCES_MASK;

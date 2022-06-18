@@ -44,12 +44,12 @@ EVENT(scene=game, editor) init(const ecs::OnSceneCreated &)
     const ecs::Template *tmpl = ecs::get_template("test_template");
     for (uint i = 0; i < entityCount; i++)
     {
-      ecs::ComponentInitializerList list;
-      list.set("index", i);
-      list.set("pos", rand_vec3());
-      list.set("vel", rand_vec3());
-      list.set("m", rand_float(1.f, 10.f));
-      ecs::create_entity(tmpl, std::move(list));
+      ecs::create_entity(tmpl, {
+        {"index", i},
+        {"pos", rand_vec3()},
+        {"vel", rand_vec3()},
+        {"m", rand_float(1.f, 10.f)}
+      });
     }
   }
   {
