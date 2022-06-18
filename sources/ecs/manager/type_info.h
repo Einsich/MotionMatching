@@ -11,10 +11,43 @@ namespace ecs
   struct TypeRTTI
   {
     const int sizeOf = 0;
-    const Constructor constructor = nullptr;
-    const CopyConstructor copy_constructor = nullptr;
-    const MoveConstructor move_constructor = nullptr;
-    const Destructor destructor = nullptr;
+    const Constructor constructorFunc = nullptr;
+    const CopyConstructor copy_constructorFunc = nullptr;
+    const MoveConstructor move_constructorFunc = nullptr;
+    const Destructor destructorFunc = nullptr;
+    const bool trivialCopy = false;
+    const bool trivialMove = false;
+    const bool trivialConstruct = false;
+    const bool trivialDestruct = false;
+    inline void constructor(void *memory) const
+    {
+      if (trivialConstruct)
+        memset(memory, 0, sizeOf);
+      else
+        constructorFunc(memory);
+    }
+    inline void copy_constructor(const void*src, void*dst) const
+    {
+      if (trivialCopy)
+        memcpy(dst, src, sizeOf);
+      else
+        copy_constructorFunc(src, dst);
+    }
+    inline void move_constructor(void*src, void*dst) const
+    {
+      if (trivialCopy)
+      {
+        memcpy(dst, src, sizeOf);
+        memset(src, 0, sizeOf);
+      }
+      else
+        move_constructorFunc(src, dst);
+    }
+    inline void destructor(void *memory) const
+    {
+      if (!trivialDestruct)
+        destructorFunc(memory);
+    }
   };
   struct TypeInfo
   {
@@ -24,14 +57,12 @@ namespace ecs
       return types;
     }
     
-    const uint32_t hashId = 0;
-    const std::string name = "";
-    const bool trivialCopy = false;
-    const bool trivialRelocatable = false;
-    TypeRTTI rtti;
+    const uint32_t hashId;
+    const std::string name;
+    const TypeRTTI rtti;
     const UserTypeInfo userInfo;
 
-    TypeInfo(TypeRTTI rtti, std::string &&name, bool trivialCopy = false, bool trivialRelocatable = false, UserTypeInfo userInfo = UserTypeInfo());
+    TypeInfo(TypeRTTI rtti, std::string &&name, UserTypeInfo userInfo = UserTypeInfo());
     TypeInfo(const TypeInfo &) = delete;
     TypeInfo(TypeInfo &&) = delete;
     TypeInfo& operator= (const TypeInfo &) = delete;

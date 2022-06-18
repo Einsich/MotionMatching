@@ -1,7 +1,6 @@
 #include "type_info.h"
 #include "3dmath.h"
 #include "manager/entity_id.h" 
-#include "base_types.h"
 #include "../component_editor.h"
 #include <type_registration.h>
 #include "common.h"
@@ -10,24 +9,39 @@
 using namespace std;
 using namespace ecs;
 
-#define MACRO(T, N, trivial_copy, trivial_move) ECS_REGISTER_TYPE_AND_VECTOR(T, T, trivial_copy, trivial_move);
 
-ECS_REGISTER_TYPE(bool, bool, true, true);
-ECS_REGISTER_TYPE_AND_VECTOR(uvec2, uvec2, true, true);
-ECS_REGISTER_TYPE_AND_VECTOR(uvec3, uvec3, true, true);
-ECS_REGISTER_TYPE_AND_VECTOR(uvec4, uvec4, true, true);
-BASE_TYPES
+ECS_REGISTER_TYPE(bool, bool, true, true, true, true);
+ECS_REGISTER_TYPE_AND_VECTOR(uvec2, uvec2, true, true, true, true);
+ECS_REGISTER_TYPE_AND_VECTOR(uvec3, uvec3, true, true, true, true);
+ECS_REGISTER_TYPE_AND_VECTOR(uvec4, uvec4, true, true, true, true);
+
+ECS_REGISTER_TYPE_AND_VECTOR(int, int, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(uint, uint, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(ivec2, ivec2, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(ivec3, ivec3, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(ivec4, ivec4, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(float, float, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(vec2, vec2, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(vec3, vec3, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(vec4, vec4, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(mat2, mat2, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(mat3, mat3, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(mat4, mat4, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(double, double, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(string, string, false, true)
+ECS_REGISTER_TYPE_AND_VECTOR(EntityId, EntityId, true, true, true, true)
+ECS_REGISTER_TYPE_AND_VECTOR(Tag, Tag, true, true, true, true)
+
 namespace ecs
 {
-  TypeInfo::TypeInfo(TypeRTTI rtti, std::string &&name, bool trivialCopy, bool trivialRelocatable, UserTypeInfo userInfo):
+  TypeInfo::TypeInfo(TypeRTTI rtti, std::string &&name, UserTypeInfo userInfo):
     hashId(HashedString(name)), name(std::move(name)),
-    trivialCopy(trivialCopy), trivialRelocatable(trivialRelocatable),
     rtti(rtti),
     userInfo(userInfo)
   {
     debug_log("ECS: register %u type %s, sizeof %u, hash %u, trivial copy - %s, move - %s",
       TypeInfo::types().size(), this->name.c_str(), rtti.sizeOf, hashId,
-      trivialCopy ? "true" : "false", trivialRelocatable ? "true" : "false");
+      rtti.trivialCopy ? "true" : "false", rtti.trivialMove ? "true" : "false");
 
     TypeInfo::types().try_emplace(hashId, this);
   }

@@ -16,11 +16,11 @@
 #include <parallel/thread_pool.h>
 #include <type_registration.h>
 
-ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>, false, false);
-ECS_REGISTER_TYPE(Texture2D, Asset<Texture2D>, false, false);
-ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>, false, false);
-ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>, false, false);
-ECS_REGISTER_TYPE(Material, Asset<Material>, false, false);
+ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>);
+ECS_REGISTER_TYPE(Texture2D, Asset<Texture2D>);
+ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>);
+ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>);
+ECS_REGISTER_TYPE(Material, Asset<Material>);
 
 EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
 {

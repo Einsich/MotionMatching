@@ -2,7 +2,7 @@
 #include "skybox.h"
 #include <type_registration.h>
 
-ECS_REGISTER_TYPE(SkyBox, SkyBox, false, false);
+ECS_REGISTER_TYPE(SkyBox, SkyBox);
 
 SkyBox::SkyBox()
 {

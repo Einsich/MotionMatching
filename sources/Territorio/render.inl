@@ -7,7 +7,7 @@
 #include "map_arrays.h"
 #include "world_render.h"
 
-ECS_REGISTER_TYPE(WorldRenderer, WorldRenderer, false, false)
+ECS_REGISTER_TYPE(WorldRenderer, WorldRenderer)
 
 template<typename Callable>
 void get_world_renderer(Callable);

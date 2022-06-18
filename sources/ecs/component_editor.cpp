@@ -1,7 +1,6 @@
 
 #include "component_editor.h"
 #include "manager/entity_id.h"
-#include "base_types.h"
 #include "ecs_core.h"
 #include "manager/entity_container.h"
 #include "serialization/reflection.h"

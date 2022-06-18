@@ -10,7 +10,7 @@
 
 ECS_EVENT_REGISTER(OnGameStarted, OnGameStarted)
 
-ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion, false, false);
+ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion);
 
 
 template<typename Callable>

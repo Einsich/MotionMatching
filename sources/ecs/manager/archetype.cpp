@@ -126,7 +126,6 @@ namespace ecs
   void save(std::ostream& os, const std::vector<Archetype*> &archetypes)
   {
     constexpr uint eidTypeHash = HashedString("EntityId");
-    //constexpr uint eidTypeNameHash  = TypeDescription::hash(HashedString("eid"), eidTypeHash);
     size_t archetypeToSave = 0;
     vector<int> archetypeRemap(archetypes.size());
     for (uint i = 0; i < archetypes.size(); ++i)

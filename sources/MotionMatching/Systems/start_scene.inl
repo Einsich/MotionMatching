@@ -10,16 +10,11 @@
 #include "Animation/Test/animation_test.h"
 #include "Animation/settings.h"
 
-#define CUSTOM_TYPES \
-MACRO(PersonController)\
-MACRO(AnimationPlayer)\
-MACRO(AnimationTester)\
-MACRO(ThirdPersonController)
-
-#define MACRO(T) ECS_REGISTER_TYPE(T, T, false, false)
-CUSTOM_TYPES
-#undef MACRO
-ECS_REGISTER_TYPE(AnimationDataBase, Asset<AnimationDataBase>, false, false)
+ECS_REGISTER_TYPE(AnimationDataBase, Asset<AnimationDataBase>)
+ECS_REGISTER_TYPE(PersonController, PersonController)
+ECS_REGISTER_TYPE(AnimationPlayer, AnimationPlayer)
+ECS_REGISTER_TYPE(AnimationTester, AnimationTester)
+ECS_REGISTER_TYPE(ThirdPersonController, ThirdPersonController)
 
 
 EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,

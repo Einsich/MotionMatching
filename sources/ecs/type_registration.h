@@ -5,38 +5,45 @@
 namespace ecs
 {
   template<class T>
-  void* template_constructor(void *memory)
+  void template_constructor(void *memory)
   {
-    return new (memory) T();
+    new (memory) T();
   }
   template<class T>
   void template_destructor(void *memory)
   {
-    return ((T*)(memory))->~T();
+    ((T*)(memory))->~T();
   }
   template<typename T>
-  void* template_copy_constructor(const void *src, void *dst)
+  void template_copy_constructor(const void *src, void *dst)
   {
-    return new (dst) T(*((T*)src));
+    new (dst) T(*((T*)src));
   }
   template<typename T>
-  void* template_move_constructor(void *src, void *dst)
+  void template_move_constructor(void *src, void *dst)
   {
-    return new (dst) T(std::move(*((T*)src)));
+    new (dst) T(std::move(*((T*)src)));
   }
   template<typename T>
-  TypeRTTI get_rtti()
+  TypeRTTI get_rtti(bool trivialCopy=false, bool trivialMove=false, bool trivialConstruct=false, bool trivialDestruct=false)
   {
     return TypeRTTI{ sizeof(T),
       ecs::template_constructor<T>,
       ecs::template_copy_constructor<T>,
       ecs::template_move_constructor<T>,
-      ecs::template_destructor<T> };
+      ecs::template_destructor<T>,
+      trivialCopy,
+      trivialMove,
+      trivialConstruct,
+      trivialDestruct
+    };
   }
 }
-#define ECS_REGISTER_TYPE(VAR_NAME, TYPE, TRIVIAL_COPY, TRIVIAL_MOVE)\
+
+//bool trivialCopy, bool trivialMove, bool trivialConstruct, bool trivialDestruct
+#define ECS_REGISTER_TYPE(VAR_NAME, TYPE, ...)\
 namespace ecs{\
-  ecs::TypeInfo type_##VAR_NAME(ecs::get_rtti<TYPE>(), std::string(#TYPE), TRIVIAL_COPY, TRIVIAL_MOVE, get_uset_type_info<TYPE>());\
+  ecs::TypeInfo type_##VAR_NAME(ecs::get_rtti<TYPE>(__VA_ARGS__), std::string(#TYPE), get_uset_type_info<TYPE>());\
   template<>\
   uint32_t type_hash<TYPE>()\
   { return HashedString(#TYPE); }\
@@ -48,6 +55,8 @@ namespace ecs{\
   { return type_##VAR_NAME; }\
 }
 
-#define ECS_REGISTER_TYPE_AND_VECTOR(VAR_NAME, TYPE, TRIVIAL_COPY, TRIVIAL_MOVE)\
-ECS_REGISTER_TYPE(VAR_NAME, TYPE, TRIVIAL_COPY, TRIVIAL_MOVE)\
-ECS_REGISTER_TYPE(VAR_NAME##_vec, vector<TYPE>, false, true)
+
+//bool trivialCopy, bool trivialMove, bool trivialConstruct, bool trivialDestruct
+#define ECS_REGISTER_TYPE_AND_VECTOR(VAR_NAME, TYPE, ...)\
+ECS_REGISTER_TYPE(VAR_NAME, TYPE, __VA_ARGS__)\
+ECS_REGISTER_TYPE(VAR_NAME##_vec, vector<TYPE>, false, true, false, false)

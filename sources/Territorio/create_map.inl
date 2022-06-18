@@ -4,7 +4,7 @@
 #include <render/texture/texture2d.h>
 #include "map_arrays.h"
 
-ECS_REGISTER_TYPE(MapArrays, MapArrays, false, false)
+ECS_REGISTER_TYPE(MapArrays, MapArrays)
 
 
 static vector<ivec2> get_player_start_points(int h, int w, int n)
