@@ -129,7 +129,7 @@ namespace ecs
       }
       i++;
     }
-    for(const auto& arg : query.requireNotArgs)
+    for (const auto& arg : query.requireNotArgs)
     {
       if (arg.descr != 0 && archetype->get_container(arg.descr) != nullptr)//singleton case
       {
@@ -241,27 +241,21 @@ namespace ecs
       const vector<ComponentInstance> &template_list = blkTemplate->components;
       for (size_t i = 0, n = template_list.size(); i < n; ++i)
       {
-        const ComponentInstance &instance = template_list[i];
+        ComponentInstance &instance = (ComponentInstance &)template_list[i];
         ComponentContainer *container = blkTemplate->containers[i];
         size_t j = 0, m = list.size();
         for (; j < m; ++j)
-        {
           if (instance.typeNameHash == list[j].typeNameHash)
-          {
             break;
-          }
-        }
+
         void *rawMem = container->add_component();
         if (j == m)
         {
           if (instance.initManager)
           {
-            instance.initManager(rawMem);
+            instance.init_from_func();
           }
-          else
-          {
-            container->rtti.copy_constructor(instance.get_data(), rawMem);
-          }
+          container->rtti.copy_constructor(instance.get_data(), rawMem);
         }
         else
         {

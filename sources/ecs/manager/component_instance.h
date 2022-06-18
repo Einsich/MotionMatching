@@ -75,7 +75,14 @@ private:
     {
       assert(!instanceData.empty());
       return instanceData.data();
-    }    
+    }  
+    void init_from_func()
+    {
+      assert(instanceData.empty());
+      instanceData.resize(typeInfo->rtti.sizeOf);
+      initManager(instanceData.data());
+      initManager = nullptr;
+    }  
   };
   using ComponentInitializerList = vector<ComponentInstance>;
 
