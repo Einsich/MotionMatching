@@ -1,4 +1,5 @@
 #include <ecs.h>
+#include <type_registration.h>
 #include <application/time.h>
 #include <3dmath.h>
 #include "constanta.h"

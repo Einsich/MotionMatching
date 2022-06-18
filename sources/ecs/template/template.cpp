@@ -30,31 +30,33 @@ namespace ecs
     return manager;
   }
 
+  void update_template_cache(Template &tmpl)
+  {
+    for (Archetype *archetype : core().entityContainer->archetypes)
+    {
+      if (archetype->in_archetype(tmpl.components))
+      {
+        tmpl.archetype = archetype;
+        break;
+      }
+    }
+    if (!tmpl.archetype)
+    {
+      tmpl.archetype = add_archetype(tmpl);
+    }
+    size_t count = tmpl.components.size();
+    tmpl.containers.reserve(count);
+    auto &componentMap = tmpl.archetype->components; 
+    for (const ComponentInstance &instance : tmpl.components)
+    {
+      tmpl.containers.emplace_back(&componentMap[instance.typeNameHash]);
+    }
+  }
+
   const Template* get_template(const char *name)
   {
     Template* tmpl = get_template_manager().find(name);
-    if (tmpl && !tmpl->archetype)
-    {
-      for (Archetype *archetype : core().entityContainer->archetypes)
-      {
-        if (archetype->in_archetype(tmpl->components))
-        {
-          tmpl->archetype = archetype;
-          break;
-        }
-      }
-      if (!tmpl->archetype)
-      {
-        tmpl->archetype = add_archetype(*tmpl);
-      }
-      size_t count = tmpl->components.size();
-      tmpl->containers.reserve(count);
-      auto &componentMap = tmpl->archetype->components; 
-      for (const ComponentInstance &instance : tmpl->components)
-      {
-        tmpl->containers.emplace_back(&componentMap[instance.typeNameHash]);
-      }
-    }
+
     return tmpl;
   }
   

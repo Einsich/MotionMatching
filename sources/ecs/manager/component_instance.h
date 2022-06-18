@@ -46,17 +46,24 @@ private:
       return *this;
     }
 
-    template<typename T, typename TT = std::remove_cvref_t<T>>
-    ComponentInstance(const string &name, const T &instance) : 
-    instanceData(sizeof(TT)), typeInfo(&type_info<TT>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<TT>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<TT>()))
+    template<typename T>
+    ComponentInstance(const string &name, T &instance) : 
+    instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
-    template<typename T, typename TT = std::remove_cvref_t<T>>
+    template<typename T>
+    ComponentInstance(const string &name, const T &instance) : 
+    instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
+    {
+      typeInfo->rtti.copy_constructor(&instance, instanceData.data());
+    }    
+    template<typename T>
     ComponentInstance(const string &name, T &&instance) : 
-    instanceData(sizeof(TT)), typeInfo(&type_info<TT>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<TT>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<TT>()))
+    instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }

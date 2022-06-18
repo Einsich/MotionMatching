@@ -226,11 +226,12 @@ namespace ecs
   {
     if (!blkTemplate)
       return EntityId();
-    Archetype *found_archetype = blkTemplate->archetype;
     if (!blkTemplate->archetype)
     {
-      assert(0);
+      extern void update_template_cache(Template &tmpl);
+      update_template_cache((Template &)(*blkTemplate));
     }
+    Archetype *found_archetype = blkTemplate->archetype;
     int index = found_archetype->count;
     int archetype_ind = found_archetype->index;
     EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);

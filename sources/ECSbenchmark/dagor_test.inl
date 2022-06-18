@@ -46,15 +46,22 @@ EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
 {
 
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
-
+  const ecs::Template *tmpl1 = ecs::create_template("test1", {
+    {"p", vec3()},
+    {"v", vec3()}
+  });
+  const ecs::Template *tmpl2 = ecs::create_template("test2", {
+    {"P", vec3()},
+    {"V", vec3()}
+  });
   {
     TimeScope a("ecs_create");
     for (uint i = 0; i < dagorEntityCount; i++)
     {
-      ecs::create_entity<vec3, vec3>(
+      ecs::create_entity(tmpl1, {
         {"p", rand_vec3()},
         {"v", rand_vec3()}
-      );
+      });
     }
   }
   {
@@ -96,13 +103,14 @@ EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
     TimeScope a("tiny_structs_ecs_creation");
     for (uint i = 0; i < tinyCount; i++)
     {
-      ecs::create_entity<vec3, vec3>(
+      ecs::create_entity(tmpl2, {
         {"P", rand_vec3()},
         {"V", rand_vec3()}
-      );
+      });
     }
   }
   fflush(stdout);
+  return;
   auto t1 = std::thread([&]()
   {
     int a = 1;
