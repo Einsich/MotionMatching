@@ -1,7 +1,6 @@
 #include "type_info.h"
 #include "3dmath.h"
 #include "manager/entity_id.h" 
-#include "../component_editor.h"
 #include <type_registration.h>
 #include "common.h"
 #include "string_hash.h"

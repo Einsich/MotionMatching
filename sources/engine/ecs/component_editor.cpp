@@ -8,7 +8,10 @@
 constexpr int BUFN = 255;
 char buf[BUFN];
 
+#include <ecs_event_registration.h>
+#include "editor_events.h"
 
+ECS_EVENT_REGISTER(OnEntityEdited, OnEntityEdited)
 
 bool edit_component(bool &component, const char *name, bool view_only)
 {

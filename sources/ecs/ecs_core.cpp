@@ -4,7 +4,7 @@
 #include "manager/system_description.h"
 #include "common.h"
 #include "manager/entity_container.h"
-#include "template/template.h"
+#include "template.h"
 #include "manager/core_interface.h"
 #include "ecs_tag.h"
 #include "ecs_event_impl.h"

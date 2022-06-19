@@ -1,5 +1,6 @@
 #include "template.h"
 #include "manager/entity_id.h"
+#include "data_block/data_block.h"
 
 namespace ecs
 {

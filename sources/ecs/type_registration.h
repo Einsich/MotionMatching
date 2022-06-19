@@ -1,5 +1,5 @@
 #pragma once
-#include "manager/user_type_registration.h"
+#include "config/user_type_registration.h"
 #include "manager/type_info.h"
 #include "manager/string_hash.h"
 namespace ecs

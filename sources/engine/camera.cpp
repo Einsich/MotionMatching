@@ -1,7 +1,7 @@
 #include "camera.h"
 #include <vector>
 #include "application/application_data.h"
-#include "component_editor.h"
+#include "ecs/component_editor.h"
 #include "imgui.h"
 
 Camera::Camera():

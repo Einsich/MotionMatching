@@ -3,6 +3,7 @@
 #include <manager/entity_container.h>
 #include <functional>
 #include "editor_window.h"
+#include <ecs/editor_events.h>
 
 constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
 EVENT(scene=game, editor,scene=debug) init_imgui_style(const ecs::OnSceneCreated&, EditorUI &ui)
@@ -49,7 +50,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
             {
               bool edited = typeInfo.userInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), false);
               if (edited)
-                ecs::send_event(eid, ecs::OnEntityEdited());
+                ecs::send_event(eid, OnEntityEdited());
               ImGui::TreePop();
             }
           }

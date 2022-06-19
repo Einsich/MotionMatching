@@ -4,7 +4,7 @@
 #include <functional>
 #include "manager/system_description.h"
 #include "manager/entity_id.h"
-#include "template/template.h"
+#include "template.h"
 namespace ecs
 {
   struct Event;

@@ -1,6 +1,6 @@
 #include "animation_player.h"
 #include "animation_ik.h"
-#include <component_editor.h>
+#include <ecs/component_editor.h>
 #include <resources/resources.h>
 
 void AnimationPlayer::set_data_to_IK(const mat4 &t, int i, vec3 foot, vec3 toe, vec3 norm, const char *foot_name, const char *toe_name)

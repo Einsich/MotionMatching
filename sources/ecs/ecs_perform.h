@@ -2,7 +2,7 @@
 #include "ecs_core.h"
 #include "ecs_event_impl.h"
 #include <parallel/thread_pool.h>
-
+#include <array>
 namespace ecs
 {
   

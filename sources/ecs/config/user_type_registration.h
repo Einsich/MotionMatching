@@ -1,6 +1,6 @@
 #pragma once
 #include "data_block/data_block.h"
-#include "../component_editor.h"
+#include "ecs/component_editor.h"
 #include "data_block/data_block_serialization.h"
 #include "user_type_info.h"
 

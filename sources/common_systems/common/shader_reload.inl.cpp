@@ -60,7 +60,7 @@ void reload_directional_light_handler(const ecs::Event &event);
 void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription reload_directional_light_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityEdited>(), "reload_directional_light", {
+  ecs::get_mutable_event_handlers<OnEntityEdited>(), "reload_directional_light", {
   {ecs::get_type_description<DirectionLight>("directionalLight"), false}
 }, {
 }, {"editor"},
@@ -70,11 +70,11 @@ reload_directional_light_handler, reload_directional_light_singl_handler, ecs::t
 
 void reload_directional_light_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityEdited&)event, reload_directional_light_descr, reload_directional_light);
+  ecs::perform_event((const OnEntityEdited&)event, reload_directional_light_descr, reload_directional_light);
 }
 void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 {
-  ecs::perform_event((const ecs::OnEntityEdited&)event, reload_directional_light_descr, eid, reload_directional_light);
+  ecs::perform_event((const OnEntityEdited&)event, reload_directional_light_descr, eid, reload_directional_light);
 }
 
 

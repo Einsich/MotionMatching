@@ -1,7 +1,7 @@
 #include "texture2d_array.h"
 #include "stb_image.h"
 #include "imgui.h"
-#include "component_editor.h"
+#include "ecs/component_editor.h"
 #include <parallel/thread_pool.h>
 
 Texture2DArray::Texture2DArray()

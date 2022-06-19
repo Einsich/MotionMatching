@@ -2,7 +2,7 @@
 #include "component_function.h"
 #include <unordered_map>
 #include "../singleton.h"
-#include "user_type_info.h"
+#include "config/user_type_info.h"
 
 #include <eastl/unique_ptr.h>
 #include <eastl/vector_map.h>

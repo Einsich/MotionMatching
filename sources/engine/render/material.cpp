@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "resources/resource_registration.h"
 #include "resources/editor.h"
-#include "component_editor.h"
+#include "ecs/component_editor.h"
 #include "global_uniform.h"
 
 void Material::bind_textures_to_shader() const

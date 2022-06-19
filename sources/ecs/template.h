@@ -1,8 +1,7 @@
 #pragma once
-#include "../manager/component_instance.h"
-#include "../manager/component_container.h"
-#include "../manager/archetype.h"
-#include "data_block/data_block.h"
+#include "manager/component_instance.h"
+#include "manager/component_container.h"
+#include "manager/archetype.h"
 
 namespace ecs
 {

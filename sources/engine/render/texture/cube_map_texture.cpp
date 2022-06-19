@@ -1,7 +1,7 @@
 #include "cube_map_texture.h"
 #include "stb_image.h"
 #include "resources/resource_registration.h"
-#include "component_editor.h"
+#include "ecs/component_editor.h"
 #include <parallel/thread_pool.h>
 
 CubeMap::CubeMap()

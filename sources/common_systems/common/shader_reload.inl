@@ -4,6 +4,7 @@
 #include <render/shader/shader_factory.h>
 #include <render/direction_light.h>
 #include <render/material.h>
+#include <ecs/editor_events.h>
 
 
 template<typename T>
@@ -35,7 +36,7 @@ load_directional_light(const ecs::OnEntityCreated &, DirectionLight &directional
   directionalLight.normalizedLightDirection = normalize(directionalLight.lightDirection);
 }
 EVENT(scene=editor) 
-reload_directional_light(const ecs::OnEntityEdited &, DirectionLight &directionalLight)
+reload_directional_light(const OnEntityEdited &, DirectionLight &directionalLight)
 {
   directionalLight.normalizedLightDirection = normalize(directionalLight.lightDirection);
 }

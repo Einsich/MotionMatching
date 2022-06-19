@@ -15,10 +15,6 @@ namespace ecs
   {
 
   }; 
-  struct OnEntityEdited : public Event
-  {
-
-  };
   struct OnEntityDestroyed : public Event
   {
 

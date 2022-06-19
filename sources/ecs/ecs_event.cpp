@@ -4,5 +4,4 @@
 
 ECS_EVENT_REGISTER(OnSceneCreated, ecs::OnSceneCreated)
 ECS_EVENT_REGISTER(OnEntityCreated, ecs::OnEntityCreated)
-ECS_EVENT_REGISTER(OnEntityEdited, ecs::OnEntityEdited)
 ECS_EVENT_REGISTER(OnEntityDestroyed, ecs::OnEntityDestroyed)
