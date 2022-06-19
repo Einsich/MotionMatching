@@ -1,5 +1,4 @@
 #include "component_container.h"
-#include "core_interface.h"
 #include <stdlib.h>
 namespace ecs
 {

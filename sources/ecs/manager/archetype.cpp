@@ -1,11 +1,11 @@
 #include "archetype.h"
 #include "entity_pull.h"
-#include "core_interface.h"
 #include "entity_id.h"
 #include "string_hash.h"
+#include "common.h"
 namespace ecs
 {
-  Archetype::Archetype(int index, const vector<ComponentInstance> &type_hashes, int capacity, const string &synonim):
+  Archetype::Archetype(int index, const std::vector<ComponentInstance> &type_hashes, int capacity, const std::string &synonim):
     index(index), components(), count(0), capacity(capacity), typeDescriptions(), synonim(synonim)
   {
     for (const ComponentInstance &instance : type_hashes)
@@ -27,7 +27,7 @@ namespace ecs
       });
   }
   
-  bool Archetype::in_archetype(const vector<ComponentInstance> &instances) const
+  bool Archetype::in_archetype(const std::vector<ComponentInstance> &instances) const
   {
     if (instances.size() != components.size())
       return false;

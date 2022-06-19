@@ -5,7 +5,6 @@
 #include "common.h"
 #include "manager/entity_container.h"
 #include "template.h"
-#include "manager/core_interface.h"
 #include "ecs_tag.h"
 #include "ecs_event_impl.h"
 #define ECS_DEBUG_INFO 0
@@ -273,6 +272,22 @@ namespace ecs
       printf("}\n");
     }
   }
+  
+  void print_archetypes()
+  {   
+    printf("\n- - - - - \n");
+    for (const Archetype *archetype : core().entityContainer->archetypes)
+    {
+      printf("{\n");
+      for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
+      {
+        printf("  %s %s\n", typeInfo->name.c_str(), name);
+      }
+      printf("},\n");
+    }
+    std::fflush(stdout);
+  }
+
   void destroy_scene()
   {    
     core().destroy_all_entities();

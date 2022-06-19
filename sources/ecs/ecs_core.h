@@ -75,4 +75,5 @@ namespace ecs
   }
 
   void system_statistic();
+  void print_archetypes();
 }

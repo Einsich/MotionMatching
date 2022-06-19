@@ -1,5 +1,4 @@
 #pragma once
-#include "component_function.h"
 #include <unordered_map>
 #include "../singleton.h"
 #include "config/user_type_info.h"
@@ -7,6 +6,10 @@
 #include <eastl/vector_map.h>
 namespace ecs
 {
+  typedef void (*Constructor)(void*);
+  typedef void (*CopyConstructor)(const void*, void*);
+  typedef void (*MoveConstructor)(void*, void*);
+  typedef void (*Destructor)(void*);
   struct TypeRTTI
   {
     const int sizeOf = 0;

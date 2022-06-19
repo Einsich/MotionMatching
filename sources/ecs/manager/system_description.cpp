@@ -1,5 +1,4 @@
 #include "system_description.h"
-#include "core_interface.h"
 #include "../ecs_tag.h"
 namespace ecs
 {
