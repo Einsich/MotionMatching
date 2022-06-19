@@ -42,13 +42,12 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
             archetype->destroy_entity(j, true);
           }
           else
-          for (const ecs::FullTypeDescription *full_descr : archetype->fullTypeDescriptions)
+          for (const auto&[name, typeInfo, component, hash] : archetype->typeDescriptions)
           {
-            const ecs::TypeInfo &typeInfo = *ecs::TypeInfo::types()[full_descr->typeHash];
-            snprintf(buf, N, "%s %s",  full_descr->name.c_str(), typeInfo.name.c_str());
+            snprintf(buf, N, "%s %s",  name, typeInfo->name.c_str());
             if (ImGui::TreeNode(buf))
             {
-              bool edited = typeInfo.userInfo.componentEdition(archetype->components[full_descr->hash].get_component<void>(j), false);
+              bool edited = typeInfo->userInfo.componentEdition(component->get_component<void>(j), false);
               if (edited)
                 ecs::send_event(eid, OnEntityEdited());
               ImGui::TreePop();

@@ -3,8 +3,7 @@
 #include <unordered_map>
 #include "../singleton.h"
 #include "config/user_type_info.h"
-
-#include <eastl/unique_ptr.h>
+#include "string_hash.h"
 #include <eastl/vector_map.h>
 namespace ecs
 {
@@ -92,4 +91,18 @@ namespace ecs
 
   template<typename T>
   const TypeInfo &type_info();
+  
+  constexpr inline uint type_name_hash(uint name_hash, uint type_hash)
+  {
+    return name_hash ^ (type_hash * 16397816463u);
+  }
+
+  template<typename T>
+  constexpr uint get_type_description(const char *name)
+  {
+    if constexpr (is_singleton<T>::value)
+      return 0;
+    else
+      return type_name_hash(HashedString(name), ecs::type_hash<T>());
+  }
 }

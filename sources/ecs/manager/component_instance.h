@@ -1,7 +1,6 @@
 #pragma once
 #include <functional>
 #include "type_info.h"
-#include "type_description.h"
 #include "string_hash.h"
 #include <assert.h>
 namespace ecs
@@ -9,11 +8,11 @@ namespace ecs
   struct ComponentInstance 
   {
 private:
-    vector<char> instanceData;
+    std::vector<char> instanceData;
   public:
     const TypeInfo *typeInfo;
     std::function<void(void*)> initManager;
-    string name;
+    std::string name;
     uint nameHash, typeHash, typeNameHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
@@ -47,29 +46,29 @@ private:
     }
 
     template<typename T>
-    ComponentInstance(const string &name, T &instance) : 
+    ComponentInstance(const std::string &name, T &instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
     template<typename T>
-    ComponentInstance(const string &name, const T &instance) : 
+    ComponentInstance(const std::string &name, const T &instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
     template<typename T>
-    ComponentInstance(const string &name, T &&instance) : 
+    ComponentInstance(const std::string &name, T &&instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(TypeDescription::hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }
-    ComponentInstance(const TypeInfo &info, const string &name, std::function<void(void*)> &&initManager) : 
+    ComponentInstance(const TypeInfo &info, const std::string &name, std::function<void(void*)> &&initManager) : 
     instanceData(), typeInfo(&info), initManager(initManager), name(name)
-    , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(TypeDescription::hash(nameHash, info.hashId))
+    , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(type_name_hash(nameHash, info.hashId))
     {
     }
    
@@ -91,8 +90,8 @@ private:
       initManager = nullptr;
     }  
   };
-  using ComponentInitializerList = vector<ComponentInstance>;
+  using ComponentInitializerList = std::vector<ComponentInstance>;
 
-  void patch_components(vector<ComponentInstance> &components, const vector<ComponentInstance> &patch);
-  void patch_components(vector<ComponentInstance> &components, vector<ComponentInstance> &&patch);
+  void patch_components(std::vector<ComponentInstance> &components, const std::vector<ComponentInstance> &patch);
+  void patch_components(std::vector<ComponentInstance> &components, std::vector<ComponentInstance> &&patch);
 }

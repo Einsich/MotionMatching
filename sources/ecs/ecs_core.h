@@ -14,12 +14,11 @@ namespace ecs
   std::vector<QueryDescription*> &all_queries();
   struct Core
   {
-    std::unordered_map<uint, FullTypeDescription> types;
     EntityContainer *entityContainer;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint applicationTags;
-    string currentSceneTags;
+    std::string currentSceneTags;
     std::string sceneToLoad;
     bool reloadScene;
     Core();
@@ -32,45 +31,6 @@ namespace ecs
   };
   Core &core();
 
-
-
-  template<typename T>
-  struct ComponentInitializer
-  {
-    const char *name;
-    const T & component;
-  };
-  template<typename T>
-  uint component_initializer_hash(const ComponentInitializer<T> &component)
-  {
-    return register_type_description<T>(component.name);
-  }
-  template<typename T> 
-  void component_copy(void *data, const T & component)
-  {
-    new (data) T(std::move(component));
-  }
-  template<int N, typename T, typename ...Args>
-  void component_initializer_copy(vector<void*> &data, const ComponentInitializer<T> & arg, const Args &...args)
-  {
-    component_copy(data[N], arg.component);
-    if constexpr (sizeof...(args) > 0)
-      component_initializer_copy<N+1>(data, args...);
-  }
-  
-/*   pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes);
-  template<typename ...Args>
-  EntityId create_entity(const ComponentInitializer<Args> &...args)
-  {
-    vector<uint> typeHashes = 
-      {register_type_description<EntityId>("eid"), component_initializer_hash(args)... };
-    auto [eid, archetype] = add_entity(typeHashes);
-    vector<void*> data = archetype.get_entity_data(typeHashes);
-    component_copy(data[0], eid);
-    component_initializer_copy<1>(data, args...);
-    send_event_immediate(eid, OnEntityCreated());
-    return eid;
-  } */
   struct Template;
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list = {});
   EntityId create_entity(const char *template_name, ComponentInitializerList &&list = {});
@@ -78,7 +38,7 @@ namespace ecs
   void destroy_entity(const EntityId &eid);
 
   //destoy current scene and load new scene from path
-  void create_scene(const string &path, bool reload = true);
+  void create_scene(const std::string &path, bool reload = true);
 
 
   template<typename T>

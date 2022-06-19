@@ -9,7 +9,7 @@ SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
   {
     if (ImGui::Button("open scene"))
     {
-      filesystem::path path;
+      std::filesystem::path path;
       if (get_open_file(path, {"Scene", ".blk"}))
       {
         ecs::create_scene(path.string());

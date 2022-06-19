@@ -1,11 +1,11 @@
 #include "template.h"
 #include "manager/entity_id.h"
 #include "data_block/data_block.h"
-
+#include "common.h"
 namespace ecs
 {
   
-  void init_components_from_blk(const DataBlock *tmpl, vector<ComponentInstance> &components);
+  void init_components_from_blk(const DataBlock *tmpl, std::vector<ComponentInstance> &components);
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
 
   void load_scene(const DataBlock &scene)
@@ -15,7 +15,7 @@ namespace ecs
       const DataBlock *entity = scene.getBlock(i);
       if (entity->name() != "entity")
         continue;
-      const string *templateName = entity->get<string>("_template");
+      const std::string *templateName = entity->get<std::string>("_template");
       if (!templateName)
       {
         debug_error("need specify _template:t=\"template_name\"; in %d block", i);

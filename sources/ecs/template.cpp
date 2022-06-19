@@ -8,7 +8,7 @@
 
 namespace ecs
 {
-  Template::Template(const char *name, vector<ComponentInstance> &&components):
+  Template::Template(const char *name, std::vector<ComponentInstance> &&components):
     name(name), components(std::move(components)), containers(), archetype(nullptr)
   {}
   
@@ -16,7 +16,7 @@ namespace ecs
 
   struct TemplateManager
   {
-    std::map<string, std::shared_ptr<Template>> templates;
+    std::map<std::string, std::shared_ptr<Template>> templates;
     Template *find(const char *name)
     {
       auto it = templates.find(name);
@@ -60,7 +60,7 @@ namespace ecs
     return tmpl;
   }
   
-  Template *create_template(const char *name, vector<ComponentInstance> &&components)
+  Template *create_template(const char *name, std::vector<ComponentInstance> &&components)
   {
     auto it = get_template_manager().templates.try_emplace(name, std::make_shared<Template>(name, std::move(components)));
     if (it.second)

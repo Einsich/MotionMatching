@@ -10,7 +10,4 @@ namespace ecs
   void add_system(SystemDescription *system_description);
   
   void print_archetypes();
-  struct FullTypeDescription;
-
-  std::unordered_map<uint, FullTypeDescription> &full_description();
 }

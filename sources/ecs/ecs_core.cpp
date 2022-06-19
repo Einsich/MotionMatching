@@ -152,11 +152,9 @@ namespace ecs
     
 #if ECS_DEBUG_INFO
     debug_log("register archetype");
-    for (const auto &component : archetype->components)
+    for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
     {
-      auto &ecsType = core().types[component.first];
-      auto &cppType = TypeInfo::types()[ecsType.typeHash];
-      debug_log("  %s %s",cppType.name.c_str(), ecsType.name.c_str());
+      printf("  %s %s;", typeInfo->name.c_str(), name);
     }
 #endif
     for (QueryDescription *query: ecs::all_queries())
@@ -174,20 +172,7 @@ namespace ecs
   
   Archetype *add_archetype(const Template &tmpl)
   {
-    auto &fullDecr = full_description();
-    for (const ComponentInstance &t: tmpl.components)
-      fullDecr.try_emplace(t.typeNameHash, t.name.c_str(), t.typeHash, t.typeNameHash);
-
     Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), tmpl.components, 1, tmpl.name);
-    core().entityContainer->archetypes.push_back(archetype);
-
-    register_archetype(archetype);
-    
-    return archetype;
-  }
-  Archetype *add_archetype(const vector<uint> &type_hashes, int capacity, const string &synonim)
-  {
-    Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), type_hashes, capacity, synonim);
     core().entityContainer->archetypes.push_back(archetype);
 
     register_archetype(archetype);
@@ -197,26 +182,6 @@ namespace ecs
 
   
 
-  pair<EntityId, Archetype&> add_entity(const vector<uint> & type_hashes)
-  {
-    Archetype *found_archetype = nullptr;
-    int archetype_ind = 0;
-    for (Archetype *archetype : core().entityContainer->archetypes)
-    {
-      if (archetype->in_archetype(type_hashes))
-      {
-        found_archetype = archetype;
-        break;
-      }
-      archetype_ind++;
-    }
-    if (!found_archetype)
-    {
-      found_archetype = add_archetype(type_hashes, 1, "template[" + to_string(core().entityContainer->archetypes.size()) + "]");
-    }
-    int index = found_archetype->count++;
-    return {core().entityContainer->entityPull.create_entity(archetype_ind, index), *found_archetype};
-  }
   EntityId create_entity(const char *template_name, ComponentInitializerList &&list)
   {
     return create_entity(ecs::get_template(template_name), std::move(list));
@@ -300,11 +265,9 @@ namespace ecs
       for (const SystemCashedArchetype &archetype : descr->archetypes)
       {
         printf("---\n");
-        for (const auto &component : archetype.archetype->components)
+        for (const auto &[name, typeInfo, components, hash] : archetype.archetype->typeDescriptions)
         {
-          auto &ecsType = core().types[component.first];
-          auto &cppType = *TypeInfo::types()[ecsType.typeHash];
-          printf("  %s %s\n",cppType.name.c_str(), ecsType.name.c_str());
+          printf("  %s %s\n", typeInfo->name.c_str(), name);
         }
       }
       printf("}\n");

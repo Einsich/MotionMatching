@@ -9,7 +9,7 @@ namespace ecs
 
   template<std::size_t... Is, std::size_t N>
   std::array<char*__restrict, N> copy_data_pointer_impl(uint binIndex,
-    const std::array<vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
+    const std::array<std::vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
   {
     return std::array<char*__restrict, N> {(data_vectors[Is] ? (char*)((*data_vectors[Is])[binIndex]) : nullptr)...};
   }
@@ -79,7 +79,7 @@ namespace ecs
         if (cachedArchetype.archetype->count == 0)
           continue;
         
-        std::array<vector<void*>*, N> dataVectors;
+        std::array<std::vector<void*>*, N> dataVectors;
         for (uint i = 0; i < N; ++i)
           dataVectors[i] = cachedArchetype.containers[i] ? &cachedArchetype.containers[i]->data : nullptr;
         uint binN = (uint)cachedArchetype.archetype->count >> binPow;

@@ -5,27 +5,27 @@
 #include "component_instance.h"
 namespace ecs
 {
+  struct TypeDescription
+  {
+    const char *name;
+    const ecs::TypeInfo *typeInfo;
+    const ComponentContainer *components;
+    uint typeNameHash;
+  };
   class Archetype
   {
   public: 
     int index;
     eastl::vector_map<uint, ComponentContainer> components;
     int count, capacity;
-    std::vector<FullTypeDescription*> fullTypeDescriptions;
-    string synonim;
-    bool dontSave;
+    std::vector<TypeDescription> typeDescriptions;
+    std::string synonim;
 
-    //after this constructor need to feel components and fullTypeDescriptions correctly
-    Archetype(int index, int count, const string &synonim, int type_count);
-    Archetype(int index, const vector<uint> &type_hashes, int count, const string &synonim);
-    Archetype(int index, const vector<ComponentInstance> &type_hashes, int count, const string &synonim);
-    bool in_archetype(const vector<uint> &type_hashes) const;
-    bool in_archetype(const vector<ComponentInstance> &instances) const;
+    Archetype(int index, const std::vector<ComponentInstance> &type_hashes, int count, const std::string &synonim);
 
-    ComponentContainer *get_container(const TypeDescription &type);
-    template<typename T>
-    ComponentContainer *get_container(const char *name);
-    vector<void*> get_entity_data(const vector<uint> &type_hashes);
+    bool in_archetype(const std::vector<ComponentInstance> &instances) const;
+
+    ComponentContainer *get_container(uint type_name_hash);
     void destroy_entity(int index, bool with_swap);
     ~Archetype() = default;
     void copy(const Archetype *src);

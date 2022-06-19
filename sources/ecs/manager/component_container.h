@@ -2,8 +2,8 @@
 #include <sys/types.h>
 #include <unordered_map>
 #include <assert.h>
-#include "type_description.h"
 #include <algorithm>
+#include "type_info.h"
 namespace ecs
 {
   constexpr uint binPow = 8;
@@ -18,19 +18,9 @@ namespace ecs
     TypeRTTI rtti;
     ComponentContainer();
     ComponentContainer(const TypeInfo &type_info, uint type_name_hash, int capacity);
+
     template<typename T>
-    T* get_component(uint i)
-    {
-      if (0 <= i && i < count)
-      {
-        int j = i >> binPow;
-        i &= binMask;
-        return (T*)((char*)data[j] + i * rtti.sizeOf);
-      }
-      return nullptr;
-    }
-    template<typename T>
-    const T* get_component(uint i) const
+    T* get_component(uint i) const
     {
       if (0 <= i && i < count)
       {
