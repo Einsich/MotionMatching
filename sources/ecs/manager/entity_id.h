@@ -1,6 +1,5 @@
 #pragma once
-#include <stdint.h>
-typedef uint32_t uint;
+#include "config/config.h"
 namespace ecs
 {
   class EntityId

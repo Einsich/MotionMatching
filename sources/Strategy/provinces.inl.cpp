@@ -46,8 +46,8 @@ ecs::EventDescription create_provinces_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "create_provinces", {
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<Asset<Texture2D>>("provinces_texture"), false},
-  {ecs::get_type_description<string>("provinces_texture_name"), false},
-  {ecs::get_type_description<string>("load_provinces_info"), false},
+  {ecs::get_type_description<ecs::string>("provinces_texture_name"), false},
+  {ecs::get_type_description<ecs::string>("load_provinces_info"), false},
   {ecs::get_type_description<float>("pixel_scale"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
   {ecs::get_type_description<MapRenderData>("data"), false}

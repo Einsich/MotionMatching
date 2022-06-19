@@ -29,7 +29,7 @@ namespace ecs
     answer.push_back(v);
   }
   template<typename Description>
-  static void topological_sort(std::vector<Description *> &systems)
+  static void topological_sort(ecs::vector<Description *> &systems)
   {
     vector<vector<uint>> edge(systems.size());
     vector<bool> used(systems.size(), false);
@@ -71,7 +71,7 @@ namespace ecs
       if (!used[i])
         dfs(i, edge, used, answer);
     }
-    std::vector<Description *> rightOrder(systems.size());
+    ecs::vector<Description *> rightOrder(systems.size());
 
     for (uint i = 0; i < systems.size(); i++)
       rightOrder[answer[i]] = systems[i];
@@ -111,8 +111,8 @@ namespace ecs
     menu.end = systems.end();
   }
 
-  void save(std::ostream& os, const std::vector<Archetype*> &archetypes);
-  void load(std::istream& is, std::vector<Archetype*> &archetypes, EntityPull &entityPull);
+  void save(std::ostream& os, const ecs::vector<Archetype*> &archetypes);
+  void load(std::istream& is, ecs::vector<Archetype*> &archetypes, EntityPull &entityPull);
 
   void SceneManager::restart_cur_scene()
   {
@@ -131,10 +131,10 @@ namespace ecs
     currentScene.inEditor = !currentScene.inEditor;
     init_scene();
   }
-  void SceneManager::start_scene(const string &path, bool inEditor)
+  void SceneManager::start_scene(const std::string &path, bool inEditor)
   {
     currentScene.rawScene = DataBlock(path);
-    currentScene.path = path;
+    currentScene.path = path.c_str();
     currentScene.inEditor = inEditor;
     init_scene();
   }
@@ -199,7 +199,7 @@ namespace ecs
     string &sceneToLoad = core().sceneToLoad;
     if (sceneToLoad != "")
     {
-      start_scene(sceneToLoad, currentScene.inEditor);
+      start_scene(sceneToLoad.c_str(), currentScene.inEditor);
       sceneToLoad = "";
     }
   }

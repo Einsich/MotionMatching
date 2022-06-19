@@ -8,7 +8,7 @@
 ECS_REGISTER_TYPE_AND_VECTOR(AnimationTest, AnimationTest, false, true);
 
 SYSTEM(stage=ui) recorder_ui(
-  vector<AnimationTest> &tests,
+  ecs::vector<AnimationTest> &tests,
   int &recordedTest,
   int &recordedState,
   float &recorderStartTime)
@@ -82,7 +82,7 @@ SYSTEM(stage=ui) recorder_ui(
 
 EVENT() listener_keybord(
   const KeyEventAnyActionKey &e,
-  vector<AnimationTest> &tests,
+  ecs::vector<AnimationTest> &tests,
   int recordedTest,
   int recordedState,
   float recorderStartTime)
@@ -97,7 +97,7 @@ EVENT() listener_keybord(
 
 EVENT() listener_mousemove(
   const MouseMoveEvent &e,
-  vector<AnimationTest> &tests,
+  ecs::vector<AnimationTest> &tests,
   int recordedTest,
   int recordedState,
   float recorderStartTime)

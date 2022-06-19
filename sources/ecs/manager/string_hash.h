@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-
-typedef uint32_t uint;
+#include "config/config.h"
 
 static constexpr unsigned int crc_table[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -51,22 +49,19 @@ static constexpr unsigned int crc_table[256] = {
 };
 
 
-constexpr uint HashedString(const char *s)
+constexpr ecs::uint HashedString(const char *s)
 {
   uint32_t crc = 0xffffffff;
-    for (uint32_t i = 0; s[i]; ++i)
-        crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)s[i])) & 0xff];
-    return crc ^ 0xffffffff;
+  for (uint32_t i = 0; s[i]; ++i)
+    crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)s[i])) & 0xff];
+  return crc ^ 0xffffffff;
 }
 
-constexpr uint HashedString(const std::string_view& str)
+constexpr ecs::uint HashedString(const ecs::string& str)
 {
-  uint32_t crc = 0xffffffff;
-    for (uint32_t i = 0; i < str.size(); ++i)
-        crc = (crc >> 8) ^ crc_table[(crc ^ ((uint8_t)str[i])) & 0xff];
-    return crc ^ 0xffffffff;
+  return HashedString(str.c_str());
 }
 
-constexpr uint operator"" _hs(const char *str, std::size_t) noexcept {
+constexpr ecs::uint operator"" _hs(const char *str, std::size_t) noexcept {
     return HashedString(str);
 }

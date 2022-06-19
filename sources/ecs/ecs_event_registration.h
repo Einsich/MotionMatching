@@ -20,14 +20,14 @@ namespace ecs
 
 #define ECS_EVENT_REGISTER(VAR_NAME, EVENT)\
 namespace ecs {\
-  template<> std::vector<EventDescription *> &get_mutable_event_handlers<EVENT>()\
+  template<> ecs::vector<EventDescription *> &get_mutable_event_handlers<EVENT>()\
   {\
-    static std::vector<EventDescription *> handlers;\
+    static ecs::vector<EventDescription *> handlers;\
     return handlers;\
   }\
-  template<> std::vector<EventDescription *> &get_event_handlers<EVENT>()\
+  template<> ecs::vector<EventDescription *> &get_event_handlers<EVENT>()\
   {\
-    static std::vector<EventDescription *> handlers;\
+    static ecs::vector<EventDescription *> handlers;\
     return handlers;\
   }\
   template<> void unicast_event<EVENT>(const Event &event, EntityId eid)\

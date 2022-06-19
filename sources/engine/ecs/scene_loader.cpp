@@ -5,7 +5,7 @@
 namespace ecs
 {
   
-  void init_components_from_blk(const DataBlock *tmpl, std::vector<ComponentInstance> &components);
+  void init_components_from_blk(const DataBlock *tmpl, ecs::vector<ComponentInstance> &components);
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list);
 
   void load_scene(const DataBlock &scene)

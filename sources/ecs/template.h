@@ -7,14 +7,14 @@ namespace ecs
 {
   struct Template
   {
-    std::string name;
-    std::vector<ComponentInstance> components;
-    std::vector<ComponentContainer*> containers;
+    ecs::string name;
+    ecs::vector<ComponentInstance> components;
+    ecs::vector<ComponentContainer*> containers;
     Archetype *archetype;
-    Template(const char *name, std::vector<ComponentInstance> &&components);
+    Template(const char *name, ecs::vector<ComponentInstance> &&components);
   };
 
   const Template* get_template(const char *name);
-  Template *create_template(const char *name, std::vector<ComponentInstance> &&components);
+  Template *create_template(const char *name, ecs::vector<ComponentInstance> &&components);
   void invalidate_cached_archetype();
 }

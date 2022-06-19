@@ -2,10 +2,8 @@
 #include "3dmath.h"
 #include "manager/entity_id.h" 
 #include <type_registration.h>
-#include "common.h"
 #include "string_hash.h"
 #include "ecs_tag.h"
-using namespace std;
 using namespace ecs;
 
 
@@ -33,15 +31,18 @@ ECS_REGISTER_TYPE_AND_VECTOR(Tag, Tag, true, true, true, true)
 
 namespace ecs
 {
-  TypeInfo::TypeInfo(TypeRTTI rtti, std::string &&name, UserTypeInfo userInfo):
+  TypeInfo::TypeInfo(TypeRTTI rtti, ecs::string &&name, UserTypeInfo userInfo):
     hashId(HashedString(name)), name(std::move(name)),
     rtti(rtti),
     userInfo(userInfo)
   {
-    debug_log("ECS: register %u type %s, sizeof %u, hash %u, trivial copy - %s, move - %s",
+    ECS_LOG("ECS: register %u type %s, sizeof %u, hash %u, trivial copy - %s, move - %s",
       TypeInfo::types().size(), this->name.c_str(), rtti.sizeOf, hashId,
       rtti.trivialCopy ? "true" : "false", rtti.trivialMove ? "true" : "false");
-
+    #if ECS_USE_EASTL
+    TypeInfo::types().insert({hashId, this});
+    #else
     TypeInfo::types().try_emplace(hashId, this);
+    #endif
   }
 }

@@ -12,7 +12,7 @@ SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
       std::filesystem::path path;
       if (get_open_file(path, {"Scene", ".blk"}))
       {
-        ecs::create_scene(path.string());
+        ecs::create_scene(path.string().c_str());
       }
     }
     constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;

@@ -10,25 +10,30 @@ namespace ecs
 { 
   struct TemplateFile
   {
-    string path;
+    std::string path;
     DataBlockPtr fileBlk;
-    TemplateFile(const string &path, DataBlockPtr fileBlk):
+    TemplateFile(const std::string &path, DataBlockPtr fileBlk):
       path(path), fileBlk(fileBlk)
     {}
   };
   
   struct RawTemplate
   {
-    string name;
+    std::string name;
     const DataBlock* blk;
     vector<ComponentInstance> components;
-    vector<string> extends;
+    vector<std::string> extends;
     vector<size_t> extendsIdx;
   };
   template<typename T>
-  static ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
+  ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
-    return ComponentInstance(property.name, blk.get<T>(property));
+    return ComponentInstance(property.name.c_str(), blk.get<T>(property));
+  }
+  template<>
+  ComponentInstance create_instance<std::string>(const DataBlock &blk, const DataBlock::Property &property)
+  {
+    return ComponentInstance(property.name.c_str(), ecs::string(blk.get<std::string>(property).c_str()));
   }
   GET_FUNCTIONS(instantiate, create_instance)
 
@@ -44,7 +49,7 @@ namespace ecs
       {
         if (entry.is_regular_file() && entry.path().extension() == ".blk")
         {
-          string strPath = entry.path().string();
+          std::string strPath = entry.path().string();
           templatesFiles.emplace_back(strPath, make_shared<DataBlock>(strPath));
         }
       }
@@ -67,7 +72,7 @@ namespace ecs
         {
           const DataBlock::Property &property = tmpl->getProperty(i);
           if (property.name == "_extends")
-            rawTemplate.extends.emplace_back(tmpl->get<string>(property));
+            rawTemplate.extends.emplace_back(tmpl->get<std::string>(property));
         }
       }
     }
@@ -88,7 +93,7 @@ namespace ecs
       return false;
       
     status[templateId] = VISITED;
-    for (const string &extends : templates[templateId].extends)
+    for (const std::string &extends : templates[templateId].extends)
     {
       bool hasExtends = false;
       for (size_t i = 0, n = templates.size(); i < n; ++i)
@@ -133,7 +138,7 @@ namespace ecs
   {
     for (RawTemplate &rawTmpl : rawTemplates)
     {
-      for (const string &extends : rawTmpl.extends)
+      for (const std::string &extends : rawTmpl.extends)
       {
         auto it = find_if(rawTemplates.begin(), rawTemplates.end(), [&](const RawTemplate&tmpl) {return tmpl.name == extends;});
         if (it != rawTemplates.end())
@@ -159,11 +164,11 @@ namespace ecs
     {
       const DataBlock *property = tmpl->getBlock(i);
   
-      auto it = typeMap.find(HashedString(property->type()));
+      auto it = typeMap.find(HashedString(property->type().c_str()));
       if (it != typeMap.end())
       {
         const ecs::TypeInfo &typeInfo = *it->second;
-        components.emplace_back(typeInfo, property->name(),
+        components.emplace_back(typeInfo, property->name().c_str(),
           [property, reader = typeInfo.userInfo.blkReader](void *raw_data) {
           reader(*property, raw_data);
         });

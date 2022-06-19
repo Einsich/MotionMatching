@@ -65,7 +65,7 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
 } 
 
 EVENT(scene=game, editor) spawn_buildings(const ecs::OnEntityCreated&,
-  const vector<string> &items_templates,
+  const ecs::vector<ecs::string> &items_templates,
   vec3 center,
   float step_length,
   int row_count
@@ -74,7 +74,7 @@ EVENT(scene=game, editor) spawn_buildings(const ecs::OnEntityCreated&,
   return;
   row_count = row_count <= 0 ? 1 : row_count;
   int i = 0;
-  for (const string &template_name : items_templates)
+  for (const ecs::string &template_name : items_templates)
   {
     ecs::ComponentInitializerList list;
     const ecs::Template *t = ecs::get_template(template_name.c_str());

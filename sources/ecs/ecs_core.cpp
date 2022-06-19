@@ -50,7 +50,7 @@ namespace ecs
       EntityId &eid = toDestroy.front();
       if (eid)
       {
-        debug_log("destroy %d %d entity", eid.archetype_index(), eid.array_index());
+        ECS_LOG("destroy %d %d entity", eid.archetype_index(), eid.array_index());
         core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap_last_element);
         core().entityContainer->entityPull.destroy_entity(eid);
       }
@@ -110,8 +110,8 @@ namespace ecs
   {
     if (query.notSingletonArgsCount == 0)
       return;
-    std::vector<SystemCashedArchetype> &sys_archetypes = query.archetypes;
-    std::vector<ComponentContainer*> containers(query.requireArgs.size(), nullptr);
+    ecs::vector<SystemCashedArchetype> &sys_archetypes = query.archetypes;
+    ecs::vector<ComponentContainer*> containers(query.requireArgs.size(), nullptr);
     bool breaked = false;
     int i = 0;
     for(const auto& arg : query.requireArgs)
@@ -140,7 +140,7 @@ namespace ecs
     {
       sys_archetypes.emplace_back(archetype, std::move(containers));
 #if ECS_DEBUG_INFO
-      debug_log("processed by %s",query->name.c_str());
+      ECS_LOG("processed by %s",query->name.c_str());
 #endif
     }
   }
@@ -150,10 +150,10 @@ namespace ecs
   {
     
 #if ECS_DEBUG_INFO
-    debug_log("register archetype");
+    ECS_LOG("register archetype");
     for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
     {
-      printf("  %s %s;", typeInfo->name.c_str(), name);
+      printf("  %s %s;", typeInfo->name.c_str(), name.c_str());
     }
 #endif
     for (QueryDescription *query: ecs::all_queries())
@@ -255,18 +255,18 @@ namespace ecs
 
   void system_statistic()
   {
-    debug_log("\nSystems statistics");
+    ECS_LOG("\nSystems statistics");
     for (const SystemDescription *descr : ecs::get_all_systems())
     {
       int archetypesCount = descr->archetypes.size();
-      debug_log("%s has %d archetypes", descr->name.c_str(), archetypesCount);
+      ECS_LOG("%s has %d archetypes", descr->name.c_str(), archetypesCount);
       printf("{\n");
       for (const SystemCashedArchetype &archetype : descr->archetypes)
       {
         printf("---\n");
         for (const auto &[name, typeInfo, components, hash] : archetype.archetype->typeDescriptions)
         {
-          printf("  %s %s\n", typeInfo->name.c_str(), name);
+          printf("  %s %s\n", typeInfo->name.c_str(), name.c_str());
         }
       }
       printf("}\n");
@@ -281,7 +281,7 @@ namespace ecs
       printf("{\n");
       for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
       {
-        printf("  %s %s\n", typeInfo->name.c_str(), name);
+        printf("  %s %s\n", typeInfo->name.c_str(), name.c_str());
       }
       printf("},\n");
     }
@@ -293,7 +293,7 @@ namespace ecs
     core().destroy_all_entities();
     core().events = {};
   }
-  void create_scene(const string &path, bool reload)
+  void create_scene(const char *path, bool reload)
   {
     core().sceneToLoad = path;
     core().reloadScene = reload;

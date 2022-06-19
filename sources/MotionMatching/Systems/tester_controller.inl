@@ -16,7 +16,7 @@ SYSTEM(stage=act) tester_update(
   int &testerSeed,
   AnimationTester &animationTester)
 {
-  QUERY()get_tests([&](const vector<AnimationTest> &tests)
+  QUERY()get_tests([&](const ecs::vector<AnimationTest> &tests)
   {
     float dt = Time::delta_time();
     
@@ -66,7 +66,7 @@ EVENT(scene=game, editor) start_test(
   int testerSeed,
   const Settings &settings)
 {
-  QUERY()get_tests2([&](const vector<AnimationTest> &tests)
+  QUERY()get_tests2([&](const ecs::vector<AnimationTest> &tests)
   {
     srand(testerSeed);
     float edge = sqrt((float)settings.testCount) * settings.testDensity;
@@ -84,8 +84,8 @@ EVENT(scene=game, editor) start_test(
 }
 
 SYSTEM(scene=game) test_count(
-  vector<ecs::EntityId> &testers,
-  vector<AnimationTest> &tests,
+  ecs::vector<ecs::EntityId> &testers,
+  ecs::vector<AnimationTest> &tests,
   Settings &settings)
 {
   settings.testCount = glm::clamp(settings.testCount, 0, 10000);

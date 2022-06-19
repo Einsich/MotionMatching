@@ -12,7 +12,7 @@ namespace ecs
   class ComponentContainer
   {
   public:
-    std::vector<void*> data;
+    ecs::vector<void*> data;
     uint typeHash, typeNameHash;
     uint count, capacity;
     TypeRTTI rtti;

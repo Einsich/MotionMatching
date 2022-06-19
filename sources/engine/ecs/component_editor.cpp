@@ -149,6 +149,16 @@ bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
   return edited;
 }
 
+bool edit_component(ecs::string &component, const char *name, bool view_only)
+{
+  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
+  snprintf(buf, BUFN, "%s", component.c_str());
+  bool edited = ImGui::InputText(name, buf, BUFN, flags);
+  if (edited)
+    component = ecs::string(buf);
+  ImGui::Spacing();
+  return edited;
+}
 bool edit_component(std::string &component, const char *name, bool view_only)
 {
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
@@ -159,4 +169,3 @@ bool edit_component(std::string &component, const char *name, bool view_only)
   ImGui::Spacing();
   return edited;
 }
-

@@ -3,12 +3,12 @@
 namespace ecs
 {
   EventDescription::EventDescription(
-    std::vector<EventDescription *> &handlers,
+    ecs::vector<EventDescription *> &handlers,
     const char *name, 
-    std::vector<FunctionArgument> &&require_args,
-    std::vector<FunctionArgument> &&require_not_args,
-    std::vector<std::string> &&scenes,
-    std::vector<std::string> &&before, std::vector<std::string> &&after,
+    ecs::vector<FunctionArgument> &&require_args,
+    ecs::vector<FunctionArgument> &&require_not_args,
+    ecs::vector<ecs::string> &&scenes,
+    ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
     EventHandler broadcastEventHandler,
     SingleEventHandler unicastEventHandler,
     uint tags):

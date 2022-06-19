@@ -18,7 +18,7 @@ ECS_REGISTER_TYPE(ThirdPersonController, ThirdPersonController)
 
 
 EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,
-  vector<AnimationTest> &tests,
+  ecs::vector<AnimationTest> &tests,
   Settings &settings,
   SettingsContainer &settingsContainer)
 {  
@@ -31,7 +31,7 @@ EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,
 
 EVENT() scene_destroy(
   const ecs::OnEntityDestroyed &,
-  vector<AnimationTest> &tests,
+  ecs::vector<AnimationTest> &tests,
   const Settings &settings,
   const SettingsContainer &settingsContainer)
 {

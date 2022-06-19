@@ -7,7 +7,7 @@ void init_anim_settings_singl_handler(const ecs::Event &event, ecs::EntityId eid
 
 ecs::EventDescription init_anim_settings_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_anim_settings", {
-  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
+  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {
@@ -30,7 +30,7 @@ void scene_destroy_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription scene_destroy_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityDestroyed>(), "scene_destroy", {
-  {ecs::get_type_description<vector<AnimationTest>>("tests"), false},
+  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {

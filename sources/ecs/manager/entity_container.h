@@ -1,12 +1,12 @@
 #pragma once
-#include <vector>
 #include "entity_pull.h"
+#include "config/config.h"
 namespace ecs
 {
   class Archetype;
   struct EntityContainer
   {
-    std::vector<Archetype*> archetypes;
+    ecs::vector<Archetype*> archetypes;
     EntityPull entityPull;
     bool loaded;
   };

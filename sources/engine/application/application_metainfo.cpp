@@ -3,7 +3,7 @@
 #include "data_block/data_block_serialization.h"
 
 
-ApplicationMetaInfo::ApplicationMetaInfo(const string &path)
+ApplicationMetaInfo::ApplicationMetaInfo(const std::string &path)
 {
   DataBlock project_config(path);
   read(project_config, *this);

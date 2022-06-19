@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include <queue>
 #include <functional>
 #include "manager/system_description.h"
@@ -11,15 +10,15 @@ namespace ecs
   struct EventDescription;
 
   struct EntityContainer;
-  std::vector<QueryDescription*> &all_queries();
+  ecs::vector<QueryDescription*> &all_queries();
   struct Core
   {
     EntityContainer *entityContainer;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
     uint applicationTags;
-    std::string currentSceneTags;
-    std::string sceneToLoad;
+    ecs::string currentSceneTags;
+    ecs::string sceneToLoad;
     bool reloadScene;
     Core();
     ~Core();
@@ -38,7 +37,7 @@ namespace ecs
   void destroy_entity(const EntityId &eid);
 
   //destoy current scene and load new scene from path
-  void create_scene(const std::string &path, bool reload = true);
+  void create_scene(const char *path, bool reload = true);
 
 
   template<typename T>

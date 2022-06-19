@@ -53,11 +53,11 @@ static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod)
 } 
 
 static vector<uint> terrain_types(
-  const string &terrain_texture,
-  const vector<ivec3> &terrain_type_color,
-  const vector<int> &terrain_type_index)
+  const ecs::string &terrain_texture,
+  const ecs::vector<ivec3> &terrain_type_color,
+  const ecs::vector<int> &terrain_type_index)
 {
-  const auto &path = root_path(terrain_texture);
+  const auto &path = root_path(terrain_texture.c_str());
   int w, h, ch;
   stbi_set_flip_vertically_on_load(true);
   auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
@@ -85,13 +85,13 @@ static vector<uint> terrain_types(
 
 //ugly hardcoded tree spawn
 static void spawn_tress(
-  const string &tree_map,
+  const ecs::string &tree_map,
   vec2 map_scale,
   float tree_scale,
   const HeightMap &height_map
 )
 {
-  const auto &path = root_path(tree_map);
+  const auto &path = root_path(tree_map.c_str());
   int w, h, ch;
   stbi_set_flip_vertically_on_load(true);
   auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
@@ -170,15 +170,15 @@ EVENT(scene=game, editor) create_terrain(const ecs::OnSceneCreated&,
   Asset<Material> &political_material,
   Asset<Material> &physycal_material,
   Transform &transform,
-  vector<float> &lods_distances,
-  vector<Asset<Mesh>> &lods_meshes,
+  ecs::vector<float> &lods_distances,
+  ecs::vector<Asset<Mesh>> &lods_meshes,
   int terrain_lods_count,
   float first_lod_distance,
-  const string &terrain_texture,
-  const string &tree_map,
+  const ecs::string &terrain_texture,
+  const ecs::string &tree_map,
   float tree_scale,
-  const vector<ivec3> &terrain_type_color,
-  const vector<int> &terrain_type_index,
+  const ecs::vector<ivec3> &terrain_type_color,
+  const ecs::vector<int> &terrain_type_index,
   float pixel_scale,
   int water_level,
   vec2 &map_size,

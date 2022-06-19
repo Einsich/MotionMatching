@@ -24,11 +24,11 @@ projectPath(root + "/" + project_name)
   application = this;
 }
 
-static void copy_paths(const string &root, const vector<string> &src, vector<filesystem::path> &dst)
+static void copy_paths(const std::string &root, const ecs::vector<ecs::string> &src, vector<filesystem::path> &dst)
 {
   dst.resize(src.size());
   for (int i = 0, n = src.size(); i < n; i++)
-    dst[i] = filesystem::path(root + "/" + src[i]);
+    dst[i] = filesystem::path(root + "/" + src[i].c_str());
 }
 
 void Application::start()
@@ -48,7 +48,7 @@ void Application::start()
   get_cpu_profiler();
   get_gpu_profiler();
 
-  scene->start_scene(root_path(metaInfo.firstScene), editor);
+  scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
 bool Application::sdl_event_handler()
 {

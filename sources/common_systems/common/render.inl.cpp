@@ -64,8 +64,8 @@ void lod_selector_func();
 ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<vector<Asset<Mesh>>>("lods_meshes"), false},
-  {ecs::get_type_description<vector<float>>("lods_distances"), false},
+  {ecs::get_type_description<ecs::vector<Asset<Mesh>>>("lods_meshes"), false},
+  {ecs::get_type_description<ecs::vector<float>>("lods_distances"), false},
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<vec3>("lod_selector_axis"), true},
   {ecs::get_type_description<bool>("is_enabled"), false}

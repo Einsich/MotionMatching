@@ -1,8 +1,7 @@
 #pragma once
-#include <vector>
+#include "config/config.h"
 namespace ecs
 {
-  typedef uint32_t uint;
   class EntityId;
   class EntityPull;
 
@@ -23,7 +22,7 @@ namespace ecs
   {
     friend class EntityPullIterator;
     friend class EntityId;
-    std::vector<uint*> entities;
+    ecs::vector<uint*> entities;
     int totalCount, destroyCount, entityCapacity;
     uint *get_entity();
   public:

@@ -1,9 +1,8 @@
 #pragma once
-#include <unordered_map>
+#include "config/config.h"
 #include "../singleton.h"
 #include "config/user_type_info.h"
 #include "string_hash.h"
-#include <eastl/vector_map.h>
 namespace ecs
 {
   typedef void (*Constructor)(void*);
@@ -53,18 +52,18 @@ namespace ecs
   };
   struct TypeInfo
   {
-    static std::unordered_map<uint32_t, TypeInfo*>& types()
+    static ecs::map<uint32_t, TypeInfo*>& types()
     {
-      static std::unordered_map<uint32_t, TypeInfo*> types;
+      static ecs::map<uint32_t, TypeInfo*> types;
       return types;
     }
     
     const uint32_t hashId;
-    const std::string name;
+    const ecs::string name;
     const TypeRTTI rtti;
     const UserTypeInfo userInfo;
 
-    TypeInfo(TypeRTTI rtti, std::string &&name, UserTypeInfo userInfo = UserTypeInfo());
+    TypeInfo(TypeRTTI rtti, ecs::string &&name, UserTypeInfo userInfo = UserTypeInfo());
     TypeInfo(const TypeInfo &) = delete;
     TypeInfo(TypeInfo &&) = delete;
     TypeInfo& operator= (const TypeInfo &) = delete;
@@ -73,9 +72,9 @@ namespace ecs
   struct SingletonTypeInfo : public TypeInfo
   {
     const GetSingleton getSingleton = nullptr;
-    static std::unordered_map<uint32_t, SingletonTypeInfo>& types()
+    static ecs::map<uint32_t, SingletonTypeInfo>& types()
     {
-      static std::unordered_map<uint32_t, SingletonTypeInfo> types;
+      static ecs::map<uint32_t, SingletonTypeInfo> types;
       return types;
     }
   };

@@ -11,26 +11,26 @@ namespace ecs
   struct SystemCashedArchetype
   {
     Archetype *archetype;
-    std::vector<ComponentContainer*> containers;
-    SystemCashedArchetype(Archetype *archetype, std::vector<ComponentContainer*> &&containers);
+    ecs::vector<ComponentContainer*> containers;
+    SystemCashedArchetype(Archetype *archetype, ecs::vector<ComponentContainer*> &&containers);
   };
 
   struct CallableDescription
   {
-    std::string name;
-    std::vector<FunctionArgument> requireArgs, requireNotArgs;
-    std::vector<SystemCashedArchetype> archetypes;
-    std::vector<std::string> scenes;
-    std::vector<std::string> before, after;
+    ecs::string name;
+    ecs::vector<FunctionArgument> requireArgs, requireNotArgs;
+    ecs::vector<SystemCashedArchetype> archetypes;
+    ecs::vector<ecs::string> scenes;
+    ecs::vector<ecs::string> before, after;
     uint tags;
     uint notSingletonArgsCount;
     bool isQuery;
     CallableDescription(const char *name,
-      std::vector<FunctionArgument> &&require_args,
-      std::vector<FunctionArgument> &&require_not_args,
-      std::vector<std::string> &&scenes,
-      std::vector<std::string> &&before,
-      std::vector<std::string> &&after,
+      ecs::vector<FunctionArgument> &&require_args,
+      ecs::vector<FunctionArgument> &&require_not_args,
+      ecs::vector<ecs::string> &&scenes,
+      ecs::vector<ecs::string> &&before,
+      ecs::vector<ecs::string> &&after,
       uint tags);
     virtual void registration() = 0;
     CallableDescription(const CallableDescription &) = delete;

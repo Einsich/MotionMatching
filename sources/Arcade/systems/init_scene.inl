@@ -32,5 +32,5 @@ EVENT() init_sprites_shaders_camera(
 
 EVENT() load_scene_event(const LoadSceneEvent &)
 {
-  ecs::create_scene(root_path("resources/Arcade/Scenes/game_scene.blk"));
+  ecs::create_scene(root_path("resources/Arcade/Scenes/game_scene.blk").c_str());
 }

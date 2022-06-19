@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <eastl/vector.h>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -47,6 +48,16 @@ inline size_t write(std::ostream& os, const std::filesystem::path& value)
 }
 template<typename T>
 inline size_t write(std::ostream& os, const std::vector<T>& value) 
+{
+  const auto pos = os.tellp();
+  const auto len = static_cast<std::uint32_t>(value.size());
+  os.write(reinterpret_cast<const char*>(&len), sizeof(len));
+  for (const T & t : value)
+    write(os, t);
+  return static_cast<std::size_t>(os.tellp() - pos);
+}
+template<typename T>
+inline size_t write(std::ostream& os, const eastl::vector<T>& value) 
 {
   const auto pos = os.tellp();
   const auto len = static_cast<std::uint32_t>(value.size());
@@ -155,6 +166,41 @@ inline size_t read(std::istream& is, std::filesystem::path& value)
 }
 template<typename T>
 inline size_t read(std::istream& is, std::vector<T>& value) 
+{
+  const auto pos = is.tellg();
+  value.clear();
+  std::uint32_t len = 0;
+  is.read(reinterpret_cast<char*>(&len), sizeof(len));
+
+  value.resize(len);
+  if constexpr (std::is_base_of_v<ISerializable, T> ||
+      HasReflection<T>::value ||
+      std::is_same_v<std::filesystem::path, T> ||
+      std::is_same_v<std::string, T> ||
+      is_pair<T>::value ||
+      std::is_same_v<bool, T>)
+  {
+    for (uint i = 0, n = value.size(); i < n; ++i)
+    {
+      if constexpr (std::is_same_v<bool, T>)
+      {
+        bool v = value[i];
+        read(is, v);
+        value[i] = v;
+      }
+      else
+        read(is, value[i]);
+    }
+  }
+  else
+  {
+    is.read(reinterpret_cast<char*>(value.data()), sizeof(T) * len);
+  }
+  
+  return static_cast<size_t>(is.tellg() - pos);
+}
+template<typename T>
+inline size_t read(std::istream& is, eastl::vector<T>& value) 
 {
   const auto pos = is.tellg();
   value.clear();

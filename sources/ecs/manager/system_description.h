@@ -7,8 +7,8 @@ namespace ecs
   struct QueryDescription final : CallableDescription
   {
     QueryDescription(const char *name,
-      std::vector<FunctionArgument> &&require_args,
-      std::vector<FunctionArgument> &&require_not_args);
+      ecs::vector<FunctionArgument> &&require_args,
+      ecs::vector<FunctionArgument> &&require_not_args);
     void registration() override;
   };
   struct SystemDescription final : CallableDescription
@@ -17,16 +17,16 @@ namespace ecs
     int stage;
     bool isJob;
     SystemDescription(const char *name,
-      std::vector<FunctionArgument> &&require_args,
-      std::vector<FunctionArgument> &&require_not_args,
-      std::vector<std::string> &&scenes,
-      std::vector<std::string> &&before, std::vector<std::string> &&after,
+      ecs::vector<FunctionArgument> &&require_args,
+      ecs::vector<FunctionArgument> &&require_not_args,
+      ecs::vector<ecs::string> &&scenes,
+      ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
       void (*function_pointer)(),
       int stage, uint tags, bool is_job);
     void execute();
     void registration() override;
   };
   
-  std::vector<SystemDescription *>& get_all_mutable_systems();
-  std::vector<SystemDescription *>& get_all_systems();
+  ecs::vector<SystemDescription *>& get_all_mutable_systems();
+  ecs::vector<SystemDescription *>& get_all_systems();
 }

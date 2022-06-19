@@ -8,11 +8,11 @@ namespace ecs
   struct ComponentInstance 
   {
 private:
-    std::vector<char> instanceData;
+    ecs::vector<char> instanceData;
   public:
     const TypeInfo *typeInfo;
     std::function<void(void*)> initManager;
-    std::string name;
+    ecs::string name;
     uint nameHash, typeHash, typeNameHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
@@ -46,27 +46,27 @@ private:
     }
 
     template<typename T>
-    ComponentInstance(const std::string &name, T &instance) : 
+    ComponentInstance(const char *name, T &instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
     template<typename T>
-    ComponentInstance(const std::string &name, const T &instance) : 
+    ComponentInstance(const char *name, const T &instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }    
     template<typename T>
-    ComponentInstance(const std::string &name, T &&instance) : 
+    ComponentInstance(const char *name, T &&instance) : 
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }
-    ComponentInstance(const TypeInfo &info, const std::string &name, std::function<void(void*)> &&initManager) : 
+    ComponentInstance(const TypeInfo &info, const char *name, std::function<void(void*)> &&initManager) : 
     instanceData(), typeInfo(&info), initManager(initManager), name(name)
     , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(type_name_hash(nameHash, info.hashId))
     {
@@ -90,8 +90,8 @@ private:
       initManager = nullptr;
     }  
   };
-  using ComponentInitializerList = std::vector<ComponentInstance>;
+  using ComponentInitializerList = ecs::vector<ComponentInstance>;
 
-  void patch_components(std::vector<ComponentInstance> &components, const std::vector<ComponentInstance> &patch);
-  void patch_components(std::vector<ComponentInstance> &components, std::vector<ComponentInstance> &&patch);
+  void patch_components(ecs::vector<ComponentInstance> &components, const ecs::vector<ComponentInstance> &patch);
+  void patch_components(ecs::vector<ComponentInstance> &components, ecs::vector<ComponentInstance> &&patch);
 }

@@ -44,7 +44,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
           else
           for (const auto&[name, typeInfo, component, hash] : archetype->typeDescriptions)
           {
-            snprintf(buf, N, "%s %s",  name, typeInfo->name.c_str());
+            snprintf(buf, N, "%s %s", name.c_str(), typeInfo->name.c_str());
             if (ImGui::TreeNode(buf))
             {
               bool edited = typeInfo->userInfo.componentEdition(component->get_component<void>(j), false);

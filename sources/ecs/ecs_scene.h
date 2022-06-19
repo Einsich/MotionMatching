@@ -18,7 +18,7 @@ namespace ecs
   class SceneManager
   {
   private:
-    typedef std::vector<SystemDescription*>::iterator SystemIterator;
+    typedef ecs::vector<SystemDescription*>::iterator SystemIterator;
     struct SystemRange { SystemIterator begin, end; };
     SystemRange act, before_render, render, ui, menu;
     Scene currentScene;
@@ -29,7 +29,7 @@ namespace ecs
   public:
     void restart_cur_scene();
     void start();
-    void start_scene(const string &path, bool editor);
+    void start_scene(const std::string &path, bool editor);
     void swap_editor_game_scene();
     void update_act();
     void update_render();

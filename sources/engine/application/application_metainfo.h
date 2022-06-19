@@ -1,17 +1,17 @@
 #pragma once
 #include <vector>
 #include "serialization/reflection.h"
-#include "common.h"
-
+#include "config/config.h"
+#include <string>
 
 struct ApplicationMetaInfo
 {
   REFLECT(ApplicationMetaInfo,
-    (string) (firstScene),
+    (ecs::string) (firstScene),
     (bool) (startGame),
-    (vector<string>) (shadersPaths),
-    (vector<string>) (resourcesPaths),
-    (vector<string>) (templatePaths)
+    (ecs::vector<ecs::string>) (shadersPaths),
+    (ecs::vector<ecs::string>) (resourcesPaths),
+    (ecs::vector<ecs::string>) (templatePaths)
   )
-  ApplicationMetaInfo(const string &path);
+  ApplicationMetaInfo(const std::string &path);
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "data_block.h"
 #include "serialization/reflection.h"
-
+#include <config/config.h>
 
 template<typename T>
 std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t)
@@ -12,11 +12,17 @@ std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t
   }
 }
 template<typename T>
-void read(const DataBlock &blk, std::vector<T> &t)
+void read(const DataBlock &blk, ecs::vector<T> &t)
 {
   t.clear();
-  
-  if constexpr (DataBlock::AllowedTypes::hasType<T>())
+  if constexpr (std::is_same_v<T, eastl::string>)
+  {
+    constexpr size_t needType = DataBlock::AllowedTypes::getIndexOfType<std::string>();
+    for (size_t i = 0, n = blk.propertiesCount(); i < n; i++)
+      if (blk.getProperty(i).type == needType)
+        t.push_back(blk.get<std::string>(blk.getProperty(i)).c_str());
+  }
+  else if constexpr (DataBlock::AllowedTypes::hasType<T>())
   {
     constexpr size_t needType = DataBlock::AllowedTypes::getIndexOfType<T>();
     for (size_t i = 0, n = blk.propertiesCount(); i < n; i++)
@@ -25,7 +31,7 @@ void read(const DataBlock &blk, std::vector<T> &t)
   }
   else
   {
-    constexpr const string_view &typeName = nameOf<T>::value;
+    constexpr const std::string_view &typeName = nameOf<T>::value;
     for (size_t i = 0, n = blk.blockCount(); i < n; i++)
       if (blk.getBlock(i)->type() == typeName)
       {
@@ -41,7 +47,13 @@ std::enable_if_t<HasReflection<T>::value, void> read(const DataBlock &blk, T &va
   value.reflect([&](auto &arg, const char *name)
   { 
     using TT = std::remove_cvref_t<decltype(arg)>;
-    if constexpr (DataBlock::AllowedTypes::hasType<TT>())
+    if constexpr (std::is_same_v<TT, eastl::string>)
+    {
+      const auto *component = blk.get<std::string>(name);
+      if (component)
+        arg = component->c_str();
+    }
+    else if constexpr (DataBlock::AllowedTypes::hasType<TT>())
     {
       const auto *component = blk.get<TT>(name);
       if (component)

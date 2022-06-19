@@ -63,8 +63,8 @@ EVENT(scene=game, editor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &
 SYSTEM(stage=render; before=frustum_culling; scene=game, editor;job=true) lod_selector(
   const MainCamera &mainCamera,
   const Transform &transform,
-  const vector<Asset<Mesh>> &lods_meshes,
-  const vector<float> &lods_distances,
+  const ecs::vector<Asset<Mesh>> &lods_meshes,
+  const ecs::vector<float> &lods_distances,
   Asset<Mesh> &mesh,
   const vec3 *lod_selector_axis,
   bool is_enabled)

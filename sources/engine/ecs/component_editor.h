@@ -20,7 +20,7 @@ template<typename T>
 std::enable_if_t<is_vector<T>::value, bool>
 edit_component(T &v, const char *name, bool view_only)
 {
-  std::vector<typename T::value_type> &component = v;
+  ecs::vector<typename T::value_type> &component = v;
   constexpr int BUFN = 255;
   char buf[BUFN];
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
@@ -157,4 +157,5 @@ bool edit_component(mat2 &component, const char *name, bool view_only);
 bool edit_component(mat3 &component, const char *name, bool view_only);
 bool edit_component(mat4 &component, const char *name, bool view_only);
 bool edit_component(ecs::EntityId &component, const char *name, bool view_only);
+bool edit_component(ecs::string &component, const char *name, bool view_only);
 bool edit_component(std::string &component, const char *name, bool view_only);

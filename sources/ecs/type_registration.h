@@ -43,7 +43,7 @@ namespace ecs
 //bool trivialCopy, bool trivialMove, bool trivialConstruct, bool trivialDestruct
 #define ECS_REGISTER_TYPE(VAR_NAME, TYPE, ...)\
 namespace ecs{\
-  ecs::TypeInfo type_##VAR_NAME(ecs::get_rtti<TYPE>(__VA_ARGS__), std::string(#TYPE), get_uset_type_info<TYPE>());\
+  ecs::TypeInfo type_##VAR_NAME(ecs::get_rtti<TYPE>(__VA_ARGS__), ecs::string(#TYPE), get_uset_type_info<TYPE>());\
   template<>\
   uint32_t type_hash<TYPE>()\
   { return HashedString(#TYPE); }\

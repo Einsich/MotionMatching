@@ -33,14 +33,14 @@ EVENT(scene=game, editor) change_terrain_mode(
 EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
   Asset<Material> &political_material,
   Asset<Texture2D> &provinces_texture,
-  const string &provinces_texture_name,
-  const string &load_provinces_info,
+  const ecs::string &provinces_texture_name,
+  const ecs::string &load_provinces_info,
   float pixel_scale,
   PoliticalMap &politicalMap,
   MapRenderData &data)
 {
   DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
-  DataBlock provincesOwn(root_path(load_provinces_info));
+  DataBlock provincesOwn(root_path(load_provinces_info.c_str()));
   auto &states = politicalMap.countries;
   vector<vec3> countriesColors;
   for (uint i = 0; i < countries.blockCount(); i++)
@@ -53,7 +53,7 @@ EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
     states.push_back({color, (int)i, state->name()});
   }
 
-  const auto &path = root_path(provinces_texture_name);
+  const auto &path = root_path(provinces_texture_name.c_str());
   int w, h, ch;
   stbi_set_flip_vertically_on_load(true);
   auto img = stbi_load(path.c_str(), &w, &h, &ch, 4);

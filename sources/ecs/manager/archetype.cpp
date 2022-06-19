@@ -5,16 +5,21 @@
 #include "common.h"
 namespace ecs
 {
-  Archetype::Archetype(int index, const std::vector<ComponentInstance> &type_hashes, int capacity, const std::string &synonim):
+  Archetype::Archetype(int index, const ecs::vector<ComponentInstance> &type_hashes, int capacity, const ecs::string &synonim):
     index(index), components(), count(0), capacity(capacity), typeDescriptions(), synonim(synonim)
   {
     for (const ComponentInstance &instance : type_hashes)
     {
+      #if ECS_USE_EASTL
       auto result = components.insert(instance.typeNameHash);
       if (result.second)
       {
         result.first->second = ComponentContainer(*instance.typeInfo, instance.typeNameHash, capacity);
-        typeDescriptions.emplace_back(TypeDescription{instance.name.c_str(), instance.typeInfo, nullptr, instance.typeNameHash});
+      #else
+      if (components.try_emplace(instance.typeNameHash, *instance.typeInfo, instance.typeNameHash, capacity).second)
+      {
+      #endif
+        typeDescriptions.emplace_back(TypeDescription{instance.name, instance.typeInfo, nullptr, instance.typeNameHash});
       }
     }    
 
@@ -23,11 +28,11 @@ namespace ecs
 
     std::sort(typeDescriptions.begin(), typeDescriptions.end(),
       [](const auto &a, const auto &b) {
-        return strcmp(a.name, b.name);
+        return a.name < b.name;
       });
   }
   
-  bool Archetype::in_archetype(const std::vector<ComponentInstance> &instances) const
+  bool Archetype::in_archetype(const ecs::vector<ComponentInstance> &instances) const
   {
     if (instances.size() != components.size())
       return false;
@@ -61,7 +66,7 @@ namespace ecs
       eid.migrate(eid.archetype_index(), index);
     }
     if (count < 0)
-      debug_error("count < 0 in %s", synonim.c_str());
+      ECS_LOG("count < 0 in %s", synonim.c_str());
   }
   
   void Archetype::copy(const Archetype *src)
