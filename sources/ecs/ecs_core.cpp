@@ -14,9 +14,9 @@ namespace ecs
   {
     entityContainer = new EntityContainer();
     sceneToLoad = "";
-    applicationTags = 0;
+    applicationTags.clear();
 #ifndef RELEASE
-    applicationTags |= tags::debug;
+    applicationTags.push_back("debug");
 #endif
   }
   
@@ -58,30 +58,10 @@ namespace ecs
     }
   }
   
-  void Core::register_allowed_callable()
+  void system_sort(const ecs::string &currentSceneTags, const ecs::vector<ecs::string> &applicationTags);
+  void Core::resolve_system_order_and_subscribes()
   {
-    get_all_systems().clear();
-    bool isEditor = currentSceneTags != "editor";
-    auto callableTest = [isEditor, this](const CallableDescription *callable)
-    {
-      return (callable->tags & applicationTags) == callable->tags &&
-        ((callable->scenes.empty() && isEditor) || 
-        std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)
-          != callable->scenes.end());
-    };
-    for (SystemDescription *callable : get_all_mutable_systems())
-    {
-      if (callableTest(callable))
-        get_all_systems().push_back(callable);
-    }
-    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
-    {
-      filteredHandlers.clear();
-      for (EventDescription *handler : srcHandlers)
-        if (callableTest(handler))
-          filteredHandlers.push_back(handler);
-    }
-      
+    system_sort(currentSceneTags, applicationTags);
   }
 
 
@@ -89,19 +69,9 @@ namespace ecs
   void Core::update_systems_subscribes()
   {
     core().events = {};
-    for (QueryDescription *query: ecs::all_queries())
-      query->archetypes.clear();
-    for (SystemDescription *system: ecs::get_all_systems())
-      system->archetypes.clear();
-      
-    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
-    {
-      for (EventDescription *handler : filteredHandlers)
-        handler->archetypes.clear();
-    }
-
-    for (Archetype *archetype : entityContainer->archetypes)
-      register_archetype(archetype);
+    
+    for (auto &archetype : entityContainer->archetypes)
+      register_archetype(archetype.get());
   }
 
 
@@ -172,7 +142,7 @@ namespace ecs
   Archetype *add_archetype(const Template &tmpl)
   {
     Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), tmpl.components, 1, tmpl.name);
-    core().entityContainer->archetypes.push_back(archetype);
+    core().entityContainer->archetypes.emplace_back(archetype);
 
     register_archetype(archetype);
     
@@ -276,7 +246,7 @@ namespace ecs
   void print_archetypes()
   {   
     printf("\n- - - - - \n");
-    for (const Archetype *archetype : core().entityContainer->archetypes)
+    for (const auto &archetype : core().entityContainer->archetypes)
     {
       printf("{\n");
       for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)

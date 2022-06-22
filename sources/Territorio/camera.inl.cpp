@@ -12,7 +12,7 @@ ecs::SystemDescription camera_lerp_descr("camera_lerp", {
 }, {},
 {},
 {},
-camera_lerp_func, ecs::stage::act, ecs::tags::all, false);
+camera_lerp_func, "act", {}, false);
 
 void camera_lerp_func()
 {
@@ -37,7 +37,7 @@ ecs::EventDescription setup_camera_descr(
 }, {},
 {},
 {},
-setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
+setup_camera_handler, setup_camera_singl_handler, {});
 
 void setup_camera_handler(const ecs::Event &event)
 {
@@ -61,7 +61,7 @@ ecs::EventDescription change_zoom_descr(
 }, {},
 {},
 {},
-change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
+change_zoom_handler, change_zoom_singl_handler, {});
 
 void change_zoom_handler(const ecs::Event &event)
 {
@@ -85,7 +85,7 @@ ecs::EventDescription move_camera_descr(
 }, {},
 {},
 {},
-move_camera_handler, move_camera_singl_handler, ecs::tags::all);
+move_camera_handler, move_camera_singl_handler, {});
 
 void move_camera_handler(const ecs::Event &event)
 {
@@ -107,7 +107,7 @@ ecs::EventDescription lock_unlock_camera_descr(
 }, {},
 {},
 {},
-lock_unlock_camera_handler, lock_unlock_camera_singl_handler, ecs::tags::all);
+lock_unlock_camera_handler, lock_unlock_camera_singl_handler, {});
 
 void lock_unlock_camera_handler(const ecs::Event &event)
 {

@@ -7,7 +7,7 @@
 #include <camera.h>
 #include "heightmap.h"
 
-SYSTEM(scene=game, editor, ecs::Tag coinEffect) coin_move(
+SYSTEM(stage=act;scene=game, editor, ecs::Tag coinEffect) coin_move(
   ecs::EntityId eid,
   vec3 &linear_velocity,
   vec3 &angular_velocity,

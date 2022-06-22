@@ -10,7 +10,7 @@ ecs::SystemDescription resources_menu_descr("resources_menu", {
 }, {"editor"},
 {},
 {},
-resources_menu_func, ecs::stage::ui_menu, ecs::tags::all, false);
+resources_menu_func, "ui_menu", {}, false);
 
 void resources_menu_func()
 {
@@ -27,7 +27,7 @@ ecs::SystemDescription asset_viewer_descr("asset_viewer", {
 }, {"editor"},
 {},
 {},
-asset_viewer_func, ecs::stage::ui, ecs::tags::all, false);
+asset_viewer_func, "ui", {}, false);
 
 void asset_viewer_func()
 {

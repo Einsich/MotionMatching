@@ -19,7 +19,7 @@ ecs::SystemDescription motion_matching_update_descr("motion_matching_update", {
 }, {},
 {"animation_player_update"},
 {},
-motion_matching_update_func, ecs::stage::act, ecs::tags::all, false);
+motion_matching_update_func, "act", {}, false);
 
 void motion_matching_update_func()
 {

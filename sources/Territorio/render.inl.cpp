@@ -42,7 +42,7 @@ ecs::SystemDescription render_scene_descr("render_scene", {
 }, {},
 {},
 {},
-render_scene_func, ecs::stage::render, ecs::tags::all, false);
+render_scene_func, "render", {}, false);
 
 void render_scene_func()
 {
@@ -59,7 +59,7 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
 }, {},
 {},
 {},
-update_map_textures_func, ecs::stage::act, ecs::tags::all, false);
+update_map_textures_func, "act", {}, false);
 
 void update_map_textures_func()
 {

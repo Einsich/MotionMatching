@@ -10,13 +10,12 @@ namespace ecs
   struct EventDescription;
 
   struct EntityContainer;
-  ecs::vector<QueryDescription*> &all_queries();
   struct Core
   {
     EntityContainer *entityContainer;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
-    uint applicationTags;
+    ecs::vector<ecs::string> applicationTags;
     ecs::string currentSceneTags;
     ecs::string sceneToLoad;
     bool reloadScene;
@@ -26,7 +25,7 @@ namespace ecs
     void destroy_all_entities();
     void destroy_entities_from_destroy_queue(bool with_swap_last_element);
     void update_systems_subscribes();
-    void register_allowed_callable();
+    void resolve_system_order_and_subscribes();
   };
   Core &core();
 

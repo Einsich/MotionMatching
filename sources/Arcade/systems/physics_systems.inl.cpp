@@ -28,7 +28,7 @@ ecs::SystemDescription move_all_entity_with_velocity_descr("move_all_entity_with
 }, {},
 {},
 {},
-move_all_entity_with_velocity_func, ecs::stage::act, ecs::tags::all, false);
+move_all_entity_with_velocity_func, "act", {}, false);
 
 void move_all_entity_with_velocity_func()
 {
@@ -45,7 +45,7 @@ ecs::SystemDescription collision_detection_descr("collision_detection", {
 }, {},
 {},
 {},
-collision_detection_func, ecs::stage::act, ecs::tags::all, false);
+collision_detection_func, "act", {}, false);
 
 void collision_detection_func()
 {

@@ -15,7 +15,7 @@ ecs::SystemDescription coin_move_descr("coin_move", {
 }, {"game","editor","ecs::Tag coinEffect"},
 {},
 {},
-coin_move_func, ecs::stage::act, ecs::tags::all, false);
+coin_move_func, "act", {}, false);
 
 void coin_move_func()
 {
@@ -33,7 +33,7 @@ ecs::EventDescription spawn_coin_effect_descr(
 }, {"game","editor"},
 {},
 {},
-spawn_coin_effect_handler, spawn_coin_effect_singl_handler, ecs::tags::all);
+spawn_coin_effect_handler, spawn_coin_effect_singl_handler, {});
 
 void spawn_coin_effect_handler(const ecs::Event &event)
 {

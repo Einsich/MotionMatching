@@ -12,7 +12,7 @@ ecs::SystemDescription controll_targets_descr("controll_targets", {
 }, {},
 {},
 {},
-controll_targets_func, ecs::stage::act, ecs::tags::all, false);
+controll_targets_func, "act", {}, false);
 
 void controll_targets_func()
 {
@@ -30,7 +30,7 @@ ecs::SystemDescription destroy_old_bullets_descr("destroy_old_bullets", {
 }, {},
 {},
 {},
-destroy_old_bullets_func, ecs::stage::act, ecs::tags::all, false);
+destroy_old_bullets_func, "act", {}, false);
 
 void destroy_old_bullets_func()
 {
@@ -48,7 +48,7 @@ ecs::SystemDescription move_hero_descr("move_hero", {
 }, {},
 {},
 {},
-move_hero_func, ecs::stage::act, ecs::tags::all, false);
+move_hero_func, "act", {}, false);
 
 void move_hero_func()
 {
@@ -67,7 +67,7 @@ ecs::EventDescription look_at_mouse_position_when_mouse_moves_descr(
 }, {},
 {},
 {},
-look_at_mouse_position_when_mouse_moves_handler, look_at_mouse_position_when_mouse_moves_singl_handler, ecs::tags::all);
+look_at_mouse_position_when_mouse_moves_handler, look_at_mouse_position_when_mouse_moves_singl_handler, {});
 
 void look_at_mouse_position_when_mouse_moves_handler(const ecs::Event &event)
 {
@@ -92,7 +92,7 @@ ecs::EventDescription fire_when_mouse_click_descr(
 }, {},
 {},
 {},
-fire_when_mouse_click_handler, fire_when_mouse_click_singl_handler, ecs::tags::all);
+fire_when_mouse_click_handler, fire_when_mouse_click_singl_handler, {});
 
 void fire_when_mouse_click_handler(const ecs::Event &event)
 {
@@ -115,7 +115,7 @@ ecs::EventDescription circle_attack_descr(
 }, {},
 {},
 {},
-circle_attack_handler, circle_attack_singl_handler, ecs::tags::all);
+circle_attack_handler, circle_attack_singl_handler, {});
 
 void circle_attack_handler(const ecs::Event &event)
 {

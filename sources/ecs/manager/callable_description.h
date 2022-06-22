@@ -22,17 +22,16 @@ namespace ecs
     ecs::vector<SystemCashedArchetype> archetypes;
     ecs::vector<ecs::string> scenes;
     ecs::vector<ecs::string> before, after;
-    uint tags;
+    ecs::vector<ecs::string> tags;
     uint notSingletonArgsCount;
     bool isQuery;
     CallableDescription(const char *name,
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args,
-      ecs::vector<ecs::string> &&scenes,
-      ecs::vector<ecs::string> &&before,
-      ecs::vector<ecs::string> &&after,
-      uint tags);
-    virtual void registration() = 0;
+      ecs::vector<ecs::string> &&scenes={},
+      ecs::vector<ecs::string> &&before={},
+      ecs::vector<ecs::string> &&after={},
+      ecs::vector<ecs::string> &&tags={});
     CallableDescription(const CallableDescription &) = delete;
     CallableDescription(CallableDescription &&) = delete;
     CallableDescription& operator= (const CallableDescription &) = delete;

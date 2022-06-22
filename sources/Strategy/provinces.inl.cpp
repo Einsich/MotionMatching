@@ -28,7 +28,7 @@ ecs::EventDescription change_terrain_mode_descr(
 }, {"game","editor"},
 {},
 {},
-change_terrain_mode_handler, change_terrain_mode_singl_handler, ecs::tags::all);
+change_terrain_mode_handler, change_terrain_mode_singl_handler, {});
 
 void change_terrain_mode_handler(const ecs::Event &event)
 {
@@ -55,7 +55,7 @@ ecs::EventDescription create_provinces_descr(
 }, {"game","editor"},
 {},
 {},
-create_provinces_handler, create_provinces_singl_handler, ecs::tags::all);
+create_provinces_handler, create_provinces_singl_handler, {});
 
 void create_provinces_handler(const ecs::Event &event)
 {

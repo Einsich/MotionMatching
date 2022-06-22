@@ -15,7 +15,7 @@ ecs::SystemDescription peson_controller_update_descr("peson_controller_update", 
 }, {},
 {},
 {},
-peson_controller_update_func, ecs::stage::act, ecs::tags::all, false);
+peson_controller_update_func, "act", {}, false);
 
 void peson_controller_update_func()
 {
@@ -33,7 +33,7 @@ ecs::EventDescription controller_mouse_move_handler_descr(
 }, {},
 {},
 {},
-controller_mouse_move_handler_handler, controller_mouse_move_handler_singl_handler, ecs::tags::all);
+controller_mouse_move_handler_handler, controller_mouse_move_handler_singl_handler, {});
 
 void controller_mouse_move_handler_handler(const ecs::Event &event)
 {
@@ -54,7 +54,7 @@ ecs::EventDescription controller_crouch_event_handler_descr(
 }, {},
 {},
 {},
-controller_crouch_event_handler_handler, controller_crouch_event_handler_singl_handler, ecs::tags::all);
+controller_crouch_event_handler_handler, controller_crouch_event_handler_singl_handler, {});
 
 void controller_crouch_event_handler_handler(const ecs::Event &event)
 {

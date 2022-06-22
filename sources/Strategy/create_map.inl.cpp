@@ -11,7 +11,7 @@ ecs::EventDescription scene_created_descr(
 }, {},
 {},
 {},
-scene_created_handler, scene_created_singl_handler, ecs::tags::all);
+scene_created_handler, scene_created_singl_handler, {});
 
 void scene_created_handler(const ecs::Event &event)
 {
@@ -35,7 +35,7 @@ ecs::EventDescription spawn_buildings_descr(
 }, {"game","editor"},
 {},
 {},
-spawn_buildings_handler, spawn_buildings_singl_handler, ecs::tags::all);
+spawn_buildings_handler, spawn_buildings_singl_handler, {});
 
 void spawn_buildings_handler(const ecs::Event &event)
 {

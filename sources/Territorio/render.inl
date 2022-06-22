@@ -55,7 +55,7 @@ SYSTEM(stage=render) render_scene(
 
 }
 
-SYSTEM()update_map_textures(
+SYSTEM(stage=act;)update_map_textures(
   bool &mapWasChanged,
   Asset<Texture2D> &mapTexture,
   const MapArrays &map_arrays

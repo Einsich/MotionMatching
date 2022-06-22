@@ -25,7 +25,7 @@ ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_
 }, {},
 {},
 {},
-update_camera_pos_before_render_func, ecs::stage::before_render, ecs::tags::all, false);
+update_camera_pos_before_render_func, "before_render", {}, false);
 
 void update_camera_pos_before_render_func()
 {
@@ -44,7 +44,7 @@ ecs::EventDescription change_zoom_descr(
 }, {},
 {},
 {},
-change_zoom_handler, change_zoom_singl_handler, ecs::tags::all);
+change_zoom_handler, change_zoom_singl_handler, {});
 
 void change_zoom_handler(const ecs::Event &event)
 {

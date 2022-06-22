@@ -54,7 +54,7 @@ EVENT(scene=editor) find_main_camera_editor(
   editorCameraManager.camera = editorCamera;
 }
 
-SYSTEM(scene=game, editor; require=Camera camera) set_main_camera(
+SYSTEM(scene=game, editor;stage=act; require=Camera camera) set_main_camera(
   ecs::EntityId eid,
   const bool isMainCamera,
   MainCamera &mainCamera)
@@ -113,7 +113,7 @@ EVENT() arccam_mouse_wheel_handler(
 template<typename Callable>
 void check_arcball_target(ecs::EntityId, Callable);
 
-SYSTEM() arcball_camera_update(
+SYSTEM(stage=act) arcball_camera_update(
   ArcballCamera &arcballCamera,
   bool isMainCamera,
   Transform &transform,
@@ -197,7 +197,7 @@ EVENT(scene=[editor,game]) freecam_mouse_click_handler(
   }
 }
 
-SYSTEM(scene=[editor,game]) freecamera_update(
+SYSTEM(stage=act;scene=[editor,game]) freecamera_update(
   FreeCamera &freeCamera,
   bool isMainCamera,
   Transform &transform)

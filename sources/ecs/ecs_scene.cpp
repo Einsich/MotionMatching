@@ -14,101 +14,21 @@ namespace ecs
   void destroy_scene();
   void invalidate_cached_archetype();
 
-  static bool system_comparator(const SystemDescription *a, const SystemDescription *b)
-  {
-    return a->stage < b->stage;
-  }
-  static void dfs(uint v, const vector<vector<uint>> &edges, vector<bool> &used, vector<uint> &answer)
-  {
-    used[v] = true;
-    for (uint to : edges[v])
-    {
-      if (!used[to])
-        dfs(to, edges, used, answer);
-    }
-    answer.push_back(v);
-  }
-  template<typename Description>
-  static void topological_sort(ecs::vector<Description *> &systems)
-  {
-    vector<vector<uint>> edge(systems.size());
-    vector<bool> used(systems.size(), false);
-    vector<uint> answer;
-    answer.reserve(systems.size());
-    map<string, int> nameMap;
-    for (uint i = 0; i < systems.size(); i++)
-      if (!systems[i]->isQuery)
-        nameMap[systems[i]->name] = i;
-    for (uint i = 0; i < systems.size(); i++)
-    {
-      for (const string &before : systems[i]->before)
-      {
-        auto it = nameMap.find(before);
-        if (it != nameMap.end())
-        {
-          edge[it->second].push_back(i);
-        }
-        else
-        {
-          debug_error("%s didn't exist for before %s", before.c_str(), systems[i]->name.c_str());
-        }
-      }
-      for (const string &after : systems[i]->after)
-      {
-        auto it = nameMap.find(after);
-        if (it != nameMap.end())
-        {
-          edge[i].push_back(it->second);
-        }
-        else
-        {
-          debug_error("%s didn't exist for after %s", after.c_str(), systems[i]->name.c_str());
-        }
-      }
-    }
-    for (uint i = 0; i < systems.size(); i++)
-    {
-      if (!used[i])
-        dfs(i, edge, used, answer);
-    }
-    ecs::vector<Description *> rightOrder(systems.size());
-
-    for (uint i = 0; i < systems.size(); i++)
-      rightOrder[answer[i]] = systems[i];
-
-    swap(systems, rightOrder);
-  }
 
   void SceneManager::start()
   {
     create_all_resources_from_metadata();
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    topological_sort(get_all_systems());
-    for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
-    {
-      topological_sort(filteredHandlers);
-    }
 
   }
   void SceneManager::sort_systems()
   {
-    auto &systems = ecs::get_all_systems();
-    std::sort(systems.begin(), systems.end(), system_comparator);
-    act.begin = systems.begin();
-    act.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= stage::before_render;});
-    before_render.begin = act.end;
-    before_render.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= stage::render;});
-    render.begin = act.end;
-    render.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= stage::ui;});
-    ui.begin = render.end;
-    ui.end = std::find_if(systems.begin(), systems.end(),
-      [](const SystemDescription *a){return a->stage >= stage::ui_menu;});
-    menu.begin = ui.end;
-    menu.end = systems.end();
+    act = ecs::get_system_stage("act");
+    before_render = ecs::get_system_stage("before_render");
+    render = ecs::get_system_stage("render");
+    ui = ecs::get_system_stage("ui");
+    menu = ecs::get_system_stage("ui_menu");
   }
 
   void save(std::ostream& os, const ecs::vector<Archetype*> &archetypes);
@@ -144,7 +64,7 @@ namespace ecs
     ecs::EntityContainer &curContainer = inEditor ? currentScene.editorScene : currentScene.gameScene;
     core().currentSceneTags = inEditor ? "editor" : "game";
     core().entityContainer = &curContainer;
-    core().register_allowed_callable();
+    core().resolve_system_order_and_subscribes();
     sort_systems();
     core().update_systems_subscribes();
     bool needRestart = (inEditor && !curContainer.loaded) || !inEditor;
@@ -155,12 +75,12 @@ namespace ecs
       curContainer.loaded = true;
     }
   }
-  void SceneManager::update_range(const SystemRange &range)
+  static void update_range(const SystemStageInterval &range)
   {
-    for (SystemIterator it = range.begin; it != range.end; it++)
+    for (auto system = range.begin; system < range.end; ++system)
     {
-      ProfilerLabel label((*it)->name.c_str());
-      (*it)->execute();
+      ProfilerLabel label((*system)->name.c_str());
+      (*system)->execute();
     }
   }
   void SceneManager::update_act()
@@ -208,10 +128,7 @@ namespace ecs
   {
     process_events();
     core().destroy_all_entities();
-    for (Archetype *archetype : currentScene.gameScene.archetypes)
-      delete archetype;
-    for (Archetype *archetype : currentScene.editorScene.archetypes)
-      delete archetype;
+
     save_all_resources_to_metadata();
   }
 }

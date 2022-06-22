@@ -38,7 +38,7 @@ ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
 }, {},
 {},
 {},
-change_invasion_weight_func, ecs::stage::ui, ecs::tags::all, false);
+change_invasion_weight_func, "ui", {}, false);
 
 void change_invasion_weight_func()
 {
@@ -52,7 +52,7 @@ ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
 }, {},
 {},
 {},
-check_mouse_over_ui_func, ecs::stage::ui, ecs::tags::all, false);
+check_mouse_over_ui_func, "ui", {}, false);
 
 void check_mouse_over_ui_func()
 {
@@ -69,7 +69,7 @@ ecs::EventDescription start_game_descr(
 }, {},
 {},
 {},
-start_game_handler, start_game_singl_handler, ecs::tags::all);
+start_game_handler, start_game_singl_handler, {});
 
 void start_game_handler(const ecs::Event &event)
 {
@@ -91,7 +91,7 @@ ecs::EventDescription select_spawn_point_descr(
 }, {},
 {},
 {},
-select_spawn_point_handler, select_spawn_point_singl_handler, ecs::tags::all);
+select_spawn_point_handler, select_spawn_point_singl_handler, {});
 
 void select_spawn_point_handler(const ecs::Event &event)
 {
@@ -118,7 +118,7 @@ ecs::EventDescription select_invasion_descr(
 }, {},
 {},
 {},
-select_invasion_handler, select_invasion_singl_handler, ecs::tags::all);
+select_invasion_handler, select_invasion_singl_handler, {});
 
 void select_invasion_handler(const ecs::Event &event)
 {

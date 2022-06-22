@@ -26,7 +26,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
   const int N = 100;
   char buf[N];
   int archetypeIndex = 0;
-  for (ecs::Archetype *archetype : ecs::core().entityContainer->archetypes)
+  for (auto &archetype : ecs::core().entityContainer->archetypes)
   {
     if (ImGui::TreeNode(archetype->synonim.c_str()))
     {

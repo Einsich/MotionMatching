@@ -35,7 +35,7 @@ ecs::EventDescription create_map_descr(
 }, {},
 {},
 {},
-create_map_handler, create_map_singl_handler, ecs::tags::all);
+create_map_handler, create_map_singl_handler, {});
 
 void create_map_handler(const ecs::Event &event)
 {

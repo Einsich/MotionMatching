@@ -30,7 +30,7 @@ EVENT() setup_camera(
   wr.resolution = ivec2(width, height);
 }
 
-SYSTEM() camera_lerp(
+SYSTEM(stage=act;) camera_lerp(
   const Transform2D &targetTransform,
   Transform2D &transform,
   float lerpStrength

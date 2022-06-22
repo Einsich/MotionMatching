@@ -18,11 +18,8 @@ namespace ecs
   class SceneManager
   {
   private:
-    typedef ecs::vector<SystemDescription*>::iterator SystemIterator;
-    struct SystemRange { SystemIterator begin, end; };
-    SystemRange act, before_render, render, ui, menu;
+    SystemStageInterval act, before_render, render, ui, menu;
     Scene currentScene;
-    void update_range(const SystemRange &range);
     void destroy_entities(bool without_copy);
     void sort_systems();
     void init_scene();

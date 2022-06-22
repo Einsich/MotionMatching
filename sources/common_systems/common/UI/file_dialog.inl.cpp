@@ -10,7 +10,7 @@ ecs::SystemDescription open_dialog_descr("open_dialog", {
 }, {"editor"},
 {},
 {},
-open_dialog_func, ecs::stage::ui_menu, ecs::tags::all, false);
+open_dialog_func, "ui_menu", {}, false);
 
 void open_dialog_func()
 {

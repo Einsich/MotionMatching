@@ -11,7 +11,7 @@ ecs::SystemDescription dag_ecs_update_descr("dag_ecs_update", {
 }, {"game","editor"},
 {},
 {},
-dag_ecs_update_func, ecs::stage::act, ecs::tags::all, false);
+dag_ecs_update_func, "act", {}, false);
 
 void dag_ecs_update_func()
 {
@@ -25,7 +25,7 @@ ecs::SystemDescription prune_cache0_descr("prune_cache0", {
 }, {"game","editor"},
 {},
 {},
-prune_cache0_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache0_func, "act", {}, false);
 
 void prune_cache0_func()
 {
@@ -39,7 +39,7 @@ ecs::SystemDescription dag_vector_structs_update_descr("dag_vector_structs_updat
 }, {"game","editor"},
 {},
 {},
-dag_vector_structs_update_func, ecs::stage::act, ecs::tags::all, false);
+dag_vector_structs_update_func, "act", {}, false);
 
 void dag_vector_structs_update_func()
 {
@@ -53,7 +53,7 @@ ecs::SystemDescription prune_cache1_descr("prune_cache1", {
 }, {"game","editor"},
 {},
 {},
-prune_cache1_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache1_func, "act", {}, false);
 
 void prune_cache1_func()
 {
@@ -67,7 +67,7 @@ ecs::SystemDescription dag_vector_pointers_update_descr("dag_vector_pointers_upd
 }, {"game","editor"},
 {},
 {},
-dag_vector_pointers_update_func, ecs::stage::act, ecs::tags::all, false);
+dag_vector_pointers_update_func, "act", {}, false);
 
 void dag_vector_pointers_update_func()
 {
@@ -81,7 +81,7 @@ ecs::SystemDescription prune_cache2_descr("prune_cache2", {
 }, {"game","editor"},
 {},
 {},
-prune_cache2_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache2_func, "act", {}, false);
 
 void prune_cache2_func()
 {
@@ -95,7 +95,7 @@ ecs::SystemDescription dag_vector_pointers_virtual_update_descr("dag_vector_poin
 }, {"game","editor"},
 {},
 {},
-dag_vector_pointers_virtual_update_func, ecs::stage::act, ecs::tags::all, false);
+dag_vector_pointers_virtual_update_func, "act", {}, false);
 
 void dag_vector_pointers_virtual_update_func()
 {
@@ -109,7 +109,7 @@ ecs::SystemDescription prune_cache3_descr("prune_cache3", {
 }, {"game","editor"},
 {},
 {},
-prune_cache3_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache3_func, "act", {}, false);
 
 void prune_cache3_func()
 {
@@ -125,7 +125,7 @@ ecs::SystemDescription tiny_ecs_update_descr("tiny_ecs_update", {
 }, {"game","editor"},
 {},
 {},
-tiny_ecs_update_func, ecs::stage::act, ecs::tags::all, false);
+tiny_ecs_update_func, "act", {}, false);
 
 void tiny_ecs_update_func()
 {
@@ -139,7 +139,7 @@ ecs::SystemDescription prune_cache4_descr("prune_cache4", {
 }, {"game","editor"},
 {},
 {},
-prune_cache4_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache4_func, "act", {}, false);
 
 void prune_cache4_func()
 {
@@ -153,7 +153,7 @@ ecs::SystemDescription tiny_soa_structs_update_descr("tiny_soa_structs_update", 
 }, {"game","editor"},
 {},
 {},
-tiny_soa_structs_update_func, ecs::stage::act, ecs::tags::all, false);
+tiny_soa_structs_update_func, "act", {}, false);
 
 void tiny_soa_structs_update_func()
 {
@@ -167,7 +167,7 @@ ecs::SystemDescription prune_cache5_descr("prune_cache5", {
 }, {"game","editor"},
 {},
 {},
-prune_cache5_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache5_func, "act", {}, false);
 
 void prune_cache5_func()
 {
@@ -181,7 +181,7 @@ ecs::SystemDescription tiny_vector_structs_update_descr("tiny_vector_structs_upd
 }, {"game","editor"},
 {},
 {},
-tiny_vector_structs_update_func, ecs::stage::act, ecs::tags::all, false);
+tiny_vector_structs_update_func, "act", {}, false);
 
 void tiny_vector_structs_update_func()
 {
@@ -195,7 +195,7 @@ ecs::SystemDescription prune_cache6_descr("prune_cache6", {
 }, {"game","editor"},
 {},
 {},
-prune_cache6_func, ecs::stage::act, ecs::tags::all, false);
+prune_cache6_func, "act", {}, false);
 
 void prune_cache6_func()
 {
@@ -211,7 +211,7 @@ ecs::EventDescription dag_init_descr(
 }, {"game","editor"},
 {},
 {},
-dag_init_handler, dag_init_singl_handler, ecs::tags::all);
+dag_init_handler, dag_init_singl_handler, {});
 
 void dag_init_handler(const ecs::Event &event)
 {

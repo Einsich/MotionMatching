@@ -25,7 +25,7 @@ ecs::SystemDescription third_peson_controller_update_descr("third_peson_controll
 }, {},
 {},
 {},
-third_peson_controller_update_func, ecs::stage::act, ecs::tags::all, false);
+third_peson_controller_update_func, "act", {}, false);
 
 void third_peson_controller_update_func()
 {
@@ -43,7 +43,7 @@ ecs::EventDescription third_controller_appear_descr(
 }, {},
 {},
 {},
-third_controller_appear_handler, third_controller_appear_singl_handler, ecs::tags::all);
+third_controller_appear_handler, third_controller_appear_singl_handler, {});
 
 void third_controller_appear_handler(const ecs::Event &event)
 {
@@ -67,7 +67,7 @@ ecs::EventDescription mouse_move_handler_descr(
 }, {},
 {},
 {},
-mouse_move_handler_handler, mouse_move_handler_singl_handler, ecs::tags::all);
+mouse_move_handler_handler, mouse_move_handler_singl_handler, {});
 
 void mouse_move_handler_handler(const ecs::Event &event)
 {
@@ -88,7 +88,7 @@ ecs::EventDescription mouse_wheel_handler_descr(
 }, {},
 {},
 {},
-mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, ecs::tags::all);
+mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, {});
 
 void mouse_wheel_handler_handler(const ecs::Event &event)
 {
@@ -110,7 +110,7 @@ ecs::EventDescription crouch_event_handler_descr(
 }, {},
 {},
 {},
-crouch_event_handler_handler, crouch_event_handler_singl_handler, ecs::tags::all);
+crouch_event_handler_handler, crouch_event_handler_singl_handler, {});
 
 void crouch_event_handler_handler(const ecs::Event &event)
 {
@@ -132,7 +132,7 @@ ecs::EventDescription animation_player_handler_descr(
 }, {},
 {},
 {},
-animation_player_handler_handler, animation_player_handler_singl_handler, ecs::tags::all);
+animation_player_handler_handler, animation_player_handler_singl_handler, {});
 
 void animation_player_handler_handler(const ecs::Event &event)
 {

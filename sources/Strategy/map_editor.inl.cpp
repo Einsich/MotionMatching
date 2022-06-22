@@ -25,7 +25,7 @@ ecs::SystemDescription country_builder_descr("country_builder", {
 }, {"editor"},
 {},
 {},
-country_builder_func, ecs::stage::ui, ecs::tags::all, false);
+country_builder_func, "ui", {}, false);
 
 void country_builder_func()
 {
@@ -46,7 +46,7 @@ ecs::EventDescription trace_province_descr(
 }, {"editor"},
 {},
 {},
-trace_province_handler, trace_province_singl_handler, ecs::tags::all);
+trace_province_handler, trace_province_singl_handler, {});
 
 void trace_province_handler(const ecs::Event &event)
 {
@@ -70,7 +70,7 @@ ecs::EventDescription selecte_descr(
 }, {"game","editor"},
 {},
 {},
-selecte_handler, selecte_singl_handler, ecs::tags::all);
+selecte_handler, selecte_singl_handler, {});
 
 void selecte_handler(const ecs::Event &event)
 {

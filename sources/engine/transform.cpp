@@ -1,7 +1,7 @@
 #include "transform.h"
 #include <type_registration.h>
 
-ECS_REGISTER_TYPE_AND_VECTOR(Transform, Transform, true, true);
+ECS_REGISTER_TYPE_AND_VECTOR(Transform, Transform, false, true);
 
 Transform::Transform(vec3 position, mat4x4 rotation, vec3 scale):
   position(position), rotation(rotation), scale(scale), calculated(false)

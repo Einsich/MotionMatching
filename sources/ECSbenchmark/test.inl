@@ -92,12 +92,12 @@ static void process(float dt, vec3 &pos, vec3 &vel, const vec3 &center, float m)
   vel += a * dt;
   pos += vel * dt;
 }
-SYSTEM(scene=game, editor) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
+SYSTEM(stage=act;scene=game, editor) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
 {
   process(Time::delta_time(), pos, vel, center, m);
 }
 
-SYSTEM(scene=game, editor) vector_structs_update()
+SYSTEM(stage=act;scene=game, editor) vector_structs_update()
 {
   for (auto &entity : list0)
   {
@@ -105,7 +105,7 @@ SYSTEM(scene=game, editor) vector_structs_update()
   }
 }
 
-SYSTEM(scene=game, editor) vector_pointers_update()
+SYSTEM(stage=act;scene=game, editor) vector_pointers_update()
 {
   for (auto entityPrt : list1)
   {

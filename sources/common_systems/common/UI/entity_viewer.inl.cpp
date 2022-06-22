@@ -10,7 +10,7 @@ ecs::SystemDescription entity_viewer_descr("entity_viewer", {
 }, {"game","editor","scene","debug"},
 {},
 {},
-entity_viewer_func, ecs::stage::ui, ecs::tags::all, false);
+entity_viewer_func, "ui", {}, false);
 
 void entity_viewer_func()
 {
@@ -27,7 +27,7 @@ ecs::EventDescription init_imgui_style_descr(
 }, {"game","editor","scene","debug"},
 {},
 {},
-init_imgui_style_handler, init_imgui_style_singl_handler, ecs::tags::all);
+init_imgui_style_handler, init_imgui_style_singl_handler, {});
 
 void init_imgui_style_handler(const ecs::Event &event)
 {

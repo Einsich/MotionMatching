@@ -9,7 +9,7 @@ ecs::SystemDescription briefing_ui_descr("briefing_ui", {
 }, {},
 {},
 {},
-briefing_ui_func, ecs::stage::ui, ecs::tags::all, false);
+briefing_ui_func, "ui", {}, false);
 
 void briefing_ui_func()
 {
@@ -27,7 +27,7 @@ ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statisti
 }, {},
 {},
 {},
-motion_matching_statistic_func, ecs::stage::ui, ecs::tags::all, false);
+motion_matching_statistic_func, "ui", {}, false);
 
 void motion_matching_statistic_func()
 {
@@ -43,7 +43,7 @@ ecs::SystemDescription current_anim_index_descr("current_anim_index", {
 }, {},
 {},
 {},
-current_anim_index_func, ecs::stage::ui, ecs::tags::all, false);
+current_anim_index_func, "ui", {}, false);
 
 void current_anim_index_func()
 {
@@ -59,7 +59,7 @@ ecs::SystemDescription menu_ui_descr("menu_ui", {
 }, {},
 {},
 {},
-menu_ui_func, ecs::stage::ui_menu, ecs::tags::all, false);
+menu_ui_func, "ui_menu", {}, false);
 
 void menu_ui_func()
 {
@@ -74,7 +74,7 @@ ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
 }, {},
 {},
 {},
-mm_early_text_perf_func, ecs::stage::ui, ecs::tags::all, false);
+mm_early_text_perf_func, "ui", {}, false);
 
 void mm_early_text_perf_func()
 {

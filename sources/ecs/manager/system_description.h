@@ -9,24 +9,37 @@ namespace ecs
     QueryDescription(const char *name,
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args);
-    void registration() override;
   };
   struct SystemDescription final : CallableDescription
   {
     void (*function)();
-    int stage;
+    const char *stage;
     bool isJob;
     SystemDescription(const char *name,
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args,
       ecs::vector<ecs::string> &&scenes,
-      ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
+      ecs::vector<ecs::string> &&before,
+      ecs::vector<ecs::string> &&after,
       void (*function_pointer)(),
-      int stage, uint tags, bool is_job);
+      const char * stage,
+      ecs::vector<ecs::string> &&tags,
+      bool is_job);
     void execute();
-    void registration() override;
   };
   
   ecs::vector<SystemDescription *>& get_all_mutable_systems();
   ecs::vector<SystemDescription *>& get_all_systems();
+  ecs::vector<QueryDescription*> &all_queries();
+
+  struct SystemStageInterval
+  {
+    SystemDescription **begin, **end;
+
+    SystemStageInterval(SystemDescription**begin, SystemDescription**end);
+    SystemStageInterval():begin(nullptr), end(nullptr){}
+    void perform_stage() const;
+  };
+  SystemStageInterval get_system_stage(const char *stage);
+  void perform_stage(const char *stage);
 }

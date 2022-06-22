@@ -70,7 +70,7 @@ void try_add_invasion(uint &forces, vector<Invasion> &invasions, Invasion invasi
   }
 }
 
-SYSTEM() update_bot_invasions(
+SYSTEM(stage=act;) update_bot_invasions(
   float invasionPeriod,
   float &invasionTime,
   vector<Invasion> &invasions,

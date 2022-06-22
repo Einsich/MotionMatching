@@ -69,6 +69,12 @@ static const std::regex new_system_annotation_regex(LEXEMA_ANNOTATION);
 static const std::regex new_system_arg_regex(SYSTEM_ARG);
 static const std::regex type_regex(TYPE_REGEX2);
 
+enum CallableType
+{
+  SYSTEM_TYPE,
+  EVENT_TYPE,
+  QUERY_TYPE
+};
 namespace fs = std::filesystem;
 
 void log_success(const std::string &meassage)
@@ -163,7 +169,7 @@ ParserFunctionArgument clear_arg(std::string str)
     arg.name = args[1];
   return arg;
 }
-void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
+void parse_definition(std::string &str, ParserSystemDescription &parserDescr, CallableType type)
 {
   auto args_range = get_match({str.begin(), str.end()}, new_system_args_regex);
   
@@ -190,10 +196,10 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
         if (key == "tags")
         {
           for (uint i = 1; i < args0.size(); i++)
-            parserDescr.tags += std::string(parserDescr.tags.empty() ? "" : "|") + "ecs::tags::" + args0[i];
+            parserDescr.tags += std::string(parserDescr.tags.empty() ? "" : ", ") + '\"' + args0[i] + '\"';;
         } else if (key == "stage")
         {
-          parserDescr.stage = "ecs::stage::" + args0[1];
+          parserDescr.stage = '\"' + args0[1] + '\"';
           if (args0.size() > 2)
             log_error("there are more than 1 stage definition");
         } else if (key == "scene")
@@ -227,16 +233,27 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr)
       }
     }
   }
-  if (parserDescr.tags.empty())
-    parserDescr.tags = "ecs::tags::all";
-  if (parserDescr.stage.empty())
-    parserDescr.stage = "ecs::stage::act";
+  if (type != CallableType::SYSTEM_TYPE)
+  {
+    if (!parserDescr.stage.empty())
+      log_error("there is stage " + parserDescr.stage + " in " + parserDescr.sys_name);
+
+  }
+  else
+  {
+    if (parserDescr.stage.empty())
+    {
+      parserDescr.stage = "\"\"";//warning system without stage
+      log_error(parserDescr.sys_name + " without stage");
+    }
+  }
   if (parserDescr.isJob.empty())
     parserDescr.isJob = "false";
 }
+
 void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
   const std::string &file, const std::string &file_path,
-  const std::regex &full_regex, const std::regex &def_regex)
+  const std::regex &full_regex, const std::regex &def_regex, CallableType type)
 {
   
   auto systems = get_matches(file, full_regex);
@@ -268,9 +285,9 @@ void parse_system(std::vector<ParserSystemDescription>  &systemsDescriptions,
     args_range.end--;
     args = args_range.str();
     ParserSystemDescription descr;
-    parse_definition(definition, descr);
     descr.sys_file = file_path;
     descr.sys_name = name;
+    parse_definition(definition, descr, type);
     auto matched_args = get_matches(args, arg_regex);
     for (auto& arg : matched_args)
     {
@@ -390,10 +407,10 @@ void process_inl_file(const fs::path& path)
   std::vector<ParserSystemDescription>  singlqueriesDescriptions;
   std::vector<ParserSystemDescription>  eventsDescriptions;
   std::string pathStr = path.string();
-  parse_system(systemsDescriptions, str, pathStr, system_full_regex, system_regex);
-  parse_system(queriesDescriptions, str, pathStr, query_full_regex, query_regex);
-  parse_system(singlqueriesDescriptions, str, pathStr, singl_query_full_regex, query_regex);
-  parse_system(eventsDescriptions, str, pathStr, event_full_regex, event_regex);
+  parse_system(systemsDescriptions, str, pathStr, system_full_regex, system_regex, CallableType::SYSTEM_TYPE);
+  parse_system(queriesDescriptions, str, pathStr, query_full_regex, query_regex, CallableType::QUERY_TYPE);
+  parse_system(singlqueriesDescriptions, str, pathStr, singl_query_full_regex, query_regex, CallableType::QUERY_TYPE);
+  parse_system(eventsDescriptions, str, pathStr, event_full_regex, event_regex, CallableType::EVENT_TYPE);
 
   std::ofstream outFile;
   log_success(pathStr + ".cpp");
@@ -469,7 +486,7 @@ void process_inl_file(const fs::path& path)
     write(outFile, ",\n");
     fill_array(outFile, system.after);
     write(outFile,
-    ",\n%s, %s, %s, %s);\n\n", sys_func.c_str(), system.stage.c_str(), system.tags.c_str(), system.isJob.c_str());
+    ",\n%s, %s, {%s}, %s);\n\n", sys_func.c_str(), system.stage.c_str(), system.tags.c_str(), system.isJob.c_str());
 
     bool isJob = system.isJob == "true";
     write(outFile,
@@ -504,7 +521,7 @@ void process_inl_file(const fs::path& path)
     write(outFile, ",\n");
     fill_array(outFile, event.after);
     write(outFile, 
-    ",\n%s, %s, %s);\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
+    ",\n%s, %s, {%s});\n\n", event_handler.c_str(), event_singl_handler.c_str(), event.tags.c_str());
 
     write(outFile,
     "void %s(const ecs::Event &event)\n"

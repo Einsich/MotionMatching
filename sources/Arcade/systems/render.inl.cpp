@@ -27,7 +27,7 @@ ecs::SystemDescription render_scene_descr("render_scene", {
 }, {},
 {},
 {},
-render_scene_func, ecs::stage::render, ecs::tags::all, false);
+render_scene_func, "render", {}, false);
 
 void render_scene_func()
 {

@@ -13,7 +13,7 @@ ecs::SystemDescription process_animation_descr("process_animation", {
 }, {"game","editor"},
 {},
 {},
-process_animation_func, ecs::stage::render, ecs::tags::all, false);
+process_animation_func, "render", {}, false);
 
 void process_animation_func()
 {

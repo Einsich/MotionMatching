@@ -13,7 +13,7 @@ ecs::SystemDescription recorder_ui_descr("recorder_ui", {
 }, {},
 {},
 {},
-recorder_ui_func, ecs::stage::ui, ecs::tags::all, false);
+recorder_ui_func, "ui", {}, false);
 
 void recorder_ui_func()
 {
@@ -33,7 +33,7 @@ ecs::EventDescription listener_keybord_descr(
 }, {},
 {},
 {},
-listener_keybord_handler, listener_keybord_singl_handler, ecs::tags::all);
+listener_keybord_handler, listener_keybord_singl_handler, {});
 
 void listener_keybord_handler(const ecs::Event &event)
 {
@@ -57,7 +57,7 @@ ecs::EventDescription listener_mousemove_descr(
 }, {},
 {},
 {},
-listener_mousemove_handler, listener_mousemove_singl_handler, ecs::tags::all);
+listener_mousemove_handler, listener_mousemove_singl_handler, {});
 
 void listener_mousemove_handler(const ecs::Event &event)
 {

@@ -11,7 +11,7 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
 }, {},
 {},
 {},
-animation_player_update_func, ecs::stage::act, ecs::tags::all, false);
+animation_player_update_func, "act", {}, false);
 
 void animation_player_update_func()
 {
@@ -28,7 +28,7 @@ ecs::SystemDescription update_bone_remap_descr("update_bone_remap", {
 }, {"game","editor"},
 {},
 {},
-update_bone_remap_func, ecs::stage::act, ecs::tags::all, false);
+update_bone_remap_func, "act", {}, false);
 
 void update_bone_remap_func()
 {
@@ -45,7 +45,7 @@ ecs::EventDescription init_animation_character_descr(
 }, {"game","editor"},
 {},
 {},
-init_animation_character_handler, init_animation_character_singl_handler, ecs::tags::all);
+init_animation_character_handler, init_animation_character_singl_handler, {});
 
 void init_animation_character_handler(const ecs::Event &event)
 {
@@ -66,7 +66,7 @@ ecs::EventDescription init_animation_material_descr(
 }, {"game"},
 {},
 {},
-init_animation_material_handler, init_animation_material_singl_handler, ecs::tags::all);
+init_animation_material_handler, init_animation_material_singl_handler, {});
 
 void init_animation_material_handler(const ecs::Event &event)
 {

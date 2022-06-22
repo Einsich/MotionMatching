@@ -14,7 +14,7 @@ ecs::EventDescription init_anim_settings_descr(
 }, {"game"},
 {},
 {},
-init_anim_settings_handler, init_anim_settings_singl_handler, ecs::tags::all);
+init_anim_settings_handler, init_anim_settings_singl_handler, {});
 
 void init_anim_settings_handler(const ecs::Event &event)
 {
@@ -37,7 +37,7 @@ ecs::EventDescription scene_destroy_descr(
 }, {},
 {},
 {},
-scene_destroy_handler, scene_destroy_singl_handler, ecs::tags::all);
+scene_destroy_handler, scene_destroy_singl_handler, {});
 
 void scene_destroy_handler(const ecs::Event &event)
 {

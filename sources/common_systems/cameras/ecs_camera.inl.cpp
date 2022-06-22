@@ -70,7 +70,7 @@ ecs::SystemDescription set_main_camera_descr("set_main_camera", {
 }, {"game","editor"},
 {},
 {},
-set_main_camera_func, ecs::stage::act, ecs::tags::all, false);
+set_main_camera_func, "act", {}, false);
 
 void set_main_camera_func()
 {
@@ -88,7 +88,7 @@ ecs::SystemDescription arcball_camera_update_descr("arcball_camera_update", {
 }, {},
 {},
 {},
-arcball_camera_update_func, ecs::stage::act, ecs::tags::all, false);
+arcball_camera_update_func, "act", {}, false);
 
 void arcball_camera_update_func()
 {
@@ -105,7 +105,7 @@ ecs::SystemDescription freecamera_update_descr("freecamera_update", {
 }, {"editor","game"},
 {},
 {},
-freecamera_update_func, ecs::stage::act, ecs::tags::all, false);
+freecamera_update_func, "act", {}, false);
 
 void freecamera_update_func()
 {
@@ -120,7 +120,7 @@ ecs::SystemDescription update_main_camera_game_transformations_descr("update_mai
 }, {"game"},
 {},
 {},
-update_main_camera_game_transformations_func, ecs::stage::before_render, ecs::tags::all, false);
+update_main_camera_game_transformations_func, "before_render", {}, false);
 
 void update_main_camera_game_transformations_func()
 {
@@ -136,7 +136,7 @@ ecs::SystemDescription update_main_camera_editor_transformations_descr("update_m
 }, {"editor"},
 {},
 {},
-update_main_camera_editor_transformations_func, ecs::stage::before_render, ecs::tags::all, false);
+update_main_camera_editor_transformations_func, "before_render", {}, false);
 
 void update_main_camera_editor_transformations_func()
 {
@@ -153,7 +153,7 @@ ecs::EventDescription find_main_camera_game_descr(
 }, {"game"},
 {},
 {},
-find_main_camera_game_handler, find_main_camera_game_singl_handler, ecs::tags::all);
+find_main_camera_game_handler, find_main_camera_game_singl_handler, {});
 
 void find_main_camera_game_handler(const ecs::Event &event)
 {
@@ -174,7 +174,7 @@ ecs::EventDescription find_main_camera_editor_descr(
 }, {"editor"},
 {},
 {},
-find_main_camera_editor_handler, find_main_camera_editor_singl_handler, ecs::tags::all);
+find_main_camera_editor_handler, find_main_camera_editor_singl_handler, {});
 
 void find_main_camera_editor_handler(const ecs::Event &event)
 {
@@ -196,7 +196,7 @@ ecs::EventDescription arcball_created_descr(
 }, {},
 {},
 {},
-arcball_created_handler, arcball_created_singl_handler, ecs::tags::all);
+arcball_created_handler, arcball_created_singl_handler, {});
 
 void arcball_created_handler(const ecs::Event &event)
 {
@@ -218,7 +218,7 @@ ecs::EventDescription arccam_mouse_move_handler_descr(
 }, {},
 {},
 {},
-arccam_mouse_move_handler_handler, arccam_mouse_move_handler_singl_handler, ecs::tags::all);
+arccam_mouse_move_handler_handler, arccam_mouse_move_handler_singl_handler, {});
 
 void arccam_mouse_move_handler_handler(const ecs::Event &event)
 {
@@ -240,7 +240,7 @@ ecs::EventDescription arccam_mouse_click_handler_descr(
 }, {},
 {},
 {},
-arccam_mouse_click_handler_handler, arccam_mouse_click_handler_singl_handler, ecs::tags::all);
+arccam_mouse_click_handler_handler, arccam_mouse_click_handler_singl_handler, {});
 
 void arccam_mouse_click_handler_handler(const ecs::Event &event)
 {
@@ -262,7 +262,7 @@ ecs::EventDescription arccam_mouse_wheel_handler_descr(
 }, {},
 {},
 {},
-arccam_mouse_wheel_handler_handler, arccam_mouse_wheel_handler_singl_handler, ecs::tags::all);
+arccam_mouse_wheel_handler_handler, arccam_mouse_wheel_handler_singl_handler, {});
 
 void arccam_mouse_wheel_handler_handler(const ecs::Event &event)
 {
@@ -284,7 +284,7 @@ ecs::EventDescription freecam_created_descr(
 }, {"editor","game"},
 {},
 {},
-freecam_created_handler, freecam_created_singl_handler, ecs::tags::all);
+freecam_created_handler, freecam_created_singl_handler, {});
 
 void freecam_created_handler(const ecs::Event &event)
 {
@@ -307,7 +307,7 @@ ecs::EventDescription freecam_mouse_move_handler_descr(
 }, {"editor","game"},
 {},
 {},
-freecam_mouse_move_handler_handler, freecam_mouse_move_handler_singl_handler, ecs::tags::all);
+freecam_mouse_move_handler_handler, freecam_mouse_move_handler_singl_handler, {});
 
 void freecam_mouse_move_handler_handler(const ecs::Event &event)
 {
@@ -329,7 +329,7 @@ ecs::EventDescription freecam_mouse_click_handler_descr(
 }, {"editor","game"},
 {},
 {},
-freecam_mouse_click_handler_handler, freecam_mouse_click_handler_singl_handler, ecs::tags::all);
+freecam_mouse_click_handler_handler, freecam_mouse_click_handler_singl_handler, {});
 
 void freecam_mouse_click_handler_handler(const ecs::Event &event)
 {

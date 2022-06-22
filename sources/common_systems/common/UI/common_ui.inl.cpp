@@ -10,7 +10,7 @@ ecs::SystemDescription fps_ui_descr("fps_ui", {
 }, {"editor","game"},
 {},
 {},
-fps_ui_func, ecs::stage::ui, ecs::tags::all, false);
+fps_ui_func, "ui", {}, false);
 
 void fps_ui_func()
 {
@@ -25,7 +25,7 @@ ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
 }, {"game","editor"},
 {},
 {},
-debug_console_ui_func, ecs::stage::ui, ecs::tags::debug, false);
+debug_console_ui_func, "ui", {"debug"}, false);
 
 void debug_console_ui_func()
 {

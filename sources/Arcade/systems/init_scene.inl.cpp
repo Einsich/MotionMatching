@@ -13,7 +13,7 @@ ecs::EventDescription init_sprites_shaders_camera_descr(
 }, {},
 {},
 {},
-init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, ecs::tags::all);
+init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, {});
 
 void init_sprites_shaders_camera_handler(const ecs::Event &event)
 {
@@ -33,7 +33,7 @@ ecs::EventDescription load_scene_event_descr(
 }, {},
 {},
 {},
-load_scene_event_handler, load_scene_event_singl_handler, ecs::tags::all);
+load_scene_event_handler, load_scene_event_singl_handler, {});
 
 void load_scene_event_handler(const ecs::Event &event)
 {

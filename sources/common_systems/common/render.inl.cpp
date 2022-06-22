@@ -37,7 +37,7 @@ ecs::SystemDescription render_submenu_descr("render_submenu", {
 }, {"editor"},
 {},
 {},
-render_submenu_func, ecs::stage::ui_menu, ecs::tags::all, false);
+render_submenu_func, "ui_menu", {}, false);
 
 void render_submenu_func()
 {
@@ -52,7 +52,7 @@ ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
 }, {"game","editor"},
 {},
 {},
-set_global_render_data_func, ecs::stage::render, ecs::tags::all, false);
+set_global_render_data_func, "render", {}, false);
 
 void set_global_render_data_func()
 {
@@ -73,7 +73,7 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
 }, {"game","editor"},
 {"frustum_culling"},
 {},
-lod_selector_func, ecs::stage::render, ecs::tags::all, true);
+lod_selector_func, "render", {}, true);
 
 void lod_selector_func()
 {
@@ -93,7 +93,7 @@ ecs::SystemDescription frustum_culling_descr("frustum_culling", {
 }, {"game","editor"},
 {"process_mesh_position"},
 {},
-frustum_culling_func, ecs::stage::render, ecs::tags::all, true);
+frustum_culling_func, "render", {}, true);
 
 void frustum_culling_func()
 {
@@ -114,7 +114,7 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
 }, {"game","editor"},
 {"main_instanced_render"},
 {},
-process_mesh_position_func, ecs::stage::render, ecs::tags::all, false);
+process_mesh_position_func, "render", {}, false);
 
 void process_mesh_position_func()
 {
@@ -129,7 +129,7 @@ ecs::SystemDescription render_sky_box_descr("render_sky_box", {
 }, {"game","editor"},
 {},
 {"main_instanced_render"},
-render_sky_box_func, ecs::stage::render, ecs::tags::all, false);
+render_sky_box_func, "render", {}, false);
 
 void render_sky_box_func()
 {
@@ -145,7 +145,7 @@ ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
 }, {"game","editor"},
 {},
 {"render_sky_box"},
-render_debug_arrows_func, ecs::stage::render, ecs::tags::all, false);
+render_debug_arrows_func, "render", {}, false);
 
 void render_debug_arrows_func()
 {
@@ -161,7 +161,7 @@ ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
 }, {"game","editor"},
 {},
 {},
-main_instanced_render_func, ecs::stage::render, ecs::tags::all, false);
+main_instanced_render_func, "render", {}, false);
 
 void main_instanced_render_func()
 {
@@ -176,7 +176,7 @@ ecs::SystemDescription render_collision_descr("render_collision", {
 }, {"game","editor"},
 {"render_sky_box"},
 {"process_mesh_position"},
-render_collision_func, ecs::stage::render, ecs::tags::all, false);
+render_collision_func, "render", {}, false);
 
 void render_collision_func()
 {
@@ -192,7 +192,7 @@ ecs::EventDescription add_global_uniform_descr(
 }, {"game","editor"},
 {},
 {},
-add_global_uniform_handler, add_global_uniform_singl_handler, ecs::tags::all);
+add_global_uniform_handler, add_global_uniform_singl_handler, {});
 
 void add_global_uniform_handler(const ecs::Event &event)
 {
@@ -213,7 +213,7 @@ ecs::EventDescription mesh_loader_descr(
 }, {"game","editor"},
 {},
 {},
-mesh_loader_handler, mesh_loader_singl_handler, ecs::tags::all);
+mesh_loader_handler, mesh_loader_singl_handler, {});
 
 void mesh_loader_handler(const ecs::Event &event)
 {

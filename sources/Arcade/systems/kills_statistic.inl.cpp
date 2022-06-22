@@ -23,7 +23,7 @@ ecs::SystemDescription show_kill_stat_descr("show_kill_stat", {
 }, {},
 {},
 {},
-show_kill_stat_func, ecs::stage::ui, ecs::tags::all, false);
+show_kill_stat_func, "ui", {}, false);
 
 void show_kill_stat_func()
 {
@@ -39,7 +39,7 @@ ecs::SystemDescription check_winner_descr("check_winner", {
 }, {},
 {},
 {},
-check_winner_func, ecs::stage::act, ecs::tags::all, false);
+check_winner_func, "act", {}, false);
 
 void check_winner_func()
 {
@@ -57,7 +57,7 @@ ecs::EventDescription collect_kills_descr(
 }, {},
 {},
 {},
-collect_kills_handler, collect_kills_singl_handler, ecs::tags::all);
+collect_kills_handler, collect_kills_singl_handler, {});
 
 void collect_kills_handler(const ecs::Event &event)
 {

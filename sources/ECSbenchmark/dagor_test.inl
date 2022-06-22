@@ -157,17 +157,17 @@ static void process(float dt, vec3 &pos, const vec3 &vel)
   pos += vel * dt;
 }
 
-SYSTEM(scene=game, editor) dag_ecs_update(vec3 &p, const vec3 &v)
+SYSTEM(stage=act;scene=game, editor) dag_ecs_update(vec3 &p, const vec3 &v)
 {
   process(Time::delta_time(), p, v);
 }
 
-SYSTEM(scene=game, editor) prune_cache0()
+SYSTEM(stage=act;scene=game, editor) prune_cache0()
 {
   prune_cache();
 }
 
-SYSTEM(scene=game, editor) dag_vector_structs_update()
+SYSTEM(stage=act;scene=game, editor) dag_vector_structs_update()
 {
   for (DagorTestEntity &entity : list0)
   {
@@ -175,12 +175,12 @@ SYSTEM(scene=game, editor) dag_vector_structs_update()
   }
 }
 
-SYSTEM(scene=game, editor) prune_cache1()
+SYSTEM(stage=act;scene=game, editor) prune_cache1()
 {
   prune_cache();
 }
 
-SYSTEM(scene=game, editor) dag_vector_pointers_update()
+SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_update()
 {
   for (auto &entity : list1)
   {
@@ -188,12 +188,12 @@ SYSTEM(scene=game, editor) dag_vector_pointers_update()
   }
 }
 
-SYSTEM(scene=game, editor) prune_cache2()
+SYSTEM(stage=act;scene=game, editor) prune_cache2()
 {
   prune_cache();
 }
 
-SYSTEM(scene=game, editor) dag_vector_pointers_virtual_update()
+SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_virtual_update()
 {
   for (auto &entity : list2)
   {
@@ -201,23 +201,23 @@ SYSTEM(scene=game, editor) dag_vector_pointers_virtual_update()
   }
 }
 
-SYSTEM(scene=game, editor) prune_cache3()
+SYSTEM(stage=act;scene=game, editor) prune_cache3()
 {
   prune_cache();
 }
 
 
-SYSTEM(scene=game, editor) tiny_ecs_update(vec3 &P, const vec3 &V)
+SYSTEM(stage=act;scene=game, editor) tiny_ecs_update(vec3 &P, const vec3 &V)
 {
   process(Time::delta_time(), P, V);
 }
 
-SYSTEM(scene=game, editor) prune_cache4()
+SYSTEM(stage=act;scene=game, editor) prune_cache4()
 {
   prune_cache();
 }
 
-SYSTEM(scene=game, editor) tiny_soa_structs_update()
+SYSTEM(stage=act;scene=game, editor) tiny_soa_structs_update()
 {
   for (uint i = 0, n = vData.size(); i < n; i++)
   {
@@ -225,12 +225,12 @@ SYSTEM(scene=game, editor) tiny_soa_structs_update()
   }
 }
 
-SYSTEM(scene=game, editor) prune_cache5()
+SYSTEM(stage=act;scene=game, editor) prune_cache5()
 {
   prune_cache();
 }
 
-SYSTEM(scene=game, editor) tiny_vector_structs_update()
+SYSTEM(stage=act;scene=game, editor) tiny_vector_structs_update()
 {
   for (TinyEntity &entity : tinyList0)
   {
@@ -238,7 +238,7 @@ SYSTEM(scene=game, editor) tiny_vector_structs_update()
   }
 }
 
-SYSTEM(scene=game, editor) prune_cache6()
+SYSTEM(stage=act;scene=game, editor) prune_cache6()
 {
   prune_cache();
 }

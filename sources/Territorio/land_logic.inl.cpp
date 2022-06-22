@@ -105,7 +105,7 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
 }, {},
 {},
 {},
-update_bot_invasions_func, ecs::stage::act, ecs::tags::all, false);
+update_bot_invasions_func, "act", {}, false);
 
 void update_bot_invasions_func()
 {
@@ -128,7 +128,7 @@ ecs::SystemDescription map_update_descr("map_update", {
 }, {},
 {},
 {},
-map_update_func, ecs::stage::act, ecs::tags::all, false);
+map_update_func, "act", {}, false);
 
 void map_update_func()
 {
@@ -144,7 +144,7 @@ ecs::SystemDescription border_update_descr("border_update", {
 }, {},
 {},
 {},
-border_update_func, ecs::stage::act, ecs::tags::all, false);
+border_update_func, "act", {}, false);
 
 void border_update_func()
 {
@@ -164,7 +164,7 @@ ecs::EventDescription game_started_descr(
 }, {},
 {},
 {},
-game_started_handler, game_started_singl_handler, ecs::tags::all);
+game_started_handler, game_started_singl_handler, {});
 
 void game_started_handler(const ecs::Event &event)
 {

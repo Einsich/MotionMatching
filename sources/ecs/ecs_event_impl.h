@@ -19,10 +19,7 @@ namespace ecs
       ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
       EventHandler broadcastEventHandler,
       SingleEventHandler unicastEventHandler,
-      uint tags);
-    void registration() override
-    {
-    }
+      ecs::vector<ecs::string> &&tags);
   };
 
   typedef ecs::vector<std::pair<ecs::vector<EventDescription *>&, ecs::vector<EventDescription *>&>> AllHandlers;

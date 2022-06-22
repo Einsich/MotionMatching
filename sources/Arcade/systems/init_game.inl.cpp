@@ -13,7 +13,7 @@ ecs::EventDescription init_game_descr(
 }, {},
 {},
 {},
-init_game_handler, init_game_singl_handler, ecs::tags::all);
+init_game_handler, init_game_singl_handler, {});
 
 void init_game_handler(const ecs::Event &event)
 {

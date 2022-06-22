@@ -11,9 +11,9 @@ namespace ecs
     ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
     EventHandler broadcastEventHandler,
     SingleEventHandler unicastEventHandler,
-    uint tags):
+    ecs::vector<ecs::string> &&tags):
     CallableDescription(name, std::move(require_args), std::move(require_not_args),
-      std::move(scenes), std::move(before), std::move(after), tags),
+      std::move(scenes), std::move(before), std::move(after), std::move(tags)),
     broadcastEventHandler(broadcastEventHandler),
     unicastEventHandler(unicastEventHandler)
   {

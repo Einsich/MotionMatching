@@ -12,7 +12,7 @@ ecs::SystemDescription start_game_button_descr("start_game_button", {
 }, {},
 {},
 {},
-start_game_button_func, ecs::stage::ui, ecs::tags::all, false);
+start_game_button_func, "ui", {}, false);
 
 void start_game_button_func()
 {
@@ -29,7 +29,7 @@ ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
 }, {},
 {},
 {},
-exit_menu_button_func, ecs::stage::ui, ecs::tags::all, false);
+exit_menu_button_func, "ui", {}, false);
 
 void exit_menu_button_func()
 {
@@ -49,7 +49,7 @@ ecs::EventDescription setup_camera_descr(
 }, {},
 {},
 {},
-setup_camera_handler, setup_camera_singl_handler, ecs::tags::all);
+setup_camera_handler, setup_camera_singl_handler, {});
 
 void setup_camera_handler(const ecs::Event &event)
 {

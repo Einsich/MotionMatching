@@ -29,7 +29,7 @@ ecs::SystemDescription set_map_render_data_descr("set_map_render_data", {
 }, {"game","editor"},
 {},
 {},
-set_map_render_data_func, ecs::stage::render, ecs::tags::all, false);
+set_map_render_data_func, "render", {}, false);
 
 void set_map_render_data_func()
 {
@@ -45,7 +45,7 @@ ecs::EventDescription add_map_uniform_descr(
 }, {"game","editor"},
 {},
 {},
-add_map_uniform_handler, add_map_uniform_singl_handler, ecs::tags::all);
+add_map_uniform_handler, add_map_uniform_singl_handler, {});
 
 void add_map_uniform_handler(const ecs::Event &event)
 {
@@ -89,7 +89,7 @@ ecs::EventDescription create_terrain_descr(
 }, {"game","editor"},
 {},
 {},
-create_terrain_handler, create_terrain_singl_handler, ecs::tags::all);
+create_terrain_handler, create_terrain_singl_handler, {});
 
 void create_terrain_handler(const ecs::Event &event)
 {

@@ -24,7 +24,7 @@ ecs::EventDescription reload_shaders_descr(
 }, {"editor","scene","game","scene","debug"},
 {},
 {},
-reload_shaders_handler, reload_shaders_singl_handler, ecs::tags::all);
+reload_shaders_handler, reload_shaders_singl_handler, {});
 
 void reload_shaders_handler(const ecs::Event &event)
 {
@@ -45,7 +45,7 @@ ecs::EventDescription load_directional_light_descr(
 }, {"editor","scene","game"},
 {},
 {},
-load_directional_light_handler, load_directional_light_singl_handler, ecs::tags::all);
+load_directional_light_handler, load_directional_light_singl_handler, {});
 
 void load_directional_light_handler(const ecs::Event &event)
 {
@@ -66,7 +66,7 @@ ecs::EventDescription reload_directional_light_descr(
 }, {"editor"},
 {},
 {},
-reload_directional_light_handler, reload_directional_light_singl_handler, ecs::tags::all);
+reload_directional_light_handler, reload_directional_light_singl_handler, {});
 
 void reload_directional_light_handler(const ecs::Event &event)
 {

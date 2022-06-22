@@ -12,14 +12,14 @@ namespace ecs
     ecs::vector<ecs::string> &&scenes,
     ecs::vector<ecs::string> &&before,
     ecs::vector<ecs::string> &&after,
-    uint tags):
+    ecs::vector<ecs::string> &&tags):
     name(name),
     requireArgs(std::move(require_args)),
     requireNotArgs(std::move(require_not_args)),
     scenes(std::move(scenes)),
     before(std::move(before)),
     after(std::move(after)),
-    tags(tags),
+    tags(std::move(tags)),
     isQuery(false)
   {
     notSingletonArgsCount = 0;
@@ -35,17 +35,17 @@ namespace ecs
     ecs::vector<FunctionArgument> &&require_not_args,
     ecs::vector<ecs::string> &&scenes, 
     ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
-    void (*function_pointer)(), int stage, uint tags, bool is_job):
+    void (*function_pointer)(),
+    const char * stage,
+    ecs::vector<ecs::string> &&tags,
+    bool is_job):
     CallableDescription(name, std::move(require_args), std::move(require_not_args),
-      std::move(scenes), std::move(before), std::move(after), tags),
+      std::move(scenes), std::move(before), std::move(after), std::move(tags)),
     function(function_pointer),
     stage(stage),
     isJob(is_job)
   {
     get_all_mutable_systems().push_back(this);
-  }
-  void SystemDescription::registration()
-  {
   }
   void SystemDescription::execute()
   {
@@ -61,13 +61,10 @@ namespace ecs
   QueryDescription::QueryDescription(const char *name, 
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args):
-    CallableDescription(name, std::move(require_args), std::move(require_not_args), {}, {}, {}, tags::all)
+    CallableDescription(name, std::move(require_args), std::move(require_not_args))
   {
     all_queries().push_back(this);
     isQuery = true;
-  }
-  void QueryDescription::registration()
-  {
   }
   
   ecs::vector<SystemDescription *> &get_all_mutable_systems()
@@ -80,4 +77,33 @@ namespace ecs
     static ecs::vector<SystemDescription *> systems;
     return systems;
   }
+  
+  SystemStageInterval::SystemStageInterval(SystemDescription**begin, SystemDescription**end):
+    begin(begin), end(end){}
+  void SystemStageInterval::perform_stage() const
+  {
+    for (auto system = begin; system < end; ++system)
+      (*system)->execute();
+  }
+  
+  static bool lower_bound_cmp(const SystemDescription *a, const char *stage)
+  {
+    return strcmp(a->stage, stage) < 0;
+  }
+  static bool upper_bound_cmp(const char *stage, const SystemDescription *a)
+  {
+    return strcmp(a->stage, stage) > 0;
+  }
+
+  SystemStageInterval get_system_stage(const char *stage)
+  {
+    auto &systems = get_all_systems();
+    return SystemStageInterval(
+      eastl::lower_bound(systems.begin(), systems.end(), stage, lower_bound_cmp),
+      eastl::upper_bound(systems.begin(), systems.end(), stage, upper_bound_cmp));
+  }
+  void perform_stage(const char *stage)
+  {
+    get_system_stage(stage).perform_stage();
+  } 
 }

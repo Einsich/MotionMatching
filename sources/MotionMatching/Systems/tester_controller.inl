@@ -83,7 +83,7 @@ EVENT(scene=game, editor) start_test(
   });
 }
 
-SYSTEM(scene=game) test_count(
+SYSTEM(stage=act;scene=game) test_count(
   ecs::vector<ecs::EntityId> &testers,
   ecs::vector<AnimationTest> &tests,
   Settings &settings)

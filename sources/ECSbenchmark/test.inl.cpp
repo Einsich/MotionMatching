@@ -13,7 +13,7 @@ ecs::SystemDescription ecs_update_descr("ecs_update", {
 }, {"game","editor"},
 {},
 {},
-ecs_update_func, ecs::stage::act, ecs::tags::all, false);
+ecs_update_func, "act", {}, false);
 
 void ecs_update_func()
 {
@@ -27,7 +27,7 @@ ecs::SystemDescription vector_structs_update_descr("vector_structs_update", {
 }, {"game","editor"},
 {},
 {},
-vector_structs_update_func, ecs::stage::act, ecs::tags::all, false);
+vector_structs_update_func, "act", {}, false);
 
 void vector_structs_update_func()
 {
@@ -41,7 +41,7 @@ ecs::SystemDescription vector_pointers_update_descr("vector_pointers_update", {
 }, {"game","editor"},
 {},
 {},
-vector_pointers_update_func, ecs::stage::act, ecs::tags::all, false);
+vector_pointers_update_func, "act", {}, false);
 
 void vector_pointers_update_func()
 {
@@ -57,7 +57,7 @@ ecs::EventDescription init_descr(
 }, {"game","editor"},
 {},
 {},
-init_handler, init_singl_handler, ecs::tags::all);
+init_handler, init_singl_handler, {});
 
 void init_handler(const ecs::Event &event)
 {

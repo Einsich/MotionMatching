@@ -26,7 +26,7 @@ ecs::SystemDescription show_statistic_descr("show_statistic", {
 }, {},
 {},
 {},
-show_statistic_func, ecs::stage::ui, ecs::tags::all, false);
+show_statistic_func, "ui", {}, false);
 
 void show_statistic_func()
 {

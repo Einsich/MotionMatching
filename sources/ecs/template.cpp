@@ -32,11 +32,11 @@ namespace ecs
 
   void update_template_cache(Template &tmpl)
   {
-    for (Archetype *archetype : core().entityContainer->archetypes)
+    for (auto &archetype : core().entityContainer->archetypes)
     {
       if (archetype->in_archetype(tmpl.components))
       {
-        tmpl.archetype = archetype;
+        tmpl.archetype = archetype.get();
         break;
       }
     }

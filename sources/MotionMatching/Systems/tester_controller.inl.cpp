@@ -38,7 +38,7 @@ ecs::SystemDescription tester_update_descr("tester_update", {
 }, {},
 {},
 {},
-tester_update_func, ecs::stage::act, ecs::tags::all, false);
+tester_update_func, "act", {}, false);
 
 void tester_update_func()
 {
@@ -55,7 +55,7 @@ ecs::SystemDescription test_count_descr("test_count", {
 }, {"game"},
 {},
 {},
-test_count_func, ecs::stage::act, ecs::tags::all, false);
+test_count_func, "act", {}, false);
 
 void test_count_func()
 {
@@ -76,7 +76,7 @@ ecs::EventDescription start_test_descr(
 }, {"game","editor"},
 {},
 {},
-start_test_handler, start_test_singl_handler, ecs::tags::all);
+start_test_handler, start_test_singl_handler, {});
 
 void start_test_handler(const ecs::Event &event)
 {
