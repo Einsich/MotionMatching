@@ -1,4 +1,4 @@
-#include <ecs.h> 
+#include <ecs.h>
 #include <type_registration.h>
 #include <transform2d.h>
 #include <render/texture/texture2d.h>
@@ -8,7 +8,7 @@ ECS_REGISTER_TYPE(MapArrays, MapArrays)
 
 
 static vector<ivec2> get_player_start_points(int h, int w, int n)
-{ 
+{
   vector<ivec2> points(n);
   for (int i = 0; i < n; i++)
   {
@@ -30,7 +30,7 @@ ecs::EntityId spawn_player(const ecs::Template *player_template, ivec2 start_poi
   ecs::EntityId result;
   QUERY()spawn_player_query([&](
     MapArrays &map_arrays,
-    vector<vec3> &land_colors,
+    ecs::vector<vec3> &land_colors,
     bool &mapWasChanged,
     bool &needUpdateBorder)
   {
@@ -39,7 +39,7 @@ ecs::EntityId spawn_player(const ecs::Template *player_template, ivec2 start_poi
     ivec2 p = start_point;
     map_arrays.color_indices[p.y][p.x] = i;
     for (ivec2 d : {ivec2(1, 0), ivec2(-1, 0), ivec2(0, -1), ivec2(0, 1)})
-      if (map_arrays.color_indices.test(p.y + d.y, p.x + d.x))  
+      if (map_arrays.color_indices.test(p.y + d.y, p.x + d.x))
         borders.insert(p+d);
     land_colors[i] = rand_vec3(0, 1);
 
@@ -60,7 +60,7 @@ EVENT() create_map(
   Asset<Texture2D> &borderTexture,
   Shader &mapShader,
   MapArrays &map_arrays,
-  vector<vec3> &land_colors,
+  ecs::vector<vec3> &land_colors,
   int botsCount)
 {
   array2d<uint> &color_indices = map_arrays.color_indices;

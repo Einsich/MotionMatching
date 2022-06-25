@@ -67,7 +67,6 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
                 "yes"
             ],
             "windows": {
@@ -111,7 +110,6 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
                 "yes"
             ],
             "windows": {
@@ -133,7 +131,6 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "rel",
-                "\"${config:launchOption.currentConfig.Project.dependencies}\"",
                 "yes"
             ],
             "windows": {

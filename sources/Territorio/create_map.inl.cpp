@@ -4,7 +4,7 @@
 
 ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<vector<vec3>>("land_colors"), false},
+  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<bool>("mapWasChanged"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
 }, {
@@ -13,7 +13,7 @@ ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {
 template<typename Callable>
 void spawn_player_query(Callable lambda)
 {
-  ecs::perform_query<MapArrays&, vector<vec3>&, bool&, bool&>
+  ecs::perform_query<MapArrays&, ecs::vector<vec3>&, bool&, bool&>
   (spawn_player_query_descr, lambda);
 }
 
@@ -29,7 +29,7 @@ ecs::EventDescription create_map_descr(
   {ecs::get_type_description<Asset<Texture2D>>("borderTexture"), false},
   {ecs::get_type_description<Shader>("mapShader"), false},
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<vector<vec3>>("land_colors"), false},
+  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<int>("botsCount"), false}
 }, {
 }, {},

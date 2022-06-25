@@ -52,15 +52,15 @@ EVENT(require=ecs::Tag player_spawning) select_spawn_point(
   });
 }
 
-void try_add_invasion(uint &forces, vector<Invasion> &invasions, Invasion invasion);
+void try_add_invasion(uint &forces, ecs::vector<Invasion> &invasions, Invasion invasion);
 
 EVENT(require=ecs::Tag isPlayer) select_invasion(
   const MouseButtonDownEvent<MouseButton::LeftButton> &event,
   uint landIndex,
   uint &forces,
-  const vector<ecs::EntityId> &neighbors,
-  const vector<uint> &neighborsIdx,
-  vector<Invasion> &invasions,
+  const ecs::vector<ecs::EntityId> &neighbors,
+  const ecs::vector<uint> &neighborsIdx,
+  ecs::vector<Invasion> &invasions,
   float invasion_weight
 )
 {
@@ -98,7 +98,7 @@ SYSTEM(stage=ui; require=ecs::Tag isPlayer) change_invasion_weight(float &invasi
     }
     ImGui::End();
   }
-  
+
 }
 SYSTEM(stage=ui) check_mouse_over_ui()
 {

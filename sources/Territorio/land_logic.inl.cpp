@@ -18,7 +18,7 @@ void lands_economic(Callable lambda)
 
 
 ecs::QueryDescription gather_invaders_descr("gather_invaders", {
-  {ecs::get_type_description<vector<Invasion>>("invasions"), false},
+  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<int>("landCount"), false}
 }, {
@@ -27,15 +27,15 @@ ecs::QueryDescription gather_invaders_descr("gather_invaders", {
 template<typename Callable>
 void gather_invaders(Callable lambda)
 {
-  ecs::perform_query<vector<Invasion>&, uint, int&>
+  ecs::perform_query<ecs::vector<Invasion>&, uint, int&>
   (gather_invaders_descr, lambda);
 }
 
 
 ecs::QueryDescription gather_invaders2_descr("gather_invaders2", {
   {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
-  {ecs::get_type_description<vector<uint>>("neighborsIdx"), false},
+  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
+  {ecs::get_type_description<ecs::vector<uint>>("neighborsIdx"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
 }, {
 });
@@ -43,7 +43,7 @@ ecs::QueryDescription gather_invaders2_descr("gather_invaders2", {
 template<typename Callable>
 void gather_invaders2(Callable lambda)
 {
-  ecs::perform_query<uint, vector<ecs::EntityId>&, vector<uint>&>
+  ecs::perform_query<uint, ecs::vector<ecs::EntityId>&, ecs::vector<uint>&>
   (gather_invaders2_descr, lambda);
 }
 
@@ -98,8 +98,8 @@ void update_bot_invasions_func();
 ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<float>("invasionPeriod"), false},
   {ecs::get_type_description<float>("invasionTime"), false},
-  {ecs::get_type_description<vector<Invasion>>("invasions"), false},
-  {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
+  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
+  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
   {ecs::get_type_description<uint>("forces"), false}
 }, {
 }, {},

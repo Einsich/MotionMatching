@@ -19,7 +19,7 @@ ecs::QueryDescription gather_sprites_descr("gather_sprites", {
   {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
   {ecs::get_type_description<Asset<Texture2D>>("borderTexture"), false},
   {ecs::get_type_description<Shader>("mapShader"), false},
-  {ecs::get_type_description<vector<vec3>>("land_colors"), false},
+  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<vec4>("color"), true}
 }, {
 });
@@ -27,7 +27,7 @@ ecs::QueryDescription gather_sprites_descr("gather_sprites", {
 template<typename Callable>
 void gather_sprites(Callable lambda)
 {
-  ecs::perform_query<Asset<Texture2D>&, Asset<Texture2D>&, Shader&, vector<vec3>&, vec4*>
+  ecs::perform_query<Asset<Texture2D>&, Asset<Texture2D>&, Shader&, ecs::vector<vec3>&, vec4*>
   (gather_sprites_descr, lambda);
 }
 

@@ -21,7 +21,7 @@ void gather_lands(Callable lambda)
 void show_statistic_func();
 
 ecs::SystemDescription show_statistic_descr("show_statistic", {
-  {ecs::get_type_description<vector<vec3>>("land_colors"), false}
+  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false}
 }, {
 }, {},
 {},

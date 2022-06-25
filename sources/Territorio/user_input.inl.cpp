@@ -109,9 +109,9 @@ ecs::EventDescription select_invasion_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "select_invasion", {
   {ecs::get_type_description<uint>("landIndex"), false},
   {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<vector<ecs::EntityId>>("neighbors"), false},
-  {ecs::get_type_description<vector<uint>>("neighborsIdx"), false},
-  {ecs::get_type_description<vector<Invasion>>("invasions"), false},
+  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
+  {ecs::get_type_description<ecs::vector<uint>>("neighborsIdx"), false},
+  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
   {ecs::get_type_description<float>("invasion_weight"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {

@@ -109,7 +109,6 @@
         "name": "MotionMatching",
         "value":{
           "name":"MotionMatching",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
           "delpoy_only_project_folder":"false"
         }
       },
@@ -117,21 +116,18 @@
         "name": "ECSCodeGen",
         "value":{
           "name":"ECSCodeGen",
-          "dependencies":""
         }
       },
       {
         "name": "ECSbenchmark",
         "value":{
           "name":"ECSbenchmark",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;"
         }
       },
       {
         "name": "Strategy",
         "value":{
           "name":"Strategy",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
           "delpoy_only_project_folder":"false"
         }
       },
@@ -139,7 +135,6 @@
         "name": "Arcade",
         "value":{
           "name":"Arcade",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
           "delpoy_only_project_folder":"false"
         }
       },
@@ -147,7 +142,6 @@
         "name": "Territorio",
         "value":{
           "name":"Territorio",
-          "dependencies":"3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
           "delpoy_only_project_folder":"true"
         }
       }
@@ -156,9 +150,7 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "Territorio",
-      "dependencies": "3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl;ecs;engine;common_systems;",
-      "delpoy_only_project_folder": "true"
+      "name": "ECSbenchmark"
     }
   },
   "cmake.configureOnOpen": false,

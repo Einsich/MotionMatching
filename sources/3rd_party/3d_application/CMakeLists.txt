@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(${MODULE_NAME})
+set(MODULE_NAME 3d_application)
+set(MODULE_PATH ${SRC_ROOT}/3rd_party/${MODULE_NAME})
 
-file(GLOB_RECURSE MODULE_SOURCES ${MODULE_PATH}/*.cpp)
-file(GLOB_RECURSE MODULE_C_SOURCES ${MODULE_PATH}/*.c)
-
-include_directories(${MODULE_PATH})
-
-add_library(${MODULE_NAME} OBJECT ${MODULE_SOURCES} ${MODULE_C_SOURCES})
+include(../../module.cmake)

@@ -1,15 +1,14 @@
 @echo off
 set PROJECT=%1
 set BUILD_TYPE=%2
-set DEPENDENCIES=%3
-set CMAKE=%4
+set CMAKE=%3
 
 cd sources
 if "%CMAKE%"=="yes" (
-    cmake -G Ninja -DDEPENDENCIES=%DEPENDENCIES%%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/%BUILD_TYPE%
+    cmake -G Ninja  -DGAME=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/%BUILD_TYPE%
 )
 
-cd ../Builds/%BUILD_TYPE% 
+cd ../Builds/%BUILD_TYPE%
 
 "../../Tools/Ninja/ninja.exe"
 set binPath=..\..\%PROJECT%

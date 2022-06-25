@@ -1,12 +1,13 @@
 #include <ecs.h>
 #include <imgui.h>
+#include <3dmath.h>
 
 
 
 template<typename Callable>
 void gather_lands(Callable);
 
-SYSTEM(stage=ui) show_statistic(vector<vec3> &land_colors)
+SYSTEM(stage=ui) show_statistic(ecs::vector<vec3> &land_colors)
 {
   struct StatInfo
   {
@@ -14,11 +15,11 @@ SYSTEM(stage=ui) show_statistic(vector<vec3> &land_colors)
     int landCount;
     uint forces;
     bool operator<(const StatInfo &other)
-    { 
+    {
       return landCount > other.landCount;
     }
   };
-  vector<StatInfo> info;
+  ecs::vector<StatInfo> info;
   QUERY(require=ecs::Tag isPlayableLand)gather_lands([&](uint landIndex, int landCount, uint forces)
   {
     info.emplace_back(StatInfo{landIndex, landCount, forces});

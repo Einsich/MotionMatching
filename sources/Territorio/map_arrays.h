@@ -1,5 +1,6 @@
 #pragma once
 #include "array2d.h"
+#include <3dmath.h>
 #include <set>
 inline bool operator<(const ivec2&a, const ivec2&b)
 {
@@ -11,7 +12,7 @@ struct MapArrays
   {
     ivec2 center;
     cmp(ivec2 center):
-    center(center) 
+    center(center)
     { }
     inline uint64_t ilength2(const ivec2&a) const
     {

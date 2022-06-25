@@ -16,7 +16,7 @@ ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion);
 template<typename Callable>
 static void query_neighbor(ecs::EntityId, Callable);
 
-static Invasion find_target(const vector<ecs::EntityId> &neighbors, uint forces)
+static Invasion find_target(const ecs::vector<ecs::EntityId> &neighbors, uint forces)
 {
   ecs::EntityId target;
   uint minForces = forces;
@@ -56,7 +56,7 @@ EVENT(require=ecs::Tag isPlayableLand) game_started(
   landCount = 1;
 }
 
-void try_add_invasion(uint &forces, vector<Invasion> &invasions, Invasion invasion)
+void try_add_invasion(uint &forces, ecs::vector<Invasion> &invasions, Invasion invasion)
 {
   if (invasion.enemyEid)
   {
@@ -73,8 +73,8 @@ void try_add_invasion(uint &forces, vector<Invasion> &invasions, Invasion invasi
 SYSTEM(stage=act;) update_bot_invasions(
   float invasionPeriod,
   float &invasionTime,
-  vector<Invasion> &invasions,
-  const vector<ecs::EntityId> &neighbors,
+  ecs::vector<Invasion> &invasions,
+  const ecs::vector<ecs::EntityId> &neighbors,
   uint &forces
 )
 {
@@ -115,7 +115,7 @@ static void conquer(MapArrays &map_arrays, uint conquerer, ivec2 p)
         if (neighborColor < map_arrays.borders.size())
           map_arrays.borders[neighborColor].insert(p);
       }
-      //else erase it later      
+      //else erase it later
     }
   }
 }
@@ -139,7 +139,7 @@ SYSTEM(stage=act) map_update(
     return;
 
   updateTime -= updatePeriod;
-  
+
   QUERY(require=ecs::Tag isPlayableLand)lands_economic([&](
     int landCount,
     uint &forces
@@ -150,7 +150,7 @@ SYSTEM(stage=act) map_update(
   });
 
   QUERY()gather_invaders([&](
-    vector<Invasion> &invasions,
+    ecs::vector<Invasion> &invasions,
     uint landIndex,
     int &landCount
   )
@@ -216,7 +216,7 @@ SYSTEM(stage=act) border_update(
     return;
   needUpdateBorder = false;
   for (uint i = 0; i < map_arrays.borders.size(); i++)
-    std::erase_if(map_arrays.borders[i], [&](const ivec2 &p) 
+    std::erase_if(map_arrays.borders[i], [&](const ivec2 &p)
     {
       if (map_arrays.color_indices[p.y][p.x] == i)
         return true;
@@ -231,8 +231,8 @@ SYSTEM(stage=act) border_update(
 
   QUERY(require=ecs::Tag isPlayableLand)gather_invaders2([&](
     uint landIndex,
-    vector<ecs::EntityId> &neighbors,
-    vector<uint> &neighborsIdx
+    ecs::vector<ecs::EntityId> &neighbors,
+    ecs::vector<uint> &neighborsIdx
   )
   {
     uint invadersIndex = landIndex;

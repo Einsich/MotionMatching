@@ -17,7 +17,7 @@ public:
 	Shader(int shaderIdx):shaderIdx(shaderIdx){}
 	Shader(const std::string &shader_name, GLuint shader_program, bool compiled, bool update_list = false);
 	explicit operator bool() const
-	{ 
+	{
 		return get_shader_program() != BAD_PROGRAM;
   }
 	void use() const;
@@ -25,7 +25,7 @@ public:
 	const string& get_name() const;
 	const ShaderBuffer &get_instance_data() const;
 	const vector<SamplerUniform> &get_samplers() const;
-	
+
 	int get_uniform_location(const char *name)
 	{
 		return glGetUniformLocation(get_shader_program(), name);
@@ -81,6 +81,11 @@ public:
 	{
 		if (!v.empty())
 			glUniform3fv(glGetUniformLocation(get_shader_program(), name), v.size(), glm::value_ptr(v[0]));
+  }
+	void set_vec3(const char*name, size_t size, const vec3 *data) const
+	{
+		if (size > 0)
+			glUniform3fv(glGetUniformLocation(get_shader_program(), name), size, (const float*)data);
   }
 	void set_vec3(int uniform_location, const vec3 &v) const
 	{

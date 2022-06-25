@@ -1,4 +1,4 @@
-#include <ecs.h> 
+#include <ecs.h>
 #include <type_registration.h>
 #include <render/shader/shader.h>
 #include <render/texture/texture2d.h>
@@ -36,19 +36,19 @@ SYSTEM(stage=render) render_scene(
     const Asset<Texture2D> &mapTexture,
     const Asset<Texture2D> &borderTexture,
     Shader &mapShader,
-    vector<vec3> &land_colors,
+    ecs::vector<vec3> &land_colors,
     const vec4 *color)
   {
     glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND); 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     mapShader.use();
 
     mapTexture->bind(mapShader, "sprite", 0);
     borderTexture->bind(mapShader, "border", 1);
     mapShader.set_mat3x3("trasformViewProjection", viewProjection);
     mapShader.set_vec4("color", color ? *color : vec4(1.f));
-    mapShader.set_vec3("colors", land_colors);
+    mapShader.set_vec3("colors", land_colors.size(), land_colors.data());
     squadVao.render();
     glEnable(GL_DEPTH_TEST);
   });
