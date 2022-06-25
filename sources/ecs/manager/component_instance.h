@@ -5,7 +5,7 @@
 #include <assert.h>
 namespace ecs
 {
-  struct ComponentInstance 
+  struct ComponentInstance
   {
 private:
     ecs::vector<char> instanceData;
@@ -16,7 +16,7 @@ private:
     uint nameHash, typeHash, typeNameHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
-    
+
     ComponentInstance(const ComponentInstance &other):
     instanceData(), typeInfo(other.typeInfo), initManager(other.initManager), name(other.name),
     nameHash(other.nameHash), typeHash(other.typeHash), typeNameHash(other.typeNameHash)
@@ -25,7 +25,7 @@ private:
       {
         instanceData.resize(typeInfo->rtti.sizeOf);
         typeInfo->rtti.copy_constructor(other.get_data(), get_data());
-      }      
+      }
     }
     ComponentInstance& operator=(const ComponentInstance &other)
     {
@@ -46,49 +46,49 @@ private:
     }
 
     template<typename T>
-    ComponentInstance(const char *name, T &instance) : 
+    ComponentInstance(const char *name, T &instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
-    }    
+    }
     template<typename T>
-    ComponentInstance(const char *name, const T &instance) : 
+    ComponentInstance(const char *name, const T &instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
-    }    
+    }
     template<typename T>
-    ComponentInstance(const char *name, T &&instance) : 
+    ComponentInstance(const char *name, T &&instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
     , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
     {
       typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }
-    ComponentInstance(const TypeInfo &info, const char *name, std::function<void(void*)> &&initManager) : 
+    ComponentInstance(const TypeInfo &info, const char *name, std::function<void(void*)> &&initManager) :
     instanceData(), typeInfo(&info), initManager(initManager), name(name)
     , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(type_name_hash(nameHash, info.hashId))
     {
     }
-   
+
     void *get_data()
     {
       assert(!instanceData.empty());
       return instanceData.data();
-    }   
-    const void *get_data() const 
+    }
+    const void *get_data() const
     {
       assert(!instanceData.empty());
       return instanceData.data();
-    }  
+    }
     void init_from_func()
     {
       assert(instanceData.empty());
       instanceData.resize(typeInfo->rtti.sizeOf);
       initManager(instanceData.data());
       initManager = nullptr;
-    }  
+    }
   };
   using ComponentInitializerList = ecs::vector<ComponentInstance>;
 

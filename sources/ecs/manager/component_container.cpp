@@ -13,7 +13,7 @@ namespace ecs
   count(0),
   capacity(data.size() << binPow),
   rtti(type_info.rtti)
-  { 
+  {
     for (uint i = 0; i < data.size(); ++i)
       data[i] = malloc(rtti.sizeOf << binPow);
   }
@@ -59,19 +59,19 @@ namespace ecs
     count++;
     return dst;
   }
-  void ComponentContainer::destroy_component(int i, bool with_swap)
+  void ComponentContainer::destroy_component(int i)
   {
     count--;
     int j = count;
     void *removed = (char*)data[i >> binPow] + rtti.sizeOf * (i & binMask);
     rtti.destructor(removed);
-    if (with_swap && j != i)
+    if (j != i)
     {
       void *copied = (char*)data[j >> binPow] + rtti.sizeOf * (j & binMask);
       rtti.copy_constructor(copied, removed);
     }
   }
-  
+
   void ComponentContainer::copy_components(const ComponentContainer &other)
   {
     assert(count == 0 && "Need empty container to copy to");
@@ -90,5 +90,14 @@ namespace ecs
       rtti.constructor(dst);
       rtti.copy_constructor(scr, dst);
     }
+  }
+  void ComponentContainer::clear()
+  {
+    for (uint i = 0; i < count; i++)
+    {
+      void *removed = (char*)data[i >> binPow] + rtti.sizeOf * (i & binMask);
+      rtti.destructor(removed);
+    }
+    count = 0;
   }
 }

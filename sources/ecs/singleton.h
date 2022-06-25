@@ -1,5 +1,5 @@
 #pragma once
-
+#include "config/config.h"
 namespace ecs
 {
   class Singleton

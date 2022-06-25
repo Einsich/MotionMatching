@@ -5,7 +5,7 @@
 #include <array>
 namespace ecs
 {
-  
+
 
   template<std::size_t... Is, std::size_t N>
   std::array<char*__restrict, N> copy_data_pointer_impl(uint binIndex,
@@ -23,7 +23,7 @@ namespace ecs
       ((char*)(archetype.containers[Is]->data[binIndex]) + archetype.containers[Is]->rtti.sizeOf * inBinIndex)
       : nullptr)...};
   }
-  
+
   template<typename ...Args, std::size_t N, std::size_t... Is>
   void update_data_pointer_impl(std::array<char*__restrict, N> &pointers, std::index_sequence<Is...>)
   {
@@ -51,7 +51,7 @@ namespace ecs
         return *arg;
     }
   }
-  
+
   template<typename ...Args, typename Callable, std::size_t... Is, std::size_t N>
   void perform_query_impl(const std::array<char*__restrict, N> &pointers, Callable function, std::index_sequence<Is...>)
   {
@@ -78,7 +78,7 @@ namespace ecs
         const auto &cachedArchetype = descr.archetypes[archetypeIdx];
         if (cachedArchetype.archetype->count == 0)
           continue;
-        
+
         std::array<ecs::vector<void*>*, N> dataVectors;
         for (uint i = 0; i < N; ++i)
           dataVectors[i] = cachedArchetype.containers[i] ? &cachedArchetype.containers[i]->data : nullptr;
@@ -109,19 +109,19 @@ namespace ecs
       function(get_singleton<std::remove_pointer_t<std::remove_cvref_t<Args>>>()...);
     }
   }
-  
+
   template<typename ...Args>
   void perform_system(const CallableDescription &descr, void(*function)(Args...))
   {
     perform_query<Args...>(descr, function);
-  } 
-  
+  }
+
   template<typename ...Args>
   void perform_job_system(const CallableDescription &descr, void(*function)(Args...))
   {
     add_job([&descr, function](){ perform_query<Args...>(descr, function); });
   }
-  
+
   template<typename E, typename Event, typename ...Args>
   void perform_event(const E &event, const CallableDescription &descr, void(*function)(Event, Args...))
   {

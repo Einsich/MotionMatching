@@ -12,7 +12,7 @@ namespace ecs
   };
   class Archetype
   {
-  public: 
+  public:
     int index;
     ecs::map<uint, ComponentContainer> components;
     int count, capacity;
@@ -24,9 +24,10 @@ namespace ecs
     bool in_archetype(const ecs::vector<ComponentInstance> &instances) const;
 
     ComponentContainer *get_container(uint type_name_hash);
-    void destroy_entity(int index, bool with_swap);
+    void destroy_entity(int index);
     ~Archetype() = default;
     void copy(const Archetype *src);
-    
+    void clear();
+
   };
 }

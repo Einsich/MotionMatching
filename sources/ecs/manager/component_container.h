@@ -30,7 +30,7 @@ namespace ecs
       }
       return nullptr;
     }
-    void destroy_component(int i, bool without_copy);
+    void destroy_component(int i);
     void add_component(void *component_data);
     void add_component(const void *component_data);
     void* add_component();
@@ -48,5 +48,6 @@ namespace ecs
       memcpy(this, &other, sizeof(ComponentContainer));
       memset(&other, 0, sizeof(ComponentContainer));
     }
+    void clear();
   };
 }

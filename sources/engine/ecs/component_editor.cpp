@@ -2,7 +2,7 @@
 #include "component_editor.h"
 #include "manager/entity_id.h"
 #include "ecs_core.h"
-#include "manager/entity_container.h"
+#include "manager/entity_manager.h"
 #include "serialization/reflection.h"
 #include "3dmath.h"
 constexpr int BUFN = 255;
@@ -143,7 +143,7 @@ bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
     int archIndex[2] = {component.archetype_index(), (int)component.array_index()};
     edited = ImGui::InputInt2("archetype&array index", archIndex);
     if (edited)
-      component = ecs::core().entityContainer->entityPull.find_entity(archIndex[0], archIndex[1]);
+      component = ecs::entityManager->entityPull.find_entity(archIndex[0], archIndex[1]);
   }
   ImGui::Spacing();
   return edited;

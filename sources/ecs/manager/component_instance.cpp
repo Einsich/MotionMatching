@@ -1,7 +1,7 @@
 #include "component_instance.h"
 
 namespace ecs
-{  
+{
   template<typename T>
   void patch_components_impl(ecs::vector<ComponentInstance> &components, T patch)
   {

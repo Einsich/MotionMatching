@@ -57,7 +57,7 @@ namespace ecs
       static ecs::map<uint32_t, TypeInfo*> types;
       return types;
     }
-    
+
     const uint32_t hashId;
     const ecs::string name;
     const TypeRTTI rtti;
@@ -93,7 +93,7 @@ namespace ecs
 
   template<typename T>
   const TypeInfo &type_info();
-  
+
   constexpr inline uint type_name_hash(uint name_hash, uint type_hash)
   {
     return name_hash ^ (type_hash * 16397816463u);

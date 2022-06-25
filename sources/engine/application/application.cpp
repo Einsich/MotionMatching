@@ -7,13 +7,15 @@
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "template.h"
-#include "ecs_scene.h"
+#include "ecs/ecs_scene.h"
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"
 namespace ecs
 {
   void load_templates_from_blk();
 }
+void create_all_resources_from_metadata();
+void save_all_resources_to_metadata();
 
 Application::Application(const string &project_name,const string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
@@ -44,6 +46,7 @@ void Application::start()
   editor = false;
   #endif
   scene->start();
+  create_all_resources_from_metadata();
   ecs::load_templates_from_blk();
   get_cpu_profiler();
   get_gpu_profiler();
@@ -146,6 +149,7 @@ void Application::exit()
 {
   save_shader_info();
   scene->destroy_scene();
+  save_all_resources_to_metadata();
   delete scene;
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
@@ -178,4 +182,9 @@ std::pair<int,int> get_resolution()
 {
   Resolution r = Application::get_context().get_resolution();
   return {r.width, r.height};
+}
+
+void create_scene(const char *path)
+{
+  Application::instance().scene->sceneToLoad = path;
 }

@@ -48,8 +48,7 @@ namespace ecs
   static_assert(0, "ECS_USE_STD or ECS_USE_EASTL should be set to 1");
 #endif
 
-namespace ecs
-{
-  using uint = unsigned int;
-}
+
+using uint = unsigned int;
+
 

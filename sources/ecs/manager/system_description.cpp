@@ -6,7 +6,7 @@ namespace ecs
     archetype(archetype), containers(std::move(containers)){}
 
 
-  CallableDescription::CallableDescription(const char *name, 
+  CallableDescription::CallableDescription(const char *name,
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args,
     ecs::vector<ecs::string> &&scenes,
@@ -30,10 +30,10 @@ namespace ecs
       }
   }
 
-  SystemDescription::SystemDescription(const char *name, 
+  SystemDescription::SystemDescription(const char *name,
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args,
-    ecs::vector<ecs::string> &&scenes, 
+    ecs::vector<ecs::string> &&scenes,
     ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
     void (*function_pointer)(),
     const char * stage,
@@ -58,7 +58,7 @@ namespace ecs
     return queries;
   }
 
-  QueryDescription::QueryDescription(const char *name, 
+  QueryDescription::QueryDescription(const char *name,
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args):
     CallableDescription(name, std::move(require_args), std::move(require_not_args))
@@ -66,7 +66,7 @@ namespace ecs
     all_queries().push_back(this);
     isQuery = true;
   }
-  
+
   ecs::vector<SystemDescription *> &get_all_mutable_systems()
   {
     static ecs::vector<SystemDescription *> systems;
@@ -77,7 +77,7 @@ namespace ecs
     static ecs::vector<SystemDescription *> systems;
     return systems;
   }
-  
+
   SystemStageInterval::SystemStageInterval(SystemDescription**begin, SystemDescription**end):
     begin(begin), end(end){}
   void SystemStageInterval::perform_stage() const
@@ -85,7 +85,7 @@ namespace ecs
     for (auto system = begin; system < end; ++system)
       (*system)->execute();
   }
-  
+
   static bool lower_bound_cmp(const SystemDescription *a, const char *stage)
   {
     return strcmp(a->stage, stage) < 0;
@@ -105,5 +105,5 @@ namespace ecs
   void perform_stage(const char *stage)
   {
     get_system_stage(stage).perform_stage();
-  } 
+  }
 }

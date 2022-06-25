@@ -3,7 +3,7 @@
 
 namespace ecs
 {
-  
+
 
   constexpr uint entityBinSize = 200;
 
@@ -45,6 +45,9 @@ namespace ecs
   {
     totalCount = 0;
     destroyCount = 0;
+    for (uint*eid : entities)
+      for (uint i = 0; i < entityBinSize; i++)
+        eid[i] = bad_eid;
   }
   uint *EntityPull::get_entity()
   {

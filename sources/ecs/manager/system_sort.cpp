@@ -3,7 +3,7 @@
 
 namespace ecs
 {
-  
+
   static void dfs(uint v, const vector<vector<uint>> &edges, vector<bool> &used, vector<uint> &answer)
   {
     used[v] = true;
@@ -77,9 +77,9 @@ namespace ecs
   }
   static bool system_comparator(const SystemDescription *a, const SystemDescription *b)
   {
-    return a->stage < b->stage;
+    return strcmp(a->stage, b->stage) < 0;
   }
-  
+
   void system_sort(const ecs::string &currentSceneTags, const ecs::vector<ecs::string> &applicationTags)
   {
     auto &systems = ecs::get_all_systems();
@@ -105,7 +105,7 @@ namespace ecs
     }
 
     std::sort(systems.begin(), systems.end(), system_comparator);
-    
+
     auto cmp = [](const SystemDescription *stage, const SystemDescription *a){return strcmp(a->stage, stage->stage) > 0;};
 
     auto begin = systems.begin();
@@ -115,22 +115,24 @@ namespace ecs
       topological_sort(begin, end);
       begin = end;
     }
-    
     for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
     {
       topological_sort(filteredHandlers.begin(), filteredHandlers.end());
     }
-    
+  }
+
+  void clear_system_archetypes_cache()
+  {
+
     for (QueryDescription *query: ecs::all_queries())
       query->archetypes.clear();
-    for (SystemDescription *system: ecs::get_all_systems())
+    for (SystemDescription *system: ecs::get_all_mutable_systems())
       system->archetypes.clear();
-      
+
     for (auto &[srcHandlers, filteredHandlers] : get_all_event_handlers())
     {
-      for (EventDescription *handler : filteredHandlers)
+      for (EventDescription *handler : srcHandlers)
         handler->archetypes.clear();
     }
-
   }
 }

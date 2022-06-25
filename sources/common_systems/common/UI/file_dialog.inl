@@ -1,5 +1,6 @@
 #include <ecs.h>
 #include <application/file_dialog.h>
+#include <application/application.h>
 #include "editor_window.h"
 #include <imgui.h>
 
@@ -12,7 +13,7 @@ SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
       std::filesystem::path path;
       if (get_open_file(path, {"Scene", ".blk"}))
       {
-        ecs::create_scene(path.string().c_str());
+        create_scene(path.string().c_str());
       }
     }
     constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;

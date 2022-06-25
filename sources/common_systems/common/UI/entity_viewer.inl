@@ -1,6 +1,6 @@
 #include <ecs.h>
 #include <imgui.h>
-#include <manager/entity_container.h>
+#include <manager/entity_manager.h>
 #include <functional>
 #include "editor_window.h"
 #include <ecs/editor_events.h>
@@ -26,7 +26,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
   const int N = 100;
   char buf[N];
   int archetypeIndex = 0;
-  for (auto &archetype : ecs::core().entityContainer->archetypes)
+  for (auto &archetype : ecs::entityManager->archetypes)
   {
     if (ImGui::TreeNode(archetype->synonim.c_str()))
     {
@@ -39,7 +39,7 @@ SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui
           ImGui::SameLine();
           if (ImGui::Button("destroy"))
           {
-            archetype->destroy_entity(j, true);
+            archetype->destroy_entity(j);
           }
           else
           for (const auto&[name, typeInfo, component, hash] : archetype->typeDescriptions)

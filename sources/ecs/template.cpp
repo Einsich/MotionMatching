@@ -2,7 +2,7 @@
 #include "ecs_core.h"
 #include "manager/component_container.h"
 #include "manager/archetype.h"
-#include "manager/entity_container.h"
+#include "manager/entity_manager.h"
 #include <map>
 #include <memory>
 
@@ -11,7 +11,7 @@ namespace ecs
   Template::Template(const char *name, ecs::vector<ComponentInstance> &&components):
     name(name), components(std::move(components)), containers(), archetype(nullptr)
   {}
-  
+
   Archetype *add_archetype(const Template &tmpl);
 
   struct TemplateManager
@@ -24,7 +24,7 @@ namespace ecs
     }
   };
 
-  static TemplateManager &get_template_manager() 
+  static TemplateManager &get_template_manager()
   {
     static TemplateManager manager;
     return manager;
@@ -32,7 +32,7 @@ namespace ecs
 
   void update_template_cache(Template &tmpl)
   {
-    for (auto &archetype : core().entityContainer->archetypes)
+    for (auto &archetype : entityManager->archetypes)
     {
       if (archetype->in_archetype(tmpl.components))
       {
@@ -46,7 +46,7 @@ namespace ecs
     }
     size_t count = tmpl.components.size();
     tmpl.containers.reserve(count);
-    auto &componentMap = tmpl.archetype->components; 
+    auto &componentMap = tmpl.archetype->components;
     for (const ComponentInstance &instance : tmpl.components)
     {
       tmpl.containers.emplace_back(&componentMap[instance.typeNameHash]);
@@ -59,7 +59,7 @@ namespace ecs
 
     return tmpl;
   }
-  
+
   Template *create_template(const char *name, ecs::vector<ComponentInstance> &&components)
   {
     auto it = get_template_manager().templates.try_emplace(name, std::make_shared<Template>(name, std::move(components)));

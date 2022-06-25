@@ -27,7 +27,7 @@ namespace ecs
       bool is_job);
     void execute();
   };
-  
+
   ecs::vector<SystemDescription *>& get_all_mutable_systems();
   ecs::vector<SystemDescription *>& get_all_systems();
   ecs::vector<QueryDescription*> &all_queries();

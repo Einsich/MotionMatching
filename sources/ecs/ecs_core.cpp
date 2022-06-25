@@ -3,78 +3,30 @@
 #include "ecs_event.h"
 #include "manager/system_description.h"
 #include "common.h"
-#include "manager/entity_container.h"
+#include "manager/entity_manager.h"
 #include "template.h"
 #include "ecs_tag.h"
 #include "ecs_event_impl.h"
 #define ECS_DEBUG_INFO 0
 namespace ecs
 {
-  Core::Core()
+
+  EntityManager *entityManager = nullptr;
+
+  void clear_system_archetypes_cache();
+
+  void set_entity_manager(EntityManager &manager)
   {
-    entityContainer = new EntityContainer();
-    sceneToLoad = "";
-    applicationTags.clear();
-#ifndef RELEASE
-    applicationTags.push_back("debug");
-#endif
-  }
-  
-  Core::~Core()
-  {
-  }
-  Core &core()
-  {
-    static Core *singleton = new Core();
-    return *singleton;
-  }
-  void Core::destroy_all_entities()
-  {
-    destroy_entities_from_destroy_queue(false);
-    for (auto it = entityContainer->entityPull.begin(), end = entityContainer->entityPull.end(); it != end; ++it)
+    if (entityManager)
     {
-      EntityId eid = it.eid();
-      if (eid)
-      {
-        send_event_immediate(eid, OnEntityDestroyed());
-        entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), false);
-      }
+      invalidate_cached_archetype();
+      clear_system_archetypes_cache();
+
     }
-    entityContainer->entityPull.clear();
-  }
-  
-  void Core::destroy_entities_from_destroy_queue(bool with_swap_last_element)
-  {
-    for (int i = 0, n = toDestroy.size(); i < n; i++)
-    {
-      EntityId &eid = toDestroy.front();
-      if (eid)
-      {
-        ECS_LOG("destroy %d %d entity", eid.archetype_index(), eid.array_index());
-        core().entityContainer->archetypes[eid.archetype_index()]->destroy_entity(eid.array_index(), with_swap_last_element);
-        core().entityContainer->entityPull.destroy_entity(eid);
-      }
-      toDestroy.pop();
-    }
-  }
-  
-  void system_sort(const ecs::string &currentSceneTags, const ecs::vector<ecs::string> &applicationTags);
-  void Core::resolve_system_order_and_subscribes()
-  {
-    system_sort(currentSceneTags, applicationTags);
-  }
+    entityManager = &manager;
+    manager.resolve_system_order_and_subscribes();
 
-
-  void register_archetype(Archetype *archetype);
-  void Core::update_systems_subscribes()
-  {
-    core().events = {};
-    
-    for (auto &archetype : entityContainer->archetypes)
-      register_archetype(archetype.get());
   }
-
-
 
   static void register_archetype_to(CallableDescription &query, Archetype *archetype)
   {
@@ -115,10 +67,10 @@ namespace ecs
     }
   }
 
-  
+
   void register_archetype(Archetype *archetype)
   {
-    
+
 #if ECS_DEBUG_INFO
     ECS_LOG("register archetype");
     for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
@@ -136,48 +88,48 @@ namespace ecs
       for (EventDescription *handler : filteredHandlers)
         register_archetype_to(*handler, archetype);
     }
-    
+
   }
-  
+
   Archetype *add_archetype(const Template &tmpl)
   {
-    Archetype *archetype = new Archetype(core().entityContainer->archetypes.size(), tmpl.components, 1, tmpl.name);
-    core().entityContainer->archetypes.emplace_back(archetype);
+    Archetype *archetype = new Archetype(entityManager->archetypes.size(), tmpl.components, 1, tmpl.name);
+    entityManager->archetypes.emplace_back(archetype);
 
     register_archetype(archetype);
-    
+
     return archetype;
   }
 
-  
 
-  EntityId create_entity(const char *template_name, ComponentInitializerList &&list)
+
+  EntityId EntityManager::create_entity(const char *template_name, ComponentInitializerList &&list)
   {
     return create_entity(ecs::get_template(template_name), std::move(list));
   }
 
-  EntityId create_entity(const Template *blkTemplate, ComponentInitializerList &&list)
+  EntityId EntityManager::create_entity(const Template *tmpl, ComponentInitializerList &&list)
   {
-    if (!blkTemplate)
+    if (!tmpl)
       return EntityId();
-    if (!blkTemplate->archetype)
+    if (!tmpl->archetype)
     {
       extern void update_template_cache(Template &tmpl);
-      update_template_cache((Template &)(*blkTemplate));
+      update_template_cache((Template &)(*tmpl));
     }
-    Archetype *found_archetype = blkTemplate->archetype;
+    Archetype *found_archetype = tmpl->archetype;
     int index = found_archetype->count;
     int archetype_ind = found_archetype->index;
-    EntityId eid = core().entityContainer->entityPull.create_entity(archetype_ind, index);
+    EntityId eid = entityManager->entityPull.create_entity(archetype_ind, index);
 
 
     list.emplace_back("eid", EntityId(eid));
     {
-      const vector<ComponentInstance> &template_list = blkTemplate->components;
+      const vector<ComponentInstance> &template_list = tmpl->components;
       for (size_t i = 0, n = template_list.size(); i < n; ++i)
       {
         ComponentInstance &instance = (ComponentInstance &)template_list[i];
-        ComponentContainer *container = blkTemplate->containers[i];
+        ComponentContainer *container = tmpl->containers[i];
         size_t j = 0, m = list.size();
         for (; j < m; ++j)
           if (instance.typeNameHash == list[j].typeNameHash)
@@ -210,17 +162,34 @@ namespace ecs
     return eid;
   }
 
-  void destroy_entity(const EntityId &eid)
+  void EntityManager::destroy_entity(const EntityId &eid)
   {
     if (eid)
     {
-      send_event_immediate(eid, OnEntityDestroyed());
-      core().toDestroy.push(eid);
+      entityManager->toDestroy.push(eid);
     }
+  }
+  EntityId EntityManager::find_entity(uint archetype, uint index)
+  {
+    return entityManager->entityPull.find_entity(archetype, index);
+  }
+
+  EntityId create_entity(const Template *temp, ComponentInitializerList &&list)
+  {
+    return entityManager->create_entity(temp, std::move(list));
+  }
+  EntityId create_entity(const char *template_name, ComponentInitializerList &&list)
+  {
+    return entityManager->create_entity(ecs::get_template(template_name), std::move(list));
   }
   EntityId find_entity(uint archetype, uint index)
   {
-    return core().entityContainer->entityPull.find_entity(archetype, index);
+    return entityManager->find_entity(archetype, index);
+  }
+
+  void destroy_entity(const EntityId &eid)
+  {
+    return entityManager->destroy_entity(eid);
   }
 
   void system_statistic()
@@ -242,11 +211,11 @@ namespace ecs
       printf("}\n");
     }
   }
-  
+
   void print_archetypes()
-  {   
+  {
     printf("\n- - - - - \n");
-    for (const auto &archetype : core().entityContainer->archetypes)
+    for (const auto &archetype : entityManager->archetypes)
     {
       printf("{\n");
       for (const auto &[name, typeInfo, components, hash] : archetype->typeDescriptions)
@@ -258,15 +227,5 @@ namespace ecs
     std::fflush(stdout);
   }
 
-  void destroy_scene()
-  {    
-    core().destroy_all_entities();
-    core().events = {};
-  }
-  void create_scene(const char *path, bool reload)
-  {
-    core().sceneToLoad = path;
-    core().reloadScene = reload;
-  }
 }
 

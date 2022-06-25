@@ -1,42 +1,22 @@
 #pragma once
-#include <queue>
-#include <functional>
 #include "manager/system_description.h"
 #include "manager/entity_id.h"
+#include "manager/entity_manager.h"
 #include "template.h"
 namespace ecs
 {
   struct Event;
   struct EventDescription;
 
-  struct EntityContainer;
-  struct Core
-  {
-    EntityContainer *entityContainer;
-    std::queue<std::function<void()>> events;
-    std::queue<EntityId> toDestroy;
-    ecs::vector<ecs::string> applicationTags;
-    ecs::string currentSceneTags;
-    ecs::string sceneToLoad;
-    bool reloadScene;
-    Core();
-    ~Core();
-    
-    void destroy_all_entities();
-    void destroy_entities_from_destroy_queue(bool with_swap_last_element);
-    void update_systems_subscribes();
-    void resolve_system_order_and_subscribes();
-  };
-  Core &core();
+  extern EntityManager *entityManager;
+
+  void set_entity_manager(EntityManager &manager);
 
   struct Template;
   EntityId create_entity(const Template *temp, ComponentInitializerList &&list = {});
   EntityId create_entity(const char *template_name, ComponentInitializerList &&list = {});
   EntityId find_entity(uint archetype, uint index);
   void destroy_entity(const EntityId &eid);
-
-  //destoy current scene and load new scene from path
-  void create_scene(const char *path, bool reload = true);
 
 
   template<typename T>
@@ -47,7 +27,7 @@ namespace ecs
   template<typename E>
   void send_event(const E &event)
   {
-    core().events.push([event](){ broadcast_event<E>(event); });
+    entityManager->send_event(event);
   }
   template<typename E>
   void send_event_immediate(const E &event)
@@ -60,7 +40,7 @@ namespace ecs
   {
     if (eid)
     {
-      core().events.push([event, eid](){ unicast_event<E>(event, eid); });
+      entityManager->send_event(eid, event);
     }
   }
   template<typename E>

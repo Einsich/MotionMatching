@@ -21,7 +21,7 @@ namespace ecs
       #endif
         typeDescriptions.emplace_back(TypeDescription{instance.name, instance.typeInfo, nullptr, instance.typeNameHash});
       }
-    }    
+    }
 
     for (auto &descr : typeDescriptions)
       descr.components = &components[descr.typeNameHash];
@@ -31,7 +31,7 @@ namespace ecs
         return a.name < b.name;
       });
   }
-  
+
   bool Archetype::in_archetype(const ecs::vector<ComponentInstance> &instances) const
   {
     if (instances.size() != components.size())
@@ -51,15 +51,15 @@ namespace ecs
     return it == components.end() ? nullptr : &it->second;
   }
 
-  void Archetype::destroy_entity(int index, bool with_swap)
+  void Archetype::destroy_entity(int index)
   {
     if (count > 0)
     for (auto &container : components)
     {
-      container.second.destroy_component(index, with_swap);
+      container.second.destroy_component(index);
     }
     count--;
-    if (with_swap && index != count)
+    if (index != count)
     {
       EntityId &eid = *components[get_type_description<EntityId>("eid")]
       .get_component<EntityId>(index);
@@ -68,7 +68,7 @@ namespace ecs
     if (count < 0)
       ECS_LOG("count < 0 in %s", synonim.c_str());
   }
-  
+
   void Archetype::copy(const Archetype *src)
   {
     for (const auto & component : src->components)
@@ -80,5 +80,13 @@ namespace ecs
       it->second.copy_components(component.second);
     }
     count = src->count;
+  }
+  void Archetype::clear()
+  {
+    for (auto & component : components)
+    {
+      component.second.clear();
+    }
+    count = 0;
   }
 }

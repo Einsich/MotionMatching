@@ -4,7 +4,7 @@ namespace ecs
 {
   EventDescription::EventDescription(
     ecs::vector<EventDescription *> &handlers,
-    const char *name, 
+    const char *name,
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args,
     ecs::vector<ecs::string> &&scenes,

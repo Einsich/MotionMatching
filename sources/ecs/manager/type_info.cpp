@@ -1,6 +1,6 @@
 #include "type_info.h"
 #include "3dmath.h"
-#include "manager/entity_id.h" 
+#include "manager/entity_id.h"
 #include <type_registration.h>
 #include "string_hash.h"
 #include "ecs_tag.h"
