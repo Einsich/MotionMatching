@@ -8,14 +8,14 @@ namespace ecs
 
 
   template<std::size_t... Is, std::size_t N>
-  std::array<char*__restrict, N> copy_data_pointer_impl(uint binIndex,
+  std::array<char*__restrict, N> __forceinline copy_data_pointer_impl(uint binIndex,
     const std::array<ecs::vector<void*>*, N> &data_vectors, std::index_sequence<Is...>)
   {
     return std::array<char*__restrict, N> {(data_vectors[Is] ? (char*)((*data_vectors[Is])[binIndex]) : nullptr)...};
   }
 
   template<std::size_t N, std::size_t... Is>
-  std::array<char*__restrict, N> data_pointer(uint binIndex, uint inBinIndex,
+  std::array<char*__restrict, N> __forceinline data_pointer(uint binIndex, uint inBinIndex,
     const SystemCashedArchetype &archetype, std::index_sequence<Is...>)
   {
     return std::array<char*__restrict, N> {
@@ -25,13 +25,13 @@ namespace ecs
   }
 
   template<typename ...Args, std::size_t N, std::size_t... Is>
-  void update_data_pointer_impl(std::array<char*__restrict, N> &pointers, std::index_sequence<Is...>)
+  void __forceinline update_data_pointer_impl(std::array<char*__restrict, N> &pointers, std::index_sequence<Is...>)
   {
     std::array<char*__restrict, N> dummy{(pointers[Is] = pointers[Is] ? pointers[Is] + sizeof(std::remove_pointer_t<std::remove_cvref_t<Args>>) : pointers[Is])...};
     (void)dummy;
   }
   template<uint I, typename R, typename T>
-  R get_smart_component(T arg)
+  R __forceinline get_smart_component(T arg)
   {
 
     using cvrefT = typename std::remove_cvref_t<R>;
@@ -53,13 +53,13 @@ namespace ecs
   }
 
   template<typename ...Args, typename Callable, std::size_t... Is, std::size_t N>
-  void perform_query_impl(const std::array<char*__restrict, N> &pointers, Callable function, std::index_sequence<Is...>)
+  void __forceinline perform_query_impl(const std::array<char*__restrict, N> &pointers, Callable function, size_t i, std::index_sequence<Is...>)
   {
-    function(get_smart_component<Is, Args>((std::remove_pointer_t<std::remove_cvref_t<Args>>*)pointers[Is])...);
+    function(get_smart_component<Is, Args>((std::remove_pointer_t<std::remove_cvref_t<Args>>*)pointers[Is] + i)...);
   }
 
   template<typename ...Args, typename Callable>
-  void perform_query(const CallableDescription &descr, Callable function)
+  void __forceinline perform_query(const CallableDescription &descr, Callable function)
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
@@ -86,10 +86,12 @@ namespace ecs
         for (uint binIdx = 0; binIdx < binN; ++binIdx)
         {
           auto dataPointers = copy_data_pointer_impl(binIdx, dataVectors, indexes);
-          for (uint inBinIdx = 0; inBinIdx < binSize; ++inBinIdx)
+          for (uint inBinIdx = 0; inBinIdx < binSize; inBinIdx+=4)
           {
-            perform_query_impl<Args...>(dataPointers, function, indexes);
-            update_data_pointer_impl<Args...>(dataPointers, indexes);
+            perform_query_impl<Args...>(dataPointers, function, inBinIdx, indexes);
+            perform_query_impl<Args...>(dataPointers, function, inBinIdx+1, indexes);
+            perform_query_impl<Args...>(dataPointers, function, inBinIdx+2, indexes);
+            perform_query_impl<Args...>(dataPointers, function, inBinIdx+3, indexes);
           }
         }
         uint lastBinSize = cachedArchetype.archetype->count - (binN << binPow);
@@ -98,8 +100,7 @@ namespace ecs
           auto dataPointers = copy_data_pointer_impl(binN, dataVectors, indexes);
           for (uint inBinIdx = 0; inBinIdx < lastBinSize; ++inBinIdx)
           {
-            perform_query_impl<Args...>(dataPointers, function, indexes);
-            update_data_pointer_impl<Args...>(dataPointers, indexes);
+            perform_query_impl<Args...>(dataPointers, function, inBinIdx, indexes);
           }
         }
       }
@@ -111,26 +112,26 @@ namespace ecs
   }
 
   template<typename ...Args>
-  void perform_system(const CallableDescription &descr, void(*function)(Args...))
+  void __forceinline perform_system(const CallableDescription &descr, void(*function)(Args...))
   {
     perform_query<Args...>(descr, function);
   }
 
   template<typename ...Args>
-  void perform_job_system(const CallableDescription &descr, void(*function)(Args...))
+  void __forceinline perform_job_system(const CallableDescription &descr, void(*function)(Args...))
   {
     add_job([&descr, function](){ perform_query<Args...>(descr, function); });
   }
 
   template<typename E, typename Event, typename ...Args>
-  void perform_event(const E &event, const CallableDescription &descr, void(*function)(Event, Args...))
+  void __forceinline perform_event(const E &event, const CallableDescription &descr, void(*function)(Event, Args...))
   {
     perform_query<Args...>(descr, [&](Args...args){function(event, args...);});
   }
 
 
   template<typename ...Args, typename Callable>
-  void perform_query(const CallableDescription &descr, EntityId eid, Callable function)
+  void __forceinline perform_query(const CallableDescription &descr, EntityId eid, Callable function)
   {
     constexpr uint N = sizeof...(Args);
     constexpr auto indexes = std::make_index_sequence<N>();
@@ -145,7 +146,7 @@ namespace ecs
         uint binIdx = index >> binPow;
         uint inBinIdx = index & binMask;
         auto dataPointers = data_pointer<N>(binIdx, inBinIdx, *it, indexes);
-        perform_query_impl<Args...>(dataPointers, function, indexes);
+        perform_query_impl<Args...>(dataPointers, function, 0, indexes);
       }
     }
   }
