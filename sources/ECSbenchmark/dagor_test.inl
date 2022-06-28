@@ -136,12 +136,32 @@ EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
   t3.join();
   t4.join();
 }
-
+SYSTEM(stage=act;scene=game, editor) cache_trach(mat4 &data0, mat4 &data1, mat4 &data2, mat4 &data3)
+{
+  data0 = data1;
+  data1 = data2;
+  data2 = data3;
+  data3 += mat4(0.001f);
+}
 static void process(float dt, vec3 &pos, const vec3 &vel)
 {
   pos += vel * dt;
 }
 
+SYSTEM(stage=act;scene=game, editor) dag_soa_update()
+{
+  vec3 *__restrict pos = pData.data();
+  const vec3 *__restrict vel = vData.data();
+  for (uint i = 0, n = vData.size(); i < n; i++)
+  {
+    process(Time::delta_time(), pos[i], vel[i]);
+  }
+}
+
+SYSTEM(stage=act;scene=game, editor) prune_cache_()
+{
+  prune_cache();
+}
 SYSTEM(stage=act;scene=game, editor) dag_ecs_update(vec3 &p, const vec3 &v)
 {
   process(Time::delta_time(), p, v);
@@ -191,21 +211,12 @@ SYSTEM(stage=act;scene=game, editor) prune_cache3()
   prune_cache();
 }
 
-SYSTEM(stage=act;scene=game, editor) tiny_soa_structs_update()
-{
-  vec3 *__restrict pos = pData.data();
-  vec3 *__restrict vel = pData.data();
-  for (uint i = 0, n = vData.size(); i < n; i++)
-  {
-    process(Time::delta_time(), pos[i], vel[i]);
-  }
-}
 
 void dag_ecs_update_func();
 void dag_vector_structs_update_func();
 void dag_vector_pointers_update_func();
 void dag_vector_pointers_virtual_update_func();
-void tiny_soa_structs_update_func();
+void dag_soa_update_func();
 
 
 void tiny_vector_and_soa_update()
@@ -221,7 +232,7 @@ void tiny_vector_and_soa_update()
   });
   auto handle2 = std::thread([&]()
   {
-    tiny_soa_structs_update_func();
+    dag_soa_update_func();
   });
   dag_ecs_update_func();
   dag_vector_pointers_virtual_update_func();
