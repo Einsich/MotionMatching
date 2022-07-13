@@ -14,3 +14,4 @@ add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 add_definitions(-DEASTL_OPENSOURCE=1)
 
 include(../../module.cmake)
+set(LibsNamesList ${LibsNamesList} eastl PARENT_SCOPE)

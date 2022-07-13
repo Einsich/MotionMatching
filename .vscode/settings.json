@@ -96,7 +96,9 @@
     "forward_list": "cpp",
     "unordered_set": "cpp",
     "format": "cpp",
-    "stop_token": "cpp"
+    "stop_token": "cpp",
+    "valarray": "cpp",
+    "variant": "cpp"
   },
   "launchOption.options": {
     "BuildType": [

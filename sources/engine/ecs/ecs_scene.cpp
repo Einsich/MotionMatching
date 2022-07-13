@@ -59,7 +59,7 @@ namespace ecs
     send_event(OnSceneCreated());
 
   }
-  
+
   static void update_range(const SystemStageInterval &range)
   {
     for (auto system = range.begin; system < range.end; ++system)
@@ -102,9 +102,10 @@ namespace ecs
       sceneToLoad = "";
     }
   }
-  
+
   void SceneManager::destroy_scene()
   {
+    ecs::send_event_immediate(OnSceneDestroy());
     entityManager->clear_scene();
   }
 }

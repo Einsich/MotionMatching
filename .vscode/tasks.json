@@ -110,7 +110,7 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "yes"
+                "no"
             ],
             "windows": {
                 "command": "Tools\\build_script.bat"

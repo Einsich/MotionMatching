@@ -11,6 +11,10 @@ namespace ecs
   {
 
   };
+  struct OnSceneDestroy : public Event
+  {
+
+  };
   struct OnEntityCreated : public Event
   {
 

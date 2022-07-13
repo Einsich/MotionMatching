@@ -10,7 +10,6 @@ else()
 endif()
 
 
-
 set(ROOT ${CMAKE_SOURCE_DIR}/..)
 set(SRC_ROOT ${CMAKE_SOURCE_DIR})
 
@@ -71,8 +70,6 @@ endforeach()
 set(LibsNamesList )
 foreach(DEPENDENCY ${subFolderList})
   add_subdirectory(${SRC_ROOT}/${DEPENDENCY})
-  get_filename_component(MODULE_NAME ${DEPENDENCY} NAME)
-  set(LibsNamesList ${LibsNamesList} ${MODULE_NAME})
 endforeach()
 
 set(PROJECT_NAME Application)
