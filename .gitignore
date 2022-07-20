@@ -18,7 +18,7 @@
 
 #.vscode/*
 Builds/*
-Test
+
 # Precompiled Headers
 *.gch
 *.pch

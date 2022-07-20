@@ -16,7 +16,7 @@
 #include <parallel/thread_pool.h>
 #include <type_registration.h>
 
-ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>);
+ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>); 
 ECS_REGISTER_TYPE(Texture2D, Asset<Texture2D>);
 ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>);
 ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>);

@@ -38,7 +38,7 @@ list(FIND subFolderList "3rd_party/3d_application" is3DApplication)
 
 if(${is3DApplication} GREATER -1)
     if(WIN32)
-        set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} SDL2 assimp)
+        set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} SDL2 imm32 assimp)
         set (BuildDir "${ROOT}/Builds")
         add_library(SDL2 STATIC IMPORTED)
         set_target_properties(SDL2 PROPERTIES
@@ -47,8 +47,8 @@ if(${is3DApplication} GREATER -1)
             LINKER_LANGUAGE CXX)
         add_library(assimp STATIC IMPORTED)
         set_target_properties(assimp PROPERTIES
-                IMPORTED_LOCATION_DEBUG "${BuildDir}/assimp-vc142-mt.lib"
-                IMPORTED_LOCATION_RELEASE "${BuildDir}/assimp-vc142-mt.lib"
+                IMPORTED_LOCATION_DEBUG "${BuildDir}/assimp.lib"
+                IMPORTED_LOCATION_RELEASE "${BuildDir}/assimp.lib"
                 LINKER_LANGUAGE CXX)
     else()
         find_package(SDL2 REQUIRED)

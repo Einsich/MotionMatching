@@ -2,6 +2,7 @@
 #include <application/time.h>
 #include <3dmath.h>
 #include "constanta.h"
+#include <thread>
 
 
 struct DagorTestEntity

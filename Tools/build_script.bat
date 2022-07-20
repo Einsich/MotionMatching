@@ -10,7 +10,8 @@ if "%CMAKE%"=="yes" (
 
 cd ../Builds/%BUILD_TYPE%
 
-"../../Tools/Ninja/ninja.exe"
+ninja
+
 set binPath=..\..\%PROJECT%
 IF not exist %binPath% (mkdir %binPath%)
 
@@ -19,6 +20,6 @@ set APP_NAME=%PROJECT%-%BUILD_TYPE%.exe
 ren Application.exe %APP_NAME%
 move %APP_NAME% %binPath%
 if "%CMAKE%"=="yes" (
-    IF not exist %binPath%\assimp-vc142-mt.dll (copy ..\assimp-vc142-mt.dll %binPath%)
+    IF not exist %binPath%\assimp.dll (copy ..\assimp.dll %binPath%)
 )
 cd ../..
