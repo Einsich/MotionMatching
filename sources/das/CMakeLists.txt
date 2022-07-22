@@ -3,7 +3,7 @@ set(MODULE_NAME das)
 set(MODULE_PATH ${SRC_ROOT}/${MODULE_NAME})
 
 include(../module.cmake)
-set(LibsNamesList ${LibsNamesList} das PARENT_SCOPE)
+
 
 set(DAS_BUILD_TEST NO PARENT_SCOPE)
 set(DAS_BUILD_PROFILE NO PARENT_SCOPE)

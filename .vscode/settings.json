@@ -146,21 +146,14 @@
           "name":"Territorio",
           "delpoy_only_project_folder":"true"
         }
-      },
-      {
-        "name": "Test",
-        "value":{
-          "name":"Test",
-          "delpoy_only_project_folder":"true"
-        }
       }
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
-      "name": "Strategy",
-      "delpoy_only_project_folder": "false"
+      "name": "Territorio",
+      "delpoy_only_project_folder": "true"
     }
   },
   "cmake.configureOnOpen": false,

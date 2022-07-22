@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
+project(dummy)
 
 if(WIN32)
     set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
@@ -30,32 +31,6 @@ if(BUILD_TYPE STREQUAL "rel")
     add_definitions(-DRELEASE)
 endif()
 
-set(subFolderList )
-include(${GAME}/dependencies.cmake)
-
-set(is3DApplication -1)
-list(FIND subFolderList "3rd_party/3d_application" is3DApplication)
-
-if(${is3DApplication} GREATER -1)
-    if(WIN32)
-        set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} SDL2 imm32 assimp)
-        set (BuildDir "${ROOT}/Builds")
-        add_library(SDL2 STATIC IMPORTED)
-        set_target_properties(SDL2 PROPERTIES
-            IMPORTED_LOCATION_RELEASE "${BuildDir}/libSDL2.a"
-            IMPORTED_LOCATION_DEBUG "${BuildDir}/libSDL2.a"
-            LINKER_LANGUAGE CXX)
-        add_library(assimp STATIC IMPORTED)
-        set_target_properties(assimp PROPERTIES
-                IMPORTED_LOCATION_DEBUG "${BuildDir}/assimp.lib"
-                IMPORTED_LOCATION_RELEASE "${BuildDir}/assimp.lib"
-                LINKER_LANGUAGE CXX)
-    else()
-        find_package(SDL2 REQUIRED)
-        include_directories(${SDL2_INCLUDE_DIRS})
-        find_package(assimp REQUIRED)
-    endif()
-endif()
 
 
 set(INCLUDES 3rd_party/3d_application;3rd_party/imgui;3rd_party/eastl/include;ecs;engine;common_systems;)
@@ -64,15 +39,21 @@ foreach(DEPENDENCY ${INCLUDES})
 endforeach()
 
 
+set(ALL_LIBS
+  ecs
+  das
+  3rd_party/3d_application
+  3rd_party/imgui
+  3rd_party/eastl
+  3rd_party/daScript
+  engine
+  common_systems
+)
 
 
-
-set(LibsNamesList )
-foreach(DEPENDENCY ${subFolderList})
-  add_subdirectory(${SRC_ROOT}/${DEPENDENCY})
+foreach(LIB ${ALL_LIBS})
+  add_subdirectory(${SRC_ROOT}/${LIB})
 endforeach()
 
-set(PROJECT_NAME Application)
-project(${PROJECT_NAME})
-add_executable(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} ${ADDITIONAL_LIBS} ${LibsNamesList})
+
+add_subdirectory(${SRC_ROOT}/${GAME})

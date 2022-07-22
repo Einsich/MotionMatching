@@ -8,6 +8,18 @@
             "name": "Run project",
             "type": "cppvsdbg",
             "request": "launch",
+            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.BuildType}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}.exe",
+            "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
+            "args": [],
+           // "preLaunchTask": "Build project",
+            "linux": {
+                "type": "cppdbg",
+            }
+        },
+        {
+            "name": "Run project2",
+            "type": "cppvsdbg",
+            "request": "launch",
             "program": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}-${config:launchOption.currentConfig.BuildType}.exe",
             "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
             "args": [],

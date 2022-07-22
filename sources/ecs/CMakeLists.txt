@@ -3,4 +3,3 @@ set(MODULE_NAME ecs)
 set(MODULE_PATH ${SRC_ROOT}/${MODULE_NAME})
 
 include(../module.cmake)
-set(LibsNamesList ${LibsNamesList} ecs PARENT_SCOPE)

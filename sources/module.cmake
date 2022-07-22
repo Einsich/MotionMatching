@@ -11,4 +11,3 @@ include_directories(${MODULE_PATH})
 
 
 add_library(${MODULE_NAME} OBJECT ${MODULE_SOURCES} ${MODULE_C_SOURCES})
-set(LibsNamesList ${LibsNamesList} ${MODULE_NAME})
