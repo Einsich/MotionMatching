@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
+
 set(MODULE_NAME imgui)
 set(MODULE_PATH ${SRC_ROOT}/3rd_party/${MODULE_NAME})
+include_directories(${SRC_ROOT}/3rd_party/3d_application)
 include(../../module.cmake)

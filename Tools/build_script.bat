@@ -15,10 +15,7 @@ ninja
 set binPath=..\..\%PROJECT%
 IF not exist %binPath% (mkdir %binPath%)
 
-set APP_NAME=%PROJECT%-%BUILD_TYPE%.exe
 
-ren Application.exe %APP_NAME%
-move %APP_NAME% %binPath%
 if "%CMAKE%"=="yes" (
     IF not exist %binPath%\assimp.dll (copy ..\assimp.dll %binPath%)
 )

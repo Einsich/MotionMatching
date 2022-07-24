@@ -8,7 +8,7 @@
             "name": "Run project",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.BuildType}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}.exe",
+            "program": "${workspaceFolder}/Builds/${config:launchOption.currentConfig.BuildType}/${config:launchOption.currentConfig.Project.name}.exe",
             "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
             "args": [],
            // "preLaunchTask": "Build project",
@@ -32,7 +32,7 @@
             "name": "Run ecs codegen",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/ECSCodeGen/ECSCodeGen-${config:launchOption.currentConfig.BuildType}.exe",
+            "program": "${workspaceFolder}/Builds/rel/ECSCodeGen.exe",
             "args": [
                 "${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}",
             ],

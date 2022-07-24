@@ -1,17 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
-set(PROJECT_NAME Strategy)
-set(PROJECT_PATH ${SRC_ROOT}/${PROJECT_NAME})
-
-set(LibsNamesList
-  ecs
-  3d_application
-  imgui
-  eastl
-  engine
-  common_systems
-)
-
-include(../sdl2.cmake)
-include(../assimp.cmake)
-
-include(../exe.cmake)
+set(MODULE_NAME StrategyLib)
+set(MODULE_PATH ${SRC_ROOT}/Strategy)
+include_directories(${SRC_ROOT}/engine)
+include_directories(${SRC_ROOT}/ecs)
+include_directories(${SRC_ROOT}/3rd_party/eastl/include)
+include_directories(${SRC_ROOT}/3rd_party/3d_application)
+include_directories(${SRC_ROOT}/3rd_party/imgui)
+include(../module.cmake)

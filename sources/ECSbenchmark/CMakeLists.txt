@@ -1,23 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
-set(PROJECT_NAME ECSbenchmark)
-set(PROJECT_PATH ${SRC_ROOT}/${PROJECT_NAME})
+set(MODULE_NAME ECSbenchmarkLib)
+set(MODULE_PATH ${SRC_ROOT}/ECSbenchmark)
 
-
-set(LibsNamesList
-  ecs
-  das
-  libDaScript
-  3d_application
-  imgui
-  eastl
-  engine
-)
-
-include_directories(${SRC_ROOT}/das)
+include_directories(${SRC_ROOT}/engine)
+include_directories(${SRC_ROOT}/ecs)
+include_directories(${SRC_ROOT}/3rd_party/eastl/include)
+include_directories(${SRC_ROOT}/3rd_party/3d_application)
+include_directories(${SRC_ROOT}/3rd_party/imgui)
 include_directories(${SRC_ROOT}/3rd_party/daScript/include)
+include_directories(${SRC_ROOT}/das)
 
-include(../sdl2.cmake)
-include(../assimp.cmake)
-
-
-include(../exe.cmake)
+include(../module.cmake)
