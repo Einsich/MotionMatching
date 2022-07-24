@@ -36,10 +36,22 @@ quat to_quat(const T& t)
 }
 #define float_equal(x, y) (abs((x) - (y)) < 1e-8f)
 
-float mod_f(float x, float n);
-vec2 mod_f(vec2 v, float n);
-vec3 mod_f(vec3 v, float n);
-vec4 mod_f(vec4 v, float n);
+inline float mod_f(float x, float n)
+{
+  return x - (int)(x/n) * n;
+}
+inline vec2 mod_f(vec2 v, float n)
+{
+  return vec2(mod_f(v.x, n), mod_f(v.y, n));
+}
+inline vec3 mod_f(vec3 v, float n)
+{
+  return vec3(mod_f(v.x, n), mod_f(v.y, n), mod_f(v.z, n));
+}
+inline vec4 mod_f(vec4 v, float n)
+{
+  return vec4(mod_f(v.x, n), mod_f(v.y, n), mod_f(v.z, n), mod_f(v.w, n));
+}
 
 
 inline int rand_int(int max_val = RAND_MAX)

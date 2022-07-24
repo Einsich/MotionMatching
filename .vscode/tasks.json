@@ -9,7 +9,7 @@
             "command": "./Tools/ecs_codegen.sh",
             "args": ["${config:launchOption.currentConfig.Project.name}"],
             "windows": {
-                "command": "Tools\\ecs_codegen.bat"
+                "command": "Tools/ecs_codegen.bat"
             },
             "group": {
                 "kind": "build",
@@ -50,7 +50,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "Tools\\build_script.bat"
+                "command": "Tools/build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -70,7 +70,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "Tools\\build_script.bat"
+                "command": "Tools/build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -89,10 +89,10 @@
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.Project.delpoy_only_project_folder}",
                 "${workspaceFolder}",
-                "D:\\Releases"
+                "D:/Releases"
             ],
             "windows": {
-                "command": "Tools\\create_release.bat"
+                "command": "Tools/create_release.bat"
             },
             "group": {
                 "kind": "build",
@@ -113,7 +113,7 @@
                 "no"
             ],
             "windows": {
-                "command": "Tools\\build_script.bat"
+                "command": "Tools/build_script.bat"
             },
             "group": {
                 "kind": "build",
@@ -134,7 +134,7 @@
                 "yes"
             ],
             "windows": {
-                "command": "Tools\\build_script.bat"
+                "command": "Tools/build_script.bat"
             },
             "group": {
                 "kind": "build",

@@ -16,7 +16,6 @@
 *.gz
 
 
-#.vscode/*
 Builds/*
 
 # Precompiled Headers
