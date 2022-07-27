@@ -42,7 +42,7 @@ EVENT(scene=game, editor) spawn_coin_effect(
 
   auto [w, h] = get_resolution();
   
-  vec2 screenPos((x / w * 2.f - 1.0f)*mainCamera.aspectRatio, 1.0f - y / h * 2.f);
+  vec2 screenPos((x / w * 2.f - 1.0f)*mainCamera.aspectRatio, y / h * 2.f - 1.0f);
   vec3 p = mainCamera.transform * vec4(screenPos, 1, 1);
   vec3 n = mainCamera.transform * vec4(screenPos, 1, 0);
   n = normalize(n);

@@ -63,7 +63,7 @@ EVENT(require=mat3 cameraProjection) move_camera(
     return;
   if (!cameraLocked)
   {
-    vec3 d = wr.screenToWorld * vec3(event.dx, -event.dy, 0);
+    vec3 d = wr.screenToWorld * vec3(event.dx, event.dy, 0);
     targetTransform.position -= vec2(d.x, d.y)*2.f;
   }
 }

@@ -7,7 +7,7 @@ struct WorldRenderer : ecs::Singleton
   mat3 screenToWorld;
   vec2 screen_to_world(int x, int y) const
   {
-    vec3 screenPos(x*2 - resolution.x, resolution.y - y*2, 1);
+    vec3 screenPos(x*2 - resolution.x, y*2 - resolution.y, 1);
     return screenToWorld * screenPos;
   }
 };

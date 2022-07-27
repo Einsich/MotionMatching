@@ -72,7 +72,7 @@ EVENT() mouse_move_handler(
   if (personController.disableEvents )
     return;
   float dx = (settings.mouseInvertXaxis ? 1 : -1) * e.dx;
-  thirdPersonController.wantedCameraRotation += vec2(dx, -e.dy) * settings.mouseSensitivity;
+  thirdPersonController.wantedCameraRotation += vec2(dx, e.dy) * settings.mouseSensitivity;
 
   thirdPersonController.wantedCameraRotation.y = glm::clamp(thirdPersonController.wantedCameraRotation.y, -180 * 0.45f, 180 * 0.1f);
   thirdPersonController.wantedCameraOrientation = rotation_to_orientation(thirdPersonController.wantedCameraRotation * DegToRad);

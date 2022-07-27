@@ -84,7 +84,7 @@ bool get_map_hit(
   uint &prov_id)
 {
   auto [w, h] = get_resolution();
-  vec2 screenPos((screen_x / w * 2.f - 1.0f)*camera.aspectRatio, 1.0f - screen_y / h * 2.f);
+  vec2 screenPos((screen_x / w * 2.f - 1.0f)*camera.aspectRatio, screen_y / h * 2.f - 1.0f);
   vec3 p = camera.transform * vec4(screenPos, 1, 1);
   vec3 n = camera.transform * vec4(screenPos, 1, 0);
   n = normalize(n);
