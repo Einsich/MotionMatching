@@ -102,7 +102,8 @@ SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const 
             adding = false;
           }
           
-          if (widgets.back.get())
+          //if (widgets.back.get())
+          if (ImGui::Button("Back"))
           {
             adding = false;
             scroll = 0;
@@ -129,7 +130,8 @@ SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const 
       {
         if (selectedAsset.asset)
         {
-          if (widgets.back.get())
+          //if (widgets.back.get())
+          if (ImGui::Button("Back"))
           {
             selectedAsset.asset = nullptr;
             scroll *= -1;

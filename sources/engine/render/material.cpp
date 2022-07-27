@@ -113,6 +113,7 @@ void Material::load(const filesystem::path &path, bool reload, AssetStatus &stat
     if (!shader)
     {
       debug_error("missed shader for material %s ", path.string().c_str());
+      status = AssetStatus::Loaded;
       return;
     }
     const ShaderBuffer &instanceData = shader.get_instance_data();
