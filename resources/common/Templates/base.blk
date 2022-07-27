@@ -40,3 +40,21 @@ arcball_camera {
   arcballCamera:ArcballCamera {}
   arcballCameraTarget:EntityId {}
 }
+
+text {
+  text:t="fps   tratatatat
+fkofbfh
+ffff
+DASF afF f
+\"LOL\"
+??
+new line";
+  position:i2=500,300;
+  pivot:f2=0, 0;
+  scale:f=1;
+  color:f4=1,1,1,1;
+  aligment:TextAlignment{ value:t="Middle"; }
+  glyph_buffer:vector<vec4>{ }
+  
+
+}

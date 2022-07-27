@@ -28,6 +28,7 @@ namespace ecs
     act = ecs::get_system_stage("act");
     before_render = ecs::get_system_stage("before_render");
     render = ecs::get_system_stage("render");
+    render_ui = ecs::get_system_stage("render_ui");
     ui = ecs::get_system_stage("ui");
     menu = ecs::get_system_stage("ui_menu");
   }
@@ -79,7 +80,7 @@ namespace ecs
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     update_range(render);
-    glFlush();
+    update_range(render_ui);
   }
   void SceneManager::update_ui()
   {

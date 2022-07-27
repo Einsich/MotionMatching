@@ -9,3 +9,6 @@ entity {
 entity {
   _template:t="player_spawning";
 }
+entity {
+  _template:t="text";
+}

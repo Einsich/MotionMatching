@@ -150,9 +150,10 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
-      "name": "ECSbenchmark"
+      "name": "Territorio",
+      "delpoy_only_project_folder": "true"
     }
   },
   "cmake.configureOnOpen": false,
