@@ -2,6 +2,7 @@
 #include "data_block.h"
 #include "serialization/reflection.h"
 #include <config/config.h>
+#include <magic_enum.hpp>
 
 template<typename T>
 std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t)
@@ -9,6 +10,15 @@ std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t
   if constexpr (std::is_constructible_v<T, const DataBlock &>)
   {
     t = T(blk);
+  }
+  if constexpr (std::is_enum_v<T>)
+  {
+    if (auto str = blk.get<std::string>("value"))
+    {
+      auto e = magic_enum::enum_cast<T>(str->c_str());
+      if (e.has_value())
+        t = e.value();
+    }
   }
 }
 template<typename T>
