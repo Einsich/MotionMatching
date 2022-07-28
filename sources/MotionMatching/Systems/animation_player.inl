@@ -25,7 +25,7 @@ SYSTEM(stage=act) animation_player_update(
   animationPlayer.tree.calculate_bone_transforms();
 }
 
-EVENT(scene=game, editor) init_animation_character(
+EVENT() init_animation_character(
   const ecs::OnEntityCreated &,
   AnimationPlayer &animationPlayer)
 {
@@ -47,7 +47,7 @@ EVENT(scene=game, editor) init_animation_character(
   tree.calculate_bone_transforms();
 }
 
-SYSTEM(scene=game, editor; stage=act) update_bone_remap(
+SYSTEM( stage=act) update_bone_remap(
   AnimationPlayer &animationPlayer,
   const Asset<Mesh> &mesh,
   bool &bone_remaped)
@@ -65,7 +65,7 @@ SYSTEM(scene=game, editor; stage=act) update_bone_remap(
     bone_remaped = true;
   }
 }
-EVENT(scene=game) init_animation_material(
+EVENT(tags=game) init_animation_material(
   const ecs::OnEntityCreated &,
   Asset<Material> &material)
 {

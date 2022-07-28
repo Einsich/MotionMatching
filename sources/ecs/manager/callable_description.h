@@ -20,7 +20,6 @@ namespace ecs
     ecs::string name;
     ecs::vector<FunctionArgument> requireArgs, requireNotArgs;
     ecs::vector<SystemCashedArchetype> archetypes;
-    ecs::vector<ecs::string> scenes;
     ecs::vector<ecs::string> before, after;
     ecs::vector<ecs::string> tags;
     uint notSingletonArgsCount;
@@ -28,7 +27,6 @@ namespace ecs
     CallableDescription(const char *name,
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args,
-      ecs::vector<ecs::string> &&scenes={},
       ecs::vector<ecs::string> &&before={},
       ecs::vector<ecs::string> &&after={},
       ecs::vector<ecs::string> &&tags={});

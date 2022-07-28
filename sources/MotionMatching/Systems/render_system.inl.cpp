@@ -10,7 +10,7 @@ ecs::SystemDescription process_animation_descr("process_animation", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 process_animation_func, "render", {}, false);

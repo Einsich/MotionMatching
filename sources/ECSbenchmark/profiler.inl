@@ -49,7 +49,7 @@ void profiler(Profiler &profiler)
     }
   }
 }
-SYSTEM(stage=ui_menu; scene=game, editor) menu_profiler()
+SYSTEM(stage=ui_menu) menu_profiler()
 {
 
   if (ImGui::BeginMenu("Profiler"))

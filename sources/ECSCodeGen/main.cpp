@@ -27,7 +27,7 @@ struct ParserSystemDescription
   std::string stage;
   std::string tags;
   std::vector<ParserFunctionArgument> args, req_args, req_not_args;
-  std::vector<std::string> before, after, scenes;
+  std::vector<std::string> before, after;
   std::string isJob;
 };
 #define SPACE_SYM " \n\t\r\a\f\v"
@@ -202,10 +202,6 @@ void parse_definition(std::string &str, ParserSystemDescription &parserDescr, Ca
           parserDescr.stage = '\"' + args0[1] + '\"';
           if (args0.size() > 2)
             log_error("there are more than 1 stage definition");
-        } else if (key == "scene")
-        {
-          for (uint i = 1; i < args0.size(); i++)
-            parserDescr.scenes.emplace_back(std::move(args0[i]));
         } else if (key == "before")
         {
           for (uint i = 1; i < args0.size(); i++)
@@ -333,16 +329,7 @@ static void fill_arguments(std::ofstream &outFile, const ParserSystemDescription
     outFile << buffer;
   }
 }
-static void fill_scenes(std::ofstream &outFile, const ParserSystemDescription &system)
-{
-  outFile << "}, {";
-  for (uint i = 0; i < system.scenes.size(); i++)
-  {
-    snprintf(buffer, bufferSize, "\"%s\"%s", system.scenes[i].c_str(), i + 1 == (uint)system.scenes.size() ? "" : ",");
-    outFile << buffer;
-  }
-  outFile << "},\n";
-}
+
 
 void fill_array(std::ofstream &outFile, const std::vector<std::string> &args)
 {
@@ -481,7 +468,7 @@ void process_inl_file(const fs::path& path)
     sys_func.c_str(), sys_descr.c_str(), system.sys_name.c_str());
     
     fill_arguments(outFile, system);
-    fill_scenes(outFile, system);
+    write(outFile, "},\n");
     fill_array(outFile, system.before);
     write(outFile, ",\n");
     fill_array(outFile, system.after);
@@ -516,7 +503,7 @@ void process_inl_file(const fs::path& path)
     event.sys_name.c_str());
 
     fill_arguments(outFile, event, true);
-    fill_scenes(outFile, event);
+    write(outFile, "},\n");
     fill_array(outFile, event.before);
     write(outFile, ",\n");
     fill_array(outFile, event.after);

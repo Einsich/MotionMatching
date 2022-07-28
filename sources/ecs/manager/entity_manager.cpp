@@ -19,11 +19,11 @@ namespace ecs
     }
   }
 
-  void system_sort(const ecs::string &currentSceneTags, const ecs::vector<ecs::string> &applicationTags);
+  void system_sort(const ecs::vector<ecs::string> &applicationTags);
   void register_archetype(Archetype *archetype);
   void EntityManager::resolve_system_order_and_subscribes()
   {
-    system_sort(currentSceneTags, applicationTags);
+    system_sort(applicationTags);
     for (auto &archetype : archetypes)
       register_archetype(archetype.get());
   }

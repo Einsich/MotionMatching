@@ -6,7 +6,7 @@
 #include <ecs/editor_events.h>
 
 constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
-EVENT(scene=game, editor,scene=debug) init_imgui_style(const ecs::OnSceneCreated&, EditorUI &ui)
+EVENT(tags=debug) init_imgui_style(const ecs::OnSceneCreated&, EditorUI &ui)
 {
   ImGuiStyle& style = ImGui::GetStyle();
   style.IndentSpacing = 5;
@@ -15,7 +15,7 @@ EVENT(scene=game, editor,scene=debug) init_imgui_style(const ecs::OnSceneCreated
   ui.windowFlags = lockFlag;
 
 }
-SYSTEM(stage=ui;scene=game, editor,scene=debug) entity_viewer(const EditorUI &ui)
+SYSTEM(stage=ui;tags=debug) entity_viewer(const EditorUI &ui)
 {
   if(!ImGui::Begin("Entity viewer", nullptr, ui.windowFlags))
   {

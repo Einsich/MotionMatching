@@ -22,10 +22,10 @@ ecs::SystemDescription country_builder_descr("country_builder", {
   {ecs::get_type_description<MapEditor>("editor"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-country_builder_func, "ui", {}, false);
+country_builder_func, "ui", {"editor"}, false);
 
 void country_builder_func()
 {
@@ -43,10 +43,10 @@ ecs::EventDescription trace_province_descr(
   {ecs::get_type_description<HeightMap>("heightMap"), false},
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-trace_province_handler, trace_province_singl_handler, {});
+trace_province_handler, trace_province_singl_handler, {"editor"});
 
 void trace_province_handler(const ecs::Event &event)
 {
@@ -67,7 +67,7 @@ ecs::EventDescription selecte_descr(
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
   {ecs::get_type_description<MapRenderData>("renderData"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 selecte_handler, selecte_singl_handler, {});

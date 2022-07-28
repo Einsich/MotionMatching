@@ -6,7 +6,7 @@ void menu_profiler_func();
 
 ecs::SystemDescription menu_profiler_descr("menu_profiler", {
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 menu_profiler_func, "ui_menu", {}, false);

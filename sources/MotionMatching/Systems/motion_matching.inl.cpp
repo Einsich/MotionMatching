@@ -16,7 +16,7 @@ ecs::SystemDescription motion_matching_update_descr("motion_matching_update", {
   {ecs::get_type_description<MMProfiler>("profiler"), false},
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {},
+},
 {"animation_player_update"},
 {},
 motion_matching_update_func, "act", {}, false);

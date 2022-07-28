@@ -15,12 +15,15 @@ namespace ecs
   {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    ecs::vector<ecs::string> applicationTags;
+    ecs::vector<ecs::string> editorTags, gameTags;
 #ifndef RELEASE
-    applicationTags.emplace_back("debug");
+    editorTags.emplace_back("debug");
+    gameTags.emplace_back("debug");
 #endif
-    editorScene = make_unique<ecs::EntityManager>(applicationTags, "editor");
-    gameScene = make_unique<ecs::EntityManager>(applicationTags, "game");
+    editorTags.emplace_back("editor");
+    gameTags.emplace_back("game");
+    editorScene = make_unique<ecs::EntityManager>(editorTags);
+    gameScene = make_unique<ecs::EntityManager>(gameTags);
   }
 
   void SceneManager::sort_systems()

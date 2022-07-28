@@ -22,7 +22,7 @@ ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<ecs::Tag>("mainHero"), false}
 }, {
-}, {},
+},
 {},
 {},
 update_camera_pos_before_render_func, "before_render", {}, false);
@@ -41,7 +41,7 @@ ecs::EventDescription change_zoom_descr(
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
-}, {},
+},
 {},
 {},
 change_zoom_handler, change_zoom_singl_handler, {});

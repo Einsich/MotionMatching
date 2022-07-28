@@ -34,10 +34,10 @@ void render_submenu_func();
 ecs::SystemDescription render_submenu_descr("render_submenu", {
   {ecs::get_type_description<EditorRenderSettings>("settings"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-render_submenu_func, "ui_menu", {}, false);
+render_submenu_func, "ui_menu", {"editor"}, false);
 
 void render_submenu_func()
 {
@@ -49,7 +49,7 @@ void set_global_render_data_func();
 ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 set_global_render_data_func, "render", {}, false);
@@ -70,7 +70,7 @@ ecs::SystemDescription lod_selector_descr("lod_selector", {
   {ecs::get_type_description<vec3>("lod_selector_axis"), true},
   {ecs::get_type_description<bool>("is_enabled"), false}
 }, {
-}, {"game","editor"},
+},
 {"frustum_culling"},
 {},
 lod_selector_func, "render", {}, true);
@@ -90,7 +90,7 @@ ecs::SystemDescription frustum_culling_descr("frustum_culling", {
   {ecs::get_type_description<bool>("is_enabled"), false},
   {ecs::get_type_description<ecs::Tag>("useFrustumCulling"), false}
 }, {
-}, {"game","editor"},
+},
 {"process_mesh_position"},
 {},
 frustum_culling_func, "render", {}, true);
@@ -111,7 +111,7 @@ ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
   {ecs::get_type_description<bool>("is_visible"), false},
   {ecs::get_type_description<bool>("is_enabled"), false}
 }, {
-}, {"game","editor"},
+},
 {"main_instanced_render"},
 {},
 process_mesh_position_func, "render", {}, false);
@@ -126,7 +126,7 @@ void render_sky_box_func();
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
   {ecs::get_type_description<SkyBox>("skyBox"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {"main_instanced_render"},
 render_sky_box_func, "render", {}, false);
@@ -142,7 +142,7 @@ ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
   {ecs::get_type_description<DebugArrow>("debugArrows"), false},
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {"render_sky_box"},
 render_debug_arrows_func, "render", {}, false);
@@ -158,7 +158,7 @@ ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
   {ecs::get_type_description<RenderQueue>("render"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 main_instanced_render_func, "render", {}, false);
@@ -173,7 +173,7 @@ void render_collision_func();
 ecs::SystemDescription render_collision_descr("render_collision", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
 }, {
-}, {"game","editor"},
+},
 {"render_sky_box"},
 {"process_mesh_position"},
 render_collision_func, "render", {}, false);
@@ -189,7 +189,7 @@ void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid
 ecs::EventDescription add_global_uniform_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_global_uniform", {
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 add_global_uniform_handler, add_global_uniform_singl_handler, {});
@@ -210,7 +210,7 @@ ecs::EventDescription mesh_loader_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "mesh_loader", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 mesh_loader_handler, mesh_loader_singl_handler, {});

@@ -8,7 +8,7 @@ ecs::SystemDescription animation_player_update_descr("animation_player_update", 
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
-}, {},
+},
 {},
 {},
 animation_player_update_func, "act", {}, false);
@@ -25,7 +25,7 @@ ecs::SystemDescription update_bone_remap_descr("update_bone_remap", {
   {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
   {ecs::get_type_description<bool>("bone_remaped"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 update_bone_remap_func, "act", {}, false);
@@ -42,7 +42,7 @@ ecs::EventDescription init_animation_character_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_character", {
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 init_animation_character_handler, init_animation_character_singl_handler, {});
@@ -63,10 +63,10 @@ ecs::EventDescription init_animation_material_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_material", {
   {ecs::get_type_description<Asset<Material>>("material"), false}
 }, {
-}, {"game"},
+},
 {},
 {},
-init_animation_material_handler, init_animation_material_singl_handler, {});
+init_animation_material_handler, init_animation_material_singl_handler, {"game"});
 
 void init_animation_material_handler(const ecs::Event &event)
 {

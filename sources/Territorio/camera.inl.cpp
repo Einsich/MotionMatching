@@ -9,7 +9,7 @@ ecs::SystemDescription camera_lerp_descr("camera_lerp", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<float>("lerpStrength"), false}
 }, {
-}, {},
+},
 {},
 {},
 camera_lerp_func, "act", {}, false);
@@ -34,7 +34,7 @@ ecs::EventDescription setup_camera_descr(
   {ecs::get_type_description<Transform2D>("targetTransform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
-}, {},
+},
 {},
 {},
 setup_camera_handler, setup_camera_singl_handler, {});
@@ -58,7 +58,7 @@ ecs::EventDescription change_zoom_descr(
   {ecs::get_type_description<vec3>("zoom"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
-}, {},
+},
 {},
 {},
 change_zoom_handler, change_zoom_singl_handler, {});
@@ -82,7 +82,7 @@ ecs::EventDescription move_camera_descr(
   {ecs::get_type_description<bool>("cameraLocked"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
-}, {},
+},
 {},
 {},
 move_camera_handler, move_camera_singl_handler, {});
@@ -104,7 +104,7 @@ ecs::EventDescription lock_unlock_camera_descr(
   {ecs::get_type_description<bool>("cameraLocked"), false},
   {ecs::get_type_description<mat3>("cameraProjection"), false}
 }, {
-}, {},
+},
 {},
 {},
 lock_unlock_camera_handler, lock_unlock_camera_singl_handler, {});

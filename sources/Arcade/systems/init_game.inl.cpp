@@ -10,7 +10,7 @@ ecs::EventDescription init_game_descr(
   {ecs::get_type_description<SpriteFactory>("sf"), false},
   {ecs::get_type_description<ScoreBoard>("sb"), false}
 }, {
-}, {},
+},
 {},
 {},
 init_game_handler, init_game_singl_handler, {});

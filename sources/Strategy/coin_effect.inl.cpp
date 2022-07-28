@@ -10,9 +10,10 @@ ecs::SystemDescription coin_move_descr("coin_move", {
   {ecs::get_type_description<vec3>("angular_velocity"), false},
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<float>("life_time"), false},
-  {ecs::get_type_description<float>("life_period"), false}
+  {ecs::get_type_description<float>("life_period"), false},
+  {ecs::get_type_description<ecs::Tag>("coinEffect"), false}
 }, {
-}, {"game","editor","ecs::Tag coinEffect"},
+},
 {},
 {},
 coin_move_func, "act", {}, false);
@@ -30,7 +31,7 @@ ecs::EventDescription spawn_coin_effect_descr(
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<HeightMap>("heightMap"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 spawn_coin_effect_handler, spawn_coin_effect_singl_handler, {});

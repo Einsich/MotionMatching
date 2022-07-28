@@ -7,10 +7,10 @@ void open_dialog_func();
 ecs::SystemDescription open_dialog_descr("open_dialog", {
   {ecs::get_type_description<EditorUI>("ui"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-open_dialog_func, "ui_menu", {}, false);
+open_dialog_func, "ui_menu", {"editor"}, false);
 
 void open_dialog_func()
 {

@@ -8,7 +8,7 @@ void scene_created_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 ecs::EventDescription scene_created_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "scene_created", {
 }, {
-}, {},
+},
 {},
 {},
 scene_created_handler, scene_created_singl_handler, {});
@@ -32,7 +32,7 @@ ecs::EventDescription spawn_buildings_descr(
   {ecs::get_type_description<float>("step_length"), false},
   {ecs::get_type_description<int>("row_count"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 spawn_buildings_handler, spawn_buildings_singl_handler, {});

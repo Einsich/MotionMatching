@@ -64,7 +64,7 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
  
 } 
 
-EVENT(scene=game, editor) spawn_buildings(const ecs::OnEntityCreated&,
+EVENT() spawn_buildings(const ecs::OnEntityCreated&,
   const ecs::vector<ecs::string> &items_templates,
   vec3 center,
   float step_length,

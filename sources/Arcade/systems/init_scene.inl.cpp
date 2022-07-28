@@ -10,7 +10,7 @@ ecs::EventDescription init_sprites_shaders_camera_descr(
   {ecs::get_type_description<WorldRenderer>("wr"), false},
   {ecs::get_type_description<SpriteFactory>("sf"), false}
 }, {
-}, {},
+},
 {},
 {},
 init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, {});
@@ -30,7 +30,7 @@ void load_scene_event_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 ecs::EventDescription load_scene_event_descr(
   ecs::get_mutable_event_handlers<LoadSceneEvent>(), "load_scene_event", {
 }, {
-}, {},
+},
 {},
 {},
 load_scene_event_handler, load_scene_event_singl_handler, {});

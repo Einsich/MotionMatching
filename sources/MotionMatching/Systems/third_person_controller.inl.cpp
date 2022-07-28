@@ -22,7 +22,7 @@ ecs::SystemDescription third_peson_controller_update_descr("third_peson_controll
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
-}, {},
+},
 {},
 {},
 third_peson_controller_update_func, "act", {}, false);
@@ -40,7 +40,7 @@ ecs::EventDescription third_controller_appear_descr(
   {ecs::get_type_description<ecs::EntityId>("attachedCamera"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
-}, {},
+},
 {},
 {},
 third_controller_appear_handler, third_controller_appear_singl_handler, {});
@@ -64,7 +64,7 @@ ecs::EventDescription mouse_move_handler_descr(
   {ecs::get_type_description<PersonController>("personController"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
-}, {},
+},
 {},
 {},
 mouse_move_handler_handler, mouse_move_handler_singl_handler, {});
@@ -85,7 +85,7 @@ ecs::EventDescription mouse_wheel_handler_descr(
   ecs::get_mutable_event_handlers<MouseWheelEvent>(), "mouse_wheel_handler", {
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
-}, {},
+},
 {},
 {},
 mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, {});
@@ -107,7 +107,7 @@ ecs::EventDescription crouch_event_handler_descr(
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
-}, {},
+},
 {},
 {},
 crouch_event_handler_handler, crouch_event_handler_singl_handler, {});
@@ -129,7 +129,7 @@ ecs::EventDescription animation_player_handler_descr(
   {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
   {ecs::get_type_description<ThirdPersonController>("thirdPersonController"), false}
 }, {
-}, {},
+},
 {},
 {},
 animation_player_handler_handler, animation_player_handler_singl_handler, {});

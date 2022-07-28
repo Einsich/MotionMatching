@@ -35,7 +35,7 @@ ecs::SystemDescription tester_update_descr("tester_update", {
   {ecs::get_type_description<int>("testerSeed"), false},
   {ecs::get_type_description<AnimationTester>("animationTester"), false}
 }, {
-}, {},
+},
 {},
 {},
 tester_update_func, "act", {}, false);
@@ -52,10 +52,10 @@ ecs::SystemDescription test_count_descr("test_count", {
   {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
-}, {"game"},
+},
 {},
 {},
-test_count_func, "act", {}, false);
+test_count_func, "act", {"game"}, false);
 
 void test_count_func()
 {
@@ -73,7 +73,7 @@ ecs::EventDescription start_test_descr(
   {ecs::get_type_description<int>("testerSeed"), false},
   {ecs::get_type_description<Settings>("settings"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 start_test_handler, start_test_singl_handler, {});

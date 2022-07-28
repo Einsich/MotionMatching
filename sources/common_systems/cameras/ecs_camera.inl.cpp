@@ -67,7 +67,7 @@ ecs::SystemDescription set_main_camera_descr("set_main_camera", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<Camera>("camera"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 set_main_camera_func, "act", {}, false);
@@ -85,7 +85,7 @@ ecs::SystemDescription arcball_camera_update_descr("arcball_camera_update", {
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<ecs::EntityId>("arcballCameraTarget"), false}
 }, {
-}, {},
+},
 {},
 {},
 arcball_camera_update_func, "act", {}, false);
@@ -102,7 +102,7 @@ ecs::SystemDescription freecamera_update_descr("freecamera_update", {
   {ecs::get_type_description<bool>("isMainCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
-}, {"editor","game"},
+},
 {},
 {},
 freecamera_update_func, "act", {}, false);
@@ -117,10 +117,10 @@ void update_main_camera_game_transformations_func();
 ecs::SystemDescription update_main_camera_game_transformations_descr("update_main_camera_game_transformations", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {"game"},
+},
 {},
 {},
-update_main_camera_game_transformations_func, "before_render", {}, false);
+update_main_camera_game_transformations_func, "before_render", {"game"}, false);
 
 void update_main_camera_game_transformations_func()
 {
@@ -133,10 +133,10 @@ ecs::SystemDescription update_main_camera_editor_transformations_descr("update_m
   {ecs::get_type_description<MainCamera>("mainCamera"), false},
   {ecs::get_type_description<EditorCamera>("editorCamera"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-update_main_camera_editor_transformations_func, "before_render", {}, false);
+update_main_camera_editor_transformations_func, "before_render", {"editor"}, false);
 
 void update_main_camera_editor_transformations_func()
 {
@@ -150,10 +150,10 @@ ecs::EventDescription find_main_camera_game_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "find_main_camera_game", {
   {ecs::get_type_description<MainCamera>("mainCamera"), false}
 }, {
-}, {"game"},
+},
 {},
 {},
-find_main_camera_game_handler, find_main_camera_game_singl_handler, {});
+find_main_camera_game_handler, find_main_camera_game_singl_handler, {"game"});
 
 void find_main_camera_game_handler(const ecs::Event &event)
 {
@@ -171,10 +171,10 @@ ecs::EventDescription find_main_camera_editor_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "find_main_camera_editor", {
   {ecs::get_type_description<EditorCamera>("editorCameraManager"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-find_main_camera_editor_handler, find_main_camera_editor_singl_handler, {});
+find_main_camera_editor_handler, find_main_camera_editor_singl_handler, {"editor"});
 
 void find_main_camera_editor_handler(const ecs::Event &event)
 {
@@ -193,7 +193,7 @@ ecs::EventDescription arcball_created_descr(
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
-}, {},
+},
 {},
 {},
 arcball_created_handler, arcball_created_singl_handler, {});
@@ -215,7 +215,7 @@ ecs::EventDescription arccam_mouse_move_handler_descr(
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {},
+},
 {},
 {},
 arccam_mouse_move_handler_handler, arccam_mouse_move_handler_singl_handler, {});
@@ -237,7 +237,7 @@ ecs::EventDescription arccam_mouse_click_handler_descr(
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {},
+},
 {},
 {},
 arccam_mouse_click_handler_handler, arccam_mouse_click_handler_singl_handler, {});
@@ -259,7 +259,7 @@ ecs::EventDescription arccam_mouse_wheel_handler_descr(
   {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {},
+},
 {},
 {},
 arccam_mouse_wheel_handler_handler, arccam_mouse_wheel_handler_singl_handler, {});
@@ -281,7 +281,7 @@ ecs::EventDescription freecam_created_descr(
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<Transform>("transform"), false}
 }, {
-}, {"editor","game"},
+},
 {},
 {},
 freecam_created_handler, freecam_created_singl_handler, {});
@@ -304,7 +304,7 @@ ecs::EventDescription freecam_mouse_move_handler_descr(
   {ecs::get_type_description<Transform>("transform"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {"editor","game"},
+},
 {},
 {},
 freecam_mouse_move_handler_handler, freecam_mouse_move_handler_singl_handler, {});
@@ -326,7 +326,7 @@ ecs::EventDescription freecam_mouse_click_handler_descr(
   {ecs::get_type_description<FreeCamera>("freeCamera"), false},
   {ecs::get_type_description<bool>("isMainCamera"), false}
 }, {
-}, {"editor","game"},
+},
 {},
 {},
 freecam_mouse_click_handler_handler, freecam_mouse_click_handler_singl_handler, {});

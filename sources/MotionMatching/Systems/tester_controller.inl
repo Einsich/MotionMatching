@@ -58,7 +58,7 @@ SYSTEM(stage=act) tester_update(
   });
 }
 
-EVENT(scene=game, editor) start_test(
+EVENT() start_test(
   const ecs::OnEntityCreated &,
   AnimationTester &animationTester,
   Transform &transform,
@@ -83,7 +83,7 @@ EVENT(scene=game, editor) start_test(
   });
 }
 
-SYSTEM(stage=act;scene=game) test_count(
+SYSTEM(stage=act;tags=game) test_count(
   ecs::vector<ecs::EntityId> &testers,
   ecs::vector<AnimationTest> &tests,
   Settings &settings)

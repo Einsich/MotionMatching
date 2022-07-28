@@ -24,7 +24,7 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<mat3>("cameraProjection"), false},
   {ecs::get_type_description<Transform2D>("transform"), false}
 }, {
-}, {},
+},
 {},
 {},
 render_scene_func, "render", {}, false);

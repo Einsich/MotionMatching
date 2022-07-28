@@ -102,7 +102,7 @@ ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
   {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
   {ecs::get_type_description<uint>("forces"), false}
 }, {
-}, {},
+},
 {},
 {},
 update_bot_invasions_func, "act", {}, false);
@@ -125,7 +125,7 @@ ecs::SystemDescription map_update_descr("map_update", {
   {ecs::get_type_description<bool>("needUpdateBorder"), false},
   {ecs::get_type_description<bool>("gameStarted"), false}
 }, {
-}, {},
+},
 {},
 {},
 map_update_func, "act", {}, false);
@@ -141,7 +141,7 @@ ecs::SystemDescription border_update_descr("border_update", {
   {ecs::get_type_description<MapArrays>("map_arrays"), false},
   {ecs::get_type_description<bool>("needUpdateBorder"), false}
 }, {
-}, {},
+},
 {},
 {},
 border_update_func, "act", {}, false);
@@ -161,7 +161,7 @@ ecs::EventDescription game_started_descr(
   {ecs::get_type_description<int>("landCount"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
 }, {
-}, {},
+},
 {},
 {},
 game_started_handler, game_started_singl_handler, {});

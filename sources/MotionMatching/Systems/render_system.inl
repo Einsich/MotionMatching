@@ -7,7 +7,7 @@
 #include <render/global_uniform.h>
 #include "Animation/settings.h"
   
-SYSTEM(stage=render;scene=game, editor) process_animation(
+SYSTEM(stage=render;) process_animation(
   const Asset<Mesh> &mesh,
   const AnimationPlayer &animationPlayer,
   Transform &transform,

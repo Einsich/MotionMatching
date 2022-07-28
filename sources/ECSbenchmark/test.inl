@@ -21,7 +21,7 @@ struct TestClass
 static vector<TestClass> list0;
 static vector<TestClass*> list1;
 
-EVENT(scene=game, editor) init(const ecs::OnSceneCreated &)
+EVENT() init(const ecs::OnSceneCreated &)
 {
 /*   DataBlock blk;
 
@@ -92,12 +92,12 @@ static void process(float dt, vec3 &pos, vec3 &vel, const vec3 &center, float m)
   vel += a * dt;
   pos += vel * dt;
 }
-SYSTEM(stage=act;scene=game, editor) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
+SYSTEM(stage=act;) ecs_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
 {
   process(Time::delta_time(), pos, vel, center, m);
 }
 
-SYSTEM(stage=act;scene=game, editor) vector_structs_update()
+SYSTEM(stage=act;) vector_structs_update()
 {
   for (auto &entity : list0)
   {
@@ -105,7 +105,7 @@ SYSTEM(stage=act;scene=game, editor) vector_structs_update()
   }
 }
 
-SYSTEM(stage=act;scene=game, editor) vector_pointers_update()
+SYSTEM(stage=act;) vector_pointers_update()
 {
   for (auto entityPrt : list1)
   {
@@ -120,7 +120,7 @@ SYSTEM(stage=act;scene=game, editor) vector_pointers_update()
 das::shared_ptr<DasFile> file;
 das::SimFunction *das_process_function;
 
-EVENT(scene=game, editor) init_das(const ecs::OnSceneCreated &)
+EVENT() init_das(const ecs::OnSceneCreated &)
 {
   das::daScriptEnvironment::ensure();
   das::daScriptEnvironment::bound->das_def_tab_size = 2;
@@ -176,7 +176,7 @@ EVENT(scene=game, editor) init_das(const ecs::OnSceneCreated &)
   }
 }
 
-EVENT(scene=game, editor) term_das(const ecs::OnSceneDestroy &)
+EVENT() term_das(const ecs::OnSceneDestroy &)
 {
   clear_das_files();
   file.reset();
@@ -185,7 +185,7 @@ EVENT(scene=game, editor) term_das(const ecs::OnSceneDestroy &)
 }
 
 
-SYSTEM(stage=act;scene=game, editor) das_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
+SYSTEM(stage=act;) das_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
 {
   vec4f args[5] = {
     das::cast<float>::from(Time::delta_time()),

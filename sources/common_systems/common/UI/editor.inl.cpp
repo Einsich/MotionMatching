@@ -7,10 +7,10 @@ void resources_menu_func();
 ecs::SystemDescription resources_menu_descr("resources_menu", {
   {ecs::get_type_description<SelectedAsset>("selectedAsset"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-resources_menu_func, "ui_menu", {}, false);
+resources_menu_func, "ui_menu", {"editor"}, false);
 
 void resources_menu_func()
 {
@@ -24,10 +24,10 @@ ecs::SystemDescription asset_viewer_descr("asset_viewer", {
   {ecs::get_type_description<EditorUI>("ui"), false},
   {ecs::get_type_description<EditorWidgets>("widgets"), false}
 }, {
-}, {"editor"},
+},
 {},
 {},
-asset_viewer_func, "ui", {}, false);
+asset_viewer_func, "ui", {"editor"}, false);
 
 void asset_viewer_func()
 {

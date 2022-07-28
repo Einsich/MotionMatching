@@ -7,11 +7,11 @@
 #include <render/global_uniform.h>
 #include "map_render_data.h"
 
-EVENT(scene=game, editor) add_map_uniform(const ecs::OnSceneCreated &)
+EVENT() add_map_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<MapRenderData>("mapData", 1);
 }
-SYSTEM(stage=render;scene=game, editor)
+SYSTEM(stage=render;)
 set_map_render_data(const MapRenderData &data)
 {
   get_buffer("mapData").update_buffer_and_flush<MapRenderData>(data); 
@@ -159,7 +159,7 @@ static void spawn_tress(
 template<typename Callable>
 static void query_water(Callable);
 
-EVENT(scene=game, editor) create_terrain(const ecs::OnSceneCreated&,
+EVENT() create_terrain(const ecs::OnSceneCreated&,
   const Asset<Texture2D> &heights_texture,
   const Asset<Texture2D> &normal_texture,
   const Asset<Texture2DArray> &terrain_diffuse_array,

@@ -10,7 +10,7 @@ ecs::SystemDescription recorder_ui_descr("recorder_ui", {
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
 }, {
-}, {},
+},
 {},
 {},
 recorder_ui_func, "ui", {}, false);
@@ -30,7 +30,7 @@ ecs::EventDescription listener_keybord_descr(
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
 }, {
-}, {},
+},
 {},
 {},
 listener_keybord_handler, listener_keybord_singl_handler, {});
@@ -54,7 +54,7 @@ ecs::EventDescription listener_mousemove_descr(
   {ecs::get_type_description<int>("recordedState"), false},
   {ecs::get_type_description<float>("recorderStartTime"), false}
 }, {
-}, {},
+},
 {},
 {},
 listener_mousemove_handler, listener_mousemove_singl_handler, {});

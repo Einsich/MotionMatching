@@ -25,7 +25,7 @@ ecs::EventDescription change_terrain_mode_descr(
   {ecs::get_type_description<Asset<Material>>("political_material"), false},
   {ecs::get_type_description<Asset<Material>>("physycal_material"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 change_terrain_mode_handler, change_terrain_mode_singl_handler, {});
@@ -52,7 +52,7 @@ ecs::EventDescription create_provinces_descr(
   {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
   {ecs::get_type_description<MapRenderData>("data"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 create_provinces_handler, create_provinces_singl_handler, {});

@@ -11,10 +11,10 @@ ecs::EventDescription init_anim_settings_descr(
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {
-}, {"game"},
+},
 {},
 {},
-init_anim_settings_handler, init_anim_settings_singl_handler, {});
+init_anim_settings_handler, init_anim_settings_singl_handler, {"game"});
 
 void init_anim_settings_handler(const ecs::Event &event)
 {
@@ -34,7 +34,7 @@ ecs::EventDescription scene_destroy_descr(
   {ecs::get_type_description<Settings>("settings"), false},
   {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
 }, {
-}, {},
+},
 {},
 {},
 scene_destroy_handler, scene_destroy_singl_handler, {});

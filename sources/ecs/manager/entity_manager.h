@@ -18,16 +18,15 @@ namespace ecs
   struct EntityManager
   {
     ecs::vector<ecs::string> applicationTags;
-    ecs::string currentSceneTags;
     ecs::vector<std::unique_ptr<Archetype>> archetypes;
     EntityPull entityPull;
     std::queue<std::function<void()>> events;
     std::queue<EntityId> toDestroy;
-    EntityManager(ecs::vector<ecs::string> &&applicationTags, ecs::string &&currentSceneTags):
-    applicationTags(std::move(applicationTags)), currentSceneTags(std::move(currentSceneTags))
+    EntityManager(ecs::vector<ecs::string> &&applicationTags):
+    applicationTags(std::move(applicationTags))
     {}
-    EntityManager(const ecs::vector<ecs::string> &applicationTags, const ecs::string &currentSceneTags):
-    applicationTags(applicationTags), currentSceneTags(currentSceneTags)
+    EntityManager(const ecs::vector<ecs::string> &applicationTags):
+    applicationTags(applicationTags)
     {}
     void process_events();
     void destroy_all_entities();

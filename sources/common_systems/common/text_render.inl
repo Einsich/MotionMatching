@@ -188,7 +188,7 @@ EVENT() text_appear(const ecs::OnEntityCreated&,
 template<typename Callable> 
 void gather_text(Callable);
 
-SYSTEM(stage=render_ui; scene=game, editor) text_render(const EditorRenderSettings &editorSettings, const TextRender &textRender)
+SYSTEM(stage=render_ui) text_render(const EditorRenderSettings &editorSettings, const TextRender &textRender)
 {
   if (textRender.invalid)
     return;

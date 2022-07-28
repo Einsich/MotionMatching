@@ -11,7 +11,7 @@ Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale);
 template<typename Callable>
 static void toggle_map_mode(Callable);
 
-EVENT(scene=game, editor) change_terrain_mode(
+EVENT() change_terrain_mode(
   const KeyDownEvent<SDLK_m> &,
   Asset<Material> &material,
   const Asset<Material> &political_material,
@@ -30,7 +30,7 @@ EVENT(scene=game, editor) change_terrain_mode(
   });
 }
 
-EVENT(scene=game, editor) create_provinces(const ecs::OnSceneCreated&,
+EVENT() create_provinces(const ecs::OnSceneCreated&,
   Asset<Material> &political_material,
   Asset<Texture2D> &provinces_texture,
   const ecs::string &provinces_texture_name,

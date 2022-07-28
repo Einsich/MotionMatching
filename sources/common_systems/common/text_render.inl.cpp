@@ -25,7 +25,7 @@ ecs::SystemDescription text_render_descr("text_render", {
   {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
   {ecs::get_type_description<TextRender>("textRender"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 text_render_func, "render_ui", {}, false);
@@ -46,7 +46,7 @@ ecs::EventDescription text_changed_descr(
   {ecs::get_type_description<vec2>("pivot"), false},
   {ecs::get_type_description<TextRender>("textRender"), false}
 }, {
-}, {},
+},
 {},
 {},
 text_changed_handler, text_changed_singl_handler, {});
@@ -71,7 +71,7 @@ ecs::EventDescription text_appear_descr(
   {ecs::get_type_description<vec2>("pivot"), false},
   {ecs::get_type_description<TextRender>("textRender"), false}
 }, {
-}, {},
+},
 {},
 {},
 text_appear_handler, text_appear_singl_handler, {});

@@ -35,7 +35,7 @@ void prune_cache()
     cache0 += i;
 }
 
-EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
+EVENT() dag_init(const ecs::OnSceneCreated &)
 {
 
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
@@ -137,7 +137,7 @@ EVENT(scene=game, editor) dag_init(const ecs::OnSceneCreated &)
   t3.join();
   t4.join();
 }
-SYSTEM(stage=act;scene=game, editor) cache_trach(mat4 &data0, mat4 &data1, mat4 &data2, mat4 &data3)
+SYSTEM(stage=act;) cache_trach(mat4 &data0, mat4 &data1, mat4 &data2, mat4 &data3)
 {
   data0 = data1;
   data1 = data2;
@@ -149,7 +149,7 @@ static void process(float dt, vec3 &pos, const vec3 &vel)
   pos += vel * dt;
 }
 
-SYSTEM(stage=act;scene=game, editor) dag_soa_update()
+SYSTEM(stage=act;) dag_soa_update()
 {
   vec3 *__restrict pos = pData.data();
   const vec3 *__restrict vel = vData.data();
@@ -159,21 +159,21 @@ SYSTEM(stage=act;scene=game, editor) dag_soa_update()
   }
 }
 
-SYSTEM(stage=act;scene=game, editor) prune_cache_()
+SYSTEM(stage=act;) prune_cache_()
 {
   prune_cache();
 }
-SYSTEM(stage=act;scene=game, editor) dag_ecs_update(vec3 &p, const vec3 &v)
+SYSTEM(stage=act;) dag_ecs_update(vec3 &p, const vec3 &v)
 {
   process(Time::delta_time(), p, v);
 }
 
-SYSTEM(stage=act;scene=game, editor) prune_cache0()
+SYSTEM(stage=act;) prune_cache0()
 {
   prune_cache();
 }
 
-SYSTEM(stage=act;scene=game, editor) dag_vector_structs_update()
+SYSTEM(stage=act;) dag_vector_structs_update()
 {
   for (DagorTestEntity &entity : list0)
   {
@@ -181,12 +181,12 @@ SYSTEM(stage=act;scene=game, editor) dag_vector_structs_update()
   }
 }
 
-SYSTEM(stage=act;scene=game, editor) prune_cache1()
+SYSTEM(stage=act;) prune_cache1()
 {
   prune_cache();
 }
 
-SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_update()
+SYSTEM(stage=act;) dag_vector_pointers_update()
 {
   for (auto &entity : list1)
   {
@@ -194,12 +194,12 @@ SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_update()
   }
 }
 
-SYSTEM(stage=act;scene=game, editor) prune_cache2()
+SYSTEM(stage=act;) prune_cache2()
 {
   prune_cache();
 }
 
-SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_virtual_update()
+SYSTEM(stage=act;) dag_vector_pointers_virtual_update()
 {
   for (auto &entity : list2)
   {
@@ -207,7 +207,7 @@ SYSTEM(stage=act;scene=game, editor) dag_vector_pointers_virtual_update()
   }
 }
 
-SYSTEM(stage=act;scene=game, editor) prune_cache3()
+SYSTEM(stage=act;) prune_cache3()
 {
   prune_cache();
 }

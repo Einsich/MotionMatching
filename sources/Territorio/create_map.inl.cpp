@@ -32,7 +32,7 @@ ecs::EventDescription create_map_descr(
   {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
   {ecs::get_type_description<int>("botsCount"), false}
 }, {
-}, {},
+},
 {},
 {},
 create_map_handler, create_map_singl_handler, {});

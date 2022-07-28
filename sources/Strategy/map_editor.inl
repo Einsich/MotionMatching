@@ -20,7 +20,7 @@ struct MapEditor : ecs::Singleton
 template<typename Callable>
 static void toggle_water(Callable);
 
-SYSTEM(stage=ui; scene=editor) country_builder(
+SYSTEM(stage=ui; tags=editor) country_builder(
   MapEditor &editor,
   const PoliticalMap &politicalMap)
 {
@@ -100,7 +100,7 @@ bool get_map_hit(
   return false;
 }
 
-EVENT(scene=editor) trace_province(
+EVENT(tags=editor) trace_province(
   const MouseClickEvent &event,
   Asset<Material> &political_material,
   const MapEditor &editor,
@@ -132,7 +132,7 @@ static void selection_province(const PoliticalMap &political_map, MapRenderData 
     render_data.borders[borderId].color1.a = selection ? Time::time() : 0;
 }
 
-EVENT(scene=game, editor) selecte(
+EVENT() selecte(
   const MouseClickEvent &event,
   const MainCamera &mainCamera,
   const HeightMap &heightMap,

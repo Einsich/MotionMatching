@@ -22,7 +22,7 @@ struct SelectedAsset : ecs::Singleton
   ResourceMap *resourceType = nullptr;
   bool selectNewResourceType = false;
 };
-SYSTEM(stage=ui_menu; scene=editor) resources_menu(SelectedAsset &selectedAsset)
+SYSTEM(stage=ui_menu; tags=editor) resources_menu(SelectedAsset &selectedAsset)
 {
   if (ImGui::BeginMenu("Resources"))
   {
@@ -42,7 +42,7 @@ SYSTEM(stage=ui_menu; scene=editor) resources_menu(SelectedAsset &selectedAsset)
   }
 }
 
-SYSTEM(stage=ui; scene=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
+SYSTEM(stage=ui; tags=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

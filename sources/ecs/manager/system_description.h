@@ -18,7 +18,6 @@ namespace ecs
     SystemDescription(const char *name,
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args,
-      ecs::vector<ecs::string> &&scenes,
       ecs::vector<ecs::string> &&before,
       ecs::vector<ecs::string> &&after,
       void (*function_pointer)(),

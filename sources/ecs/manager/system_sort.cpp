@@ -80,16 +80,14 @@ namespace ecs
     return strcmp(a->stage, b->stage) < 0;
   }
 
-  void system_sort(const ecs::string &currentSceneTags, const ecs::vector<ecs::string> &applicationTags)
+  void system_sort(const ecs::vector<ecs::string> &applicationTags)
   {
     auto &systems = ecs::get_all_systems();
     systems.clear();
-    bool isEditor = currentSceneTags != "editor";
-    auto callableTest = [isEditor, &applicationTags, &currentSceneTags](const CallableDescription *callable)
+
+    auto callableTest = [&applicationTags](const CallableDescription *callable)
     {
-      return tagSatisfaction(applicationTags, callable->tags) &&
-        ((callable->scenes.empty() && isEditor) ||std::find(callable->scenes.begin(), callable->scenes.end(), currentSceneTags)
-          != callable->scenes.end());
+      return tagSatisfaction(applicationTags, callable->tags);
     };
     for (SystemDescription *callable : get_all_mutable_systems())
     {

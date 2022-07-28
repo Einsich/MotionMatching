@@ -9,7 +9,7 @@ ecs::SystemDescription start_game_button_descr("start_game_button", {
   {ecs::get_type_description<ScoreBoard>("sb"), false},
   {ecs::get_type_description<ecs::Tag>("startGameButton"), false}
 }, {
-}, {},
+},
 {},
 {},
 start_game_button_func, "ui", {}, false);
@@ -26,7 +26,7 @@ ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
   {ecs::get_type_description<int>("killsCount"), false},
   {ecs::get_type_description<ScoreBoard>("sb"), false}
 }, {
-}, {},
+},
 {},
 {},
 exit_menu_button_func, "ui", {}, false);
@@ -46,7 +46,7 @@ ecs::EventDescription setup_camera_descr(
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
-}, {},
+},
 {},
 {},
 setup_camera_handler, setup_camera_singl_handler, {});

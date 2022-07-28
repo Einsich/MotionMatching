@@ -22,7 +22,7 @@ ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>);
 ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>);
 ECS_REGISTER_TYPE(Material, Asset<Material>);
 
-EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
+EVENT() add_global_uniform(const ecs::OnSceneCreated &)
 {
   add_uniform_buffer<GlobalRenderData>("GlobalRenderData", 0);
   add_storage_buffer("InstanceData", 0, 1);
@@ -30,7 +30,7 @@ EVENT(scene=game, editor) add_global_uniform(const ecs::OnSceneCreated &)
   add_storage_buffer("StaticTransforms", 0, 3);
 }
 
-SYSTEM(stage=ui_menu; scene=editor) render_submenu(EditorRenderSettings &settings)
+SYSTEM(stage=ui_menu; tags=editor) render_submenu(EditorRenderSettings &settings)
 {
   if (ImGui::BeginMenu("Render"))
   {
@@ -43,7 +43,7 @@ SYSTEM(stage=ui_menu; scene=editor) render_submenu(EditorRenderSettings &setting
 template<typename Callable> 
 void find_light(Callable);
 
-SYSTEM(stage=render;scene=game, editor)
+SYSTEM(stage=render)
 set_global_render_data(const MainCamera &mainCamera)
 {
   DirectionLight light; 
@@ -55,12 +55,12 @@ set_global_render_data(const MainCamera &mainCamera)
     mainCamera.position, light.normalizedLightDirection, 
     light.ambient, light.lightColor, vec4(t , t * 2.f, t * 4.f, dt)});
 }
-EVENT(scene=game, editor) mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &mesh)
+EVENT() mesh_loader(const ecs::OnEntityCreated&, Asset<Mesh> &mesh)
 {
   if (mesh)
     mesh.load();
 }
-SYSTEM(stage=render; before=frustum_culling; scene=game, editor;job=true) lod_selector(
+SYSTEM(stage=render; before=frustum_culling; job=true) lod_selector(
   const MainCamera &mainCamera,
   const Transform &transform,
   const ecs::vector<Asset<Mesh>> &lods_meshes,
@@ -93,7 +93,7 @@ SYSTEM(stage=render; before=frustum_culling; scene=game, editor;job=true) lod_se
   else
     mesh = Asset<Mesh>();//culled by dist
 }
-SYSTEM(stage=render; before=process_mesh_position; scene=game, editor; require=ecs::Tag useFrustumCulling;job=true)
+SYSTEM(stage=render; before=process_mesh_position; require=ecs::Tag useFrustumCulling;job=true)
 frustum_culling(
   const MainCamera &mainCamera,
   const Transform &transform,
@@ -131,7 +131,7 @@ struct RenderQueue : ecs::Singleton
   vector<RenderStuff> queue;
 };
 
-SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_mesh_position(
+SYSTEM(stage=render;before=main_instanced_render) process_mesh_position(
   const Asset<Mesh> &mesh,
   Asset<Material> &material,
   const Transform &transform,
@@ -146,7 +146,7 @@ SYSTEM(stage=render;before=main_instanced_render; scene=game, editor) process_me
   }
 }
 
-SYSTEM(stage=render; after=main_instanced_render; scene=game, editor)
+SYSTEM(stage=render; after=main_instanced_render)
 render_sky_box(SkyBox &skyBox)
 {
 	if ((skyBox.material && skyBox.material.try_load()))
@@ -156,7 +156,7 @@ render_sky_box(SkyBox &skyBox)
   }
 }
 // after skybox
-SYSTEM(stage=render; after=render_sky_box; scene=game, editor) 
+SYSTEM(stage=render; after=render_sky_box) 
 render_debug_arrows(DebugArrow &debugArrows, EditorRenderSettings &editorSettings)
 {
   UniformBuffer &instanceData = get_buffer("InstanceData");
@@ -188,7 +188,7 @@ void set_matrices_to_buffer(const Transform &transform, const ShaderBuffer &buff
     copy_buffer_field(transform.get_bones(), data, buffer.Bones);
 }
 
-SYSTEM(stage=render; scene=game, editor)
+SYSTEM(stage=render)
 main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 {
   UniformBuffer &instanceData = get_buffer("InstanceData");
@@ -283,7 +283,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 template<typename Callable> 
 void find_collidable_entity(Callable);
 
-SYSTEM(stage=render; after=process_mesh_position; before=render_sky_box; scene=game, editor)
+SYSTEM(stage=render; after=process_mesh_position; before=render_sky_box)
 render_collision(const EditorRenderSettings &editorSettings)
 {
   if (!editorSettings.render_collision)

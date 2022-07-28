@@ -39,7 +39,7 @@ ecs::SystemDescription render_scene_descr("render_scene", {
   {ecs::get_type_description<Transform2D>("transform"), false},
   {ecs::get_type_description<WorldRenderer>("wr"), false}
 }, {
-}, {},
+},
 {},
 {},
 render_scene_func, "render", {}, false);
@@ -56,7 +56,7 @@ ecs::SystemDescription update_map_textures_descr("update_map_textures", {
   {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
   {ecs::get_type_description<MapArrays>("map_arrays"), false}
 }, {
-}, {},
+},
 {},
 {},
 update_map_textures_func, "act", {}, false);

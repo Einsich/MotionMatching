@@ -23,7 +23,7 @@ void show_statistic_func();
 ecs::SystemDescription show_statistic_descr("show_statistic", {
   {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false}
 }, {
-}, {},
+},
 {},
 {},
 show_statistic_func, "ui", {}, false);
@@ -41,7 +41,7 @@ ecs::EventDescription move_text_descr(
   {ecs::get_type_description<ivec2>("position"), false},
   {ecs::get_type_description<ecs::string>("text"), false}
 }, {
-}, {},
+},
 {},
 {},
 move_text_handler, move_text_singl_handler, {});

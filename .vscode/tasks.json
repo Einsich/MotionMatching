@@ -6,11 +6,11 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./Tools/ecs_codegen.sh",
-            "args": ["${config:launchOption.currentConfig.Project.name}"],
-            "windows": {
-                "command": "Tools/ecs_codegen.bat"
-            },
+            "command": "./Builds/rel/ECSCodeGen/ECSCodeGen.exe",
+            "args": [
+                "'${workspaceFolder}/sources/common_systems'",
+                "'${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}'",
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -22,14 +22,14 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "${workspaceFolder}/ECSCodeGen/ECSCodeGen-rel.exe",
+            "command": "./Builds/rel/ECSCodeGen/ECSCodeGen.exe",
             "args": [
-                "${workspaceFolder}/sources/common_systems",
-                "${workspaceFolder}/sources/ECSbenchmark",
-                "${workspaceFolder}/sources/MotionMatching",
-                "${workspaceFolder}/sources/Arcade",
-                "${workspaceFolder}/sources/Territorio",
-                "${workspaceFolder}/sources/Strategy",
+                "'${workspaceFolder}/sources/common_systems'",
+                "'${workspaceFolder}/sources/ECSbenchmark'",
+                "'${workspaceFolder}/sources/MotionMatching'",
+                "'${workspaceFolder}/sources/Arcade'",
+                "'${workspaceFolder}/sources/Territorio'",
+                "'${workspaceFolder}/sources/Strategy'",
             ],
             "group": {
                 "kind": "build",
@@ -46,7 +46,6 @@
             "args": [
                 "ECSCodeGen",
                 "rel",
-                "\"\"",
                 "yes"
             ],
             "windows": {
@@ -148,7 +147,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "del /S *.inl.cpp",
+            "command": "git rm -f *.inl.cpp",
             "args": [],
             "group": {
                 "kind": "build",

@@ -17,7 +17,7 @@ ECS_REGISTER_TYPE(AnimationTester, AnimationTester)
 ECS_REGISTER_TYPE(ThirdPersonController, ThirdPersonController)
 
 
-EVENT(scene=game) init_anim_settings(const ecs::OnEntityCreated &,
+EVENT(tags=game) init_anim_settings(const ecs::OnEntityCreated &,
   ecs::vector<AnimationTest> &tests,
   Settings &settings,
   SettingsContainer &settingsContainer)

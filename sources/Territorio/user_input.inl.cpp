@@ -35,7 +35,7 @@ ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
   {ecs::get_type_description<uint>("forces"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
-}, {},
+},
 {},
 {},
 change_invasion_weight_func, "ui", {}, false);
@@ -49,7 +49,7 @@ void check_mouse_over_ui_func();
 
 ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
 }, {
-}, {},
+},
 {},
 {},
 check_mouse_over_ui_func, "ui", {}, false);
@@ -66,7 +66,7 @@ ecs::EventDescription start_game_descr(
   ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_RETURN>>(), "start_game", {
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
-}, {},
+},
 {},
 {},
 start_game_handler, start_game_singl_handler, {});
@@ -88,7 +88,7 @@ ecs::EventDescription select_spawn_point_descr(
   {ecs::get_type_description<ecs::EntityId>("eid"), false},
   {ecs::get_type_description<ecs::Tag>("player_spawning"), false}
 }, {
-}, {},
+},
 {},
 {},
 select_spawn_point_handler, select_spawn_point_singl_handler, {});
@@ -115,7 +115,7 @@ ecs::EventDescription select_invasion_descr(
   {ecs::get_type_description<float>("invasion_weight"), false},
   {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
 }, {
-}, {},
+},
 {},
 {},
 select_invasion_handler, select_invasion_singl_handler, {});

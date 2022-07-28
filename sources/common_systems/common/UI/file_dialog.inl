@@ -4,7 +4,7 @@
 #include "editor_window.h"
 #include <imgui.h>
 
-SYSTEM(stage=ui_menu; scene=editor) open_dialog(EditorUI &ui)
+SYSTEM(stage=ui_menu; tags=editor) open_dialog(EditorUI &ui)
 {
   if (ImGui::BeginMenu("Editor"))
   {

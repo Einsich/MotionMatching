@@ -26,7 +26,7 @@ void set_map_render_data_func();
 ecs::SystemDescription set_map_render_data_descr("set_map_render_data", {
   {ecs::get_type_description<MapRenderData>("data"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 set_map_render_data_func, "render", {}, false);
@@ -42,7 +42,7 @@ void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 ecs::EventDescription add_map_uniform_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_map_uniform", {
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 add_map_uniform_handler, add_map_uniform_singl_handler, {});
@@ -86,7 +86,7 @@ ecs::EventDescription create_terrain_descr(
   {ecs::get_type_description<HeightMap>("heigth_map"), false},
   {ecs::get_type_description<MapRenderData>("data"), false}
 }, {
-}, {"game","editor"},
+},
 {},
 {},
 create_terrain_handler, create_terrain_singl_handler, {});
