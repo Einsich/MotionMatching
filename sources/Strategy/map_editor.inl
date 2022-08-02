@@ -120,7 +120,7 @@ EVENT(tags=editor) trace_province(
   if (get_map_hit(event.x, event.y, mainCamera, heightMap, politicalMap, worldPos, provId))
   {
     politicalMap.provincesInfo[provId].x = editedProvId;
-    political_material->set_property("material.provincesInfo[0]", politicalMap.provincesInfo);
+    political_material->set_property("provincesInfo[0]", politicalMap.provincesInfo);
   }
 }
 

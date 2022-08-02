@@ -17,7 +17,6 @@ struct ShaderBuffer
 {
   int binding;
   int size;
-  BufferField Bones;
   std::vector<BufferField> materialFields;
   vector<SamplerUniform> samplers;
 };

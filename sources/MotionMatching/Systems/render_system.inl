@@ -10,20 +10,20 @@
 SYSTEM(stage=render;) process_animation(
   const Asset<Mesh> &mesh,
   const AnimationPlayer &animationPlayer,
-  Transform &transform,
+  const Transform &transform,
+  ecs::vector<mat3x4> &bones_matrices,
   const Settings &settings)
 {
   if (mesh)
   {
-    vector<mat4> &curTransform = transform.get_bones();
     const AnimationTree &tree = animationPlayer.tree;
   
-    curTransform.resize(mesh->bonesMap.size());
+    bones_matrices.resize(mesh->bonesMap.size());
     for (uint i = 0, n = std::min(tree.nodes.size(), animationPlayer.treeBoneToMesh.size()); i < n; i++)
     {
       int idx = animationPlayer.treeBoneToMesh[i];
-      if (idx >= 0 && idx < (int)curTransform.size())
-        curTransform[idx] = tree.get_bone_transform(i);
+      if (idx >= 0 && idx < (int)bones_matrices.size())
+        bones_matrices[idx] = transpose(tree.get_bone_transform(i));
     }
   }
   if (settings.debugBones)

@@ -13,6 +13,7 @@ animated_char {
 
   mesh:Asset<Mesh> { }
   material:Asset<Material> { path:t = "resources/MotionMatching/Materials/animchar.Material"; }
+  bones_matrices:vector<mat3x4> { }
   lods_distances:vector<float> {
     lod0:f = 2;
     lod1:f = 10;

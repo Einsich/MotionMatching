@@ -91,7 +91,7 @@ vec3 apply_root_motion_to_speed(vec3 speed, vec3 root_motion)
   return root_motion * speed;
 }
 
-SYSTEM(stage=act) peson_controller_update(
+SYSTEM(stage=act; tags=game) peson_controller_update(
   AnimationPlayer &animationPlayer,
   PersonController &personController,
   AnimationTester *animationTester,

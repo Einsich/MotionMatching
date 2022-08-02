@@ -10,7 +10,7 @@ struct Material
 };
 #include vs_output
 
-#define BONES 60
+#define BONES
 #include instancing
 #include common_data
 

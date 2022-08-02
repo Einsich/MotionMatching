@@ -85,7 +85,7 @@ struct MMProfiler : ecs::Singleton
   }
 };
 
-SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
+SYSTEM(stage=act;before=animation_player_update; tags=game) motion_matching_update(
   Transform &transform,
   AnimationPlayer &animationPlayer,
   Asset<Material> &material,
@@ -117,7 +117,7 @@ SYSTEM(stage=act;before=animation_player_update) motion_matching_update(
     lodColor = lodColors[j];
     matching.lod = j;
     
-    material->set_property("material.AdditionalColor", lodColor);
+    material->set_property("AdditionalColor", lodColor);
 
 
     auto &index = matching.index;

@@ -15,7 +15,7 @@ ecs::SystemDescription peson_controller_update_descr("peson_controller_update", 
 },
 {},
 {},
-peson_controller_update_func, "act", {}, false);
+peson_controller_update_func, "act", {"game"}, false);
 
 void peson_controller_update_func()
 {

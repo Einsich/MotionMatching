@@ -1,19 +1,13 @@
-struct Instance
-{
-    Material material;
-    #if BONES
-    mat4 Bones[BONES];
-    #endif
-};
+
 
 layout(std430, binding = 1) readonly buffer InstanceData 
 {
-  Instance instances[];
+  Material instances[];
 };
 #ifdef VS
-  #define material_inst instances[gl_InstanceID].material
+  #define material_inst instances[gl_InstanceID]
 #elif PS
-  #define material_inst instances[instanceID].material
+  #define material_inst instances[instanceID]
 #endif
 
 #include transforms

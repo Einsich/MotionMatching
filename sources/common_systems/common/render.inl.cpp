@@ -29,6 +29,19 @@ void find_collidable_entity(Callable lambda)
 }
 
 
+ecs::QueryDescription find_matrices_descr("find_matrices", {
+  {ecs::get_type_description<ecs::vector<mat3x4>>("bones_matrices"), false}
+}, {
+});
+
+template<typename Callable>
+void find_matrices(ecs::EntityId eid, Callable lambda)
+{
+  ecs::perform_query<ecs::vector<mat3x4>&>
+  (find_matrices_descr, eid, lambda);
+}
+
+
 void render_submenu_func();
 
 ecs::SystemDescription render_submenu_descr("render_submenu", {

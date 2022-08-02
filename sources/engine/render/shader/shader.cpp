@@ -151,7 +151,6 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
     {
       buffer.binding = binding;
       buffer.size = size;
-      buffer.Bones = BufferField();
     }
     else
     {
@@ -172,22 +171,9 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
           program, GL_BUFFER_VARIABLE, varId[i], 
           bufSize, &strLength, name);
       char *matterPart = name + bufferNameLen;
-      char *materialPart = strstr(matterPart, "material.");
-      if (materialPart)
-      {
-        fields.emplace_back(BufferField{string(materialPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
-        typeToOffset[params[0]] += params[2];
-      }
-      else
-      {
-        if (!strcmp(matterPart, "Bones[0]"))
-          buffer.Bones = BufferField{string(matterPart), params[0], params[1], params[2], params[3], 0};
-        else
-        {
-          fields.emplace_back(BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
-          typeToOffset[params[0]] += params[2];
-        }
-      }
+      
+      fields.emplace_back(BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
+      typeToOffset[params[0]] += params[2];
       //debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
   }

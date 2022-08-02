@@ -164,15 +164,12 @@ void Material::before_save()
 
   for (const BufferField &field : shader.get_instance_data().materialFields)
   {
-    if (field.name.substr(0, 9) == "material.")
+    switch(field.type)
     {
-      switch(field.type)
-      {
-        #define TYPE(T, gl_type) case gl_type: T##savable.emplace_back(field.name, \
-          vector<T>(T##s.begin() + field.vectorOffset, T##s.begin() + field.vectorOffset + field.size)); break;
-        TYPES
-        #undef TYPE
-      }
+      #define TYPE(T, gl_type) case gl_type: T##savable.emplace_back(field.name, \
+        vector<T>(T##s.begin() + field.vectorOffset, T##s.begin() + field.vectorOffset + field.size)); break;
+      TYPES
+      #undef TYPE
     }
   }
   

@@ -28,6 +28,7 @@ EVENT() add_global_uniform(const ecs::OnSceneCreated &)
   add_storage_buffer("InstanceData", 0, 1);
   add_storage_buffer("DynamicTransforms", 0, 2);
   add_storage_buffer("StaticTransforms", 0, 3);
+  add_storage_buffer("MeshBones", 0, 4);
 }
 
 SYSTEM(stage=ui_menu; tags=editor) render_submenu(EditorRenderSettings &settings)
@@ -182,99 +183,125 @@ static bool matComparer(const RenderStuff &a, const RenderStuff &b)
 template<typename Callable> 
 void find_matrices(ecs::EntityId, Callable);
 
-void set_matrices_to_buffer(const Transform &transform, const ShaderBuffer &buffer, char *data)
+void set_matrices_to_buffer(ecs::EntityId eid, int instanceCount, int &curBoneSize, UniformBuffer &meshBones)
 {
-  if (buffer.Bones.type && !transform.get_bones().empty())
-    copy_buffer_field(transform.get_bones(), data, buffer.Bones);
+  QUERY()find_matrices(eid, [&](const ecs::vector<mat3x4> &bones_matrices)
+    {
+      if (curBoneSize > 0)
+        assert(curBoneSize == bones_matrices.size());
+      else
+      {
+        curBoneSize = bones_matrices.size() * sizeof(mat3x4);
+        int *bonesCount = (int*)meshBones.get_buffer(0, sizeof(int));
+        *bonesCount = bones_matrices.size();
+      }
+      if (!bones_matrices.empty())
+      {
+        char *bones = meshBones.get_buffer(16 + instanceCount * curBoneSize, curBoneSize);
+        memcpy(bones, bones_matrices.data(), curBoneSize);
+      }
+    });   
 }
 
 SYSTEM(stage=render)
 main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
 {
+  if (render.queue.empty())
+    return;
+
   UniformBuffer &instanceData = get_buffer("InstanceData");
+  UniformBuffer &meshBones = get_buffer("MeshBones");
+  int curBoneSize = 0;
   bool wire_frame = editorSettings.wire_frame; 
 
   std::sort(render.queue.begin(), render.queue.end(), matComparer);
 
-  if (!render.queue.empty())
+  
+  //debug_log("start");
   {
-    //debug_log("start");
+    ProfilerLabel transforms_copy("transforms copy");
+    UniformBuffer &dynamicTransforms = get_buffer("DynamicTransforms");
+    const uint instanceSize = sizeof(mat3x4);
+    const uint n = render.queue.size();
+    dynamicTransforms.bind();
+    mat3x4 *buffer = (mat3x4*)dynamicTransforms.get_buffer(0, n * instanceSize);
+    for (uint i = 0; i < n; i++)
     {
-      ProfilerLabel transforms_copy("transforms copy");
-      UniformBuffer &dynamicTransforms = get_buffer("DynamicTransforms");
-      const uint instanceSize = sizeof(mat3x4);
-      const uint n = render.queue.size();
-      dynamicTransforms.bind();
-      mat3x4 *buffer = (mat3x4*)dynamicTransforms.get_buffer(0, n * instanceSize);
-      for (uint i = 0; i < n; i++)
-      {
-        const mat3x4 &tm = render.queue[i].transform->get_3x4transform();
-        memcpy(buffer + i, &tm, instanceSize);
-      }
-      dynamicTransforms.flush_buffer(n * instanceSize);
+      const mat3x4 &tm = render.queue[i].transform->get_3x4transform();
+      memcpy(buffer + i, &tm, instanceSize);
     }
-    uint instanceCount = 0, matrixOffset = 0;
-    uint sp = 0;
-    bool startTransparentPass = false;
-    bool zTestEnabled = true;
-    instanceData.bind();
-    //debug_log("start");
-    for (uint i = 0, n = render.queue.size(); i < n; i++)
+    dynamicTransforms.flush_buffer(n * instanceSize);
+  }
+  uint instanceCount = 0, matrixOffset = 0;
+  uint sp = 0;
+  bool startTransparentPass = false;
+  bool zTestEnabled = true;
+  //debug_log("start");
+  for (uint i = 0, n = render.queue.size(); i < n; i++)
+  {
+    const RenderStuff &stuff = render.queue[i];
+    const Material &material = *render.queue[i].material;
+    const Shader &shader = material.get_shader();
+    uint instanceSize = material.buffer_size();
+    char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
+    material.set_data_to_buf(buffer);
+    set_matrices_to_buffer(stuff.eid, instanceCount, curBoneSize, meshBones);
+
+    instanceCount++;
+    bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
+    if (needRender)
     {
-      const RenderStuff &stuff = render.queue[i];
-      const Material &material = *render.queue[i].material;
-      const Shader &shader = material.get_shader();
-      uint instanceSize = material.buffer_size();
-      char *buffer = instanceData.get_buffer(instanceCount * instanceSize, instanceSize);
-      material.set_data_to_buf(buffer);
-      set_matrices_to_buffer(*stuff.transform, shader.get_instance_data(), buffer);
-      instanceCount++;
-      bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
-      if (needRender)
+      ProfilerLabelGPU label(stuff.label);
+      if (shader.get_shader_program() != sp)//need use new shader
       {
-        ProfilerLabelGPU label(stuff.label);
-        if (shader.get_shader_program() != sp)//need use new shader
+        shader.use();
+        sp = shader.get_shader_program();
+        if (startTransparentPass != material.is_transparent())
         {
-          shader.use();
-          sp = shader.get_shader_program();
-          if (startTransparentPass != material.is_transparent())
+          startTransparentPass = !startTransparentPass;
+          if (startTransparentPass)
           {
-            startTransparentPass = !startTransparentPass;
-            if (startTransparentPass)
-            {
-              glEnable(GL_BLEND);
-              glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
-            else
-            {
-              glDisable(GL_BLEND);
-            }
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
           }
-          if (zTestEnabled != material.need_z_test())
+          else
           {
-            zTestEnabled = !zTestEnabled;
-            if (zTestEnabled)
-              glEnable(GL_DEPTH_TEST);
-            else
-              glDisable(GL_DEPTH_TEST);
+            glDisable(GL_BLEND);
           }
         }
-        shader.set_int("dynamicTransformsOffset", matrixOffset);
-        material.bind_textures_to_shader();
-        instanceData.flush_buffer(instanceCount * instanceSize);
-        stuff.mesh->render_instances(instanceCount, wire_frame);
-        //debug_log("draw instance = %d, instance size = %d, %s",
-        //    instanceCount, instanceSize, material.get_shader().get_name().c_str());
-        matrixOffset += instanceCount;
-        instanceCount = 0;
+        if (zTestEnabled != material.need_z_test())
+        {
+          zTestEnabled = !zTestEnabled;
+          if (zTestEnabled)
+            glEnable(GL_DEPTH_TEST);
+          else
+            glDisable(GL_DEPTH_TEST);
+        }
       }
-    }
-    if (startTransparentPass)
-    {
-      glDisable(GL_BLEND);
-      glEnable(GL_DEPTH_TEST);
+      shader.set_int("dynamicTransformsOffset", matrixOffset);
+      material.bind_textures_to_shader();
+      instanceData.bind();
+      instanceData.flush_buffer(instanceCount * instanceSize);
+      
+      if (curBoneSize > 0)
+      {
+        meshBones.bind();
+        meshBones.flush_buffer(16 + instanceCount * curBoneSize);
+      }
+      stuff.mesh->render_instances(instanceCount, wire_frame);
+      //debug_log("draw instance = %d, instance size = %d, %s",
+      //    instanceCount, instanceSize, material.get_shader().get_name().c_str());
+      matrixOffset += instanceCount;
+      instanceCount = 0;
+      curBoneSize = 0;
     }
   }
+  if (startTransparentPass)
+  {
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+  }
+
   render.queue.clear();
 }
 

@@ -233,8 +233,8 @@ EVENT() create_terrain(const ecs::OnSceneCreated&,
     mat.set_texture("terrainDiffuseArray", terrain_diffuse_array);
     mat.set_texture("terrainNormalArray", terrain_normal_array);
     mat.set_texture("terrainColormapArray", terrain_colormap_array);
-    mat.set_property("material.mapSize", ivec2(w, h));
-    mat.set_property("material.texelSize", vec2(1.f / w, 1.f / h));
+    mat.set_property("mapSize", ivec2(w, h));
+    mat.set_property("texelSize", vec2(1.f / w, 1.f / h));
     mat.before_save();
   };
   political_material.try_load();
@@ -261,7 +261,7 @@ EVENT() create_terrain(const ecs::OnSceneCreated&,
     material->set_texture("waterColor", water_color_texture);
     material->set_texture("waterFoam", water_foam_texture);
     material->set_texture("skyReflection", sky_reflection);
-    material->set_property("material.waterLevel", waterLevel);
+    material->set_property("waterLevel", waterLevel);
     material->before_save();
   });
 }
