@@ -3,10 +3,10 @@
 //Code-generator production
 
 ecs::QueryDescription gather_lands_descr("gather_lands", {
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<int>("landCount"), false},
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {-1u, ecs::get_name_hash("isPlayableLand"), false}
 }, {
 });
 
@@ -21,7 +21,7 @@ void gather_lands(Callable lambda)
 void show_statistic_func();
 
 ecs::SystemDescription show_statistic_descr("show_statistic", {
-  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false}
+  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false}
 }, {
 },
 {},
@@ -38,8 +38,8 @@ void move_text_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription move_text_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "move_text", {
-  {ecs::get_type_description<ivec2>("position"), false},
-  {ecs::get_type_description<ecs::string>("text"), false}
+  {ecs::get_type_hash<ivec2>(), ecs::get_name_hash("position"), false},
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("text"), false}
 }, {
 },
 {},

@@ -5,10 +5,10 @@
 void cache_trach_func();
 
 ecs::SystemDescription cache_trach_descr("cache_trach", {
-  {ecs::get_type_description<mat4>("data0"), false},
-  {ecs::get_type_description<mat4>("data1"), false},
-  {ecs::get_type_description<mat4>("data2"), false},
-  {ecs::get_type_description<mat4>("data3"), false}
+  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data0"), false},
+  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data1"), false},
+  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data2"), false},
+  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data3"), false}
 }, {
 },
 {},
@@ -51,8 +51,8 @@ void prune_cache__func()
 void dag_ecs_update_func();
 
 ecs::SystemDescription dag_ecs_update_descr("dag_ecs_update", {
-  {ecs::get_type_description<vec3>("p"), false},
-  {ecs::get_type_description<vec3>("v"), false}
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("p"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("v"), false}
 }, {
 },
 {},

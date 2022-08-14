@@ -3,11 +3,11 @@
 //Code-generator production
 
 ecs::QueryDescription gather_text_descr("gather_text", {
-  {ecs::get_type_description<ecs::string>("text"), false},
-  {ecs::get_type_description<ecs::vector<vec4>>("glyph_buffer"), false},
-  {ecs::get_type_description<ivec2>("position"), false},
-  {ecs::get_type_description<float>("scale"), false},
-  {ecs::get_type_description<vec4>("color"), false}
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("text"), false},
+  {ecs::get_type_hash<ecs::vector<vec4>>(), ecs::get_name_hash("glyph_buffer"), false},
+  {ecs::get_type_hash<ivec2>(), ecs::get_name_hash("position"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("scale"), false},
+  {ecs::get_type_hash<vec4>(), ecs::get_name_hash("color"), false}
 }, {
 });
 
@@ -22,8 +22,8 @@ void gather_text(Callable lambda)
 void text_render_func();
 
 ecs::SystemDescription text_render_descr("text_render", {
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
-  {ecs::get_type_description<TextRender>("textRender"), false}
+  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false},
+  {ecs::get_type_hash<TextRender>(), ecs::get_name_hash("textRender"), false}
 }, {
 },
 {},
@@ -40,11 +40,11 @@ void text_changed_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription text_changed_descr(
   ecs::get_mutable_event_handlers<OnEntityEdited>(), "text_changed", {
-  {ecs::get_type_description<ecs::vector<vec4>>("glyph_buffer"), false},
-  {ecs::get_type_description<ecs::string>("text"), false},
-  {ecs::get_type_description<TextAlignment>("aligment"), false},
-  {ecs::get_type_description<vec2>("pivot"), false},
-  {ecs::get_type_description<TextRender>("textRender"), false}
+  {ecs::get_type_hash<ecs::vector<vec4>>(), ecs::get_name_hash("glyph_buffer"), false},
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("text"), false},
+  {ecs::get_type_hash<TextAlignment>(), ecs::get_name_hash("aligment"), false},
+  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("pivot"), false},
+  {ecs::get_type_hash<TextRender>(), ecs::get_name_hash("textRender"), false}
 }, {
 },
 {},
@@ -65,11 +65,11 @@ void text_appear_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription text_appear_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "text_appear", {
-  {ecs::get_type_description<ecs::vector<vec4>>("glyph_buffer"), false},
-  {ecs::get_type_description<ecs::string>("text"), false},
-  {ecs::get_type_description<TextAlignment>("aligment"), false},
-  {ecs::get_type_description<vec2>("pivot"), false},
-  {ecs::get_type_description<TextRender>("textRender"), false}
+  {ecs::get_type_hash<ecs::vector<vec4>>(), ecs::get_name_hash("glyph_buffer"), false},
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("text"), false},
+  {ecs::get_type_hash<TextAlignment>(), ecs::get_name_hash("aligment"), false},
+  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("pivot"), false},
+  {ecs::get_type_hash<TextRender>(), ecs::get_name_hash("textRender"), false}
 }, {
 },
 {},

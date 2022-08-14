@@ -5,11 +5,11 @@
 void process_animation_func();
 
 ecs::SystemDescription process_animation_descr("process_animation", {
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<ecs::vector<mat3x4>>("bones_matrices"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
+  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<ecs::vector<mat3x4>>(), ecs::get_name_hash("bones_matrices"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},

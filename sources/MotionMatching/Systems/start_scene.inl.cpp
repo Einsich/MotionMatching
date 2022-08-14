@@ -7,9 +7,9 @@ void init_anim_settings_singl_handler(const ecs::Event &event, ecs::EntityId eid
 
 ecs::EventDescription init_anim_settings_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_anim_settings", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<Settings>("settings"), false},
-  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
+  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
 }, {
 },
 {},
@@ -30,9 +30,9 @@ void scene_destroy_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription scene_destroy_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityDestroyed>(), "scene_destroy", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<Settings>("settings"), false},
-  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
+  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
 }, {
 },
 {},

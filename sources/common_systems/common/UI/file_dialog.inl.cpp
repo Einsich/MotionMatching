@@ -5,7 +5,7 @@
 void open_dialog_func();
 
 ecs::SystemDescription open_dialog_descr("open_dialog", {
-  {ecs::get_type_description<EditorUI>("ui"), false}
+  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
 }, {
 },
 {},

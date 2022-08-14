@@ -5,9 +5,9 @@
 void camera_lerp_func();
 
 ecs::SystemDescription camera_lerp_descr("camera_lerp", {
-  {ecs::get_type_description<Transform2D>("targetTransform"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<float>("lerpStrength"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("lerpStrength"), false}
 }, {
 },
 {},
@@ -24,15 +24,15 @@ void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription setup_camera_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "setup_camera", {
-  {ecs::get_type_description<mat3>("cameraProjection"), false},
-  {ecs::get_type_description<vec3>("zoom"), false},
-  {ecs::get_type_description<float>("pixelPerUnit"), false},
-  {ecs::get_type_description<float>("minZoom"), false},
-  {ecs::get_type_description<float>("maxZoom"), false},
-  {ecs::get_type_description<float>("curZoom"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<Transform2D>("targetTransform"), false},
-  {ecs::get_type_description<WorldRenderer>("wr"), false}
+  {ecs::get_type_hash<mat3>(), ecs::get_name_hash("cameraProjection"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("pixelPerUnit"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("minZoom"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("maxZoom"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("curZoom"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false}
 }, {
 },
 {},
@@ -53,10 +53,10 @@ void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription change_zoom_descr(
   ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
-  {ecs::get_type_description<Transform2D>("targetTransform"), false},
-  {ecs::get_type_description<float>("zoomStrength"), false},
-  {ecs::get_type_description<vec3>("zoom"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("zoomStrength"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
+  {-1u, ecs::get_name_hash("cameraProjection"), false}
 }, {
 },
 {},
@@ -77,10 +77,10 @@ void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription move_camera_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "move_camera", {
-  {ecs::get_type_description<Transform2D>("targetTransform"), false},
-  {ecs::get_type_description<WorldRenderer>("wr"), false},
-  {ecs::get_type_description<bool>("cameraLocked"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("cameraLocked"), false},
+  {-1u, ecs::get_name_hash("cameraProjection"), false}
 }, {
 },
 {},
@@ -101,8 +101,8 @@ void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid
 
 ecs::EventDescription lock_unlock_camera_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "lock_unlock_camera", {
-  {ecs::get_type_description<bool>("cameraLocked"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("cameraLocked"), false},
+  {-1u, ecs::get_name_hash("cameraProjection"), false}
 }, {
 },
 {},

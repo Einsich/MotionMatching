@@ -8,7 +8,7 @@ namespace ecs
     ecs::string name;
     const ecs::TypeInfo *typeInfo;
     const ComponentContainer *components;
-    uint typeNameHash;
+    uint nameHash;
   };
   class Archetype
   {

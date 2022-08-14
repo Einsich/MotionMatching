@@ -1,6 +1,7 @@
 #pragma once
 #include "archetype.h"
 #include "callable_description.h"
+#include <eastl/fixed_function.h>
 
 namespace ecs
 {
@@ -10,9 +11,10 @@ namespace ecs
       ecs::vector<FunctionArgument> &&require_args,
       ecs::vector<FunctionArgument> &&require_not_args);
   };
+  using SystemFunctionPtr = eastl::fixed_function<16, void()>;
   struct SystemDescription final : CallableDescription
   {
-    void (*function)();
+    SystemFunctionPtr function;
     const char *stage;
     bool isJob;
     SystemDescription(const char *name,
@@ -20,11 +22,10 @@ namespace ecs
       ecs::vector<FunctionArgument> &&require_not_args,
       ecs::vector<ecs::string> &&before,
       ecs::vector<ecs::string> &&after,
-      void (*function_pointer)(),
+      SystemFunctionPtr function_pointer,
       const char * stage,
       ecs::vector<ecs::string> &&tags,
       bool is_job);
-    void execute();
   };
 
   ecs::vector<SystemDescription *>& get_all_mutable_systems();

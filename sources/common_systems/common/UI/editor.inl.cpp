@@ -5,7 +5,7 @@
 void resources_menu_func();
 
 ecs::SystemDescription resources_menu_descr("resources_menu", {
-  {ecs::get_type_description<SelectedAsset>("selectedAsset"), false}
+  {ecs::get_type_hash<SelectedAsset>(), ecs::get_name_hash("selectedAsset"), false}
 }, {
 },
 {},
@@ -20,9 +20,9 @@ void resources_menu_func()
 void asset_viewer_func();
 
 ecs::SystemDescription asset_viewer_descr("asset_viewer", {
-  {ecs::get_type_description<SelectedAsset>("selectedAsset"), false},
-  {ecs::get_type_description<EditorUI>("ui"), false},
-  {ecs::get_type_description<EditorWidgets>("widgets"), false}
+  {ecs::get_type_hash<SelectedAsset>(), ecs::get_name_hash("selectedAsset"), false},
+  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false},
+  {ecs::get_type_hash<EditorWidgets>(), ecs::get_name_hash("widgets"), false}
 }, {
 },
 {},

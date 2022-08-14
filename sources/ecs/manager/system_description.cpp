@@ -22,7 +22,7 @@ namespace ecs
   {
     notSingletonArgsCount = 0;
     for (auto arg : requireArgs)
-      if(arg.descr)
+      if(arg.typeHash)
       {
         notSingletonArgsCount++;
       }
@@ -32,7 +32,7 @@ namespace ecs
     ecs::vector<FunctionArgument> &&require_args,
     ecs::vector<FunctionArgument> &&require_not_args,
     ecs::vector<ecs::string> &&before, ecs::vector<ecs::string> &&after,
-    void (*function_pointer)(),
+    SystemFunctionPtr function_pointer,
     const char * stage,
     ecs::vector<ecs::string> &&tags,
     bool is_job):
@@ -43,10 +43,6 @@ namespace ecs
     isJob(is_job)
   {
     get_all_mutable_systems().push_back(this);
-  }
-  void SystemDescription::execute()
-  {
-    function();
   }
 
   ecs::vector<QueryDescription*> &all_queries()
@@ -80,7 +76,7 @@ namespace ecs
   void SystemStageInterval::perform_stage() const
   {
     for (auto system = begin; system < end; ++system)
-      (*system)->execute();
+      (*system)->function();
   }
 
   static bool lower_bound_cmp(const SystemDescription *a, const char *stage)

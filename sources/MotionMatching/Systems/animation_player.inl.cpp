@@ -5,8 +5,8 @@
 void animation_player_update_func();
 
 ecs::SystemDescription animation_player_update_descr("animation_player_update", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
+  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},
@@ -21,9 +21,9 @@ void animation_player_update_func()
 void update_bone_remap_func();
 
 ecs::SystemDescription update_bone_remap_descr("update_bone_remap", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<bool>("bone_remaped"), false}
+  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("bone_remaped"), false}
 }, {
 },
 {},
@@ -40,7 +40,7 @@ void init_animation_character_singl_handler(const ecs::Event &event, ecs::Entity
 
 ecs::EventDescription init_animation_character_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_character", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false}
+  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false}
 }, {
 },
 {},
@@ -61,7 +61,7 @@ void init_animation_material_singl_handler(const ecs::Event &event, ecs::EntityI
 
 ecs::EventDescription init_animation_material_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_animation_material", {
-  {ecs::get_type_description<Asset<Material>>("material"), false}
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false}
 }, {
 },
 {},

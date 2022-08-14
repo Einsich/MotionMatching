@@ -3,8 +3,8 @@
 //Code-generator production
 
 ecs::QueryDescription toggle_map_mode_descr("toggle_map_mode", {
-  {ecs::get_type_description<bool>("is_enabled"), false},
-  {ecs::get_type_description<ecs::Tag>("isTree"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false},
+  {-1u, ecs::get_name_hash("isTree"), false}
 }, {
 });
 
@@ -21,9 +21,9 @@ void change_terrain_mode_singl_handler(const ecs::Event &event, ecs::EntityId ei
 
 ecs::EventDescription change_terrain_mode_descr(
   ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_m>>(), "change_terrain_mode", {
-  {ecs::get_type_description<Asset<Material>>("material"), false},
-  {ecs::get_type_description<Asset<Material>>("political_material"), false},
-  {ecs::get_type_description<Asset<Material>>("physycal_material"), false}
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false},
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("political_material"), false},
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("physycal_material"), false}
 }, {
 },
 {},
@@ -44,13 +44,13 @@ void create_provinces_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription create_provinces_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "create_provinces", {
-  {ecs::get_type_description<Asset<Material>>("political_material"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("provinces_texture"), false},
-  {ecs::get_type_description<ecs::string>("provinces_texture_name"), false},
-  {ecs::get_type_description<ecs::string>("load_provinces_info"), false},
-  {ecs::get_type_description<float>("pixel_scale"), false},
-  {ecs::get_type_description<PoliticalMap>("politicalMap"), false},
-  {ecs::get_type_description<MapRenderData>("data"), false}
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("political_material"), false},
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("provinces_texture"), false},
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("provinces_texture_name"), false},
+  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("load_provinces_info"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("pixel_scale"), false},
+  {ecs::get_type_hash<PoliticalMap>(), ecs::get_name_hash("politicalMap"), false},
+  {ecs::get_type_hash<MapRenderData>(), ecs::get_name_hash("data"), false}
 }, {
 },
 {},

@@ -3,10 +3,10 @@
 //Code-generator production
 
 ecs::QueryDescription gather_all_target_colliders_descr("gather_all_target_colliders", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<bool>("destroyed"), false},
-  {ecs::get_type_description<ecs::Tag>("target"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("destroyed"), false},
+  {-1u, ecs::get_name_hash("target"), false}
 }, {
 });
 
@@ -21,9 +21,9 @@ void gather_all_target_colliders(Callable lambda)
 void move_all_entity_with_velocity_func();
 
 ecs::SystemDescription move_all_entity_with_velocity_descr("move_all_entity_with_velocity", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<vec2>("velocity"), false},
-  {ecs::get_type_description<float>("rotationVelocity"), true}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("velocity"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("rotationVelocity"), true}
 }, {
 },
 {},
@@ -38,9 +38,9 @@ void move_all_entity_with_velocity_func()
 void collision_detection_func();
 
 ecs::SystemDescription collision_detection_descr("collision_detection", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<ecs::Tag>("bullet"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {-1u, ecs::get_name_hash("bullet"), false}
 }, {
 },
 {},

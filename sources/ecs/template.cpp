@@ -49,7 +49,7 @@ namespace ecs
     auto &componentMap = tmpl.archetype->components;
     for (const ComponentInstance &instance : tmpl.components)
     {
-      tmpl.containers.emplace_back(&componentMap[instance.typeNameHash]);
+      tmpl.containers.emplace_back(&componentMap[instance.nameHash]);
     }
   }
 

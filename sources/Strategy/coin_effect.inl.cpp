@@ -5,13 +5,13 @@
 void coin_move_func();
 
 ecs::SystemDescription coin_move_descr("coin_move", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<vec3>("linear_velocity"), false},
-  {ecs::get_type_description<vec3>("angular_velocity"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<float>("life_time"), false},
-  {ecs::get_type_description<float>("life_period"), false},
-  {ecs::get_type_description<ecs::Tag>("coinEffect"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("linear_velocity"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("angular_velocity"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("life_time"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("life_period"), false},
+  {-1u, ecs::get_name_hash("coinEffect"), false}
 }, {
 },
 {},
@@ -28,8 +28,8 @@ void spawn_coin_effect_singl_handler(const ecs::Event &event, ecs::EntityId eid)
 
 ecs::EventDescription spawn_coin_effect_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "spawn_coin_effect", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<HeightMap>("heightMap"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
+  {ecs::get_type_hash<HeightMap>(), ecs::get_name_hash("heightMap"), false}
 }, {
 },
 {},

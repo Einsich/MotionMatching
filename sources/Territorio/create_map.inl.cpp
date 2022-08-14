@@ -3,10 +3,10 @@
 //Code-generator production
 
 ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
-  {ecs::get_type_description<bool>("mapWasChanged"), false},
-  {ecs::get_type_description<bool>("needUpdateBorder"), false}
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
+  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("mapWasChanged"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false}
 }, {
 });
 
@@ -23,14 +23,14 @@ void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription create_map_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "create_map", {
-  {ecs::get_type_description<int>("width"), false},
-  {ecs::get_type_description<int>("height"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("borderTexture"), false},
-  {ecs::get_type_description<Shader>("mapShader"), false},
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
-  {ecs::get_type_description<int>("botsCount"), false}
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("width"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("height"), false},
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("mapTexture"), false},
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("borderTexture"), false},
+  {ecs::get_type_hash<Shader>(), ecs::get_name_hash("mapShader"), false},
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
+  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("botsCount"), false}
 }, {
 },
 {},

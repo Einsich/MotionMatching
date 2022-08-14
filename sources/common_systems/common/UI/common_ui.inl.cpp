@@ -5,7 +5,7 @@
 void fps_ui_func();
 
 ecs::SystemDescription fps_ui_descr("fps_ui", {
-  {ecs::get_type_description<EditorUI>("ui"), false}
+  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
 }, {
 },
 {},
@@ -20,7 +20,7 @@ void fps_ui_func()
 void debug_console_ui_func();
 
 ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
-  {ecs::get_type_description<EditorUI>("ui"), false}
+  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
 }, {
 },
 {},

@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription get_world_renderer_descr("get_world_renderer", {
-  {ecs::get_type_description<WorldRenderer>("wr"), false}
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false}
 }, {
 });
 
@@ -16,11 +16,11 @@ void get_world_renderer(Callable lambda)
 
 
 ecs::QueryDescription gather_sprites_descr("gather_sprites", {
-  {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("borderTexture"), false},
-  {ecs::get_type_description<Shader>("mapShader"), false},
-  {ecs::get_type_description<ecs::vector<vec3>>("land_colors"), false},
-  {ecs::get_type_description<vec4>("color"), true}
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("mapTexture"), false},
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("borderTexture"), false},
+  {ecs::get_type_hash<Shader>(), ecs::get_name_hash("mapShader"), false},
+  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false},
+  {ecs::get_type_hash<vec4>(), ecs::get_name_hash("color"), true}
 }, {
 });
 
@@ -35,9 +35,9 @@ void gather_sprites(Callable lambda)
 void render_scene_func();
 
 ecs::SystemDescription render_scene_descr("render_scene", {
-  {ecs::get_type_description<mat3>("cameraProjection"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<WorldRenderer>("wr"), false}
+  {ecs::get_type_hash<mat3>(), ecs::get_name_hash("cameraProjection"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false}
 }, {
 },
 {},
@@ -52,9 +52,9 @@ void render_scene_func()
 void update_map_textures_func();
 
 ecs::SystemDescription update_map_textures_descr("update_map_textures", {
-  {ecs::get_type_description<bool>("mapWasChanged"), false},
-  {ecs::get_type_description<Asset<Texture2D>>("mapTexture"), false},
-  {ecs::get_type_description<MapArrays>("map_arrays"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("mapWasChanged"), false},
+  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("mapTexture"), false},
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false}
 }, {
 },
 {},

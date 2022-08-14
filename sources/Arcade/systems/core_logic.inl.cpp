@@ -5,9 +5,9 @@
 void controll_targets_func();
 
 ecs::SystemDescription controll_targets_descr("controll_targets", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<vec2>("velocity"), false},
-  {ecs::get_type_description<ecs::Tag>("target"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("velocity"), false},
+  {-1u, ecs::get_name_hash("target"), false}
 }, {
 },
 {},
@@ -22,10 +22,10 @@ void controll_targets_func()
 void destroy_old_bullets_func();
 
 ecs::SystemDescription destroy_old_bullets_descr("destroy_old_bullets", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<float>("creationTime"), false},
-  {ecs::get_type_description<float>("lifeTime"), false},
-  {ecs::get_type_description<ecs::Tag>("bullet"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("creationTime"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("lifeTime"), false},
+  {-1u, ecs::get_name_hash("bullet"), false}
 }, {
 },
 {},
@@ -40,10 +40,10 @@ void destroy_old_bullets_func()
 void move_hero_func();
 
 ecs::SystemDescription move_hero_descr("move_hero", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<vec2>("velocity"), false},
-  {ecs::get_type_description<bool>("isWinner"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("velocity"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isWinner"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},
@@ -60,9 +60,9 @@ void look_at_mouse_position_when_mouse_moves_singl_handler(const ecs::Event &eve
 
 ecs::EventDescription look_at_mouse_position_when_mouse_moves_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "look_at_mouse_position_when_mouse_moves", {
-  {ecs::get_type_description<WorldRenderer>("wr"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},
@@ -83,11 +83,11 @@ void fire_when_mouse_click_singl_handler(const ecs::Event &event, ecs::EntityId 
 
 ecs::EventDescription fire_when_mouse_click_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "fire_when_mouse_click", {
-  {ecs::get_type_description<WorldRenderer>("wr"), false},
-  {ecs::get_type_description<SpriteFactory>("sf"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<bool>("isWinner"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false},
+  {ecs::get_type_hash<SpriteFactory>(), ecs::get_name_hash("sf"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isWinner"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},
@@ -108,9 +108,9 @@ void circle_attack_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription circle_attack_descr(
   ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_SPACE>>(), "circle_attack", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<SpriteFactory>("sf"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<SpriteFactory>(), ecs::get_name_hash("sf"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},

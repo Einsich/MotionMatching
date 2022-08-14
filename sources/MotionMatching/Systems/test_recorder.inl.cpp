@@ -5,10 +5,10 @@
 void recorder_ui_func();
 
 ecs::SystemDescription recorder_ui_descr("recorder_ui", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<int>("recordedTest"), false},
-  {ecs::get_type_description<int>("recordedState"), false},
-  {ecs::get_type_description<float>("recorderStartTime"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
 }, {
 },
 {},
@@ -25,10 +25,10 @@ void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription listener_keybord_descr(
   ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "listener_keybord", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<int>("recordedTest"), false},
-  {ecs::get_type_description<int>("recordedState"), false},
-  {ecs::get_type_description<float>("recorderStartTime"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
 }, {
 },
 {},
@@ -49,10 +49,10 @@ void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid
 
 ecs::EventDescription listener_mousemove_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "listener_mousemove", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<int>("recordedTest"), false},
-  {ecs::get_type_description<int>("recordedState"), false},
-  {ecs::get_type_description<float>("recorderStartTime"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
 }, {
 },
 {},

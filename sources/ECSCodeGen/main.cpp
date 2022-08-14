@@ -305,7 +305,7 @@ static void fill_arguments(std::ofstream &outFile, const ParserSystemDescription
   {
     auto& arg  = args[i];
     snprintf(buffer, bufferSize,
-    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
+    "  {ecs::get_type_hash<%s>(), ecs::get_name_hash(\"%s\"), %s}%s\n",
     arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)args.size()  && req_args.empty() ? "" : ",");
     outFile << buffer;
   }
@@ -313,8 +313,8 @@ static void fill_arguments(std::ofstream &outFile, const ParserSystemDescription
   {
     auto& arg  = req_args[i];
     snprintf(buffer, bufferSize,
-    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_args.size()? "" : ",");
+    "  {-1u, ecs::get_name_hash(\"%s\"), %s}%s\n",
+    arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_args.size()? "" : ",");
     outFile << buffer;
   }
   snprintf(buffer, bufferSize,
@@ -324,8 +324,8 @@ static void fill_arguments(std::ofstream &outFile, const ParserSystemDescription
   {
     auto& arg  = req_not_args[i];
     snprintf(buffer, bufferSize,
-    "  {ecs::get_type_description<%s>(\"%s\"), %s}%s\n",
-    arg.type.c_str(), arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_not_args.size()? "" : ",");
+    "  {-1u, ecs::get_name_hash(\"%s\"), %s}%s\n",
+    arg.name.c_str(), arg.optional ? "true" : "false", i + 1 == (uint)req_not_args.size()? "" : ",");
     outFile << buffer;
   }
 }

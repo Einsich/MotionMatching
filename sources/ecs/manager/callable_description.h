@@ -5,7 +5,8 @@ namespace ecs
   class Archetype;
   struct FunctionArgument
   {
-    uint descr;
+    uint typeHash;
+    uint nameHash;
     bool optional = false;
   };
   struct SystemCashedArchetype

@@ -3,8 +3,8 @@
 //Code-generator production
 
 ecs::QueryDescription update_main_camera_position_descr("update_main_camera_position", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {-1u, ecs::get_name_hash("cameraProjection"), false}
 }, {
 });
 
@@ -19,8 +19,8 @@ void update_main_camera_position(Callable lambda)
 void update_camera_pos_before_render_func();
 
 ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},
@@ -37,9 +37,9 @@ void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription change_zoom_descr(
   ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<vec3>("zoom"), false},
-  {ecs::get_type_description<mat3>("cameraProjection"), false}
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
+  {-1u, ecs::get_name_hash("cameraProjection"), false}
 }, {
 },
 {},

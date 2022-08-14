@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription is_game_started_descr("is_game_started", {
-  {ecs::get_type_description<bool>("gameStarted"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("gameStarted"), false}
 }, {
 });
 
@@ -16,7 +16,7 @@ void is_game_started(Callable lambda)
 
 
 ecs::QueryDescription select_map_query_descr("select_map_query", {
-  {ecs::get_type_description<MapArrays>("map_arrays"), false}
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false}
 }, {
 });
 
@@ -31,9 +31,9 @@ void select_map_query(Callable lambda)
 void change_invasion_weight_func();
 
 ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
-  {ecs::get_type_description<float>("invasion_weight"), false},
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasion_weight"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {-1u, ecs::get_name_hash("isPlayer"), false}
 }, {
 },
 {},
@@ -64,7 +64,7 @@ void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription start_game_descr(
   ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_RETURN>>(), "start_game", {
-  {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
+  {-1u, ecs::get_name_hash("isPlayer"), false}
 }, {
 },
 {},
@@ -85,8 +85,8 @@ void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid
 
 ecs::EventDescription select_spawn_point_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::RightButton>>(), "select_spawn_point", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<ecs::Tag>("player_spawning"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {-1u, ecs::get_name_hash("player_spawning"), false}
 }, {
 },
 {},
@@ -107,13 +107,13 @@ void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription select_invasion_descr(
   ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "select_invasion", {
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
-  {ecs::get_type_description<ecs::vector<uint>>("neighborsIdx"), false},
-  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
-  {ecs::get_type_description<float>("invasion_weight"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayer"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
+  {ecs::get_type_hash<ecs::vector<uint>>(), ecs::get_name_hash("neighborsIdx"), false},
+  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasion_weight"), false},
+  {-1u, ecs::get_name_hash("isPlayer"), false}
 }, {
 },
 {},

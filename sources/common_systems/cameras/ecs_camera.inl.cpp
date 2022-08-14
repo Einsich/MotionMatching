@@ -3,9 +3,9 @@
 //Code-generator production
 
 ecs::QueryDescription find_all_created_camera_descr("find_all_created_camera", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<Camera>("camera"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false},
+  {-1u, ecs::get_name_hash("camera"), false}
 }, {
 });
 
@@ -18,9 +18,9 @@ void find_all_created_camera(Callable lambda)
 
 
 ecs::QueryDescription find_editor_camera_descr("find_editor_camera", {
-  {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<Camera>("camera"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false},
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {-1u, ecs::get_name_hash("camera"), false}
 }, {
 });
 
@@ -33,7 +33,7 @@ void find_editor_camera(Callable lambda)
 
 
 ecs::QueryDescription check_arcball_target_descr("check_arcball_target", {
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
 }, {
 });
 
@@ -46,8 +46,8 @@ void check_arcball_target(ecs::EntityId eid, Callable lambda)
 
 
 ecs::QueryDescription get_main_cam_query_descr("get_main_cam_query", {
-  {ecs::get_type_description<Camera>("camera"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_hash<Camera>(), ecs::get_name_hash("camera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
 }, {
 });
 
@@ -62,10 +62,10 @@ void get_main_cam_query(ecs::EntityId eid, Callable lambda)
 void set_main_camera_func();
 
 ecs::SystemDescription set_main_camera_descr("set_main_camera", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<Camera>("camera"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false},
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
+  {-1u, ecs::get_name_hash("camera"), false}
 }, {
 },
 {},
@@ -80,10 +80,10 @@ void set_main_camera_func()
 void arcball_camera_update_func();
 
 ecs::SystemDescription arcball_camera_update_descr("arcball_camera_update", {
-  {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<ecs::EntityId>("arcballCameraTarget"), false}
+  {ecs::get_type_hash<ArcballCamera>(), ecs::get_name_hash("arcballCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("arcballCameraTarget"), false}
 }, {
 },
 {},
@@ -98,9 +98,9 @@ void arcball_camera_update_func()
 void freecamera_update_func();
 
 ecs::SystemDescription freecamera_update_descr("freecamera_update", {
-  {ecs::get_type_description<FreeCamera>("freeCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_hash<FreeCamera>(), ecs::get_name_hash("freeCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
 }, {
 },
 {},
@@ -115,7 +115,7 @@ void freecamera_update_func()
 void update_main_camera_game_transformations_func();
 
 ecs::SystemDescription update_main_camera_game_transformations_descr("update_main_camera_game_transformations", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false}
 }, {
 },
 {},
@@ -130,8 +130,8 @@ void update_main_camera_game_transformations_func()
 void update_main_camera_editor_transformations_func();
 
 ecs::SystemDescription update_main_camera_editor_transformations_descr("update_main_camera_editor_transformations", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<EditorCamera>("editorCamera"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
+  {ecs::get_type_hash<EditorCamera>(), ecs::get_name_hash("editorCamera"), false}
 }, {
 },
 {},
@@ -148,7 +148,7 @@ void find_main_camera_game_singl_handler(const ecs::Event &event, ecs::EntityId 
 
 ecs::EventDescription find_main_camera_game_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "find_main_camera_game", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false}
 }, {
 },
 {},
@@ -169,7 +169,7 @@ void find_main_camera_editor_singl_handler(const ecs::Event &event, ecs::EntityI
 
 ecs::EventDescription find_main_camera_editor_descr(
   ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "find_main_camera_editor", {
-  {ecs::get_type_description<EditorCamera>("editorCameraManager"), false}
+  {ecs::get_type_hash<EditorCamera>(), ecs::get_name_hash("editorCameraManager"), false}
 }, {
 },
 {},
@@ -190,8 +190,8 @@ void arcball_created_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription arcball_created_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "arcball_created", {
-  {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_hash<ArcballCamera>(), ecs::get_name_hash("arcballCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
 }, {
 },
 {},
@@ -212,8 +212,8 @@ void arccam_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::Entit
 
 ecs::EventDescription arccam_mouse_move_handler_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "arccam_mouse_move_handler", {
-  {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false}
+  {ecs::get_type_hash<ArcballCamera>(), ecs::get_name_hash("arcballCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false}
 }, {
 },
 {},
@@ -234,8 +234,8 @@ void arccam_mouse_click_handler_singl_handler(const ecs::Event &event, ecs::Enti
 
 ecs::EventDescription arccam_mouse_click_handler_descr(
   ecs::get_mutable_event_handlers<MouseClickEvent>(), "arccam_mouse_click_handler", {
-  {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false}
+  {ecs::get_type_hash<ArcballCamera>(), ecs::get_name_hash("arcballCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false}
 }, {
 },
 {},
@@ -256,8 +256,8 @@ void arccam_mouse_wheel_handler_singl_handler(const ecs::Event &event, ecs::Enti
 
 ecs::EventDescription arccam_mouse_wheel_handler_descr(
   ecs::get_mutable_event_handlers<MouseWheelEvent>(), "arccam_mouse_wheel_handler", {
-  {ecs::get_type_description<ArcballCamera>("arcballCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false}
+  {ecs::get_type_hash<ArcballCamera>(), ecs::get_name_hash("arcballCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false}
 }, {
 },
 {},
@@ -278,8 +278,8 @@ void freecam_created_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription freecam_created_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "freecam_created", {
-  {ecs::get_type_description<FreeCamera>("freeCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false}
+  {ecs::get_type_hash<FreeCamera>(), ecs::get_name_hash("freeCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
 }, {
 },
 {},
@@ -300,9 +300,9 @@ void freecam_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::Enti
 
 ecs::EventDescription freecam_mouse_move_handler_descr(
   ecs::get_mutable_event_handlers<MouseMoveEvent>(), "freecam_mouse_move_handler", {
-  {ecs::get_type_description<FreeCamera>("freeCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false}
+  {ecs::get_type_hash<FreeCamera>(), ecs::get_name_hash("freeCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false}
 }, {
 },
 {},
@@ -323,8 +323,8 @@ void freecam_mouse_click_handler_singl_handler(const ecs::Event &event, ecs::Ent
 
 ecs::EventDescription freecam_mouse_click_handler_descr(
   ecs::get_mutable_event_handlers<MouseClickEvent>(), "freecam_mouse_click_handler", {
-  {ecs::get_type_description<FreeCamera>("freeCamera"), false},
-  {ecs::get_type_description<bool>("isMainCamera"), false}
+  {ecs::get_type_hash<FreeCamera>(), ecs::get_name_hash("freeCamera"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isMainCamera"), false}
 }, {
 },
 {},

@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription gather_all_targets_descr("gather_all_targets", {
-  {ecs::get_type_description<ecs::Tag>("target"), false}
+  {-1u, ecs::get_name_hash("target"), false}
 }, {
 });
 
@@ -18,7 +18,7 @@ void gather_all_targets(Callable lambda)
 void show_kill_stat_func();
 
 ecs::SystemDescription show_kill_stat_descr("show_kill_stat", {
-  {ecs::get_type_description<int>("killsCount"), false}
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("killsCount"), false}
 }, {
 },
 {},
@@ -33,8 +33,8 @@ void show_kill_stat_func()
 void check_winner_func();
 
 ecs::SystemDescription check_winner_descr("check_winner", {
-  {ecs::get_type_description<bool>("isWinner"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isWinner"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},
@@ -51,8 +51,8 @@ void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription collect_kills_descr(
   ecs::get_mutable_event_handlers<KillTargetEvent>(), "collect_kills", {
-  {ecs::get_type_description<int>("killsCount"), false},
-  {ecs::get_type_description<ecs::Tag>("mainHero"), false}
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("killsCount"), false},
+  {-1u, ecs::get_name_hash("mainHero"), false}
 }, {
 },
 {},

@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription update_material_descr("update_material", {
-  {ecs::get_type_description<Asset<Material>>("material"), false}
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false}
 }, {
 });
 
@@ -40,7 +40,7 @@ void load_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId
 
 ecs::EventDescription load_directional_light_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "load_directional_light", {
-  {ecs::get_type_description<DirectionLight>("directionalLight"), false}
+  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
 }, {
 },
 {},
@@ -61,7 +61,7 @@ void reload_directional_light_singl_handler(const ecs::Event &event, ecs::Entity
 
 ecs::EventDescription reload_directional_light_descr(
   ecs::get_mutable_event_handlers<OnEntityEdited>(), "reload_directional_light", {
-  {ecs::get_type_description<DirectionLight>("directionalLight"), false}
+  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
 }, {
 },
 {},

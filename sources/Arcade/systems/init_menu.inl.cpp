@@ -5,9 +5,9 @@
 void start_game_button_func();
 
 ecs::SystemDescription start_game_button_descr("start_game_button", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<ScoreBoard>("sb"), false},
-  {ecs::get_type_description<ecs::Tag>("startGameButton"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<ScoreBoard>(), ecs::get_name_hash("sb"), false},
+  {-1u, ecs::get_name_hash("startGameButton"), false}
 }, {
 },
 {},
@@ -22,9 +22,9 @@ void start_game_button_func()
 void exit_menu_button_func();
 
 ecs::SystemDescription exit_menu_button_descr("exit_menu_button", {
-  {ecs::get_type_description<bool>("isWinner"), false},
-  {ecs::get_type_description<int>("killsCount"), false},
-  {ecs::get_type_description<ScoreBoard>("sb"), false}
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isWinner"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("killsCount"), false},
+  {ecs::get_type_hash<ScoreBoard>(), ecs::get_name_hash("sb"), false}
 }, {
 },
 {},
@@ -41,10 +41,10 @@ void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription setup_camera_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "setup_camera", {
-  {ecs::get_type_description<mat3>("cameraProjection"), false},
-  {ecs::get_type_description<vec3>("zoom"), false},
-  {ecs::get_type_description<Transform2D>("transform"), false},
-  {ecs::get_type_description<WorldRenderer>("wr"), false}
+  {ecs::get_type_hash<mat3>(), ecs::get_name_hash("cameraProjection"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
+  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false}
 }, {
 },
 {},

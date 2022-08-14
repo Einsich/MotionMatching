@@ -82,7 +82,7 @@ EVENT() spawn_buildings(const ecs::OnEntityCreated&,
     for (const auto &component : t->components)
     {
       
-      if (component.typeNameHash == ecs::get_type_description<Transform>("transform"))
+      if (component.typeHash == ecs::get_type_hash<Transform>() && component.nameHash == ecs::get_name_hash("transform"))
       {
         transform = *(const Transform *)component.get_data();
         break;

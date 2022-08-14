@@ -11,20 +11,20 @@ namespace ecs
     for (const ComponentInstance &instance : type_hashes)
     {
       #if ECS_USE_EASTL
-      auto result = components.insert(instance.typeNameHash);
+      auto result = components.insert(instance.nameHash);
       if (result.second)
       {
         result.first->second = ComponentContainer(*instance.typeInfo, instance.typeNameHash, capacity);
       #else
-      if (components.try_emplace(instance.typeNameHash, *instance.typeInfo, instance.typeNameHash, capacity).second)
+      if (components.try_emplace(instance.nameHash, *instance.typeInfo, instance.typeNameHash, capacity).second)
       {
       #endif
-        typeDescriptions.emplace_back(TypeDescription{instance.name, instance.typeInfo, nullptr, instance.typeNameHash});
+        typeDescriptions.emplace_back(TypeDescription{instance.name, instance.typeInfo, nullptr, instance.nameHash});
       }
     }
 
     for (auto &descr : typeDescriptions)
-      descr.components = &components[descr.typeNameHash];
+      descr.components = &components[descr.nameHash];
 
     std::sort(typeDescriptions.begin(), typeDescriptions.end(),
       [](const auto &a, const auto &b) {
@@ -38,16 +38,16 @@ namespace ecs
       return false;
     for (const ComponentInstance &descr : instances)
     {
-      auto it = components.find(descr.typeNameHash);
+      auto it = components.find(descr.nameHash);
       if (it == components.end())
         return false;
     }
     return true;
   }
 
-  ComponentContainer *Archetype::get_container(uint type_name_hash)
+  ComponentContainer *Archetype::get_container(uint name_hash)
   {
-    auto it = components.find(type_name_hash);
+    auto it = components.find(name_hash);
     return it == components.end() ? nullptr : &it->second;
   }
 
@@ -61,8 +61,9 @@ namespace ecs
     count--;
     if (index != count)
     {
-      EntityId &eid = *components[get_type_description<EntityId>("eid")]
-      .get_component<EntityId>(index);
+      ComponentContainer &eidContainer = components[HashedString("eid")];
+      assert(eidContainer.typeHash == ecs::type_hash<EntityId>());
+      EntityId &eid = *eidContainer.get_component<EntityId>(index);
       eid.migrate(eid.archetype_index(), index);
     }
     if (count < 0)

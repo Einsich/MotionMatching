@@ -100,11 +100,16 @@ namespace ecs
   }
 
   template<typename T>
-  constexpr uint get_type_description(const char *name)
+  constexpr uint get_type_hash()
   {
     if constexpr (is_singleton<T>::value)
       return 0;
     else
-      return type_name_hash(HashedString(name), ecs::type_hash<T>());
+      return ecs::type_hash<T>();
+  }
+  
+  constexpr uint get_name_hash(const char *name)
+  {
+    return HashedString(name);
   }
 }

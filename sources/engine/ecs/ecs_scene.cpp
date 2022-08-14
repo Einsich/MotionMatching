@@ -69,7 +69,7 @@ namespace ecs
     for (auto system = range.begin; system < range.end; ++system)
     {
       ProfilerLabel label((*system)->name.c_str());
-      (*system)->execute();
+      (*system)->function();
     }
   }
   void SceneManager::update_act()

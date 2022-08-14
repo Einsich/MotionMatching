@@ -3,9 +3,9 @@
 //Code-generator production
 
 ecs::QueryDescription lands_economic_descr("lands_economic", {
-  {ecs::get_type_description<int>("landCount"), false},
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {-1u, ecs::get_name_hash("isPlayableLand"), false}
 }, {
 });
 
@@ -18,9 +18,9 @@ void lands_economic(Callable lambda)
 
 
 ecs::QueryDescription gather_invaders_descr("gather_invaders", {
-  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<int>("landCount"), false}
+  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
 }, {
 });
 
@@ -33,10 +33,10 @@ void gather_invaders(Callable lambda)
 
 
 ecs::QueryDescription gather_invaders2_descr("gather_invaders2", {
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
-  {ecs::get_type_description<ecs::vector<uint>>("neighborsIdx"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
+  {ecs::get_type_hash<ecs::vector<uint>>(), ecs::get_name_hash("neighborsIdx"), false},
+  {-1u, ecs::get_name_hash("isPlayableLand"), false}
 }, {
 });
 
@@ -49,9 +49,9 @@ void gather_invaders2(Callable lambda)
 
 
 ecs::QueryDescription query_victim2_descr("query_victim2", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<int>("landCount"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
 }, {
 });
 
@@ -64,9 +64,9 @@ void query_victim2(Callable lambda)
 
 
 ecs::QueryDescription query_neighbor_descr("query_neighbor", {
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<uint>("landIndex"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false}
 }, {
 });
 
@@ -79,9 +79,9 @@ void query_neighbor(ecs::EntityId eid, Callable lambda)
 
 
 ecs::QueryDescription query_victim_descr("query_victim", {
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<uint>("landIndex"), false},
-  {ecs::get_type_description<int>("landCount"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
 }, {
 });
 
@@ -96,11 +96,11 @@ void query_victim(ecs::EntityId eid, Callable lambda)
 void update_bot_invasions_func();
 
 ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
-  {ecs::get_type_description<float>("invasionPeriod"), false},
-  {ecs::get_type_description<float>("invasionTime"), false},
-  {ecs::get_type_description<ecs::vector<Invasion>>("invasions"), false},
-  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("neighbors"), false},
-  {ecs::get_type_description<uint>("forces"), false}
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasionPeriod"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasionTime"), false},
+  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
+  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false}
 }, {
 },
 {},
@@ -115,15 +115,15 @@ void update_bot_invasions_func()
 void map_update_func();
 
 ecs::SystemDescription map_update_descr("map_update", {
-  {ecs::get_type_description<float>("forceFromCell"), false},
-  {ecs::get_type_description<float>("forceFromPeople"), false},
-  {ecs::get_type_description<float>("maxForceFromCell"), false},
-  {ecs::get_type_description<float>("updatePeriod"), false},
-  {ecs::get_type_description<float>("updateTime"), false},
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<bool>("mapWasChanged"), false},
-  {ecs::get_type_description<bool>("needUpdateBorder"), false},
-  {ecs::get_type_description<bool>("gameStarted"), false}
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("forceFromCell"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("forceFromPeople"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("maxForceFromCell"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("updatePeriod"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("updateTime"), false},
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("mapWasChanged"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("gameStarted"), false}
 }, {
 },
 {},
@@ -138,8 +138,8 @@ void map_update_func()
 void border_update_func();
 
 ecs::SystemDescription border_update_descr("border_update", {
-  {ecs::get_type_description<MapArrays>("map_arrays"), false},
-  {ecs::get_type_description<bool>("needUpdateBorder"), false}
+  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false}
 }, {
 },
 {},
@@ -156,10 +156,10 @@ void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription game_started_descr(
   ecs::get_mutable_event_handlers<OnGameStarted>(), "game_started", {
-  {ecs::get_type_description<uint>("forces"), false},
-  {ecs::get_type_description<uint>("startForces"), false},
-  {ecs::get_type_description<int>("landCount"), false},
-  {ecs::get_type_description<ecs::Tag>("isPlayableLand"), false}
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
+  {ecs::get_type_hash<uint>(), ecs::get_name_hash("startForces"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false},
+  {-1u, ecs::get_name_hash("isPlayableLand"), false}
 }, {
 },
 {},

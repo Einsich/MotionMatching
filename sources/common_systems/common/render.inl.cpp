@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription find_light_descr("find_light", {
-  {ecs::get_type_description<DirectionLight>("directionalLight"), false}
+  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
 }, {
 });
 
@@ -16,8 +16,8 @@ void find_light(Callable lambda)
 
 
 ecs::QueryDescription find_collidable_entity_descr("find_collidable_entity", {
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false}
 }, {
 });
 
@@ -30,7 +30,7 @@ void find_collidable_entity(Callable lambda)
 
 
 ecs::QueryDescription find_matrices_descr("find_matrices", {
-  {ecs::get_type_description<ecs::vector<mat3x4>>("bones_matrices"), false}
+  {ecs::get_type_hash<ecs::vector<mat3x4>>(), ecs::get_name_hash("bones_matrices"), false}
 }, {
 });
 
@@ -45,7 +45,7 @@ void find_matrices(ecs::EntityId eid, Callable lambda)
 void render_submenu_func();
 
 ecs::SystemDescription render_submenu_descr("render_submenu", {
-  {ecs::get_type_description<EditorRenderSettings>("settings"), false}
+  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},
@@ -60,7 +60,7 @@ void render_submenu_func()
 void set_global_render_data_func();
 
 ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false}
 }, {
 },
 {},
@@ -75,13 +75,13 @@ void set_global_render_data_func()
 void lod_selector_func();
 
 ecs::SystemDescription lod_selector_descr("lod_selector", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<ecs::vector<Asset<Mesh>>>("lods_meshes"), false},
-  {ecs::get_type_description<ecs::vector<float>>("lods_distances"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<vec3>("lod_selector_axis"), true},
-  {ecs::get_type_description<bool>("is_enabled"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<ecs::vector<Asset<Mesh>>>(), ecs::get_name_hash("lods_meshes"), false},
+  {ecs::get_type_hash<ecs::vector<float>>(), ecs::get_name_hash("lods_distances"), false},
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("lod_selector_axis"), true},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false}
 }, {
 },
 {"frustum_culling"},
@@ -96,12 +96,12 @@ void lod_selector_func()
 void frustum_culling_func();
 
 ecs::SystemDescription frustum_culling_descr("frustum_culling", {
-  {ecs::get_type_description<MainCamera>("mainCamera"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<bool>("is_visible"), false},
-  {ecs::get_type_description<bool>("is_enabled"), false},
-  {ecs::get_type_description<ecs::Tag>("useFrustumCulling"), false}
+  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_visible"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false},
+  {-1u, ecs::get_name_hash("useFrustumCulling"), false}
 }, {
 },
 {"process_mesh_position"},
@@ -116,13 +116,13 @@ void frustum_culling_func()
 void process_mesh_position_func();
 
 ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false},
-  {ecs::get_type_description<Asset<Material>>("material"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<RenderQueue>("render"), false},
-  {ecs::get_type_description<bool>("is_visible"), false},
-  {ecs::get_type_description<bool>("is_enabled"), false}
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
+  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<RenderQueue>(), ecs::get_name_hash("render"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_visible"), false},
+  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false}
 }, {
 },
 {"main_instanced_render"},
@@ -137,7 +137,7 @@ void process_mesh_position_func()
 void render_sky_box_func();
 
 ecs::SystemDescription render_sky_box_descr("render_sky_box", {
-  {ecs::get_type_description<SkyBox>("skyBox"), false}
+  {ecs::get_type_hash<SkyBox>(), ecs::get_name_hash("skyBox"), false}
 }, {
 },
 {},
@@ -152,8 +152,8 @@ void render_sky_box_func()
 void render_debug_arrows_func();
 
 ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
-  {ecs::get_type_description<DebugArrow>("debugArrows"), false},
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+  {ecs::get_type_hash<DebugArrow>(), ecs::get_name_hash("debugArrows"), false},
+  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false}
 }, {
 },
 {},
@@ -168,8 +168,8 @@ void render_debug_arrows_func()
 void main_instanced_render_func();
 
 ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false},
-  {ecs::get_type_description<RenderQueue>("render"), false}
+  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false},
+  {ecs::get_type_hash<RenderQueue>(), ecs::get_name_hash("render"), false}
 }, {
 },
 {},
@@ -184,7 +184,7 @@ void main_instanced_render_func()
 void render_collision_func();
 
 ecs::SystemDescription render_collision_descr("render_collision", {
-  {ecs::get_type_description<EditorRenderSettings>("editorSettings"), false}
+  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false}
 }, {
 },
 {"render_sky_box"},
@@ -221,7 +221,7 @@ void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription mesh_loader_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "mesh_loader", {
-  {ecs::get_type_description<Asset<Mesh>>("mesh"), false}
+  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false}
 }, {
 },
 {},

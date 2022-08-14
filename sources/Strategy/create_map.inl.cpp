@@ -27,10 +27,10 @@ void spawn_buildings_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription spawn_buildings_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "spawn_buildings", {
-  {ecs::get_type_description<ecs::vector<ecs::string>>("items_templates"), false},
-  {ecs::get_type_description<vec3>("center"), false},
-  {ecs::get_type_description<float>("step_length"), false},
-  {ecs::get_type_description<int>("row_count"), false}
+  {ecs::get_type_hash<ecs::vector<ecs::string>>(), ecs::get_name_hash("items_templates"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("step_length"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("row_count"), false}
 }, {
 },
 {},

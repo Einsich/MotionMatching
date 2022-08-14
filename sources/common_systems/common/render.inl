@@ -188,7 +188,7 @@ void set_matrices_to_buffer(ecs::EntityId eid, int instanceCount, int &curBoneSi
   QUERY()find_matrices(eid, [&](const ecs::vector<mat3x4> &bones_matrices)
     {
       if (curBoneSize > 0)
-        assert(curBoneSize == bones_matrices.size());
+        assert((uint)curBoneSize == bones_matrices.size() * sizeof(mat3x4));
       else
       {
         curBoneSize = bones_matrices.size() * sizeof(mat3x4);

@@ -38,10 +38,10 @@ namespace ecs
     int i = 0;
     for(const auto& arg : query.requireArgs)
     {
-      if (arg.descr != 0)//singleton case
+      if (arg.typeHash != 0)//singleton case
       {
-        ComponentContainer* container = archetype->get_container(arg.descr);
-        if (!arg.optional && (container == nullptr || container->typeNameHash != arg.descr))
+        ComponentContainer* container = archetype->get_container(arg.nameHash);
+        if (!arg.optional && (container == nullptr || (arg.typeHash != -1u && container->typeHash != arg.typeHash)))
         {
           breaked = true;
           break;
@@ -52,7 +52,7 @@ namespace ecs
     }
     for (const auto& arg : query.requireNotArgs)
     {
-      if (arg.descr != 0 && archetype->get_container(arg.descr) != nullptr)//singleton case
+      if (archetype->get_container(arg.nameHash) != nullptr)
       {
         breaked = true;
         break;

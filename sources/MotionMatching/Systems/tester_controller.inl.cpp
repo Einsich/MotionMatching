@@ -3,7 +3,7 @@
 //Code-generator production
 
 ecs::QueryDescription get_tests_descr("get_tests", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false}
 }, {
 });
 
@@ -16,7 +16,7 @@ void get_tests(Callable lambda)
 
 
 ecs::QueryDescription get_tests2_descr("get_tests2", {
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false}
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false}
 }, {
 });
 
@@ -31,9 +31,9 @@ void get_tests2(Callable lambda)
 void tester_update_func();
 
 ecs::SystemDescription tester_update_descr("tester_update", {
-  {ecs::get_type_description<ecs::EntityId>("eid"), false},
-  {ecs::get_type_description<int>("testerSeed"), false},
-  {ecs::get_type_description<AnimationTester>("animationTester"), false}
+  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("testerSeed"), false},
+  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), false}
 }, {
 },
 {},
@@ -48,9 +48,9 @@ void tester_update_func()
 void test_count_func();
 
 ecs::SystemDescription test_count_descr("test_count", {
-  {ecs::get_type_description<ecs::vector<ecs::EntityId>>("testers"), false},
-  {ecs::get_type_description<ecs::vector<AnimationTest>>("tests"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
+  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("testers"), false},
+  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},
@@ -67,11 +67,11 @@ void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid);
 
 ecs::EventDescription start_test_descr(
   ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "start_test", {
-  {ecs::get_type_description<AnimationTester>("animationTester"), false},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<PersonController>("personController"), false},
-  {ecs::get_type_description<int>("testerSeed"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
+  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), false},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("testerSeed"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},

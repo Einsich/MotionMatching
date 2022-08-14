@@ -5,12 +5,12 @@
 void peson_controller_update_func();
 
 ecs::SystemDescription peson_controller_update_descr("peson_controller_update", {
-  {ecs::get_type_description<AnimationPlayer>("animationPlayer"), false},
-  {ecs::get_type_description<PersonController>("personController"), false},
-  {ecs::get_type_description<AnimationTester>("animationTester"), true},
-  {ecs::get_type_description<Transform>("transform"), false},
-  {ecs::get_type_description<int>("controllerIndex"), true},
-  {ecs::get_type_description<SettingsContainer>("settingsContainer"), false}
+  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
+  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
+  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), true},
+  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
+  {ecs::get_type_hash<int>(), ecs::get_name_hash("controllerIndex"), true},
+  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
 }, {
 },
 {},
@@ -27,8 +27,8 @@ void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::E
 
 ecs::EventDescription controller_mouse_move_handler_descr(
   ecs::get_mutable_event_handlers<ControllerMouseMoveEvent>(), "controller_mouse_move_handler", {
-  {ecs::get_type_description<PersonController>("personController"), false},
-  {ecs::get_type_description<Settings>("settings"), false}
+  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
+  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
 }, {
 },
 {},
@@ -49,7 +49,7 @@ void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs:
 
 ecs::EventDescription controller_crouch_event_handler_descr(
   ecs::get_mutable_event_handlers<ControllerKeyBoardEvent>(), "controller_crouch_event_handler", {
-  {ecs::get_type_description<PersonController>("personController"), false}
+  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false}
 }, {
 },
 {},
