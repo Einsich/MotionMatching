@@ -13,13 +13,13 @@ private:
     const TypeInfo *typeInfo;
     std::function<void(void*)> initManager;
     ecs::string name;
-    uint nameHash, typeHash, typeNameHash;
+    uint nameHash, typeHash;
     ComponentInstance(ComponentInstance &&) = default;
     ComponentInstance& operator=(ComponentInstance &&) = default;
 
     ComponentInstance(const ComponentInstance &other):
     instanceData(), typeInfo(other.typeInfo), initManager(other.initManager), name(other.name),
-    nameHash(other.nameHash), typeHash(other.typeHash), typeNameHash(other.typeNameHash)
+    nameHash(other.nameHash), typeHash(other.typeHash)
     {
       if (!initManager)
       {
@@ -48,27 +48,27 @@ private:
     template<typename T>
     ComponentInstance(const char *name, T &instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>())
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }
     template<typename T>
     ComponentInstance(const char *name, const T &instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>())
     {
       typeInfo->rtti.copy_constructor(&instance, instanceData.data());
     }
     template<typename T>
     ComponentInstance(const char *name, T &&instance) :
     instanceData(sizeof(T)), typeInfo(&type_info<T>()), name(name)
-    , nameHash(HashedString(name)), typeHash(type_hash<T>()), typeNameHash(type_name_hash(nameHash, type_hash<T>()))
+    , nameHash(HashedString(name)), typeHash(type_hash<T>())
     {
       typeInfo->rtti.move_constructor(&instance, instanceData.data());
     }
     ComponentInstance(const TypeInfo &info, const char *name, std::function<void(void*)> &&initManager) :
     instanceData(), typeInfo(&info), initManager(initManager), name(name)
-    , nameHash(HashedString(name)), typeHash(info.hashId), typeNameHash(type_name_hash(nameHash, info.hashId))
+    , nameHash(HashedString(name)), typeHash(info.hashId)
     {
     }
 

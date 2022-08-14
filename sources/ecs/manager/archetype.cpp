@@ -14,9 +14,9 @@ namespace ecs
       auto result = components.insert(instance.nameHash);
       if (result.second)
       {
-        result.first->second = ComponentContainer(*instance.typeInfo, instance.typeNameHash, capacity);
+        result.first->second = ComponentContainer(*instance.typeInfo, capacity);
       #else
-      if (components.try_emplace(instance.nameHash, *instance.typeInfo, instance.typeNameHash, capacity).second)
+      if (components.try_emplace(instance.nameHash, *instance.typeInfo, capacity).second)
       {
       #endif
         typeDescriptions.emplace_back(TypeDescription{instance.name, instance.typeInfo, nullptr, instance.nameHash});

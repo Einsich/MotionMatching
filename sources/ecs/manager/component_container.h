@@ -13,11 +13,11 @@ namespace ecs
   {
   public:
     ecs::vector<void*> data;
-    uint typeHash, typeNameHash;
+    uint typeHash;
     uint count, capacity;
     TypeRTTI rtti;
     ComponentContainer();
-    ComponentContainer(const TypeInfo &type_info, uint type_name_hash, int capacity);
+    ComponentContainer(const TypeInfo &type_info, int capacity);
 
     template<typename T>
     T* get_component(uint i) const

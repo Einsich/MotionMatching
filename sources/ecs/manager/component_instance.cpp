@@ -10,7 +10,7 @@ namespace ecs
       bool patched = false;
       for (size_t j = 0, m = components.size(); j < m; ++j)
       {
-        if (patch[i].typeNameHash == components[j].typeNameHash)
+        if (patch[i].typeHash == components[j].typeHash && patch[i].nameHash == components[j].nameHash)
         {
           components[j] = patch[i];
           patched = true;

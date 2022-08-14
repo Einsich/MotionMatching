@@ -132,7 +132,7 @@ namespace ecs
         ComponentContainer *container = tmpl->containers[i];
         size_t j = 0, m = list.size();
         for (; j < m; ++j)
-          if (instance.typeNameHash == list[j].typeNameHash)
+          if (instance.typeHash == list[j].typeHash && instance.nameHash == list[j].nameHash)
             break;
 
         void *rawMem = container->add_component();
