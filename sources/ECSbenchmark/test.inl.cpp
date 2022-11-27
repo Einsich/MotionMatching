@@ -5,10 +5,10 @@
 void ecs_update_func();
 
 ecs::SystemDescription ecs_update_descr("ecs_update", {
-  {ecs::get_type_description<vec3>("pos"), false},
-  {ecs::get_type_description<vec3>("vel"), false},
-  {ecs::get_type_description<vec3>("center"), false},
-  {ecs::get_type_description<float>("m"), false}
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("pos"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("vel"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("m"), false}
 }, {
 },
 {},
@@ -51,10 +51,10 @@ void vector_pointers_update_func()
 void das_update_func();
 
 ecs::SystemDescription das_update_descr("das_update", {
-  {ecs::get_type_description<vec3>("pos"), false},
-  {ecs::get_type_description<vec3>("vel"), false},
-  {ecs::get_type_description<vec3>("center"), false},
-  {ecs::get_type_description<float>("m"), false}
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("pos"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("vel"), false},
+  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
+  {ecs::get_type_hash<float>(), ecs::get_name_hash("m"), false}
 }, {
 },
 {},

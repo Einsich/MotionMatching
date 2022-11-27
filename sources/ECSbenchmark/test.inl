@@ -131,6 +131,7 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   das::setDasRoot(root_path("sources/3rd_party/daScript"));
   load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
   file = load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
+return;
 
   if (file)
   {
@@ -186,7 +187,7 @@ EVENT() term_das(const ecs::OnSceneDestroy &)
 
 
 SYSTEM(stage=act;) das_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
-{
+{return;
   vec4f args[5] = {
     das::cast<float>::from(Time::delta_time()),
     das::cast<float>::from(m),

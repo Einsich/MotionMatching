@@ -8,25 +8,30 @@ require daslib/decs
 
 require ecs
 
-[ecs(stage=act)]
+[ecs(stage=act,required=(inta))]
 def hi_func(dt, m : float; var pos, vel : float3&; center: float3)
   print("hi")
 
+[ecs(stage=act,required=(inta))]
+def lol_func(dt, m : float; var pos, vel : float3; center: float3)
+  print("hi")
 
 [export]
 def process(dt, m : float; var pos, vel : float3&; center: float3)
-{
-  let dir = center - pos;
-  let distance = length(dir);
-  let F = dir * m * 0.0001f / (distance*distance*distance);
-  let a = F / m;
-  vel += a * dt;
-  pos += vel * dt;
+
+  let dir = center - pos
+  let distance = length(dir)
+  let F = dir * m * 0.0001f / (distance*distance*distance)
+  let a = F / m
+  vel += a * dt
+  pos += vel * dt
   //print("dt = {dt}, m = {m}, pos = {pos}, vel = {vel}, center = {center}\n");
-}
+
+
+
 
 [export]
 def test
-{
-  print("this is nano tutorial\n");
-}
+
+  print("this is nano tutorial\n")
+

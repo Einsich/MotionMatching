@@ -102,49 +102,58 @@
   },
   "launchOption.options": {
     "BuildType": [
-        {"name": "Debug","value": "dbg"},
-        {"name": "Develop","value": "dev"},
-        {"name": "Release", "value": "rel"}
+      {
+        "name": "Debug",
+        "value": "dbg"
+      },
+      {
+        "name": "Develop",
+        "value": "dev"
+      },
+      {
+        "name": "Release",
+        "value": "rel"
+      }
     ],
     "Project": [
       {
         "name": "MotionMatching",
-        "value":{
-          "name":"MotionMatching",
-          "delpoy_only_project_folder":"false"
+        "value": {
+          "name": "MotionMatching",
+          "delpoy_only_project_folder": "false"
         }
       },
       {
         "name": "ECSCodeGen",
-        "value":{
-          "name":"ECSCodeGen",
+        "value": {
+          "name": "ECSCodeGen",
         }
       },
       {
         "name": "ECSbenchmark",
-        "value":{
-          "name":"ECSbenchmark",
+        "value": {
+          "name": "ECSbenchmark",
         }
       },
       {
         "name": "Strategy",
-        "value":{
-          "name":"Strategy",
-          "delpoy_only_project_folder":"false"
+        "value": {
+          "name": "Strategy",
+          "delpoy_only_project_folder": "false"
         }
       },
       {
         "name": "Arcade",
-        "value":{
-          "name":"Arcade",
-          "delpoy_only_project_folder":"false"
+        "value": {
+          "name": "Arcade",
+          "delpoy_only_project_folder": "false"
         }
       },
       {
         "name": "Territorio",
-        "value":{
-          "name":"Territorio",
-          "delpoy_only_project_folder":"true"
+        "value": {
+          "name": "Territorio",
+          "delpoy_only_project_folder": "true"
         }
       }
     ]
@@ -152,9 +161,9 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "MotionMatching",
-      "delpoy_only_project_folder": "false"
+      "name": "ECSbenchmark"
     }
   },
   "cmake.configureOnOpen": false,
+  "cmake.sourceDirectory": "${workspaceFolder}/sources/3rd_party/daScript/modules/dasStdDlg",
 }

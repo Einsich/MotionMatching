@@ -114,6 +114,34 @@ class SystemMacro : AstFunctionAnnotation
     func.body := fblk
     return true
 
+def type_name(_type : TypeDeclPtr)
+
+  if _type.baseType==Type tHandle
+    return "{_type.annotation.name}"
+  if _type.baseType==Type tInt
+    return "int"
+  if _type.baseType==Type tInt2
+    return "int2"
+  if _type.baseType==Type tInt3
+    return "int3"
+  if _type.baseType==Type tInt4
+    return "int4"
+  elif _type.baseType==Type tFloat
+    return "float"
+  elif _type.baseType==Type tFloat2
+    return "float2"
+  elif _type.baseType==Type tFloat3
+    return "float3"
+  elif _type.baseType==Type tFloat4
+    return "float4"
+  elif _type.baseType==Type tDouble
+    return "double"
+  elif _type.baseType==Type tString
+    return "string"
+  elif _type.baseType==Type tBool
+    return "bool"
+
+  return "?"
 
 [function_macro(name="ecs")]
 class ECSSystemMacro : AstFunctionAnnotation
@@ -124,12 +152,27 @@ class ECSSystemMacro : AstFunctionAnnotation
 
     func.flags |= FunctionFlags exports
 
-    var req: array<string>
+    var req: array<tuple<string; string>>
+    var not_req: array<tuple<string; string>>
+    var before: array<string>
+    var after: array<string>
+    var tags: array<string>
     for arg in args
       if arg.basicType == Type tString
-        if arg.name == "REQUIRE"
-          req |> push("{arg.sValue}")
+        if arg.name == "required"
+          req |> push([[auto "", "{arg.sValue}"]])
+        elif arg.name == "required_not"
+          not_req |> push([[auto "", "{arg.sValue}"]])
+        elif arg.name == "before"
+          before |> push("{arg.sValue}")
+        elif arg.name == "after"
+          after |> push("{arg.sValue}")
+        elif arg.name == "tags"
+          tags |> push("{arg.sValue}")
+
     for arg in func.arguments
-      req |> push("{arg.name}")
-    register_system("{func.name}", req)
+      req |> push([[auto type_name(arg._type), "{arg.name}"]])
+  
+    register_system("{func.name}", "{argPass}", req, not_req, before, after, tags)
+  
     return true
