@@ -1,121 +1,157 @@
 #include "camera.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void camera_lerp_func();
+static ecs::QueryCache camera_lerp__cache__;
 
-ecs::SystemDescription camera_lerp_descr("camera_lerp", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("lerpStrength"), false}
-}, {
-},
-{},
-{},
-camera_lerp_func, "act", {}, false);
+static ecs::QueryCache setup_camera__cache__;
 
-void camera_lerp_func()
+static ecs::QueryCache change_zoom__cache__;
+
+static ecs::QueryCache move_camera__cache__;
+
+static ecs::QueryCache lock_unlock_camera__cache__;
+
+static void camera_lerp_implementation()
 {
-  ecs::perform_system(camera_lerp_descr, camera_lerp);
+  ecs::perform_system(camera_lerp__cache__, camera_lerp);
 }
 
-void setup_camera_handler(const ecs::Event &event);
-void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription setup_camera_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "setup_camera", {
-  {ecs::get_type_hash<mat3>(), ecs::get_name_hash("cameraProjection"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("pixelPerUnit"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("minZoom"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("maxZoom"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("curZoom"), false},
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
-  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false}
-}, {
-},
-{},
-{},
-setup_camera_handler, setup_camera_singl_handler, {});
-
-void setup_camera_handler(const ecs::Event &event)
+static void setup_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, setup_camera);
-}
-void setup_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, setup_camera_descr, eid, setup_camera);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), setup_camera__cache__, setup_camera);
 }
 
-void change_zoom_handler(const ecs::Event &event);
-void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription change_zoom_descr(
-  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("zoomStrength"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
-  {-1u, ecs::get_name_hash("cameraProjection"), false}
-}, {
-},
-{},
-{},
-change_zoom_handler, change_zoom_singl_handler, {});
-
-void change_zoom_handler(const ecs::Event &event)
+static void setup_camera_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, change_zoom);
-}
-void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, eid, change_zoom);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), setup_camera__cache__, setup_camera);
 }
 
-void move_camera_handler(const ecs::Event &event);
-void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription move_camera_descr(
-  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "move_camera", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("targetTransform"), false},
-  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("cameraLocked"), false},
-  {-1u, ecs::get_name_hash("cameraProjection"), false}
-}, {
-},
-{},
-{},
-move_camera_handler, move_camera_singl_handler, {});
-
-void move_camera_handler(const ecs::Event &event)
+static void change_zoom_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseMoveEvent&)event, move_camera_descr, move_camera);
-}
-void move_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseMoveEvent&)event, move_camera_descr, eid, move_camera);
+  ecs::perform_event(reinterpret_cast<const MouseWheelEvent &>(event), change_zoom__cache__, change_zoom);
 }
 
-void lock_unlock_camera_handler(const ecs::Event &event);
-void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription lock_unlock_camera_descr(
-  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "lock_unlock_camera", {
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("cameraLocked"), false},
-  {-1u, ecs::get_name_hash("cameraProjection"), false}
-}, {
-},
-{},
-{},
-lock_unlock_camera_handler, lock_unlock_camera_singl_handler, {});
-
-void lock_unlock_camera_handler(const ecs::Event &event)
+static void change_zoom_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, lock_unlock_camera_descr, lock_unlock_camera);
-}
-void lock_unlock_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, lock_unlock_camera_descr, eid, lock_unlock_camera);
+  ecs::perform_event(eid, reinterpret_cast<const MouseWheelEvent &>(event), change_zoom__cache__, change_zoom);
 }
 
+static void move_camera_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const MouseMoveEvent &>(event), move_camera__cache__, move_camera);
+}
 
+static void move_camera_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseMoveEvent &>(event), move_camera__cache__, move_camera);
+}
+
+static void lock_unlock_camera_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), lock_unlock_camera__cache__, lock_unlock_camera);
+}
+
+static void lock_unlock_camera_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), lock_unlock_camera__cache__, lock_unlock_camera);
+}
+
+static void registration_pull_camera()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "camera_lerp",
+  &camera_lerp__cache__,
+  {
+    {"targetTransform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform2D>()},
+    {"transform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"lerpStrength", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &camera_lerp_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "setup_camera",
+  &setup_camera__cache__,
+  {
+    {"cameraProjection", ecs::get_type_index<mat3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<mat3>()},
+    {"zoom", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"pixelPerUnit", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"minZoom", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"maxZoom", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"curZoom", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"transform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"targetTransform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"wr", ecs::get_type_index<WorldRenderer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<WorldRenderer>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &setup_camera_handler, &setup_camera_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "change_zoom",
+  &change_zoom__cache__,
+  {
+    {"targetTransform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"zoomStrength", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"zoom", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()}
+  },
+  {
+    {"cameraProjection", ecs::TypeIndex<mat3>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &change_zoom_handler, &change_zoom_single_handler),
+  ecs::EventIndex<MouseWheelEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "move_camera",
+  &move_camera__cache__,
+  {
+    {"targetTransform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"wr", ecs::get_type_index<WorldRenderer>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<WorldRenderer>()},
+    {"cameraLocked", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"cameraProjection", ecs::TypeIndex<mat3>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &move_camera_handler, &move_camera_single_handler),
+  ecs::EventIndex<MouseMoveEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "lock_unlock_camera",
+  &lock_unlock_camera__cache__,
+  {
+    {"cameraLocked", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"cameraProjection", ecs::TypeIndex<mat3>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &lock_unlock_camera_handler, &lock_unlock_camera_single_handler),
+  ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_camera)

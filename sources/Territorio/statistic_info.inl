@@ -1,5 +1,6 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <imgui.h>
+#include <ecs/imgui.h>
 #include <3dmath.h>
 
 static void NodeFont(ImFont* font)

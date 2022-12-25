@@ -1,132 +1,191 @@
 #include "user_input.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription is_game_started_descr("is_game_started", {
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("gameStarted"), false}
-}, {
-});
+static ecs::QueryCache is_game_started__cache__;
+
+static ecs::QueryCache select_map_query__cache__;
+
+static ecs::QueryCache start_game__cache__;
+
+static ecs::QueryCache select_spawn_point__cache__;
+
+static ecs::QueryCache select_invasion__cache__;
+
+static ecs::QueryCache change_invasion_weight__cache__;
+
+static ecs::QueryCache check_mouse_over_ui__cache__;
 
 template<typename Callable>
-void is_game_started(Callable lambda)
+static void is_game_started(Callable lambda)
 {
-  ecs::perform_query<bool&>
-  (is_game_started_descr, lambda);
+  ecs::perform_query<bool&>(is_game_started__cache__, lambda);
 }
-
-
-ecs::QueryDescription select_map_query_descr("select_map_query", {
-  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false}
-}, {
-});
 
 template<typename Callable>
-void select_map_query(Callable lambda)
+static void select_map_query(Callable lambda)
 {
-  ecs::perform_query<MapArrays&>
-  (select_map_query_descr, lambda);
+  ecs::perform_query<const MapArrays&>(select_map_query__cache__, lambda);
 }
 
-
-void change_invasion_weight_func();
-
-ecs::SystemDescription change_invasion_weight_descr("change_invasion_weight", {
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasion_weight"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {-1u, ecs::get_name_hash("isPlayer"), false}
-}, {
-},
-{},
-{},
-change_invasion_weight_func, "ui", {}, false);
-
-void change_invasion_weight_func()
+static void start_game_handler(const ecs::Event &event)
 {
-  ecs::perform_system(change_invasion_weight_descr, change_invasion_weight);
+  ecs::perform_event(reinterpret_cast<const KeyDownEvent<SDLK_RETURN> &>(event), start_game__cache__, start_game);
 }
 
-void check_mouse_over_ui_func();
-
-ecs::SystemDescription check_mouse_over_ui_descr("check_mouse_over_ui", {
-}, {
-},
-{},
-{},
-check_mouse_over_ui_func, "ui", {}, false);
-
-void check_mouse_over_ui_func()
+static void start_game_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_system(check_mouse_over_ui_descr, check_mouse_over_ui);
+  ecs::perform_event(eid, reinterpret_cast<const KeyDownEvent<SDLK_RETURN> &>(event), start_game__cache__, start_game);
 }
 
-void start_game_handler(const ecs::Event &event);
-void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription start_game_descr(
-  ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_RETURN>>(), "start_game", {
-  {-1u, ecs::get_name_hash("isPlayer"), false}
-}, {
-},
-{},
-{},
-start_game_handler, start_game_singl_handler, {});
-
-void start_game_handler(const ecs::Event &event)
+static void select_spawn_point_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const KeyDownEvent<SDLK_RETURN>&)event, start_game_descr, start_game);
-}
-void start_game_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KeyDownEvent<SDLK_RETURN>&)event, start_game_descr, eid, start_game);
+  ecs::perform_event(reinterpret_cast<const MouseButtonDownEvent<MouseButton::RightButton> &>(event), select_spawn_point__cache__, select_spawn_point);
 }
 
-void select_spawn_point_handler(const ecs::Event &event);
-void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription select_spawn_point_descr(
-  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::RightButton>>(), "select_spawn_point", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {-1u, ecs::get_name_hash("player_spawning"), false}
-}, {
-},
-{},
-{},
-select_spawn_point_handler, select_spawn_point_singl_handler, {});
-
-void select_spawn_point_handler(const ecs::Event &event)
+static void select_spawn_point_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::RightButton>&)event, select_spawn_point_descr, select_spawn_point);
-}
-void select_spawn_point_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::RightButton>&)event, select_spawn_point_descr, eid, select_spawn_point);
+  ecs::perform_event(eid, reinterpret_cast<const MouseButtonDownEvent<MouseButton::RightButton> &>(event), select_spawn_point__cache__, select_spawn_point);
 }
 
-void select_invasion_handler(const ecs::Event &event);
-void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription select_invasion_descr(
-  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "select_invasion", {
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
-  {ecs::get_type_hash<ecs::vector<uint>>(), ecs::get_name_hash("neighborsIdx"), false},
-  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasion_weight"), false},
-  {-1u, ecs::get_name_hash("isPlayer"), false}
-}, {
-},
-{},
-{},
-select_invasion_handler, select_invasion_singl_handler, {});
-
-void select_invasion_handler(const ecs::Event &event)
+static void select_invasion_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, select_invasion_descr, select_invasion);
-}
-void select_invasion_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, select_invasion_descr, eid, select_invasion);
+  ecs::perform_event(reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), select_invasion__cache__, select_invasion);
 }
 
+static void select_invasion_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), select_invasion__cache__, select_invasion);
+}
 
+static void change_invasion_weight_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), change_invasion_weight__cache__, change_invasion_weight);
+}
+
+static void change_invasion_weight_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), change_invasion_weight__cache__, change_invasion_weight);
+}
+
+static void check_mouse_over_ui_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), check_mouse_over_ui__cache__, check_mouse_over_ui);
+}
+
+static void check_mouse_over_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), check_mouse_over_ui__cache__, check_mouse_over_ui);
+}
+
+static void registration_pull_user_input()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "is_game_started",
+  &is_game_started__cache__,
+  {
+    {"gameStarted", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "select_map_query",
+  &select_map_query__cache__,
+  {
+    {"map_arrays", ecs::get_type_index<MapArrays>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MapArrays>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "start_game",
+  &start_game__cache__,
+  {},
+  {
+    {"isPlayer", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &start_game_handler, &start_game_single_handler),
+  ecs::EventIndex<KeyDownEvent<SDLK_RETURN>>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "select_spawn_point",
+  &select_spawn_point__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()}
+  },
+  {
+    {"player_spawning", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &select_spawn_point_handler, &select_spawn_point_single_handler),
+  ecs::EventIndex<MouseButtonDownEvent<MouseButton::RightButton>>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "select_invasion",
+  &select_invasion__cache__,
+  {
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<uint>()},
+    {"neighbors", ecs::get_type_index<ecs::vector<ecs::EntityId>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<ecs::EntityId>>()},
+    {"neighborsIdx", ecs::get_type_index<ecs::vector<uint>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<uint>>()},
+    {"invasions", ecs::get_type_index<ecs::vector<Invasion>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<Invasion>>()},
+    {"invasion_weight", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {
+    {"isPlayer", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &select_invasion_handler, &select_invasion_single_handler),
+  ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "change_invasion_weight",
+  &change_invasion_weight__cache__,
+  {
+    {"invasion_weight", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()}
+  },
+  {
+    {"isPlayer", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &change_invasion_weight_handler, &change_invasion_weight_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "check_mouse_over_ui",
+  &check_mouse_over_ui__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &check_mouse_over_ui_handler, &check_mouse_over_ui_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_user_input)

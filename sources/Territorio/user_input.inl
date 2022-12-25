@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <input.h>
 #include "map_arrays.h"
 #include "game_events.h"
@@ -20,7 +20,7 @@ EVENT(require=ecs::Tag isPlayer)start_game(const KeyDownEvent<SDLK_RETURN>&)
 }
 
 vec2 screen_to_world(int x, int y);
-ecs::EntityId spawn_player(const ecs::Template *player_template, ivec2 start_point);
+ecs::EntityId spawn_player(const ecs::prefab_id player_template, ivec2 start_point);
 
 static bool get_world_pos(int x, int y, const MapArrays &map_arrays, ivec2 &world_pos)
 {
@@ -45,7 +45,7 @@ EVENT(require=ecs::Tag player_spawning) select_spawn_point(
     ivec2 worldPos;
     if (get_world_pos(event.x, event.y, map_arrays, worldPos))
     {
-      const ecs::Template *playerTemplate = ecs::get_template("player");
+      const ecs::prefab_id playerTemplate = ecs::get_prefab_id("player");
       spawn_player(playerTemplate, worldPos);
       ecs::destroy_entity(eid);
     }

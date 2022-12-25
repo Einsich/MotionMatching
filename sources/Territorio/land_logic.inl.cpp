@@ -1,178 +1,244 @@
 #include "land_logic.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription lands_economic_descr("lands_economic", {
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {-1u, ecs::get_name_hash("isPlayableLand"), false}
-}, {
-});
+static ecs::QueryCache lands_economic__cache__;
+
+static ecs::QueryCache gather_invaders__cache__;
+
+static ecs::QueryCache gather_invaders2__cache__;
+
+static ecs::QueryCache query_victim2__cache__;
+
+static ecs::QueryCache query_neighbor__cache__;
+
+static ecs::QueryCache query_victim__cache__;
+
+static ecs::QueryCache update_bot_invasions__cache__;
+
+static ecs::QueryCache map_update__cache__;
+
+static ecs::QueryCache border_update__cache__;
+
+static ecs::QueryCache game_started__cache__;
 
 template<typename Callable>
-void lands_economic(Callable lambda)
+static void lands_economic(Callable lambda)
 {
-  ecs::perform_query<int, uint&>
-  (lands_economic_descr, lambda);
+  ecs::perform_query<int, uint&>(lands_economic__cache__, lambda);
 }
-
-
-ecs::QueryDescription gather_invaders_descr("gather_invaders", {
-  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
-}, {
-});
 
 template<typename Callable>
-void gather_invaders(Callable lambda)
+static void gather_invaders(Callable lambda)
 {
-  ecs::perform_query<ecs::vector<Invasion>&, uint, int&>
-  (gather_invaders_descr, lambda);
+  ecs::perform_query<ecs::vector<Invasion>&, uint, int&>(gather_invaders__cache__, lambda);
 }
-
-
-ecs::QueryDescription gather_invaders2_descr("gather_invaders2", {
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
-  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
-  {ecs::get_type_hash<ecs::vector<uint>>(), ecs::get_name_hash("neighborsIdx"), false},
-  {-1u, ecs::get_name_hash("isPlayableLand"), false}
-}, {
-});
 
 template<typename Callable>
-void gather_invaders2(Callable lambda)
+static void gather_invaders2(Callable lambda)
 {
-  ecs::perform_query<uint, ecs::vector<ecs::EntityId>&, ecs::vector<uint>&>
-  (gather_invaders2_descr, lambda);
+  ecs::perform_query<uint, ecs::vector<ecs::EntityId>&, ecs::vector<uint>&>(gather_invaders2__cache__, lambda);
 }
-
-
-ecs::QueryDescription query_victim2_descr("query_victim2", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
-}, {
-});
 
 template<typename Callable>
-void query_victim2(Callable lambda)
+static void query_victim2(Callable lambda)
 {
-  ecs::perform_query<ecs::EntityId, uint, int>
-  (query_victim2_descr, lambda);
+  ecs::perform_query<ecs::EntityId, uint, int>(query_victim2__cache__, lambda);
 }
-
-
-ecs::QueryDescription query_neighbor_descr("query_neighbor", {
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false}
-}, {
-});
 
 template<typename Callable>
-void query_neighbor(ecs::EntityId eid, Callable lambda)
+static void query_neighbor(ecs::EntityId eid, Callable lambda)
 {
-  ecs::perform_query<uint, ecs::EntityId, uint>
-  (query_neighbor_descr, eid, lambda);
+  ecs::perform_query<uint, ecs::EntityId, uint>(query_neighbor__cache__, eid, lambda);
 }
-
-
-ecs::QueryDescription query_victim_descr("query_victim", {
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("landIndex"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false}
-}, {
-});
 
 template<typename Callable>
-void query_victim(ecs::EntityId eid, Callable lambda)
+static void query_victim(ecs::EntityId eid, Callable lambda)
 {
-  ecs::perform_query<uint&, uint, int&>
-  (query_victim_descr, eid, lambda);
+  ecs::perform_query<uint&, uint, int&>(query_victim__cache__, eid, lambda);
 }
 
-
-void update_bot_invasions_func();
-
-ecs::SystemDescription update_bot_invasions_descr("update_bot_invasions", {
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasionPeriod"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("invasionTime"), false},
-  {ecs::get_type_hash<ecs::vector<Invasion>>(), ecs::get_name_hash("invasions"), false},
-  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("neighbors"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false}
-}, {
-},
-{},
-{},
-update_bot_invasions_func, "act", {}, false);
-
-void update_bot_invasions_func()
+static void update_bot_invasions_implementation()
 {
-  ecs::perform_system(update_bot_invasions_descr, update_bot_invasions);
+  ecs::perform_system(update_bot_invasions__cache__, update_bot_invasions);
 }
 
-void map_update_func();
-
-ecs::SystemDescription map_update_descr("map_update", {
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("forceFromCell"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("forceFromPeople"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("maxForceFromCell"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("updatePeriod"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("updateTime"), false},
-  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("mapWasChanged"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("gameStarted"), false}
-}, {
-},
-{},
-{},
-map_update_func, "act", {}, false);
-
-void map_update_func()
+static void map_update_implementation()
 {
-  ecs::perform_system(map_update_descr, map_update);
+  ecs::perform_system(map_update__cache__, map_update);
 }
 
-void border_update_func();
-
-ecs::SystemDescription border_update_descr("border_update", {
-  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false}
-}, {
-},
-{},
-{},
-border_update_func, "act", {}, false);
-
-void border_update_func()
+static void border_update_implementation()
 {
-  ecs::perform_system(border_update_descr, border_update);
+  ecs::perform_system(border_update__cache__, border_update);
 }
 
-void game_started_handler(const ecs::Event &event);
-void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription game_started_descr(
-  ecs::get_mutable_event_handlers<OnGameStarted>(), "game_started", {
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("forces"), false},
-  {ecs::get_type_hash<uint>(), ecs::get_name_hash("startForces"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("landCount"), false},
-  {-1u, ecs::get_name_hash("isPlayableLand"), false}
-}, {
-},
-{},
-{},
-game_started_handler, game_started_singl_handler, {});
-
-void game_started_handler(const ecs::Event &event)
+static void game_started_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const OnGameStarted&)event, game_started_descr, game_started);
-}
-void game_started_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const OnGameStarted&)event, game_started_descr, eid, game_started);
+  ecs::perform_event(reinterpret_cast<const OnGameStarted &>(event), game_started__cache__, game_started);
 }
 
+static void game_started_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const OnGameStarted &>(event), game_started__cache__, game_started);
+}
 
+static void registration_pull_land_logic()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "lands_economic",
+  &lands_economic__cache__,
+  {
+    {"landCount", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<uint>()}
+  },
+  {
+    {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "gather_invaders",
+  &gather_invaders__cache__,
+  {
+    {"invasions", ecs::get_type_index<ecs::vector<Invasion>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<Invasion>>()},
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"landCount", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "gather_invaders2",
+  &gather_invaders2__cache__,
+  {
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"neighbors", ecs::get_type_index<ecs::vector<ecs::EntityId>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<ecs::EntityId>>()},
+    {"neighborsIdx", ecs::get_type_index<ecs::vector<uint>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<uint>>()}
+  },
+  {
+    {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "query_victim2",
+  &query_victim2__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"landCount", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "query_neighbor",
+  &query_neighbor__cache__,
+  {
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "query_victim",
+  &query_victim__cache__,
+  {
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<uint>()},
+    {"landIndex", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"landCount", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "update_bot_invasions",
+  &update_bot_invasions__cache__,
+  {
+    {"invasionPeriod", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"invasionTime", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
+    {"invasions", ecs::get_type_index<ecs::vector<Invasion>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<Invasion>>()},
+    {"neighbors", ecs::get_type_index<ecs::vector<ecs::EntityId>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<ecs::EntityId>>()},
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<uint>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &update_bot_invasions_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "map_update",
+  &map_update__cache__,
+  {
+    {"forceFromCell", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"forceFromPeople", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"maxForceFromCell", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"updatePeriod", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"updateTime", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
+    {"map_arrays", ecs::get_type_index<MapArrays>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapArrays>()},
+    {"mapWasChanged", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()},
+    {"needUpdateBorder", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()},
+    {"gameStarted", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &map_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "border_update",
+  &border_update__cache__,
+  {
+    {"map_arrays", ecs::get_type_index<MapArrays>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapArrays>()},
+    {"needUpdateBorder", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &border_update_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "game_started",
+  &game_started__cache__,
+  {
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<uint>()},
+    {"startForces", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()},
+    {"landCount", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()}
+  },
+  {
+    {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &game_started_handler, &game_started_single_handler),
+  ecs::EventIndex<OnGameStarted>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_land_logic)

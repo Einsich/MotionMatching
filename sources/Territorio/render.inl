@@ -1,5 +1,5 @@
-#include <ecs.h>
-#include <ecs/type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <render/shader/shader.h>
 #include <render/texture/texture2d.h>
 #include <render/mesh.h>
@@ -7,7 +7,7 @@
 #include "map_arrays.h"
 #include "world_render.h"
 
-ECS_REGISTER_TYPE(WorldRenderer, WorldRenderer)
+ECS_REGISTER_SINGLETON(WorldRenderer)
 
 template<typename Callable>
 void get_world_renderer(Callable);

@@ -162,8 +162,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "Arcade",
-      "delpoy_only_project_folder": "false"
+      "name": "Territorio",
+      "delpoy_only_project_folder": "true"
     }
   },
   "cmake.configureOnOpen": false,

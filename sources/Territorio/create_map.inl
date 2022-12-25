@@ -1,10 +1,10 @@
-#include <ecs.h>
-#include <ecs/type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <transform2d.h>
 #include <render/texture/texture2d.h>
 #include "map_arrays.h"
 
-ECS_REGISTER_TYPE(MapArrays, MapArrays)
+ECS_REGISTER_TYPE(MapArrays, "MapArrays", ecs::DefaultType)
 
 
 static vector<ivec2> get_player_start_points(int h, int w, int n)
@@ -25,7 +25,7 @@ again:
 template<typename Callable>
 static void spawn_player_query(Callable);
 
-ecs::EntityId spawn_player(const ecs::Template *player_template, ivec2 start_point)
+ecs::EntityId spawn_player(const ecs::prefab_id player_template, ivec2 start_point)
 {
   ecs::EntityId result;
   QUERY()spawn_player_query([&](
@@ -83,7 +83,7 @@ EVENT() create_map(
   });
 
   vector<ivec2> startPoints = get_player_start_points(width, height, botsCount);
-  const ecs::Template *botTemplate = ecs::get_template("bot");
+  const ecs::prefab_id botTemplate = ecs::get_prefab_id("bot");
   for (int i = 0; i < botsCount; i++)
   {
     spawn_player(botTemplate, startPoints[i]);

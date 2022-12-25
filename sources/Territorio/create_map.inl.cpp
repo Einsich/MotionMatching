@@ -1,49 +1,64 @@
 #include "create_map.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription spawn_player_query_descr("spawn_player_query", {
-  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
-  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("mapWasChanged"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("needUpdateBorder"), false}
-}, {
-});
+static ecs::QueryCache spawn_player_query__cache__;
+
+static ecs::QueryCache create_map__cache__;
 
 template<typename Callable>
-void spawn_player_query(Callable lambda)
+static void spawn_player_query(Callable lambda)
 {
-  ecs::perform_query<MapArrays&, ecs::vector<vec3>&, bool&, bool&>
-  (spawn_player_query_descr, lambda);
+  ecs::perform_query<MapArrays&, ecs::vector<vec3>&, bool&, bool&>(spawn_player_query__cache__, lambda);
 }
 
-
-void create_map_handler(const ecs::Event &event);
-void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription create_map_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "create_map", {
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("width"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("height"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("mapTexture"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("borderTexture"), false},
-  {ecs::get_type_hash<Shader>(), ecs::get_name_hash("mapShader"), false},
-  {ecs::get_type_hash<MapArrays>(), ecs::get_name_hash("map_arrays"), false},
-  {ecs::get_type_hash<ecs::vector<vec3>>(), ecs::get_name_hash("land_colors"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("botsCount"), false}
-}, {
-},
-{},
-{},
-create_map_handler, create_map_singl_handler, {});
-
-void create_map_handler(const ecs::Event &event)
+static void create_map_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, create_map_descr, create_map);
-}
-void create_map_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, create_map_descr, eid, create_map);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), create_map__cache__, create_map);
 }
 
+static void create_map_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), create_map__cache__, create_map);
+}
 
+static void registration_pull_create_map()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "spawn_player_query",
+  &spawn_player_query__cache__,
+  {
+    {"map_arrays", ecs::get_type_index<MapArrays>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapArrays>()},
+    {"land_colors", ecs::get_type_index<ecs::vector<vec3>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<vec3>>()},
+    {"mapWasChanged", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()},
+    {"needUpdateBorder", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "create_map",
+  &create_map__cache__,
+  {
+    {"width", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"height", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"mapTexture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"borderTexture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"mapShader", ecs::get_type_index<Shader>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Shader>()},
+    {"map_arrays", ecs::get_type_index<MapArrays>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapArrays>()},
+    {"land_colors", ecs::get_type_index<ecs::vector<vec3>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<vec3>>()},
+    {"botsCount", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &create_map_handler, &create_map_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_create_map)

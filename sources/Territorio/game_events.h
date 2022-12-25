@@ -1,3 +1,3 @@
 #pragma once
-#include <ecs_event.h>
+#include <ecs/event.h>
 struct OnGameStarted : public ecs::Event {};

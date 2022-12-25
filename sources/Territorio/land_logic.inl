@@ -1,6 +1,6 @@
 #include <set>
-#include <ecs.h>
-#include <ecs/type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <application/time.h>
 #include "map_arrays.h"
 #include "game_events.h"
@@ -10,7 +10,7 @@
 
 ECS_EVENT_REGISTRATION(OnGameStarted)
 
-ECS_REGISTER_TYPE_AND_VECTOR(Invasion, Invasion);
+ECS_REGISTER_TYPE_AND_VECTOR(Invasion, "Invasion", ecs::DefaultType);
 
 
 template<typename Callable>
@@ -58,7 +58,7 @@ EVENT(require=ecs::Tag isPlayableLand) game_started(
 
 void try_add_invasion(uint &forces, ecs::vector<Invasion> &invasions, Invasion invasion)
 {
-  if (invasion.enemyEid)
+  if (invasion.enemyEid.valid())
   {
     auto prevInv = std::find_if(invasions.begin(), invasions.end(),
         [&](const Invasion &inv){return inv.enemyIndex == invasion.enemyIndex;});
