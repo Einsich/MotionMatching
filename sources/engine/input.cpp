@@ -121,7 +121,7 @@ void Input::event_process(const SDL_MouseButtonEvent& event, float time)
 void Input::event_process(const SDL_MouseMotionEvent& event, float time)
 {
   if (eventable)
-    ecs::send_event(MouseMoveEvent {{}, event.x, get_resolution().second - event.y, event.xrel, -event.yrel, time});
+    ecs::send_event(MouseMoveEvent {{}, event.x, event.y, event.xrel, event.yrel, time});
 }
 void Input::event_process(const SDL_MouseWheelEvent& event, float time)
 {

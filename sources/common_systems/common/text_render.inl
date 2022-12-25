@@ -31,7 +31,7 @@ static void load_fonts()
 }
 
 #include <ecs/registration.h>
-ECS_REGISTER_TYPE(TextAlignment, "TextAlignment", ecs::DefaultType);
+ECS_REGISTER_TYPE(TextAlignment, "TextAlignment", ecs::PODType);
 
 static GLuint CreateFontsTexture()
 {
