@@ -1,27 +1,36 @@
 #include "init_game.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void init_game_handler(const ecs::Event &event);
-void init_game_singl_handler(const ecs::Event &event, ecs::EntityId eid);
+static ecs::QueryCache init_game__cache__;
 
-ecs::EventDescription init_game_descr(
-  ecs::get_mutable_event_handlers<StartGameEvent>(), "init_game", {
-  {ecs::get_type_hash<SpriteFactory>(), ecs::get_name_hash("sf"), false},
-  {ecs::get_type_hash<ScoreBoard>(), ecs::get_name_hash("sb"), false}
-}, {
-},
-{},
-{},
-init_game_handler, init_game_singl_handler, {});
-
-void init_game_handler(const ecs::Event &event)
+static void init_game_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const StartGameEvent&)event, init_game_descr, init_game);
-}
-void init_game_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const StartGameEvent&)event, init_game_descr, eid, init_game);
+  ecs::perform_event(reinterpret_cast<const StartGameEvent &>(event), init_game__cache__, init_game);
 }
 
+static void init_game_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const StartGameEvent &>(event), init_game__cache__, init_game);
+}
 
+static void registration_pull_init_game()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "init_game",
+  &init_game__cache__,
+  {
+    {"sf", ecs::get_type_index<SpriteFactory>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<SpriteFactory>()},
+    {"sb", ecs::get_type_index<ScoreBoard>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ScoreBoard>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &init_game_handler, &init_game_single_handler),
+  ecs::EventIndex<StartGameEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_init_game)

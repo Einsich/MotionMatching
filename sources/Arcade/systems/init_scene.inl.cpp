@@ -1,47 +1,61 @@
 #include "init_scene.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void init_sprites_shaders_camera_handler(const ecs::Event &event);
-void init_sprites_shaders_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid);
+static ecs::QueryCache init_sprites_shaders_camera__cache__;
 
-ecs::EventDescription init_sprites_shaders_camera_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "init_sprites_shaders_camera", {
-  {ecs::get_type_hash<WorldRenderer>(), ecs::get_name_hash("wr"), false},
-  {ecs::get_type_hash<SpriteFactory>(), ecs::get_name_hash("sf"), false}
-}, {
-},
-{},
-{},
-init_sprites_shaders_camera_handler, init_sprites_shaders_camera_singl_handler, {});
+static ecs::QueryCache load_scene_event__cache__;
 
-void init_sprites_shaders_camera_handler(const ecs::Event &event)
+static void init_sprites_shaders_camera_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_sprites_shaders_camera_descr, init_sprites_shaders_camera);
-}
-void init_sprites_shaders_camera_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_sprites_shaders_camera_descr, eid, init_sprites_shaders_camera);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), init_sprites_shaders_camera__cache__, init_sprites_shaders_camera);
 }
 
-void load_scene_event_handler(const ecs::Event &event);
-void load_scene_event_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription load_scene_event_descr(
-  ecs::get_mutable_event_handlers<LoadSceneEvent>(), "load_scene_event", {
-}, {
-},
-{},
-{},
-load_scene_event_handler, load_scene_event_singl_handler, {});
-
-void load_scene_event_handler(const ecs::Event &event)
+static void init_sprites_shaders_camera_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const LoadSceneEvent&)event, load_scene_event_descr, load_scene_event);
-}
-void load_scene_event_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const LoadSceneEvent&)event, load_scene_event_descr, eid, load_scene_event);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), init_sprites_shaders_camera__cache__, init_sprites_shaders_camera);
 }
 
+static void load_scene_event_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const LoadSceneEvent &>(event), load_scene_event__cache__, load_scene_event);
+}
 
+static void load_scene_event_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const LoadSceneEvent &>(event), load_scene_event__cache__, load_scene_event);
+}
+
+static void registration_pull_init_scene()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "init_sprites_shaders_camera",
+  &init_sprites_shaders_camera__cache__,
+  {
+    {"wr", ecs::get_type_index<WorldRenderer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<WorldRenderer>()},
+    {"sf", ecs::get_type_index<SpriteFactory>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SpriteFactory>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &init_sprites_shaders_camera_handler, &init_sprites_shaders_camera_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "load_scene_event",
+  &load_scene_event__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &load_scene_event_handler, &load_scene_event_single_handler),
+  ecs::EventIndex<LoadSceneEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_init_scene)

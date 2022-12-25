@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <application/application.h>
 #include <render/shader/shader.h>
 #include <transform2d.h>
@@ -21,7 +21,7 @@ EVENT() init_sprites_shaders_camera(
   float figureWidth = 1.f/FigureCount, figureHeight =  1.f/2.f;
   vec2 figureSize(figureWidth, figureHeight);
   for (int i = 0; i < FigureCount; i++)
-    sf.figures[i] = Sprite(figuresTex, vec2(figureWidth*i, 0), figureSize);
+    sf.figures[i] = Sprite(figuresTex, vec2(figureWidth*i, figureHeight), figureSize);
 
   sf.arrow = Sprite(arrowTex);
   sf.bullet = Sprite(bulletTex);

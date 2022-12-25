@@ -1,10 +1,13 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <application/time.h>
 #include <transform2d.h>
 #include <input.h>
 #include "world_renderer.h"
 #include "game_structs.h"
 
+ECS_REGISTER_SINGLETON(WorldRenderer)
+ECS_REGISTER_SINGLETON(SpriteFactory)
+ECS_REGISTER_SINGLETON(ScoreBoard)
 
 SYSTEM(stage=act; require=ecs::Tag target) controll_targets(
   Transform2D &transform,
@@ -32,7 +35,7 @@ EVENT(require=ecs::Tag mainHero) look_at_mouse_position_when_mouse_moves(
 {
   vec2 worldPos = wr.screen_to_world(event.x, event.y);
   vec2 direction = worldPos - transform.position;
-  transform.rotation = atan2f(direction.x, direction.y) - PIHALF;
+  transform.rotation = atan2f(direction.y, direction.x);
 }
 
 void create_bullet(vec2 position, float rotation, float bulletVelocity, const Sprite &bulletSpite)

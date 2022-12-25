@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <transform2d.h>
 #include <input.h>
 #include "game_structs.h"

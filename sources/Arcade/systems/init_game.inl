@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <transform2d.h>
 #include "game_structs.h"
 
@@ -8,7 +8,7 @@ EVENT() init_game(const StartGameEvent &, const SpriteFactory &sf, const ScoreBo
   int targetCount = 100 * (sb.curentLevel + 1);
   float areaRadius = 25.f;
   float minSize = 0.5f, maxSize = 1.5f;
-  const ecs::Template *targets = ecs::get_template("targets");
+  const ecs::prefab_id targets = ecs::get_prefab_id("targets");
   for (int i = 0; i < targetCount; i++)
   {                                
     ecs::create_entity(targets, {

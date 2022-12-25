@@ -3,7 +3,7 @@
 #include <vector>
 #include <render/texture/texture2d.h>
 #include <render/shader/shader.h>
-#include <singleton.h>
+#include <ecs/singleton.h>
 #include <render/mesh.h>
 
 class WorldRenderer : ecs::Singleton

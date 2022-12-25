@@ -1,6 +1,7 @@
 #pragma once
 #include <render/sprite.h>
-#include <ecs_event.h>
+#include <ecs/event.h>
+#include <ecs/singleton.h>
 
 struct LoadSceneEvent : public ecs::Event{};
 

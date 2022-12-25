@@ -1,15 +1,15 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include "world_renderer.h"
 #include <transform2d.h>
 #include <imgui.h>
 #include <application/application_data.h>
 #include "game_structs.h"
-#include <ecs_event_registration.h>
+#include <ecs/event_registration.h>
 #include <ecs/imgui.h>
 
-ECS_EVENT_REGISTER(StartGameEvent, StartGameEvent)
-ECS_EVENT_REGISTER(LoadSceneEvent, LoadSceneEvent)
-ECS_EVENT_REGISTER(KillTargetEvent, KillTargetEvent)
+ECS_EVENT_REGISTRATION(StartGameEvent)
+ECS_EVENT_REGISTRATION(LoadSceneEvent)
+ECS_EVENT_REGISTRATION(KillTargetEvent)
 
 EVENT() setup_camera(
   const ecs::OnEntityCreated &,

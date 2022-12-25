@@ -1,71 +1,106 @@
 #include "kills_statistic.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription gather_all_targets_descr("gather_all_targets", {
-  {-1u, ecs::get_name_hash("target"), false}
-}, {
-});
+static ecs::QueryCache gather_all_targets__cache__;
+
+static ecs::QueryCache check_winner__cache__;
+
+static ecs::QueryCache collect_kills__cache__;
+
+static ecs::QueryCache show_kill_stat__cache__;
 
 template<typename Callable>
-void gather_all_targets(Callable lambda)
+static void gather_all_targets(Callable lambda)
 {
-  ecs::perform_query<>
-  (gather_all_targets_descr, lambda);
+  ecs::perform_query<>(gather_all_targets__cache__, lambda);
 }
 
-
-void show_kill_stat_func();
-
-ecs::SystemDescription show_kill_stat_descr("show_kill_stat", {
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("killsCount"), false}
-}, {
-},
-{},
-{},
-show_kill_stat_func, "ui", {}, false);
-
-void show_kill_stat_func()
+static void check_winner_implementation()
 {
-  ecs::perform_system(show_kill_stat_descr, show_kill_stat);
+  ecs::perform_system(check_winner__cache__, check_winner);
 }
 
-void check_winner_func();
-
-ecs::SystemDescription check_winner_descr("check_winner", {
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("isWinner"), false},
-  {-1u, ecs::get_name_hash("mainHero"), false}
-}, {
-},
-{},
-{},
-check_winner_func, "act", {}, false);
-
-void check_winner_func()
+static void collect_kills_handler(const ecs::Event &event)
 {
-  ecs::perform_system(check_winner_descr, check_winner);
+  ecs::perform_event(reinterpret_cast<const KillTargetEvent &>(event), collect_kills__cache__, collect_kills);
 }
 
-void collect_kills_handler(const ecs::Event &event);
-void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription collect_kills_descr(
-  ecs::get_mutable_event_handlers<KillTargetEvent>(), "collect_kills", {
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("killsCount"), false},
-  {-1u, ecs::get_name_hash("mainHero"), false}
-}, {
-},
-{},
-{},
-collect_kills_handler, collect_kills_singl_handler, {});
-
-void collect_kills_handler(const ecs::Event &event)
+static void collect_kills_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const KillTargetEvent&)event, collect_kills_descr, collect_kills);
-}
-void collect_kills_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KillTargetEvent&)event, collect_kills_descr, eid, collect_kills);
+  ecs::perform_event(eid, reinterpret_cast<const KillTargetEvent &>(event), collect_kills__cache__, collect_kills);
 }
 
+static void show_kill_stat_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), show_kill_stat__cache__, show_kill_stat);
+}
 
+static void show_kill_stat_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), show_kill_stat__cache__, show_kill_stat);
+}
+
+static void registration_pull_kills_statistic()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "gather_all_targets",
+  &gather_all_targets__cache__,
+  {},
+  {
+    {"target", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "check_winner",
+  &check_winner__cache__,
+  {
+    {"isWinner", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &check_winner_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "collect_kills",
+  &collect_kills__cache__,
+  {
+    {"killsCount", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()}
+  },
+  {
+    {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &collect_kills_handler, &collect_kills_single_handler),
+  ecs::EventIndex<KillTargetEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "show_kill_stat",
+  &show_kill_stat__cache__,
+  {
+    {"killsCount", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &show_kill_stat_handler, &show_kill_stat_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_kills_statistic)

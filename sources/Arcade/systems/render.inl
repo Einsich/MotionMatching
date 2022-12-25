@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include "world_renderer.h"
 #include <render/shader/shader.h>
 #include <render/sprite.h>

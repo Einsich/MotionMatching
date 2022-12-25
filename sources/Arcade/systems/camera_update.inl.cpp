@@ -1,58 +1,82 @@
 #include "camera_update.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription update_main_camera_position_descr("update_main_camera_position", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
-  {-1u, ecs::get_name_hash("cameraProjection"), false}
-}, {
-});
+static ecs::QueryCache update_main_camera_position__cache__;
+
+static ecs::QueryCache update_camera_pos_before_render__cache__;
+
+static ecs::QueryCache change_zoom__cache__;
 
 template<typename Callable>
-void update_main_camera_position(Callable lambda)
+static void update_main_camera_position(Callable lambda)
 {
-  ecs::perform_query<Transform2D&>
-  (update_main_camera_position_descr, lambda);
+  ecs::perform_query<Transform2D&>(update_main_camera_position__cache__, lambda);
 }
 
-
-void update_camera_pos_before_render_func();
-
-ecs::SystemDescription update_camera_pos_before_render_descr("update_camera_pos_before_render", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
-  {-1u, ecs::get_name_hash("mainHero"), false}
-}, {
-},
-{},
-{},
-update_camera_pos_before_render_func, "before_render", {}, false);
-
-void update_camera_pos_before_render_func()
+static void update_camera_pos_before_render_implementation()
 {
-  ecs::perform_system(update_camera_pos_before_render_descr, update_camera_pos_before_render);
+  ecs::perform_system(update_camera_pos_before_render__cache__, update_camera_pos_before_render);
 }
 
-void change_zoom_handler(const ecs::Event &event);
-void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription change_zoom_descr(
-  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "change_zoom", {
-  {ecs::get_type_hash<Transform2D>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("zoom"), false},
-  {-1u, ecs::get_name_hash("cameraProjection"), false}
-}, {
-},
-{},
-{},
-change_zoom_handler, change_zoom_singl_handler, {});
-
-void change_zoom_handler(const ecs::Event &event)
+static void change_zoom_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, change_zoom);
-}
-void change_zoom_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseWheelEvent&)event, change_zoom_descr, eid, change_zoom);
+  ecs::perform_event(reinterpret_cast<const MouseWheelEvent &>(event), change_zoom__cache__, change_zoom);
 }
 
+static void change_zoom_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseWheelEvent &>(event), change_zoom__cache__, change_zoom);
+}
 
+static void registration_pull_camera_update()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "update_main_camera_position",
+  &update_main_camera_position__cache__,
+  {
+    {"transform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()}
+  },
+  {
+    {"cameraProjection", ecs::TypeIndex<mat3>::value}
+  },
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "update_camera_pos_before_render",
+  &update_camera_pos_before_render__cache__,
+  {
+    {"transform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform2D>()}
+  },
+  {
+    {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {"before_render_end_sync_point"},
+  {"before_render_begin_sync_point"},
+  {},
+  &update_camera_pos_before_render_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "change_zoom",
+  &change_zoom__cache__,
+  {
+    {"transform", ecs::get_type_index<Transform2D>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform2D>()},
+    {"zoom", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()}
+  },
+  {
+    {"cameraProjection", ecs::TypeIndex<mat3>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &change_zoom_handler, &change_zoom_single_handler),
+  ecs::EventIndex<MouseWheelEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_camera_update)

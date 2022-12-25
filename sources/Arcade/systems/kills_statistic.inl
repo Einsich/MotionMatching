@@ -1,5 +1,6 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <imgui.h>
+#include <ecs/imgui.h>
 #include "game_structs.h"
 
 EVENT(require=ecs::Tag mainHero) collect_kills(

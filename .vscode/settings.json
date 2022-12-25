@@ -160,9 +160,9 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
-      "name": "Strategy",
+      "name": "Arcade",
       "delpoy_only_project_folder": "false"
     }
   },
