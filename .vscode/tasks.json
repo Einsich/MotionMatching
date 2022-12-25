@@ -6,7 +6,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./Builds/rel/ECSCodeGen/ECSCodeGen.exe",
+            "command": "./Builds/rel/ECSCodeGen/ecs_code_gen.exe",
             "args": [
                 "'${workspaceFolder}/sources/common_systems'",
                 "'${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}'",
@@ -22,7 +22,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./Builds/rel/ECSCodeGen/ECSCodeGen.exe",
+            "command": "./Builds/rel/ECSCodeGen/ecs_code_gen.exe",
             "args": [
                 "'${workspaceFolder}/sources/common_systems'",
                 "'${workspaceFolder}/sources/ECSbenchmark'",

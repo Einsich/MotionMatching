@@ -88,7 +88,7 @@ static void NodeFont(ImFont* font)
 template<typename Callable>
 void gather_lands(Callable);
 
-SYSTEM(stage=ui) show_statistic(ecs::vector<vec3> &land_colors)
+EVENT() show_statistic(const ImguiRender&, ecs::vector<vec3> &land_colors)
 {
   struct StatInfo
   {

@@ -11,8 +11,8 @@ mm_manager {
 
 animated_char {
 
-  mesh:Asset<Mesh> { }
-  material:Asset<Material> { path:t = "resources/MotionMatching/Materials/animchar.Material"; }
+  mesh:Mesh { }
+  material:Material { path:t = "resources/MotionMatching/Materials/animchar.Material"; }
   bones_matrices:vector<mat3x4> { }
   lods_distances:vector<float> {
     lod0:f = 2;
@@ -20,11 +20,11 @@ animated_char {
     lod2:f = 50;
     lod3:f = 400;
   }
-  lods_meshes:vector<Asset<Mesh>> {
-    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod0.fbx[0]"; }
-    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod1.fbx[0]"; }
-    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod2.fbx[0]"; }
-    mesh:Asset<Mesh> { path:t = "resources/MotionMatching/MotusMan_v55/Lod3.fbx[0]"; }
+  lods_meshes:vector<Mesh> {
+    mesh:Mesh { path:t = "resources/MotionMatching/MotusMan_v55/Lod0.fbx[0]"; }
+    mesh:Mesh { path:t = "resources/MotionMatching/MotusMan_v55/Lod1.fbx[0]"; }
+    mesh:Mesh { path:t = "resources/MotionMatching/MotusMan_v55/Lod2.fbx[0]"; }
+    mesh:Mesh { path:t = "resources/MotionMatching/MotusMan_v55/Lod3.fbx[0]"; }
   }
   transform:Transform {}
   is_visible:b=true;

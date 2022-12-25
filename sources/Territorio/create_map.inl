@@ -1,5 +1,5 @@
 #include <ecs.h>
-#include <type_registration.h>
+#include <ecs/type_registration.h>
 #include <transform2d.h>
 #include <render/texture/texture2d.h>
 #include "map_arrays.h"

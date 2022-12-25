@@ -1,10 +1,11 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <profiler/profiler.h>
 
 #include <3dmath.h>
 #include <eastl/stack.h>
 #include <memory/tmp_allocator.h>
 #include <imgui.h>
+#include <ecs/imgui.h>
 
 void profiler(Profiler &profiler)
 {
@@ -58,7 +59,7 @@ void profiler(Profiler &profiler)
   }
 }
 
-SYSTEM(stage=ui_menu) menu_profiler()
+EVENT() menu_profiler(const ImguiMenuRender&)
 {
 
   if (ImGui::BeginMenu("Profiler"))

@@ -1,37 +1,64 @@
 #include "editor.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void resources_menu_func();
+static ecs::QueryCache resources_menu__cache__;
 
-ecs::SystemDescription resources_menu_descr("resources_menu", {
-  {ecs::get_type_hash<SelectedAsset>(), ecs::get_name_hash("selectedAsset"), false}
-}, {
-},
-{},
-{},
-resources_menu_func, "ui_menu", {"editor"}, false);
+static ecs::QueryCache asset_viewer__cache__;
 
-void resources_menu_func()
+static void resources_menu_handler(const ecs::Event &event)
 {
-  ecs::perform_system(resources_menu_descr, resources_menu);
+  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), resources_menu__cache__, resources_menu);
 }
 
-void asset_viewer_func();
-
-ecs::SystemDescription asset_viewer_descr("asset_viewer", {
-  {ecs::get_type_hash<SelectedAsset>(), ecs::get_name_hash("selectedAsset"), false},
-  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false},
-  {ecs::get_type_hash<EditorWidgets>(), ecs::get_name_hash("widgets"), false}
-}, {
-},
-{},
-{},
-asset_viewer_func, "ui", {"editor"}, false);
-
-void asset_viewer_func()
+static void resources_menu_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_system(asset_viewer_descr, asset_viewer);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), resources_menu__cache__, resources_menu);
 }
 
+static void asset_viewer_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), asset_viewer__cache__, asset_viewer);
+}
 
+static void asset_viewer_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), asset_viewer__cache__, asset_viewer);
+}
+
+static void registration_pull_editor()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "resources_menu",
+  &resources_menu__cache__,
+  {
+    {"selectedAsset", ecs::get_type_index<SelectedAsset>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SelectedAsset>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &resources_menu_handler, &resources_menu_single_handler),
+  ecs::EventIndex<ImguiMenuRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "asset_viewer",
+  &asset_viewer__cache__,
+  {
+    {"selectedAsset", ecs::get_type_index<SelectedAsset>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SelectedAsset>()},
+    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorUI>()},
+    {"widgets", ecs::get_type_index<EditorWidgets>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorWidgets>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &asset_viewer_handler, &asset_viewer_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_editor)

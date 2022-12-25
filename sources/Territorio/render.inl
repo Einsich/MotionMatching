@@ -1,5 +1,5 @@
 #include <ecs.h>
-#include <type_registration.h>
+#include <ecs/type_registration.h>
 #include <render/shader/shader.h>
 #include <render/texture/texture2d.h>
 #include <render/mesh.h>

@@ -1,13 +1,13 @@
 #include <camera.h>
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <input.h>
 #include <application/application_data.h>
-#include <type_registration.h>
+#include <ecs/registration.h>
 
 bool edit_component(Camera &camera, const char *name, bool view_only);
-ECS_REGISTER_TYPE(camera, Camera, true, true);
-ECS_REGISTER_TYPE(FreeCamera, FreeCamera, true, true);
-ECS_REGISTER_TYPE(ArcballCamera, ArcballCamera, true, true);
+ECS_REGISTER_TYPE(Camera, "Camera", ecs::PODType);
+ECS_REGISTER_TYPE(FreeCamera, "FreeCamera", ecs::PODType);
+ECS_REGISTER_TYPE(ArcballCamera, "ArcballCamera", ecs::PODType);
 // CameraManager
 
 template<typename Callable>
@@ -19,6 +19,8 @@ struct EditorCamera : ecs::Singleton
 {
   ecs::EntityId camera;
 };
+ECS_REGISTER_SINGLETON(MainCamera)
+ECS_REGISTER_SINGLETON(EditorCamera)
 EVENT(tags=game) find_main_camera_game(
   const ecs::OnSceneCreated &,
   MainCamera &mainCamera)
@@ -42,7 +44,7 @@ EVENT(tags=editor) find_main_camera_editor(
     if (isMainCamera)
       editorCamera = eid;
   });
-  if (!editorCamera)
+  if (!editorCamera.valid())
   {
     Camera camera;
     camera.set_perspective(90.f, 0.01f, 5000.f);

@@ -1,115 +1,106 @@
 #include "ecs_scene.h"
-#include "ecs.h"
-#include "ecs_event_impl.h"
-#include "manager/entity_manager.h"
+#include <ecs/ecs.h>
 #include "glad/glad.h"
-#include "profiler/profiler.h"
-#include "imgui.h"
+#include <profiler/profiler.h>
+#include <imgui.h>
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_sdl.h"
+#include <ecs/imgui.h>
 
-namespace ecs
+#include <application/application_data.h>
+#include <ecs/event_registration.h>
+
+ECS_EVENT_REGISTRATION(ImguiRender)
+ECS_EVENT_REGISTRATION(ImguiMenuRender)
+
+
+void load_scene(const DataBlock &scene);
+
+void SceneManager::pre_act()
 {
-  void load_scene(const DataBlock &scene);
+  PROFILER(ecs_events);
+  ecs::update_query_manager();
 
+  perfLabel = ProfilerLabel("act");
+}
 
-  void SceneManager::start()
-  {
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    ecs::vector<ecs::string> editorTags, gameTags;
-#ifndef RELEASE
-    editorTags.emplace_back("debug");
-    gameTags.emplace_back("debug");
-#endif
-    editorTags.emplace_back("editor");
-    gameTags.emplace_back("game");
-    editorScene = make_unique<ecs::EntityManager>(editorTags);
-    gameScene = make_unique<ecs::EntityManager>(gameTags);
-  }
+void SceneManager::pre_before_render()
+{
 
-  void SceneManager::sort_systems()
-  {
-    act = ecs::get_system_stage("act");
-    before_render = ecs::get_system_stage("before_render");
-    render = ecs::get_system_stage("render");
-    render_ui = ecs::get_system_stage("render_ui");
-    ui = ecs::get_system_stage("ui");
-    menu = ecs::get_system_stage("ui_menu");
-  }
+  perfLabel = ProfilerLabel("before_render");
+  perfLabelGPU = ProfilerLabelGPU("frame");
 
-  void SceneManager::swap_editor_game_scene()
-  {
-    inEditor = !inEditor;
-    set_entity_manager(inEditor ? *editorScene : *gameScene);
-    restart_cur_scene();
-    sort_systems();
-  }
-  void SceneManager::start_scene(const std::string &path, bool in_editor)
-  {
-    if (path != scenePath)
-    {
-      rawScene = DataBlock(path);
-      scenePath = path;
-    }
-    inEditor = in_editor;
-    set_entity_manager(inEditor ? *editorScene : *gameScene);
-    restart_cur_scene();
-    sort_systems();
-  }
+  Application::instance().get_context().swap_buffer();
 
-  void SceneManager::restart_cur_scene()
-  {
-    entityManager->clear_scene();
-    load_scene(rawScene);
-    send_event(OnSceneCreated());
+  extern void process_gpu_time_queries();
+  process_gpu_time_queries();
+  get_gpu_profiler().start_frame();
 
-  }
+}
+void SceneManager::pre_render()
+{
+  perfLabel = ProfilerLabel("ecs_render");
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+void SceneManager::update_ui()
+{
+  perfLabel.stop();
 
-  static void update_range(const SystemStageInterval &range)
+  Application::instance().get_context().start_imgui();
+
   {
-    for (auto system = range.begin; system < range.end; ++system)
-    {
-      ProfilerLabel label((*system)->name.c_str());
-      (*system)->function();
-    }
-  }
-  void SceneManager::update_act()
-  {
-    update_range(act);
-  }
-  void SceneManager::update_render()
-  {
-    update_range(before_render);
-    ProfilerLabelGPU label("ecs_render");
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    update_range(render);
-    update_range(render_ui);
-  }
-  void SceneManager::update_ui()
-  {
-    update_range(ui);
+    PROFILER(ecs_imgui);
+    ecs::send_event_immediate(ImguiRender());
     if (ImGui::BeginMainMenuBar())
     {
-      update_range(menu);
+      ecs::send_event_immediate(ImguiMenuRender());
       ImGui::EndMainMenuBar();
     }
-
   }
+  
+  ProfilerLabelGPU imgui_render_label("imgui_render");
+  PROFILER(imgui_render);
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
-  void SceneManager::process_events()
+
+void SceneManager::start()
+{
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+}
+
+
+void SceneManager::swap_editor_game_scene()
+{
+  inEditor = !inEditor;
+  restart_cur_scene();
+}
+void SceneManager::start_scene(const std::string &path, bool in_editor)
+{
+  if (path != scenePath)
   {
-    entityManager->process_events();
-
-    if (sceneToLoad != "")
-    {
-      start_scene(sceneToLoad, inEditor);
-      sceneToLoad = "";
-    }
+    rawScene = DataBlock(path);
+    scenePath = path;
   }
+  inEditor = in_editor;
+  restart_cur_scene();
+}
 
-  void SceneManager::destroy_scene()
-  {
-    ecs::send_event_immediate(OnSceneDestroy());
-    entityManager->clear_scene();
-  }
+void SceneManager::restart_cur_scene()
+{
+  ecs::destroy_all_entities();
+  ecs::destroy_sinletons();
+  load_scene(rawScene);
+  send_event(ecs::OnSceneCreated());
+
+}
+
+void SceneManager::destroy_scene()
+{
+  ecs::send_event_immediate(ecs::OnSceneTerminated());
+  ecs::destroy_all_entities();
+  ecs::destroy_sinletons();
 }

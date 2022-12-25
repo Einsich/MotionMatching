@@ -1,8 +1,8 @@
 #include <vector>
 #include "skybox.h"
-#include <type_registration.h>
+#include <ecs/registration.h>
 
-ECS_REGISTER_TYPE(SkyBox, SkyBox);
+ECS_REGISTER_TYPE(SkyBox, "SkyBox", ecs::DefaultType);
 
 SkyBox::SkyBox()
 {

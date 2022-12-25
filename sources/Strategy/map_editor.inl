@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <render/render.h>
 #include <input.h>
 #include <camera.h>
@@ -8,6 +8,7 @@
 #include "political_map.h"
 #include "heightmap.h"
 #include "map_render_data.h"
+#include <ecs/imgui.h>
 
 struct MapEditor : ecs::Singleton
 {
@@ -17,10 +18,13 @@ struct MapEditor : ecs::Singleton
   int currentCountryId = 0xffff;
 };
 
+ECS_REGISTER_SINGLETON(MapEditor)
+ECS_REGISTER_SINGLETON(HeightMap)
+
 template<typename Callable>
 static void toggle_water(Callable);
 
-SYSTEM(stage=ui; tags=editor) country_builder(
+EVENT(tags=editor) country_builder(const ImguiRender&, 
   MapEditor &editor,
   const PoliticalMap &politicalMap)
 {

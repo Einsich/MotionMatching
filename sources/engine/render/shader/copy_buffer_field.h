@@ -1,4 +1,5 @@
 #pragma once
+#include <eastl/vector.h>
 #include "shader_buffer.h"
 #include "utils/is_vector.h"
 

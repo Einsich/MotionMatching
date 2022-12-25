@@ -5,6 +5,7 @@
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
 #include <manager/type_info.h>
+#include <ecs/imgui.h>
 
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatching &mm)
 {
@@ -100,7 +101,7 @@ void show_best_score(const MatchingScores &score, const MotionMatching &mm, Anim
   ImGui::End();
 }
 
-SYSTEM(stage=ui) briefing_ui()
+EVENT() briefing_ui(const ImguiRender&)
 {
   if (!ImGui::Begin("Briefing"))
   {
@@ -114,7 +115,8 @@ SYSTEM(stage=ui) briefing_ui()
   ImGui::End();
 }
 
-SYSTEM(stage=ui; require=ThirdPersonController thirdPersonController) motion_matching_statistic(
+EVENT(require=ThirdPersonController thirdPersonController) motion_matching_statistic(
+  const ImguiRender&, 
   const AnimationPlayer &animationPlayer,
   const Settings &settings,
   bool &updateMMStatistic)
@@ -142,7 +144,8 @@ SYSTEM(stage=ui; require=ThirdPersonController thirdPersonController) motion_mat
   updateMMStatistic = true;
 }
 
-SYSTEM(stage=ui; require=ThirdPersonController thirdPersonController) current_anim_index(
+EVENT(require=ThirdPersonController thirdPersonController) current_anim_index(
+  const ImguiRender&,
   const AnimationPlayer &animationPlayer)
 {
   ImGui::Begin("Current anim");
@@ -239,7 +242,7 @@ void settings_manager(vector<pair<string, T>> &settings, const char *settings_na
 }
 
 
-SYSTEM(stage=ui_menu) menu_ui(
+EVENT() menu_ui(const ImguiMenuRender&,
   Settings &settings,
   SettingsContainer &settingsContainer)
 {
@@ -250,7 +253,7 @@ SYSTEM(stage=ui_menu) menu_ui(
 }
 
 
-SYSTEM(stage=ui) mm_early_text_perf(const Settings &settings)
+EVENT() mm_early_text_perf(const ImguiRender&, const Settings &settings)
 {
 
   ImGui::Begin("Trivial optimization");

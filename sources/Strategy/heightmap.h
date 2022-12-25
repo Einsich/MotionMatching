@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <3dmath.h>
-#include <singleton.h>
+#include <ecs/singleton.h>
 
 struct HeightMap : ecs::Singleton
 {

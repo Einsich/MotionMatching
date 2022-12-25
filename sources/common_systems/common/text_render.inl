@@ -1,9 +1,11 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
+#include <ecs/singleton.h>
 #include <render/global_uniform.h>
 #include <render/mesh.h>
 #include <render/shader/shader.h>
 #include <render/render.h>
 #include <imgui.h>
+#include <ecs/imgui.h>
 #include <memory/tmp_allocator.h>
 #include <ecs/editor_events.h>
 
@@ -28,8 +30,8 @@ static void load_fonts()
   atlas->Build();
 }
 
-#include <type_registration.h>
-ECS_REGISTER_TYPE(TextAlignment, TextAlignment);
+#include <ecs/registration.h>
+ECS_REGISTER_TYPE(TextAlignment, "TextAlignment", ecs::DefaultType);
 
 static GLuint CreateFontsTexture()
 {
@@ -82,6 +84,7 @@ struct TextRender : ecs::Singleton
     invalid = false;
   }
 };
+ECS_REGISTER_SINGLETON(TextRender)
 
 
 void setup_text_buffer(ecs::vector<vec4> &glyph_buffer, const ecs::string &text, TextAlignment aligment, vec2 pivot)
@@ -188,7 +191,7 @@ EVENT() text_appear(const ecs::OnEntityCreated&,
 template<typename Callable> 
 void gather_text(Callable);
 
-SYSTEM(stage=render_ui) text_render(const EditorRenderSettings &editorSettings, const TextRender &textRender)
+EVENT() text_render(const ImguiRender &, const EditorRenderSettings &editorSettings, const TextRender &textRender)
 {
   if (textRender.invalid)
     return;

@@ -1,4 +1,4 @@
-#include "ecs.h"
+#include <ecs/ecs.h>
 #include <application/time.h>
 #include "camera.h"
 #include "render/shader/copy_buffer_field.h"
@@ -14,13 +14,14 @@
 #include <profiler/profiler.h>
 #include <render/frustum.h>
 #include <parallel/thread_pool.h>
-#include <type_registration.h>
+#include <ecs/registration.h>
+#include <ecs/imgui.h>
 
-ECS_REGISTER_TYPE_AND_VECTOR(Mesh, Asset<Mesh>); 
-ECS_REGISTER_TYPE(Texture2D, Asset<Texture2D>);
-ECS_REGISTER_TYPE(Texture2DArray, Asset<Texture2DArray>);
-ECS_REGISTER_TYPE(CubeMap, Asset<CubeMap>);
-ECS_REGISTER_TYPE(Material, Asset<Material>);
+ECS_REGISTER_TYPE_AND_VECTOR(Asset<Mesh>, "Mesh", ecs::DefaultType); 
+ECS_REGISTER_TYPE(Asset<Texture2D>, "Texture2D", ecs::DefaultType);
+ECS_REGISTER_TYPE(Asset<Texture2DArray>, "Texture2DArray", ecs::DefaultType);
+ECS_REGISTER_TYPE(Asset<CubeMap>, "CubeMap", ecs::DefaultType);
+ECS_REGISTER_TYPE(Asset<Material>, "Material", ecs::DefaultType);
 
 EVENT() add_global_uniform(const ecs::OnSceneCreated &)
 {
@@ -31,7 +32,7 @@ EVENT() add_global_uniform(const ecs::OnSceneCreated &)
   add_storage_buffer("MeshBones", 0, 4);
 }
 
-SYSTEM(stage=ui_menu; tags=editor) render_submenu(EditorRenderSettings &settings)
+EVENT(tags=editor) render_submenu(const ImguiMenuRender&, EditorRenderSettings &settings)
 {
   if (ImGui::BeginMenu("Render"))
   {
@@ -129,8 +130,12 @@ struct RenderStuff
 };
 struct RenderQueue : ecs::Singleton
 {
-  vector<RenderStuff> queue;
+  eastl::vector<RenderStuff> queue;
 };
+
+ECS_REGISTER_SINGLETON(RenderQueue)
+ECS_REGISTER_SINGLETON(DebugArrow)
+ECS_REGISTER_SINGLETON(EditorRenderSettings)
 
 SYSTEM(stage=render;before=main_instanced_render) process_mesh_position(
   const Asset<Mesh> &mesh,

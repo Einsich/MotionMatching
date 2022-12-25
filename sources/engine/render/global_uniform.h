@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+using uint = unsigned int;
 struct UniformBuffer
 {
 private:

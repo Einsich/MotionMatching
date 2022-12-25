@@ -1,19 +1,33 @@
 #include "profiler.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void menu_profiler_func();
+static ecs::QueryCache menu_profiler__cache__;
 
-ecs::SystemDescription menu_profiler_descr("menu_profiler", {
-}, {
-},
-{},
-{},
-menu_profiler_func, "ui_menu", {}, false);
-
-void menu_profiler_func()
+static void menu_profiler_handler(const ecs::Event &event)
 {
-  ecs::perform_system(menu_profiler_descr, menu_profiler);
+  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), menu_profiler__cache__, menu_profiler);
 }
 
+static void menu_profiler_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), menu_profiler__cache__, menu_profiler);
+}
 
+static void registration_pull_profiler()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "menu_profiler",
+  &menu_profiler__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &menu_profiler_handler, &menu_profiler_single_handler),
+  ecs::EventIndex<ImguiMenuRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_profiler)

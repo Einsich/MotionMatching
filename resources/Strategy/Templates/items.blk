@@ -1,8 +1,8 @@
 coin_effect
 {
   transform:Transform { }
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/coin.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/coin.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
   is_visible:b=true;
   is_enabled:b=true;
   coinEffect:Tag { }

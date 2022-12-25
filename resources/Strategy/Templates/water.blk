@@ -1,13 +1,13 @@
 water {
   transform:Transform { }
-  mesh:Asset<Mesh> {
+  mesh:Mesh {
     path:t = "plane";
   }
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/water.Material"; }
-  water_color_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_colormap_water.png.meta"; }
-  water_noise_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/fractal_noise.png.meta"; }
-  water_foam_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/foam.png.meta"; }
-  sky_reflection:Asset<CubeMap> { path:t = "resources/common/Textures/Skyboxes/default_sky.CubeMap"; }
+  material:Material { path:t = "resources/Strategy/Materials/water.Material"; }
+  water_color_texture:Texture2D { path:t = "resources/Strategy/Assets/Terrain/europe_colormap_water.png.meta"; }
+  water_noise_texture:Texture2D { path:t = "resources/Strategy/Assets/Terrain/fractal_noise.png.meta"; }
+  water_foam_texture:Texture2D { path:t = "resources/Strategy/Assets/Terrain/foam.png.meta"; }
+  sky_reflection:CubeMap { path:t = "resources/common/Textures/Skyboxes/default_sky.CubeMap"; }
 
   isWater:Tag { }
   is_visible:b=true;

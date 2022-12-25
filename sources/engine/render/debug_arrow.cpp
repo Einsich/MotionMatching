@@ -6,11 +6,11 @@
 
 void draw_arrow(const mat4 &transform, const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {
-  ecs::get_singleton<DebugArrow>().add_arrow(transform * vec4(from, 1), transform * vec4(to, 1), color, size, depth_ignore);
+  ecs::get_singleton<DebugArrow>()->add_arrow(transform * vec4(from, 1), transform * vec4(to, 1), color, size, depth_ignore);
 }
 void draw_arrow(const vec3 &from, const vec3 &to, vec3 color, float size, bool depth_ignore)
 {
-  ecs::get_singleton<DebugArrow>().add_arrow(from, to, color, size, depth_ignore);
+  ecs::get_singleton<DebugArrow>()->add_arrow(from, to, color, size, depth_ignore);
 
 }
 void draw_transform(const Transform &transform)

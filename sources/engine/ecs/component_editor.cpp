@@ -1,17 +1,18 @@
 
 #include "component_editor.h"
-#include "manager/entity_id.h"
-#include "ecs_core.h"
-#include "manager/entity_manager.h"
+#include <ecs/entity_id.h>
+#include <eastl/string.h>
+#include <ecs/event_registration.h>
 #include "serialization/reflection.h"
 #include "3dmath.h"
 constexpr int BUFN = 255;
 char buf[BUFN];
 
-#include <ecs_event_registration.h>
+#include <ecs/event.h>
 #include "editor_events.h"
+#include <imgui.h>
 
-ECS_EVENT_REGISTER(OnEntityEdited, OnEntityEdited)
+ECS_EVENT_REGISTRATION(OnEntityEdited)
 
 bool edit_component(bool &component, const char *name, bool view_only)
 {
@@ -54,30 +55,30 @@ bool edit_component(double &component, const char *name, bool view_only)
   ImGui::Spacing();
   return edited;
 }
-#define VEC_ITYPE(TYPE, INPUT)\
-bool edit_component(TYPE &component, const char *name, bool view_only)\
-{\
-  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
-  bool edited = ImGui::INPUT(name, &component.x, flags);\
-  ImGui::Spacing();\
-  return edited; \
-}
-#define VEC_UTYPE(TYPE, INPUT)\
-bool edit_component(TYPE &component, const char *name, bool view_only)\
-{\
-  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
-  bool edited = ImGui::INPUT(name, (int*)&component.x, flags);\
-  ImGui::Spacing();\
-  return edited; \
-}
-#define VEC_TYPE(TYPE, INPUT)\
-bool edit_component(TYPE &component, const char *name, bool view_only)\
-{\
-  ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
-  bool edited = ImGui::INPUT(name, &component.x, "%.2f", flags);\
-  ImGui::Spacing();\
-  return edited; \
-}
+#define VEC_ITYPE(TYPE, INPUT)                                                \
+  bool edit_component(TYPE &component, const char *name, bool view_only)      \
+  {                                                                           \
+    ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+    bool edited = ImGui::INPUT(name, &component.x, flags);                    \
+    ImGui::Spacing();                                                         \
+    return edited;                                                            \
+  }
+#define VEC_UTYPE(TYPE, INPUT)                                                \
+  bool edit_component(TYPE &component, const char *name, bool view_only)      \
+  {                                                                           \
+    ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+    bool edited = ImGui::INPUT(name, (int *)&component.x, flags);             \
+    ImGui::Spacing();                                                         \
+    return edited;                                                            \
+  }
+#define VEC_TYPE(TYPE, INPUT)                                                 \
+  bool edit_component(TYPE &component, const char *name, bool view_only)      \
+  {                                                                           \
+    ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0; \
+    bool edited = ImGui::INPUT(name, &component.x, "%.2f", flags);            \
+    ImGui::Spacing();                                                         \
+    return edited;                                                            \
+  }
 VEC_ITYPE(ivec2, InputInt2)
 VEC_ITYPE(ivec3, InputInt3)
 VEC_ITYPE(ivec4, InputInt4)
@@ -89,7 +90,6 @@ VEC_UTYPE(uvec4, InputInt4)
 VEC_TYPE(vec2, InputFloat2)
 VEC_TYPE(vec3, InputFloat3)
 VEC_TYPE(vec4, InputFloat4)
-
 
 bool edit_component(mat4 &component, const char *name, bool view_only)
 {
@@ -127,35 +127,35 @@ bool edit_component(mat2 &component, const char *name, bool view_only)
 {
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
 
-  bool edited = ImGui::InputFloat2(name, &component[0].x, 2, flags)
-              | ImGui::InputFloat2(name, &component[1].x, 2, flags);
+  bool edited = ImGui::InputFloat2(name, &component[0].x, 2, flags);
+  edited = ImGui::InputFloat2(name, &component[1].x, 2, flags) || edited;
   ImGui::Spacing();
   return edited;
 }
 
 bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
 {
-  ImGui::Text("%s [%s] archetype %d, index %d", name, component.valid() ? "valid":"not valid",
-   component.archetype_index(), component.array_index());
+  ImGui::Text("%s [%s] archetype %d, index %d", name, component.valid() ? "valid" : "not valid",
+              component.description->archetype, component.description->index);
   bool edited = false;
   if (!view_only && strcmp(name, "eid"))
   {
-    int archIndex[2] = {component.archetype_index(), (int)component.array_index()};
-    edited = ImGui::InputInt2("archetype&array index", archIndex);
-    if (edited)
-      component = ecs::entityManager->entityPull.find_entity(archIndex[0], archIndex[1]);
+    /*     int archIndex[2] = {component.archetype_index(), (int)component.array_index()};
+        edited = ImGui::InputInt2("archetype&array index", archIndex);
+        if (edited)
+          component = ecs::entityManager->entityPull.find_entity(archIndex[0], archIndex[1]); */
   }
   ImGui::Spacing();
   return edited;
 }
 
-bool edit_component(ecs::string &component, const char *name, bool view_only)
+bool edit_component(eastl::string &component, const char *name, bool view_only)
 {
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
   snprintf(buf, BUFN, "%s", component.c_str());
   bool edited = ImGui::InputText(name, buf, BUFN, flags);
   if (edited)
-    component = ecs::string(buf);
+    component = eastl::string(buf);
   ImGui::Spacing();
   return edited;
 }

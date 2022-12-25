@@ -1,5 +1,5 @@
 #include <common.h>
-#include <map>
+#include <eastl/map.h>
 #include "political_map.h"
 #include <render/mesh.h>
 
@@ -7,9 +7,9 @@ struct Provinces
 {
   int w, h;
   float pixelScale;
-  const vector<uint> &provinces;
-  map<uint, pair<int, bool>> &borderIdx;
-  vector<Province> &provincesData;
+  const eastl::vector<uint> &provinces;
+  eastl::map<uint, pair<int, bool>> &borderIdx;
+  eastl::vector<Province> &provincesData;
   vector<bool> borderFlags;
   map<uint, vector<uint>> bordersMap;
   vector<vec2> border, borderUp;

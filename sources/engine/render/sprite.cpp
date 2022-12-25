@@ -1,5 +1,5 @@
 #include "sprite.h"
-#include <type_registration.h>
+#include <ecs/registration.h>
 
-ECS_REGISTER_TYPE(Sprite, Sprite, true, true)
+ECS_REGISTER_TYPE(Sprite, "Sprite", ecs::PODType)
 

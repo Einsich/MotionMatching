@@ -1,338 +1,338 @@
 buildings_common {
   transform:Transform { }
-  mesh:Asset<Mesh> { }
-  material:Asset<Material> { }
+  mesh:Mesh { }
+  material:Material { }
   is_visible:b=true;
   is_enabled:b=true;
 }
 
 eastern_buildings {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/eastern_buildings.Material"; }
+  material:Material { path:t = "resources/Strategy/Materials/eastern_buildings.Material"; }
 }
 eastern_buildings_11 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_01.dae[0]"; }
 }
 eastern_buildings_12 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_02.dae[0]"; }
 }
 eastern_buildings_13 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_03.dae[0]"; }
 }
 eastern_buildings_14 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_1_04.dae[0]"; }
 }
 eastern_buildings_21 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_01.dae[0]"; }
 }
 eastern_buildings_22 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_02.dae[0]"; }
 }
 eastern_buildings_23 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_03.dae[0]"; }
 }
 eastern_buildings_24 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_2_04.dae[0]"; }
 }
 eastern_buildings_31 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_01.dae[0]"; }
 }
 eastern_buildings_32 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_02.dae[0]"; }
 }
 eastern_buildings_33 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_03.dae[0]"; }
 }
 eastern_buildings_34 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_3_04.dae[0]"; }
 }
 eastern_buildings_41 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_01.dae[0]"; }
 }
 eastern_buildings_42 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_02.dae[0]"; }
 }
 eastern_buildings_43 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_03.dae[0]"; }
 }
 eastern_buildings_44 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_buildings_4_04.dae[0]"; }
 }
 eastern_buildings_51 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_00.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_00.dae[0]"; }
 }
 eastern_buildings_52 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_01.dae[0]"; }
 }
 eastern_buildings_53 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_02.dae[0]"; }
 }
 eastern_buildings_54 {
   _extends:t="eastern_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Eastern/eastern_citycenter_03.dae[0]"; }
 }
 
 
 western_buildings {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/western_buildings.Material"; }
+  material:Material { path:t = "resources/Strategy/Materials/western_buildings.Material"; }
 }
 western_buildings_11 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_01.dae[0]"; }
 }
 western_buildings_12 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_02.dae[0]"; }
 }
 western_buildings_13 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_03.dae[0]"; }
 }
 western_buildings_14 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_1_04.dae[0]"; }
 }
 western_buildings_21 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_01.dae[0]"; }
 }
 western_buildings_22 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_02.dae[0]"; }
 }
 western_buildings_23 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_03.dae[0]"; }
 }
 western_buildings_24 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_2_04.dae[0]"; }
 }
 western_buildings_31 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_01.dae[0]"; }
 }
 western_buildings_32 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_02.dae[0]"; }
 }
 western_buildings_33 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_03.dae[0]"; }
 }
 western_buildings_34 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_3_04.dae[0]"; }
 }
 western_buildings_41 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_01.dae[0]"; }
 }
 western_buildings_42 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_02.dae[0]"; }
 }
 western_buildings_43 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_03.dae[0]"; }
 }
 western_buildings_44 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_buildings_4_04.dae[0]"; }
 }
 
 western_buildings_52 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_01.dae[0]"; }
 }
 western_buildings_53 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_02.dae[0]"; }
 }
 western_buildings_54 {
   _extends:t="western_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Western/western_citycenter_03.dae[0]"; }
 }
 
 asian_buildings {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/asian_buildings.Material"; }
+  material:Material { path:t = "resources/Strategy/Materials/asian_buildings.Material"; }
 }
 asian_buildings_11 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_01.dae[0]"; }
 }
 asian_buildings_12 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_02.dae[0]"; }
 }
 asian_buildings_13 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_03.dae[0]"; }
 }
 asian_buildings_14 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_1_04.dae[0]"; }
 }
 asian_buildings_21 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_01.dae[0]"; }
 }
 asian_buildings_22 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_02.dae[0]"; }
 }
 asian_buildings_23 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_03.dae[0]"; }
 }
 asian_buildings_24 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_2_04.dae[0]"; }
 }
 asian_buildings_31 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_01.dae[0]"; }
 }
 asian_buildings_32 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_02.dae[0]"; }
 }
 asian_buildings_33 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_03.dae[0]"; }
 }
 asian_buildings_34 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_3_04.dae[0]"; }
 }
 asian_buildings_41 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_01.dae[0]"; }
 }
 asian_buildings_42 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_02.dae[0]"; }
 }
 asian_buildings_43 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_03.dae[0]"; }
 }
 asian_buildings_44 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_04.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_buildings_4_04.dae[0]"; }
 }
 asian_buildings_51 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_00.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_00.dae[0]"; }
 }
 asian_buildings_52 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_01.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_01.dae[0]"; }
 }
 asian_buildings_53 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_02.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_02.dae[0]"; }
 }
 asian_buildings_54 {
   _extends:t="asian_buildings";
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_03.dae[0]"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Buildings/Asian/asian_citycenter_03.dae[0]"; }
 }
 
 
 manufactory_farm {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_farm.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_farm_estate.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_farm.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_farm_estate.dae[0]"; }
 }
 manufactory_fine_art {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_fine_art.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_fine_art_academy.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_fine_art.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_fine_art_academy.dae[0]"; }
 }
 manufactory_plantation {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_plantation.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_plantation.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_plantation.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_plantation.dae[0]"; }
 }
 manufactory_refinery {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_refinery.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_refinery.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_refinery.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_refinery.dae[0]"; }
 }
 manufactory_textile_factory {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_textile_factory.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_textile_factory.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_textile_factory.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_textile_factory.dae[0]"; }
 }
 manufactory_trade_company {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_trade_company.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_trade_company.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_trade_company.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_trade_company.dae[0]"; }
 }
 manufactory_university {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_university.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_university.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_university.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_university.dae[0]"; }
 }
 manufactory_weapons_factory {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_weapons_factory.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_weapons_factory.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_weapons_factory.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_weapons_factory.dae[0]"; }
 }
 manufactory_wharf {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/manufactory_wharf.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/manufactory_wharf.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/manufactory_wharf.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/manufactory_wharf.dae[0]"; }
 }
 
 capital_indicator {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/capital_indicator.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/capital_indicator.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/capital_indicator.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/capital_indicator.dae[0]"; }
 }
 reformation_protestant {
   _extends:t="buildings_common";
   transform:Transform { scale:f3 = 0.3, 0.3, 0.3; }
   
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/reformation_protestant.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/aow_reformation_protestant.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/reformation_protestant.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/aow_reformation_protestant.dae[0]"; }
 }
 reformation_reformed {
   _extends:t="buildings_common";
   transform:Transform { scale:f3 = 0.3, 0.3, 0.3; }
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/reformation_reformed.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/aow_reformation_reformed.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/reformation_reformed.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/aow_reformation_reformed.dae[0]"; }
 }
 trade_node {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/trade_node.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/tradenode_land.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/trade_node.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/tradenode_land.dae[0]"; }
 }
 coin {
   _extends:t="buildings_common";
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/coin.Material"; }
-  mesh:Asset<Mesh> { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
+  material:Material { path:t = "resources/Strategy/Materials/coin.Material"; }
+  mesh:Mesh { path:t = "resources/Strategy/Assets/Mapitems/coin.dae[0]"; }
 }
 
 

@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <render/render.h> 
 #include <transform.h> 
 #include <application/time.h>
@@ -49,7 +49,7 @@ EVENT() spawn_coin_effect(
   vec3 worldPos;
   if (heightMap.ray_trace(p, n, worldPos))
   {
-    const ecs::Template *t = ecs::get_template("coin_effect");
+    const ecs::prefab_id t = ecs::get_prefab_id("coin_effect");
 
     for (int i = 0; i < 25; i++)
     {

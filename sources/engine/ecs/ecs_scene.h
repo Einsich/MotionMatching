@@ -1,34 +1,29 @@
 #pragma once
 #include <vector>
 #include <filesystem>
-#include "manager/system_description.h"
-#include "input.h"
-#include "manager/entity_manager.h"
+#include <profiler/profiler.h>
 #include <data_block/data_block.h>
 
-namespace ecs
+class SceneManager
 {
-  class SceneManager
-  {
-  private:
-    SystemStageInterval act, before_render, render, render_ui, ui, menu;
+private:
+  ProfilerLabel perfLabel;
+  ProfilerLabelGPU perfLabelGPU;
+  DataBlock rawScene;
+  std::string scenePath;
 
-    DataBlock rawScene;
-    std::string scenePath;
-    std::unique_ptr<EntityManager> editorScene, gameScene;
-
-    bool inEditor;
-    void sort_systems();
-  public:
-    std::string sceneToLoad;
-    void restart_cur_scene();
-    void start();
-    void start_scene(const std::string &path, bool editor);
-    void swap_editor_game_scene();
-    void update_act();
-    void update_render();
-    void update_ui();
-    void process_events();
-    void destroy_scene();
-  };
-}
+  bool inEditor;
+public:
+  std::string sceneToLoad;
+  void restart_cur_scene();
+  void start();
+  void start_scene(const std::string &path, bool editor);
+  void swap_editor_game_scene();
+  
+  void pre_act();
+  void pre_before_render();
+  void pre_render();
+  
+  void update_ui();
+  void destroy_scene();
+};

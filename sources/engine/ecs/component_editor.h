@@ -4,19 +4,19 @@
 #include "serialization/reflection.h"
 #include "resources/asset.h"
 #include "resources/resources.h"
-#include "manager/entity_id.h"
+#include <ecs/entity_id.h>
 #include "utils/compile_time_string.h"
 
-template<typename T>
+template <typename T>
 std::enable_if_t<HasReflection<T>::value, bool> edit_component(T &component, const char *, bool view_only)
 {
   bool edited = false;
-  component.reflect([&](auto &component, const char *name)->void{edited |= edit_component(component, name, view_only);});
+  component.reflect([&](auto &component, const char *name) -> void
+                    { edited |= edit_component(component, name, view_only); });
   return edited;
 }
 
-
-template<typename T>
+template <typename T>
 std::enable_if_t<is_vector<T>::value, bool>
 edit_component(T &v, const char *name, bool view_only)
 {
@@ -24,13 +24,13 @@ edit_component(T &v, const char *name, bool view_only)
   constexpr int BUFN = 255;
   char buf[BUFN];
   ImGuiInputTextFlags flags = view_only ? ImGuiInputTextFlags_ReadOnly : 0;
-  snprintf(buf, BUFN, "%s##%p", name, (void*)&component);
+  snprintf(buf, BUFN, "%s##%p", name, (void *)&component);
   bool edited = false;
   if (ImGui::TreeNode(buf))
   {
     ImGui::SameLine();
     int count = component.size();
-    snprintf(buf, BUFN, "count##%p", (void*)&component);
+    snprintf(buf, BUFN, "count##%p", (void *)&component);
     if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | flags))
     {
       component.resize(count);
@@ -38,10 +38,10 @@ edit_component(T &v, const char *name, bool view_only)
     }
     for (uint i = 0; i < component.size(); ++i)
     {
-      snprintf(buf, BUFN, "[%u]##%p", i, (void*)&component);
+      snprintf(buf, BUFN, "[%u]##%p", i, (void *)&component);
       if (ImGui::TreeNode(buf))
       {
-        snprintf(buf, BUFN, "##%p", (void*)&component);
+        snprintf(buf, BUFN, "##%p", (void *)&component);
         if constexpr (std::is_same_v<bool, typename T::value_type>)
         {
           bool b = component[i];
@@ -50,15 +50,15 @@ edit_component(T &v, const char *name, bool view_only)
         }
         else
         {
-          if constexpr (requires(typename T::value_type &v) { edit_component(v, "", false); })
+          if constexpr (requires(typename T::value_type & v) { edit_component(v, "", false); })
           {
             edited |= edit_component(component[i], buf, view_only);
           }
         }
-        ImGui::TreePop();  
+        ImGui::TreePop();
       }
       ImGui::SameLine();
-      snprintf(buf, BUFN, "remove##%d%p", i, (void*)&component);
+      snprintf(buf, BUFN, "remove##%d%p", i, (void *)&component);
       if (ImGui::Button(buf))
       {
         edited |= true;
@@ -66,14 +66,14 @@ edit_component(T &v, const char *name, bool view_only)
         --i;
       }
     }
-    ImGui::TreePop();  
+    ImGui::TreePop();
     ImGui::Spacing();
   }
   else
   {
     ImGui::SameLine();
     int count = component.size();
-    snprintf(buf, BUFN, "count##%p", (void*)&component);
+    snprintf(buf, BUFN, "count##%p", (void *)&component);
     if (ImGui::InputInt(buf, &count, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue | flags))
     {
       edited |= true;
@@ -83,9 +83,9 @@ edit_component(T &v, const char *name, bool view_only)
   return edited;
 }
 
-template<typename T>
+template <typename T>
 std::enable_if_t<is_base_of<IAsset, T>::value, bool>
- edit_component(Asset<T> &component, const char *, bool view_only)
+edit_component(Asset<T> &component, const char *, bool view_only)
 {
   constexpr const string_view &tName = nameOf<T>::value;
   constexpr int BUFN = 255;
@@ -107,7 +107,7 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
       static std::map<intptr_t, bool> selectionMap;
       intptr_t hash = (intptr_t)(void *)&component;
       bool &select = selectionMap[hash];
-      snprintf(buf, BUFN, "Select asset##%p", (void*)&component);
+      snprintf(buf, BUFN, "Select asset##%p", (void *)&component);
       if (ImGui::Button(buf))
         select = !select;
       if (select)
@@ -121,7 +121,7 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
           keys.emplace_back(&asset.first);
         }
         static int curTex = -1;
-        snprintf(buf, BUFN, "##%p", (void*)&component);
+        snprintf(buf, BUFN, "##%p", (void *)&component);
         if (ImGui::ListBox(buf, &curTex, names.data(), names.size(), 10))
         {
           select = false;
@@ -137,7 +137,6 @@ std::enable_if_t<is_base_of<IAsset, T>::value, bool>
   }
   return edited;
 }
-
 
 bool edit_component(bool &component, const char *name, bool view_only);
 bool edit_component(int &component, const char *name, bool view_only);

@@ -1,49 +1,63 @@
 #include "create_map.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void scene_created_handler(const ecs::Event &event);
-void scene_created_singl_handler(const ecs::Event &event, ecs::EntityId eid);
+static ecs::QueryCache scene_created__cache__;
 
-ecs::EventDescription scene_created_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "scene_created", {
-}, {
-},
-{},
-{},
-scene_created_handler, scene_created_singl_handler, {});
+static ecs::QueryCache spawn_buildings__cache__;
 
-void scene_created_handler(const ecs::Event &event)
+static void scene_created_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, scene_created_descr, scene_created);
-}
-void scene_created_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, scene_created_descr, eid, scene_created);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), scene_created__cache__, scene_created);
 }
 
-void spawn_buildings_handler(const ecs::Event &event);
-void spawn_buildings_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription spawn_buildings_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "spawn_buildings", {
-  {ecs::get_type_hash<ecs::vector<ecs::string>>(), ecs::get_name_hash("items_templates"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("step_length"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("row_count"), false}
-}, {
-},
-{},
-{},
-spawn_buildings_handler, spawn_buildings_singl_handler, {});
-
-void spawn_buildings_handler(const ecs::Event &event)
+static void scene_created_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, spawn_buildings_descr, spawn_buildings);
-}
-void spawn_buildings_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, spawn_buildings_descr, eid, spawn_buildings);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), scene_created__cache__, scene_created);
 }
 
+static void spawn_buildings_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), spawn_buildings__cache__, spawn_buildings);
+}
 
+static void spawn_buildings_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), spawn_buildings__cache__, spawn_buildings);
+}
+
+static void registration_pull_create_map()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "scene_created",
+  &scene_created__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &scene_created_handler, &scene_created_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "spawn_buildings",
+  &spawn_buildings__cache__,
+  {
+    {"items_templates", ecs::get_type_index<ecs::vector<ecs::string>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<ecs::string>>()},
+    {"center", ecs::get_type_index<vec3>(), ecs::AccessType::Copy, false, ecs::is_singleton<vec3>()},
+    {"step_length", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"row_count", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &spawn_buildings_handler, &spawn_buildings_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_create_map)

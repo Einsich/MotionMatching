@@ -1,42 +1,42 @@
-#include "template.h"
+
 #include "serialization/serialization.h"
 #include "application/application_data.h"
 #include "data_block/data_block.h"
-#include "manager/entity_id.h"
+#include <ecs/ecs.h>
+
 #include <filesystem>
 #include <map>
 namespace fs = filesystem;
-namespace ecs
-{ 
+namespace ecs_ex
+{
   struct TemplateFile
   {
     std::string path;
     DataBlockPtr fileBlk;
-    TemplateFile(const std::string &path, DataBlockPtr fileBlk):
-      path(path), fileBlk(fileBlk)
-    {}
+    TemplateFile(const std::string &path, DataBlockPtr fileBlk) : path(path), fileBlk(fileBlk)
+    {
+    }
   };
-  
+
   struct RawTemplate
   {
     std::string name;
-    const DataBlock* blk;
-    vector<ComponentInstance> components;
+    const DataBlock *blk;
+    vector<ecs::ComponentPrefab> components;
     vector<std::string> extends;
     vector<size_t> extendsIdx;
   };
-  template<typename T>
-  ComponentInstance create_instance(const DataBlock &blk, const DataBlock::Property &property)
+  template <typename T>
+  ecs::ComponentPrefab create_instance(const DataBlock &blk, const DataBlock::Property &property)
   {
-    return ComponentInstance(property.name.c_str(), blk.get<T>(property));
+    return ecs::ComponentPrefab(property.name.c_str(), blk.get<T>(property));
   }
-  template<>
-  ComponentInstance create_instance<std::string>(const DataBlock &blk, const DataBlock::Property &property)
+  template <>
+  ecs::ComponentPrefab create_instance<std::string>(const DataBlock &blk, const DataBlock::Property &property)
   {
-    return ComponentInstance(property.name.c_str(), ecs::string(blk.get<std::string>(property).c_str()));
+    return ecs::ComponentPrefab(property.name.c_str(), ecs::string(blk.get<std::string>(property).c_str()));
   }
   GET_FUNCTIONS(instantiate, create_instance)
-
 
   static void collect_template_files(vector<TemplateFile> &templatesFiles)
   {
@@ -45,7 +45,7 @@ namespace ecs
     {
       if (!fs::exists(path))
         continue;
-      for (const auto & entry : fs::recursive_directory_iterator(path))
+      for (const auto &entry : fs::recursive_directory_iterator(path))
       {
         if (entry.is_regular_file() && entry.path().extension() == ".blk")
         {
@@ -78,7 +78,8 @@ namespace ecs
     }
   }
 
-  enum {
+  enum
+  {
     NOT_VISITED,
     VISITED,
     VERIFIED,
@@ -91,7 +92,7 @@ namespace ecs
       return true;
     if (status[templateId] == NOT_VERIFIED || status[templateId] == VISITED)
       return false;
-      
+
     status[templateId] = VISITED;
     for (const std::string &extends : templates[templateId].extends)
     {
@@ -121,11 +122,11 @@ namespace ecs
       }
     }
     size_t first = 0, last = templates.size();
-    for(; first < last; ++first)
+    for (; first < last; ++first)
       if (status[first] != VERIFIED)
         break;
     if (first != last)
-      for(size_t i = first, n = templates.size(); ++i < n;)
+      for (size_t i = first, n = templates.size(); ++i < n;)
         if (status[i] != VERIFIED)
         {
           templates[first] = std::move(templates[i]);
@@ -140,7 +141,8 @@ namespace ecs
     {
       for (const std::string &extends : rawTmpl.extends)
       {
-        auto it = find_if(rawTemplates.begin(), rawTemplates.end(), [&](const RawTemplate&tmpl) {return tmpl.name == extends;});
+        auto it = find_if(rawTemplates.begin(), rawTemplates.end(), [&](const RawTemplate &tmpl)
+                          { return tmpl.name == extends; });
         if (it != rawTemplates.end())
           rawTmpl.extendsIdx.emplace_back(it - rawTemplates.begin());
         else
@@ -149,9 +151,8 @@ namespace ecs
     }
   }
 
-  void init_components_from_blk(const DataBlock *tmpl, vector<ComponentInstance> &components)
+  void init_components_from_blk(const DataBlock *tmpl, vector<ecs::ComponentPrefab> &components)
   {
-    const auto &typeMap = ecs::TypeInfo::types();
     for (size_t i = 0, n = tmpl->propertiesCount(); i < n; i++)
     {
       const DataBlock::Property &property = tmpl->getProperty(i);
@@ -163,47 +164,63 @@ namespace ecs
     for (size_t i = 0, n = tmpl->blockCount(); i < n; i++)
     {
       const DataBlock *property = tmpl->getBlock(i);
-  
-      auto it = typeMap.find(HashedString(property->type().c_str()));
-      if (it != typeMap.end())
+      int idx = ecs::type_name_to_index(property->type().c_str());
+      if (idx >= 0)
       {
-        const ecs::TypeInfo &typeInfo = *it->second;
-        components.emplace_back(typeInfo, property->name().c_str(),
-          [property, reader = typeInfo.userInfo.blkReader](void *raw_data) {
-          reader(*property, raw_data);
-        });
-       ;
+        components.emplace_back(property->name().c_str(), idx, property);
       }
       else
       {
-        debug_error("unknown type %s:%s", property->name().c_str(),  property->type().c_str());
+        debug_error("unknown type %s:%s", property->name().c_str(), property->type().c_str());
       }
     }
   }
 
-  static void init_components(const RawTemplate &rawTemplate, vector<ComponentInstance> &components)
+  static void init_components(const RawTemplate &rawTemplate, vector<ecs::ComponentPrefab> &components)
   {
     init_components_from_blk(rawTemplate.blk, components);
-    components.emplace_back(ComponentInstance("eid", ecs::EntityId()));
   }
-
-
-
+  template <typename T>
+  static void patch_components_impl(ecs::vector<ecs::ComponentPrefab> &components, T patch)
+  {
+    for (size_t i = 0, n = patch.size(); i < n; ++i)
+    {
+      bool patched = false;
+      for (size_t j = 0, m = components.size(); j < m; ++j)
+      {
+        if (components[j].fastCompare(patch[i]))
+        {
+          components[j] = patch[i];
+          patched = true;
+          break;
+        }
+      }
+      if (!patched)
+        components.emplace_back(patch[i]);
+    }
+  }
+  static void patch_components(ecs::vector<ecs::ComponentPrefab> &components, const ecs::vector<ecs::ComponentPrefab> &patch)
+  {
+    patch_components_impl(components, patch);
+  }
+  static void patch_components(ecs::vector<ecs::ComponentPrefab> &components, ecs::vector<ecs::ComponentPrefab> &&patch)
+  {
+    patch_components_impl(components, std::move(patch));
+  }
   static void linearize_extends(vector<RawTemplate> &rawTemplates, size_t templateId)
   {
     RawTemplate &blkTemplate = rawTemplates[templateId];
     if (!blkTemplate.components.empty())
       return;
-    
+
     for (size_t i : rawTemplates[templateId].extendsIdx)
     {
       linearize_extends(rawTemplates, i);
       patch_components(blkTemplate.components, rawTemplates[i].components);
     }
-    vector<ComponentInstance> components;
+    vector<ecs::ComponentPrefab> components;
     init_components(rawTemplates[templateId], components);
     patch_components(blkTemplate.components, std::move(components));
-
   }
 
   static void linearize_extends(vector<RawTemplate> &rawTemplates)
@@ -222,14 +239,14 @@ namespace ecs
 
     vector<RawTemplate> rawTemplates;
     fill_raw_template(templatesFiles, rawTemplates);
-  
-    validate_templates(rawTemplates);//remove cyclic dependencies
-  
+
+    validate_templates(rawTemplates); // remove cyclic dependencies
+
     init_templates(rawTemplates);
 
     linearize_extends(rawTemplates);
 
     for (RawTemplate &tmpl : rawTemplates)
-      ecs::create_template(tmpl.name.c_str(), std::move(tmpl.components));
+      ecs::create_entity_prefab(ecs::EntityPrefab(tmpl.name.c_str(), std::move(tmpl.components)));
   }
 }

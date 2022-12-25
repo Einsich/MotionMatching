@@ -1,5 +1,5 @@
 #pragma once
-#include <singleton.h>
+#include <ecs/singleton.h>
 #include <ui/ui.h>
 
 struct EditorWidgets : ecs::Singleton

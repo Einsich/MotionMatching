@@ -6,9 +6,10 @@ class ProfilerLabel
 {
 private:
   uint64_t start; 
-  const char *label;
-  bool stopped;
+  const char *label = "";
+  bool stopped = true;
 public:
+  ProfilerLabel():stopped(true){}
   ProfilerLabel(const char *label);
   ~ProfilerLabel();
   void stop();
@@ -20,6 +21,7 @@ private:
   uint startQuery, endQuery;
   const char *label;
 public:
+  ProfilerLabelGPU():stopped(true){}
   ProfilerLabelGPU(const char *label);
   ~ProfilerLabelGPU();
   void stop();

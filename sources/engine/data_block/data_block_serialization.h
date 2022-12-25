@@ -1,7 +1,8 @@
 #pragma once
+#include <eastl/string.h>
 #include "data_block.h"
 #include "serialization/reflection.h"
-#include <config/config.h>
+#include <ecs/ecs_std.h>
 #include <magic_enum.hpp>
 
 template<typename T>

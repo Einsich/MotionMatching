@@ -1,10 +1,10 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <application/time.h>
 #include <3dmath.h>
 #include "constanta.h"
 #include <thread>
 
-
+ 
 struct DagorTestEntity
 {
   mat4 transform;
@@ -39,7 +39,7 @@ EVENT() dag_init(const ecs::OnSceneCreated &)
 {
 
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
-  const ecs::Template *tmpl1 = ecs::create_template("test1", {
+  ecs::prefab_id tmpl1 = ecs::create_entity_prefab(ecs::EntityPrefab("test1", {
     {"p", vec3()},
     {"v", vec3()},
     {"int_variable", 10},
@@ -54,7 +54,7 @@ EVENT() dag_init(const ecs::OnSceneCreated &)
     {"data7", mat4(1.f)},
     {"data8", mat4(1.f)},
     {"data9", mat4(1.f)}
-  });
+  }));
   {
     TimeScope a("ecs_create");
     for (uint i = 0; i < dagorEntityCount; i++)
@@ -213,30 +213,30 @@ SYSTEM(stage=act;) prune_cache3()
 }
 
 
-void dag_ecs_update_func();
-void dag_vector_structs_update_func();
-void dag_vector_pointers_update_func();
-void dag_vector_pointers_virtual_update_func();
-void dag_soa_update_func();
+void dag_ecs_update_implementation();
+void dag_vector_structs_update_implementation();
+void dag_vector_pointers_update_implementation();
+void dag_vector_pointers_virtual_update_implementation();
+void dag_soa_update_implementation();
 
 
 void tiny_vector_and_soa_update()
 {
   auto handle = std::thread([]()
   {
-    dag_vector_structs_update_func();
+    dag_vector_structs_update_implementation();
   });
 
   auto handle1 = std::thread([&]()
   {
-    dag_vector_pointers_update_func();
+    dag_vector_pointers_update_implementation();
   });
   auto handle2 = std::thread([&]()
   {
-    dag_soa_update_func();
+    dag_soa_update_implementation();
   });
-  dag_ecs_update_func();
-  dag_vector_pointers_virtual_update_func();
+  dag_ecs_update_implementation();
+  dag_vector_pointers_virtual_update_implementation();
   handle.join();
   handle1.join();
   handle2.join();

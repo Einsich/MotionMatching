@@ -1,18 +1,18 @@
 terrain {
-  heights_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_heightmap.png.meta"; }
-  provinces_texture:Asset<Texture2D> { }
-  normal_texture:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
+  heights_texture:Texture2D { path:t = "resources/Strategy/Assets/Terrain/europe_heightmap.png.meta"; }
+  provinces_texture:Texture2D { }
+  normal_texture:Texture2D { path:t = "resources/Strategy/Assets/Terrain/europe_world_normal.png.meta"; }
   terrain_texture:t = "resources/Strategy/Assets/Terrain/europe_terrain.png";
   tree_map:t ="resources/Strategy/Assets/Terrain/europe_trees.png";
-  atlas_diffuse:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
-  atlas_normal:Asset<Texture2D> { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
-  material:Asset<Material> { }
-  political_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain_political.Material"; }
-  physycal_material:Asset<Material> { path:t = "resources/Strategy/Materials/terrain.Material"; }
+  atlas_diffuse:Texture2D { path:t = "resources/Strategy/Assets/Terrain/atlas0.png.meta"; }
+  atlas_normal:Texture2D { path:t = "resources/Strategy/Assets/Terrain/atlas_normal0.png.meta"; }
+  material:Material { }
+  political_material:Material { path:t = "resources/Strategy/Materials/terrain_political.Material"; }
+  physycal_material:Material { path:t = "resources/Strategy/Materials/terrain.Material"; }
 
   provinces_texture_name:t="resources/Strategy/Assets/Terrain/provinces.tga";
   load_provinces_info:t="resources/Strategy/Content/provinces_owning.blk";
-  terrain_diffuse_array:Asset<Texture2DArray> {
+  terrain_diffuse_array:Texture2DArray {
     new_asset:b = true;
     path:t = "terrain_diffuse+"
     "resources/Strategy/Assets/Terrain/atlas/atlas00.png+"
@@ -27,7 +27,7 @@ terrain {
     "resources/Strategy/Assets/Terrain/atlas/atlas09.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas10.png+";
   }
-  terrain_normal_array:Asset<Texture2DArray> {
+  terrain_normal_array:Texture2DArray {
     new_asset:b = true;
     path:t = "terrain_normal+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal00.png+"
@@ -42,8 +42,8 @@ terrain {
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal09.png+"
     "resources/Strategy/Assets/Terrain/atlas/atlas_normal07.png+";
   }
-  terrain_types_texture:Asset<Texture2D> { }
-  terrain_colormap_array:Asset<Texture2DArray> {
+  terrain_types_texture:Texture2D { }
+  terrain_colormap_array:Texture2DArray {
     new_asset:b = true;
     path:t = "terrain_colormap+"
     "resources/Strategy/Assets/Terrain/europe_colormap_autumn.png+"
@@ -53,8 +53,8 @@ terrain {
   } 
   
   lods_distances:vector<float> { }
-  lods_meshes:vector<Asset<Mesh>> { }
-  mesh:Asset<Mesh> { }
+  lods_meshes:vector<Mesh> { }
+  mesh:Mesh { }
   terrain_lods_count:i=5;
   first_lod_distance:f=6;
   transform:Transform { }
@@ -100,8 +100,8 @@ terrain {
 }
 
 borders{
-  material:Asset<Material> { path:t = "resources/Strategy/Materials/border.Material"; }
-  mesh:Asset<Mesh> { }
+  material:Material { path:t = "resources/Strategy/Materials/border.Material"; }
+  mesh:Mesh { }
   transform:Transform { }
   is_visible:b=true;
   is_enabled:b=true;

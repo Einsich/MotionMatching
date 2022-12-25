@@ -1,6 +1,6 @@
 #pragma once
 #include "3dmath.h"
-#include "singleton.h"
+#include <ecs/singleton.h>
 #include "render/mesh.h"
 #include "render/material.h"
 

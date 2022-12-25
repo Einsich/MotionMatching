@@ -1,129 +1,169 @@
 #include "test.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void ecs_update_func();
+static ecs::QueryCache ecs_update__cache__;
 
-ecs::SystemDescription ecs_update_descr("ecs_update", {
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("pos"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("vel"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("m"), false}
-}, {
-},
-{},
-{},
-ecs_update_func, "act", {}, false);
+static ecs::QueryCache vector_structs_update__cache__;
 
-void ecs_update_func()
+static ecs::QueryCache vector_pointers_update__cache__;
+
+static ecs::QueryCache das_update__cache__;
+
+static ecs::QueryCache init__cache__;
+
+static ecs::QueryCache init_das__cache__;
+
+static ecs::QueryCache term_das__cache__;
+
+static void ecs_update_implementation()
 {
-  ecs::perform_system(ecs_update_descr, ecs_update);
+  ecs::perform_system(ecs_update__cache__, ecs_update);
 }
 
-void vector_structs_update_func();
-
-ecs::SystemDescription vector_structs_update_descr("vector_structs_update", {
-}, {
-},
-{},
-{},
-vector_structs_update_func, "act", {}, false);
-
-void vector_structs_update_func()
+static void vector_structs_update_implementation()
 {
-  ecs::perform_system(vector_structs_update_descr, vector_structs_update);
+  ecs::perform_system(vector_structs_update__cache__, vector_structs_update);
 }
 
-void vector_pointers_update_func();
-
-ecs::SystemDescription vector_pointers_update_descr("vector_pointers_update", {
-}, {
-},
-{},
-{},
-vector_pointers_update_func, "act", {}, false);
-
-void vector_pointers_update_func()
+static void vector_pointers_update_implementation()
 {
-  ecs::perform_system(vector_pointers_update_descr, vector_pointers_update);
+  ecs::perform_system(vector_pointers_update__cache__, vector_pointers_update);
 }
 
-void das_update_func();
-
-ecs::SystemDescription das_update_descr("das_update", {
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("pos"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("vel"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("center"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("m"), false}
-}, {
-},
-{},
-{},
-das_update_func, "act", {}, false);
-
-void das_update_func()
+static void das_update_implementation()
 {
-  ecs::perform_system(das_update_descr, das_update);
+  ecs::perform_system(das_update__cache__, das_update);
 }
 
-void init_handler(const ecs::Event &event);
-void init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription init_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "init", {
-}, {
-},
-{},
-{},
-init_handler, init_singl_handler, {});
-
-void init_handler(const ecs::Event &event)
+static void init_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_descr, init);
-}
-void init_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_descr, eid, init);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), init__cache__, init);
 }
 
-void init_das_handler(const ecs::Event &event);
-void init_das_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription init_das_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "init_das", {
-}, {
-},
-{},
-{},
-init_das_handler, init_das_singl_handler, {});
-
-void init_das_handler(const ecs::Event &event)
+static void init_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_das_descr, init_das);
-}
-void init_das_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, init_das_descr, eid, init_das);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), init__cache__, init);
 }
 
-void term_das_handler(const ecs::Event &event);
-void term_das_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription term_das_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneDestroy>(), "term_das", {
-}, {
-},
-{},
-{},
-term_das_handler, term_das_singl_handler, {});
-
-void term_das_handler(const ecs::Event &event)
+static void init_das_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneDestroy&)event, term_das_descr, term_das);
-}
-void term_das_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneDestroy&)event, term_das_descr, eid, term_das);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), init_das__cache__, init_das);
 }
 
+static void init_das_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), init_das__cache__, init_das);
+}
 
+static void term_das_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneTerminated &>(event), term_das__cache__, term_das);
+}
+
+static void term_das_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneTerminated &>(event), term_das__cache__, term_das);
+}
+
+static void registration_pull_test()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "ecs_update",
+  &ecs_update__cache__,
+  {
+    {"pos", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"vel", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"center", ecs::get_type_index<vec3>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<vec3>()},
+    {"m", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &ecs_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "vector_structs_update",
+  &vector_structs_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &vector_structs_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "vector_pointers_update",
+  &vector_pointers_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &vector_pointers_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "das_update",
+  &das_update__cache__,
+  {
+    {"pos", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"vel", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"center", ecs::get_type_index<vec3>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<vec3>()},
+    {"m", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &das_update_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "init",
+  &init__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &init_handler, &init_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "init_das",
+  &init_das__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &init_das_handler, &init_das_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "term_das",
+  &term_das__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &term_das_handler, &term_das_single_handler),
+  ecs::EventIndex<ecs::OnSceneTerminated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_test)

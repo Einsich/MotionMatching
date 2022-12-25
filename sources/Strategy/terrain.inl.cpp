@@ -1,103 +1,130 @@
 #include "terrain.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription query_water_descr("query_water", {
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("water_noise_texture"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("water_color_texture"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("water_foam_texture"), false},
-  {ecs::get_type_hash<Asset<CubeMap>>(), ecs::get_name_hash("sky_reflection"), false},
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {-1u, ecs::get_name_hash("isWater"), false}
-}, {
-});
+static ecs::QueryCache query_water__cache__;
+
+static ecs::QueryCache set_map_render_data__cache__;
+
+static ecs::QueryCache add_map_uniform__cache__;
+
+static ecs::QueryCache create_terrain__cache__;
 
 template<typename Callable>
-void query_water(Callable lambda)
+static void query_water(Callable lambda)
 {
-  ecs::perform_query<Asset<Texture2D>&, Asset<Texture2D>&, Asset<Texture2D>&, Asset<CubeMap>&, Asset<Material>&, Transform&>
-  (query_water_descr, lambda);
+  ecs::perform_query<const Asset<Texture2D>&, const Asset<Texture2D>&, const Asset<Texture2D>&, const Asset<CubeMap>&, Asset<Material>&, Transform&>(query_water__cache__, lambda);
 }
 
-
-void set_map_render_data_func();
-
-ecs::SystemDescription set_map_render_data_descr("set_map_render_data", {
-  {ecs::get_type_hash<MapRenderData>(), ecs::get_name_hash("data"), false}
-}, {
-},
-{},
-{},
-set_map_render_data_func, "render", {}, false);
-
-void set_map_render_data_func()
+static void set_map_render_data_implementation()
 {
-  ecs::perform_system(set_map_render_data_descr, set_map_render_data);
+  ecs::perform_system(set_map_render_data__cache__, set_map_render_data);
 }
 
-void add_map_uniform_handler(const ecs::Event &event);
-void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription add_map_uniform_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_map_uniform", {
-}, {
-},
-{},
-{},
-add_map_uniform_handler, add_map_uniform_singl_handler, {});
-
-void add_map_uniform_handler(const ecs::Event &event)
+static void add_map_uniform_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, add_map_uniform_descr, add_map_uniform);
-}
-void add_map_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, add_map_uniform_descr, eid, add_map_uniform);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), add_map_uniform__cache__, add_map_uniform);
 }
 
-void create_terrain_handler(const ecs::Event &event);
-void create_terrain_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription create_terrain_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "create_terrain", {
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("heights_texture"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("normal_texture"), false},
-  {ecs::get_type_hash<Asset<Texture2DArray>>(), ecs::get_name_hash("terrain_diffuse_array"), false},
-  {ecs::get_type_hash<Asset<Texture2DArray>>(), ecs::get_name_hash("terrain_normal_array"), false},
-  {ecs::get_type_hash<Asset<Texture2DArray>>(), ecs::get_name_hash("terrain_colormap_array"), false},
-  {ecs::get_type_hash<Asset<Texture2D>>(), ecs::get_name_hash("terrain_types_texture"), false},
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false},
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("political_material"), false},
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("physycal_material"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<ecs::vector<float>>(), ecs::get_name_hash("lods_distances"), false},
-  {ecs::get_type_hash<ecs::vector<Asset<Mesh>>>(), ecs::get_name_hash("lods_meshes"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("terrain_lods_count"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("first_lod_distance"), false},
-  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("terrain_texture"), false},
-  {ecs::get_type_hash<ecs::string>(), ecs::get_name_hash("tree_map"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("tree_scale"), false},
-  {ecs::get_type_hash<ecs::vector<ivec3>>(), ecs::get_name_hash("terrain_type_color"), false},
-  {ecs::get_type_hash<ecs::vector<int>>(), ecs::get_name_hash("terrain_type_index"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("pixel_scale"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("water_level"), false},
-  {ecs::get_type_hash<vec2>(), ecs::get_name_hash("map_size"), false},
-  {ecs::get_type_hash<HeightMap>(), ecs::get_name_hash("heigth_map"), false},
-  {ecs::get_type_hash<MapRenderData>(), ecs::get_name_hash("data"), false}
-}, {
-},
-{},
-{},
-create_terrain_handler, create_terrain_singl_handler, {});
-
-void create_terrain_handler(const ecs::Event &event)
+static void add_map_uniform_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, create_terrain_descr, create_terrain);
-}
-void create_terrain_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, create_terrain_descr, eid, create_terrain);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), add_map_uniform__cache__, add_map_uniform);
 }
 
+static void create_terrain_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), create_terrain__cache__, create_terrain);
+}
 
+static void create_terrain_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), create_terrain__cache__, create_terrain);
+}
+
+static void registration_pull_terrain()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "query_water",
+  &query_water__cache__,
+  {
+    {"water_noise_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"water_color_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"water_foam_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"sky_reflection", ecs::get_type_index<Asset<CubeMap>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<CubeMap>>()},
+    {"material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()}
+  },
+  {
+    {"isWater", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "set_map_render_data",
+  &set_map_render_data__cache__,
+  {
+    {"data", ecs::get_type_index<MapRenderData>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MapRenderData>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point"},
+  {},
+  &set_map_render_data_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "add_map_uniform",
+  &add_map_uniform__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &add_map_uniform_handler, &add_map_uniform_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "create_terrain",
+  &create_terrain__cache__,
+  {
+    {"heights_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"normal_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"terrain_diffuse_array", ecs::get_type_index<Asset<Texture2DArray>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2DArray>>()},
+    {"terrain_normal_array", ecs::get_type_index<Asset<Texture2DArray>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2DArray>>()},
+    {"terrain_colormap_array", ecs::get_type_index<Asset<Texture2DArray>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Texture2DArray>>()},
+    {"terrain_types_texture", ecs::get_type_index<Asset<Texture2D>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Texture2D>>()},
+    {"material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"political_material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"physycal_material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()},
+    {"lods_distances", ecs::get_type_index<ecs::vector<float>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<float>>()},
+    {"lods_meshes", ecs::get_type_index<ecs::vector<Asset<Mesh>>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<Asset<Mesh>>>()},
+    {"terrain_lods_count", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"first_lod_distance", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"terrain_texture", ecs::get_type_index<ecs::string>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::string>()},
+    {"tree_map", ecs::get_type_index<ecs::string>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::string>()},
+    {"tree_scale", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"terrain_type_color", ecs::get_type_index<ecs::vector<ivec3>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<ivec3>>()},
+    {"terrain_type_index", ecs::get_type_index<ecs::vector<int>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<int>>()},
+    {"pixel_scale", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()},
+    {"water_level", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"map_size", ecs::get_type_index<vec2>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec2>()},
+    {"heigth_map", ecs::get_type_index<HeightMap>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<HeightMap>()},
+    {"data", ecs::get_type_index<MapRenderData>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapRenderData>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &create_terrain_handler, &create_terrain_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_terrain)

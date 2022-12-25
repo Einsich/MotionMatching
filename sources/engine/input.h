@@ -3,7 +3,8 @@
 #include <map>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>
-#include "ecs_event.h"
+#include <ecs/event.h>
+
 enum class MouseButton
 {
   LeftButton,
@@ -16,7 +17,7 @@ enum class MouseAction
   Up
 };
 
-template<MouseButton buttonType>
+template <MouseButton buttonType>
 struct MouseButtonDownEvent : public ecs::Event
 {
   MouseAction action;
@@ -51,28 +52,28 @@ enum class KeyAction
   Up
 };
 
-template<SDL_Keycode Key>
+template <SDL_Keycode Key>
 struct KeyDownEvent : public ecs::Event
 {
   float time;
 };
-template<SDL_Keycode Key>
+template <SDL_Keycode Key>
 struct KeyUpEvent : public ecs::Event
 {
   float time;
 };
-template<SDL_Keycode Key>
+template <SDL_Keycode Key>
 struct KeyPressEvent : public ecs::Event
 {
   float time;
 };
-template<SDL_Keycode Key>
+template <SDL_Keycode Key>
 struct KeyEventAnyAction : public ecs::Event
 {
   KeyAction action;
   float time;
 };
-template<KeyAction Action>
+template <KeyAction Action>
 struct KeyEventAnyKey : public ecs::Event
 {
   SDL_Keycode keycode;
@@ -89,24 +90,24 @@ struct KeyEventAnyActionKey : public ecs::Event
 class Input
 {
 
-
   map<SDL_Keycode, pair<int, float>> keyMap;
   struct WheelData
   {
     float lastTime = 0, lastValue = 0, targetValue = 0;
-  } wheelData; 
+  } wheelData;
 
   bool eventable = true;
+
 public:
   bool mouseOverUI;
-  Input(bool eventable) : eventable(eventable){}
+  Input(bool eventable) : eventable(eventable) {}
   Input() = default;
-  static Input& input();
+  static Input &input();
 
-  void event_process(const SDL_KeyboardEvent& event, float time);
-  void event_process(const SDL_MouseButtonEvent& event, float time);
-  void event_process(const SDL_MouseMotionEvent& event, float time);
-  void event_process(const SDL_MouseWheelEvent& event, float time);
+  void event_process(const SDL_KeyboardEvent &event, float time);
+  void event_process(const SDL_MouseButtonEvent &event, float time);
+  void event_process(const SDL_MouseMotionEvent &event, float time);
+  void event_process(const SDL_MouseWheelEvent &event, float time);
 
   float get_key_impl(SDL_Keycode keycode, float reaction_time = 0.1f);
   float get_key_derivative_impl(SDL_Keycode keycode, float reaction_time = 0.1f);

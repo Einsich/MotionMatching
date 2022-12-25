@@ -1,48 +1,64 @@
 #include "coin_effect.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void coin_move_func();
+static ecs::QueryCache coin_move__cache__;
 
-ecs::SystemDescription coin_move_descr("coin_move", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("linear_velocity"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("angular_velocity"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("life_time"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("life_period"), false},
-  {-1u, ecs::get_name_hash("coinEffect"), false}
-}, {
-},
-{},
-{},
-coin_move_func, "act", {}, false);
+static ecs::QueryCache spawn_coin_effect__cache__;
 
-void coin_move_func()
+static void coin_move_implementation()
 {
-  ecs::perform_system(coin_move_descr, coin_move);
+  ecs::perform_system(coin_move__cache__, coin_move);
 }
 
-void spawn_coin_effect_handler(const ecs::Event &event);
-void spawn_coin_effect_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription spawn_coin_effect_descr(
-  ecs::get_mutable_event_handlers<MouseButtonDownEvent<MouseButton::LeftButton>>(), "spawn_coin_effect", {
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
-  {ecs::get_type_hash<HeightMap>(), ecs::get_name_hash("heightMap"), false}
-}, {
-},
-{},
-{},
-spawn_coin_effect_handler, spawn_coin_effect_singl_handler, {});
-
-void spawn_coin_effect_handler(const ecs::Event &event)
+static void spawn_coin_effect_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, spawn_coin_effect_descr, spawn_coin_effect);
-}
-void spawn_coin_effect_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseButtonDownEvent<MouseButton::LeftButton>&)event, spawn_coin_effect_descr, eid, spawn_coin_effect);
+  ecs::perform_event(reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), spawn_coin_effect__cache__, spawn_coin_effect);
 }
 
+static void spawn_coin_effect_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), spawn_coin_effect__cache__, spawn_coin_effect);
+}
 
+static void registration_pull_coin_effect()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "coin_move",
+  &coin_move__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"linear_velocity", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"angular_velocity", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()},
+    {"life_time", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
+    {"life_period", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {
+    {"coinEffect", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &coin_move_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "spawn_coin_effect",
+  &spawn_coin_effect__cache__,
+  {
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()},
+    {"heightMap", ecs::get_type_index<HeightMap>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<HeightMap>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &spawn_coin_effect_handler, &spawn_coin_effect_single_handler),
+  ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_coin_effect)

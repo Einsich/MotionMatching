@@ -2,9 +2,9 @@
 #include <iostream>
 #include <map>
 #include "shader_gen.h"
-#include "type_registration.h"
+#include <ecs/registration.h>
 
-ECS_REGISTER_TYPE(shader, Shader, true, true);
+ECS_REGISTER_TYPE(Shader, "Shader", ecs::PODType);
 struct ShaderInfo
 {
   GLuint program;

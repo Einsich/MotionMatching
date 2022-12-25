@@ -1,4 +1,4 @@
 #include "direction_light.h"
-#include <type_registration.h>
+#include <ecs/registration.h>
 
-ECS_REGISTER_TYPE(DirectionLight, DirectionLight, true, true)
+ECS_REGISTER_TYPE(DirectionLight, "DirectionLight", ecs::PODType)

@@ -14,8 +14,9 @@ void clear_das_files()
 DasFilePtr load_das_script(const char *path)
 {
   auto file = das::make_shared<DasFile>();
+  static auto fsAccess = das::make_smart<das::FsFileAccess>();
   // compile program
-  file->program = das::compileDaScript(path, das::make_smart<das::FsFileAccess>(), tout, file->dummyLibGroup);
+  file->program = das::compileDaScript(path, fsAccess, tout, file->dummyLibGroup);
   if (file->program->failed() ) {
     tout << "failed to compile\n";
     for ( auto & err : file->program->errors ) {

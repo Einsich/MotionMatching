@@ -6,10 +6,9 @@
 #include "input.h"
 #include "application/time.h"
 
-namespace ecs
-{
-  class SceneManager;
-}
+
+class SceneManager;
+
 class Application
 {
 private:
@@ -17,7 +16,7 @@ private:
   Context context;
   Time timer;
 public:
-  ecs::SceneManager *scene;
+  SceneManager *scene;
   string root, projectPath;
   vector<filesystem::path> resourcesPaths, shadersPaths, templatePaths;
   std::vector<std::function<void()>> mainThreadJobs;

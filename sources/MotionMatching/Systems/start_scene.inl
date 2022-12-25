@@ -1,5 +1,5 @@
 #include <ecs.h>
-#include <type_registration.h>
+#include <ecs/type_registration.h>
 #include <render/debug_arrow.h>
 #include <resources/resource_registration.h>
 #include "Animation/AnimationDatabase/animation_database.h"

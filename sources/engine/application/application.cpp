@@ -6,11 +6,12 @@
 #include "imgui_impl_sdl.h"
 #include "profiler/profiler.h"
 #include <SDL2/SDL.h>
-#include "template.h"
 #include "ecs/ecs_scene.h"
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"
-namespace ecs
+#include <ecs/ecs.h>
+
+namespace ecs_ex
 {
   void load_templates_from_blk();
 }
@@ -18,12 +19,31 @@ void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 
 Application::Application(const string &project_name,const string &root, int width, int height, bool full_screen):
-context(project_name, width, height, full_screen), timer(), scene(new ecs::SceneManager()),
+context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
 root(root),
 projectPath(root + "/" + project_name)
 {
   assert(scene);
   application = this;
+  ecs::init(false);
+  ecs::init_singletones();
+  ecs::init_stages({
+    {"act", [&]() { scene->pre_act(); }, nullptr},
+    {"before_render", [&]() { scene->pre_before_render(); }, nullptr},
+    {"render", [&]() { scene->pre_render(); }, nullptr},
+  });
+  
+  ecs::vector<ecs::string> editorTags, gameTags;
+#ifndef RELEASE
+  editorTags.emplace_back("debug");
+  gameTags.emplace_back("debug");
+#endif
+  editorTags.emplace_back("editor");
+  gameTags.emplace_back("game");
+    
+  ecs::set_system_tags(editorTags);
+
+  ecs::pull_registered_files();
 }
 
 static void copy_paths(const std::string &root, const ecs::vector<ecs::string> &src, vector<filesystem::path> &dst)
@@ -47,7 +67,7 @@ void Application::start()
   #endif
   scene->start();
   create_all_resources_from_metadata();
-  ecs::load_templates_from_blk();
+  ecs_ex::load_templates_from_blk();
   get_cpu_profiler();
   get_gpu_profiler();
 
@@ -106,43 +126,16 @@ void Application::main_loop()
         mainThreadJobs[i]();
       mainThreadJobs.erase(mainThreadJobs.begin(), mainThreadJobs.begin() + mainThreadJobsCount);
     }
-    PROFILER(sdl_events) 
-		running = sdl_event_handler();
-    sdl_events.stop();
+    {
+      PROFILER(sdl_events) 
+		  running = sdl_event_handler();
+    }
     if (running)
     {
-      PROFILER(ecs_events);
-      scene->process_events();
-      ecs_events.stop();
-      PROFILER(ecs_act);
-      scene->update_act();
-      ecs_act.stop();
-      
-      PROFILER(swapchain);
-      context.swap_buffer();
-      swapchain.stop();
-      extern void process_gpu_time_queries();
-      process_gpu_time_queries();
-      get_gpu_profiler().start_frame();
-      ProfilerLabelGPU frame_label("frame");
-      PROFILER(ecs_render);
-      scene->update_render();
-      ecs_render.stop();
-      
-      PROFILER(ui)
-      context.start_imgui();
-      PROFILER(ecs_ui);
+      ecs::update_archetype_manager();
+      ecs::perform_systems();
       scene->update_ui();
-      ecs_ui.stop();
-      
-      ProfilerLabelGPU imgui_render_label("imgui_render");
-      PROFILER(imgui_render);
-      ImGui::Render();
-      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-      imgui_render.stop();
-      ui.stop();
     }
-    main_loop.stop();
 	}
 }
 void Application::exit()

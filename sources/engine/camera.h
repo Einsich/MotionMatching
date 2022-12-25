@@ -1,7 +1,7 @@
 #pragma once
 #include "3dmath.h"
 #include "transform.h"
-#include "ecs.h"
+#include <ecs/ecs.h>
 #include "serialization/reflection.h"
 #include "render/frustum.h"
 struct Camera

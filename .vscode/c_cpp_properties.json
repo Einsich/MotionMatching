@@ -6,7 +6,7 @@
                 "${workspaceFolder}/sources/MotionMatching/**",
                 "${workspaceFolder}/sources/Strategy/**",
                 "${workspaceFolder}/sources/engine/**",
-                "${workspaceFolder}/sources/ecs/**",
+                "${workspaceFolder}/sources/3rd_party/ecs/include/**",
                 "${workspaceFolder}/sources/ECSbenchmark/**",
                 "${workspaceFolder}/sources/3rd_party/include/**",
                 "${workspaceFolder}/sources/3rd_party/imgui/**",

@@ -1,4 +1,4 @@
-#include <ecs.h> 
+#include <ecs/ecs.h> 
 #include <render/render.h> 
 #include <transform.h> 
 #include <resources/resources.h>
@@ -46,14 +46,13 @@ Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w
 } 
 EVENT() scene_created(const ecs::OnSceneCreated&) 
 { 
-  return;
   Asset<Mesh> flag = create_flag(1, 2, 1.5f, 0.02f); 
   Asset<Material> flag_mat = get_resource<Material>("flag");
-  const ecs::Template *flagTemplate = ecs::create_template("flag", {
+  const ecs::prefab_id flagTemplate = ecs::create_entity_prefab(ecs::EntityPrefab("flag", {
       {"transform", Transform()},
       {"mesh", flag},
       {"material", flag_mat}
-  });
+  }));
 
   uint N = 5; 
   for (uint i = 0; i < N; i++) 
@@ -76,22 +75,22 @@ EVENT() spawn_buildings(const ecs::OnEntityCreated&,
   int i = 0;
   for (const ecs::string &template_name : items_templates)
   {
-    ecs::ComponentInitializerList list;
-    const ecs::Template *t = ecs::get_template(template_name.c_str());
+    auto id = ecs::get_prefab_id(template_name);
+    const ecs::EntityPrefab &t = ecs::get_prefab(id);
     Transform transform;
-    for (const auto &component : t->components)
+    for (const auto &component : t.components)
     {
       
-      if (component.typeHash == ecs::get_type_hash<Transform>() && component.nameHash == ecs::get_name_hash("transform"))
+      if (component.is<Transform>() && component.nameHash == ecs::hash("transform"))
       {
-        transform = *(const Transform *)component.get_data();
+        transform = component.get<Transform>();
         break;
       }
     }
     int x = i / row_count;
     int y = i % row_count;
     transform.set_position(center + vec3(x, 0, y) * step_length);
-    ecs::create_entity(t, {{"transform", transform}});
+    ecs::create_entity(id, {{"transform", transform}});
     i++;
   }
 }

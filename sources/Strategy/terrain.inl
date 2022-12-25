@@ -1,4 +1,4 @@
-#include <ecs.h> 
+#include <ecs/ecs.h> 
 #include <render/render.h> 
 #include <transform.h>
 #include <render/texture/stb_image.h>
@@ -97,18 +97,18 @@ static void spawn_tress(
   auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
   auto imPtr = image;
 
-  const ecs::Template *leafs[3] = {
-    ecs::get_template("leafs_1"),
-    ecs::get_template("leafs_2"),
-    ecs::get_template("leafs_3")
+  const ecs::prefab_id leafs[3] = {
+    ecs::get_prefab_id("leafs_1"),
+    ecs::get_prefab_id("leafs_2"),
+    ecs::get_prefab_id("leafs_3")
   };
-  const ecs::Template *pines[3] = {
-    ecs::get_template("pine_1"),
-    ecs::get_template("pine_2"),
-    ecs::get_template("pine_3")
+  const ecs::prefab_id pines[3] = {
+    ecs::get_prefab_id("pine_1"),
+    ecs::get_prefab_id("pine_2"),
+    ecs::get_prefab_id("pine_3")
   };
-  const ecs::Template *palms[1] = {
-    ecs::get_template("palms_1")
+  const ecs::prefab_id palms[1] = {
+    ecs::get_prefab_id("palms_1")
   };
   vec2 d = vec2(1.f/w, 1.f/h);
   for (uint i = 0, n = w * h; i < n; i++, imPtr += 3)
@@ -120,7 +120,7 @@ static void spawn_tress(
 
     if (key!=0)
     {
-      const ecs::Template *treeTempalte = nullptr;
+      ecs::prefab_id treeTempalte = ecs::invalidPrefabId;
       if (b >= g && r == 0)
         treeTempalte = pines[(b+g)*3 / 8];
       else if (imPtr[0] >= imPtr[1] )

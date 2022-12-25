@@ -1,5 +1,5 @@
 #pragma once 
-#include <singleton.h>
+#include <ecs/singleton.h>
 #include <3dmath.h>
 
 struct MapRenderData : ecs::Singleton

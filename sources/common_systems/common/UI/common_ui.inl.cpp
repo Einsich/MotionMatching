@@ -1,35 +1,62 @@
 #include "common_ui.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void fps_ui_func();
+static ecs::QueryCache fps_ui__cache__;
 
-ecs::SystemDescription fps_ui_descr("fps_ui", {
-  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
-}, {
-},
-{},
-{},
-fps_ui_func, "ui", {}, false);
+static ecs::QueryCache debug_console_ui__cache__;
 
-void fps_ui_func()
+static void fps_ui_handler(const ecs::Event &event)
 {
-  ecs::perform_system(fps_ui_descr, fps_ui);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), fps_ui__cache__, fps_ui);
 }
 
-void debug_console_ui_func();
-
-ecs::SystemDescription debug_console_ui_descr("debug_console_ui", {
-  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
-}, {
-},
-{},
-{},
-debug_console_ui_func, "ui", {"debug"}, false);
-
-void debug_console_ui_func()
+static void fps_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_system(debug_console_ui_descr, debug_console_ui);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), fps_ui__cache__, fps_ui);
 }
 
+static void debug_console_ui_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), debug_console_ui__cache__, debug_console_ui);
+}
 
+static void debug_console_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), debug_console_ui__cache__, debug_console_ui);
+}
+
+static void registration_pull_common_ui()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "fps_ui",
+  &fps_ui__cache__,
+  {
+    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorUI>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &fps_ui_handler, &fps_ui_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "debug_console_ui",
+  &debug_console_ui__cache__,
+  {
+    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorUI>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"debug"},
+  &debug_console_ui_handler, &debug_console_ui_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_common_ui)

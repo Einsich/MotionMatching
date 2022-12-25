@@ -10,7 +10,7 @@ EVENT(require=ecs::Tag mainHero) collect_kills(
   killsCount++;
 }
 
-SYSTEM(stage=ui) show_kill_stat(int killsCount)
+EVENT() show_kill_stat(const ImguiRender&, int killsCount)
 {
   if (ImGui::Begin("Score"))
   {

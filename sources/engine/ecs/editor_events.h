@@ -1,8 +1,7 @@
 #pragma once
 
-#include <ecs_event.h>
+#include <ecs/event.h>
 
 struct OnEntityEdited : public ecs::Event
 {
-
 };

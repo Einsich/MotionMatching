@@ -1,10 +1,14 @@
-#include <ecs.h> 
+#include <ecs/ecs.h> 
 #include <render/render.h> 
 #include <render/texture/stb_image.h>
 #include <render/texture/stb_write.h>
 #include <input.h>
 #include "political_map.h"
 #include "map_render_data.h"
+
+ECS_REGISTER_SINGLETON(PoliticalMap)
+ECS_REGISTER_SINGLETON(MapRenderData)
+
 
 Asset<Mesh> build_borders(PoliticalMap &political_map, float pixel_scale);
 

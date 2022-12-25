@@ -4,7 +4,7 @@
 #include "application/time.h"
 #include "application/application.h"
 #include "3dmath.h"
-#include "ecs.h"
+#include <ecs/ecs.h>
 
 const float wheelDecayTime = 0.03f;
 const float wheelHalfDecayTime = wheelDecayTime * 0.5f;
@@ -188,27 +188,31 @@ float Input::get_wheel_impl()
   }
   return wheel;
 }
-#include "ecs_event_registration.h"
+#include <ecs/event_registration.h>
 
-ECS_EVENT_REGISTER(KeyEventAnyActionKey, KeyEventAnyActionKey)
-ECS_EVENT_REGISTER(KeyEventAnyKeyPress, KeyEventAnyKey<KeyAction::Press>)
-ECS_EVENT_REGISTER(KeyEventAnyKeyDown, KeyEventAnyKey<KeyAction::Down>)
-ECS_EVENT_REGISTER(KeyEventAnyKeyUp, KeyEventAnyKey<KeyAction::Up>)
 
-#define MACRO(key, Action) ECS_EVENT_REGISTER(Key## Action ##Event ##key, Key## Action ##Event<key>)
+ECS_EVENT_REGISTRATION(KeyEventAnyActionKey)
+ECS_EVENT_REGISTRATION(KeyEventAnyKey<KeyAction::Press>)
+ECS_EVENT_REGISTRATION(KeyEventAnyKey<KeyAction::Down>)
+ECS_EVENT_REGISTRATION(KeyEventAnyKey<KeyAction::Up>)
+
+
+#define MACRO(key, Action) ECS_EVENT_REGISTRATION(Key## Action ##Event<key>)
 
 KEY_CODE_SWITCH(Press)
 KEY_CODE_SWITCH(Down)
 KEY_CODE_SWITCH(Up)
 #undef MACRO
 
-#define MACRO(Key, Action) ECS_EVENT_REGISTER(KeyEventAnyAction##Key, KeyEventAnyAction<Key>)
+#define MACRO(Key, Action) ECS_EVENT_REGISTRATION(KeyEventAnyAction<Key>)
 KEY_CODE_SWITCH(_)
 #undef MACRO
 
-ECS_EVENT_REGISTER(MouseButtonDownEventLeftButton, MouseButtonDownEvent<MouseButton::LeftButton>)
-ECS_EVENT_REGISTER(MouseButtonDownEventRightButton, MouseButtonDownEvent<MouseButton::RightButton>)
-ECS_EVENT_REGISTER(MouseButtonDownEventMiddleButton, MouseButtonDownEvent<MouseButton::MiddleButton>)
-ECS_EVENT_REGISTER(MouseClickEvent, MouseClickEvent)
-ECS_EVENT_REGISTER(MouseMoveEvent, MouseMoveEvent)
-ECS_EVENT_REGISTER(MouseWheelEvent, MouseWheelEvent)
+ECS_EVENT_REGISTRATION(MouseButtonDownEvent<MouseButton::LeftButton>)
+ECS_EVENT_REGISTRATION(MouseButtonDownEvent<MouseButton::RightButton>)
+ECS_EVENT_REGISTRATION(MouseButtonDownEvent<MouseButton::MiddleButton>)
+ECS_EVENT_REGISTRATION(MouseClickEvent)
+ECS_EVENT_REGISTRATION(MouseMoveEvent)
+ECS_EVENT_REGISTRATION(MouseWheelEvent)
+
+

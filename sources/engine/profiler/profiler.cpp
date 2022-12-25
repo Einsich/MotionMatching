@@ -1,5 +1,5 @@
 #include "profiler.h"
-#include <manager/string_hash.h>
+#include <ecs/hash.h>
 
 
 ProfilerLabel::ProfilerLabel(const char *label):
@@ -20,7 +20,7 @@ ProfilerLabel::~ProfilerLabel()
 }
 static uint label_id_hash(const char *label, int id)
 {
-  return HashedString(label) ^ (id * 16397816463u);
+  return ecs::hash(label) ^ (id * 16397816463u);
 }
 
 void Profiler::start_frame()
@@ -32,13 +32,13 @@ void Profiler::start_frame()
 
 void Profiler::open_label(const char *label)
 {
-  int id = ++labelCount[HashedString(label)];
+  int id = ++labelCount[ecs::hash(label)];
   cur_frame_labels.push_back({id, label, true});
 }
 void Profiler::close_label(float time_ms, const char *label)
 {
   //support only flat similar label names
-  int id = labelCount[HashedString(label)];
+  int id = labelCount[ecs::hash(label)];
   cur_frame_labels.push_back({id, label, false});
   labelAveranges[label_id_hash(label, id)].add_time(time_ms);
 }

@@ -1,13 +1,14 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <imgui.h>
 #include <application/file_dialog.h>
 #include <resources/resources.h>
-#include <singleton.h>
+
 #include "editor_window.h"
 #include "editor.h"
 #include <render/texture/texture2d.h>
 #include <eastl/vector.h>
 #include <memory/tmp_allocator.h>
+#include <ecs/imgui.h>
 
 
 EditorWidgets::EditorWidgets():
@@ -22,7 +23,10 @@ struct SelectedAsset : ecs::Singleton
   ResourceMap *resourceType = nullptr;
   bool selectNewResourceType = false;
 };
-SYSTEM(stage=ui_menu; tags=editor) resources_menu(SelectedAsset &selectedAsset)
+ECS_REGISTER_SINGLETON(SelectedAsset)
+ECS_REGISTER_SINGLETON(EditorWidgets)
+
+EVENT(tags=editor) resources_menu(const ImguiMenuRender&, SelectedAsset &selectedAsset)
 {
   if (ImGui::BeginMenu("Resources"))
   {
@@ -42,7 +46,7 @@ SYSTEM(stage=ui_menu; tags=editor) resources_menu(SelectedAsset &selectedAsset)
   }
 }
 
-SYSTEM(stage=ui; tags=editor) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
+EVENT(tags=editor) asset_viewer(const ImguiRender&, SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

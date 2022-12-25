@@ -1,80 +1,106 @@
 #include "shader_reload.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription update_material_descr("update_material", {
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false}
-}, {
-});
+static ecs::QueryCache update_material__cache__;
+
+static ecs::QueryCache reload_shaders__cache__;
+
+static ecs::QueryCache load_directional_light__cache__;
+
+static ecs::QueryCache reload_directional_light__cache__;
 
 template<typename Callable>
-void update_material(Callable lambda)
+static void update_material(Callable lambda)
 {
-  ecs::perform_query<Asset<Material>&>
-  (update_material_descr, lambda);
+  ecs::perform_query<Asset<Material>&>(update_material__cache__, lambda);
 }
 
-
-void reload_shaders_handler(const ecs::Event &event);
-void reload_shaders_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription reload_shaders_descr(
-  ecs::get_mutable_event_handlers<KeyDownEvent<SDLK_F5>>(), "reload_shaders", {
-}, {
-},
-{},
-{},
-reload_shaders_handler, reload_shaders_singl_handler, {"debug"});
-
-void reload_shaders_handler(const ecs::Event &event)
+static void reload_shaders_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const KeyDownEvent<SDLK_F5>&)event, reload_shaders_descr, reload_shaders);
-}
-void reload_shaders_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KeyDownEvent<SDLK_F5>&)event, reload_shaders_descr, eid, reload_shaders);
+  ecs::perform_event(reinterpret_cast<const KeyDownEvent<SDLK_F5> &>(event), reload_shaders__cache__, reload_shaders);
 }
 
-void load_directional_light_handler(const ecs::Event &event);
-void load_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription load_directional_light_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "load_directional_light", {
-  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
-}, {
-},
-{},
-{},
-load_directional_light_handler, load_directional_light_singl_handler, {});
-
-void load_directional_light_handler(const ecs::Event &event)
+static void reload_shaders_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, load_directional_light_descr, load_directional_light);
-}
-void load_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, load_directional_light_descr, eid, load_directional_light);
+  ecs::perform_event(eid, reinterpret_cast<const KeyDownEvent<SDLK_F5> &>(event), reload_shaders__cache__, reload_shaders);
 }
 
-void reload_directional_light_handler(const ecs::Event &event);
-void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription reload_directional_light_descr(
-  ecs::get_mutable_event_handlers<OnEntityEdited>(), "reload_directional_light", {
-  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
-}, {
-},
-{},
-{},
-reload_directional_light_handler, reload_directional_light_singl_handler, {"editor"});
-
-void reload_directional_light_handler(const ecs::Event &event)
+static void load_directional_light_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const OnEntityEdited&)event, reload_directional_light_descr, reload_directional_light);
-}
-void reload_directional_light_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const OnEntityEdited&)event, reload_directional_light_descr, eid, reload_directional_light);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), load_directional_light__cache__, load_directional_light);
 }
 
+static void load_directional_light_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), load_directional_light__cache__, load_directional_light);
+}
 
+static void reload_directional_light_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const OnEntityEdited &>(event), reload_directional_light__cache__, reload_directional_light);
+}
+
+static void reload_directional_light_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const OnEntityEdited &>(event), reload_directional_light__cache__, reload_directional_light);
+}
+
+static void registration_pull_shader_reload()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "update_material",
+  &update_material__cache__,
+  {
+    {"material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "reload_shaders",
+  &reload_shaders__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {"debug"},
+  &reload_shaders_handler, &reload_shaders_single_handler),
+  ecs::EventIndex<KeyDownEvent<SDLK_F5>>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "load_directional_light",
+  &load_directional_light__cache__,
+  {
+    {"directionalLight", ecs::get_type_index<DirectionLight>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<DirectionLight>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &load_directional_light_handler, &load_directional_light_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "reload_directional_light",
+  &reload_directional_light__cache__,
+  {
+    {"directionalLight", ecs::get_type_index<DirectionLight>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<DirectionLight>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &reload_directional_light_handler, &reload_directional_light_single_handler),
+  ecs::EventIndex<OnEntityEdited>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_shader_reload)

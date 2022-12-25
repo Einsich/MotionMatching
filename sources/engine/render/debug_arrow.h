@@ -3,7 +3,7 @@
 #include "material.h"
 #include "mesh.h"
 #include "../transform.h"
-#include "singleton.h"
+#include <ecs/singleton.h>
 #include "global_uniform.h"
 class DebugArrow : ecs::Singleton
 {

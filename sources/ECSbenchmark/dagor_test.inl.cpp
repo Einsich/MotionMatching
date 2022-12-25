@@ -1,185 +1,251 @@
 #include "dagor_test.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void cache_trach_func();
+size_t y = (intptr_t)&y;
+static ecs::QueryCache cache_trach__cache__;
 
-ecs::SystemDescription cache_trach_descr("cache_trach", {
-  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data0"), false},
-  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data1"), false},
-  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data2"), false},
-  {ecs::get_type_hash<mat4>(), ecs::get_name_hash("data3"), false}
-}, {
-},
-{},
-{},
-cache_trach_func, "act", {}, false);
+static ecs::QueryCache dag_soa_update__cache__;
 
-void cache_trach_func()
+static ecs::QueryCache prune_cache___cache__;
+
+static ecs::QueryCache dag_ecs_update__cache__;
+
+static ecs::QueryCache prune_cache0__cache__;
+
+static ecs::QueryCache dag_vector_structs_update__cache__;
+
+static ecs::QueryCache prune_cache1__cache__;
+
+static ecs::QueryCache dag_vector_pointers_update__cache__;
+
+static ecs::QueryCache prune_cache2__cache__;
+
+static ecs::QueryCache dag_vector_pointers_virtual_update__cache__;
+
+static ecs::QueryCache prune_cache3__cache__;
+
+static ecs::QueryCache dag_init__cache__;
+
+static void cache_trach_implementation()
 {
-  ecs::perform_system(cache_trach_descr, cache_trach);
+  ecs::perform_system(cache_trach__cache__, cache_trach);
 }
 
-void dag_soa_update_func();
-
-ecs::SystemDescription dag_soa_update_descr("dag_soa_update", {
-}, {
-},
-{},
-{},
-dag_soa_update_func, "act", {}, false);
-
-void dag_soa_update_func()
+static void dag_soa_update_implementation()
 {
-  ecs::perform_system(dag_soa_update_descr, dag_soa_update);
+  ecs::perform_system(dag_soa_update__cache__, dag_soa_update);
 }
 
-void prune_cache__func();
-
-ecs::SystemDescription prune_cache__descr("prune_cache_", {
-}, {
-},
-{},
-{},
-prune_cache__func, "act", {}, false);
-
-void prune_cache__func()
+static void prune_cache__implementation()
 {
-  ecs::perform_system(prune_cache__descr, prune_cache_);
+  ecs::perform_system(prune_cache___cache__, prune_cache_);
 }
 
-void dag_ecs_update_func();
-
-ecs::SystemDescription dag_ecs_update_descr("dag_ecs_update", {
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("p"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("v"), false}
-}, {
-},
-{},
-{},
-dag_ecs_update_func, "act", {}, false);
-
-void dag_ecs_update_func()
+static void dag_ecs_update_implementation()
 {
-  ecs::perform_system(dag_ecs_update_descr, dag_ecs_update);
+  ecs::perform_system(dag_ecs_update__cache__, dag_ecs_update);
 }
 
-void prune_cache0_func();
-
-ecs::SystemDescription prune_cache0_descr("prune_cache0", {
-}, {
-},
-{},
-{},
-prune_cache0_func, "act", {}, false);
-
-void prune_cache0_func()
+static void prune_cache0_implementation()
 {
-  ecs::perform_system(prune_cache0_descr, prune_cache0);
+  ecs::perform_system(prune_cache0__cache__, prune_cache0);
 }
 
-void dag_vector_structs_update_func();
-
-ecs::SystemDescription dag_vector_structs_update_descr("dag_vector_structs_update", {
-}, {
-},
-{},
-{},
-dag_vector_structs_update_func, "act", {}, false);
-
-void dag_vector_structs_update_func()
+static void dag_vector_structs_update_implementation()
 {
-  ecs::perform_system(dag_vector_structs_update_descr, dag_vector_structs_update);
+  ecs::perform_system(dag_vector_structs_update__cache__, dag_vector_structs_update);
 }
 
-void prune_cache1_func();
-
-ecs::SystemDescription prune_cache1_descr("prune_cache1", {
-}, {
-},
-{},
-{},
-prune_cache1_func, "act", {}, false);
-
-void prune_cache1_func()
+static void prune_cache1_implementation()
 {
-  ecs::perform_system(prune_cache1_descr, prune_cache1);
+  ecs::perform_system(prune_cache1__cache__, prune_cache1);
 }
 
-void dag_vector_pointers_update_func();
-
-ecs::SystemDescription dag_vector_pointers_update_descr("dag_vector_pointers_update", {
-}, {
-},
-{},
-{},
-dag_vector_pointers_update_func, "act", {}, false);
-
-void dag_vector_pointers_update_func()
+static void dag_vector_pointers_update_implementation()
 {
-  ecs::perform_system(dag_vector_pointers_update_descr, dag_vector_pointers_update);
+  ecs::perform_system(dag_vector_pointers_update__cache__, dag_vector_pointers_update);
 }
 
-void prune_cache2_func();
-
-ecs::SystemDescription prune_cache2_descr("prune_cache2", {
-}, {
-},
-{},
-{},
-prune_cache2_func, "act", {}, false);
-
-void prune_cache2_func()
+static void prune_cache2_implementation()
 {
-  ecs::perform_system(prune_cache2_descr, prune_cache2);
+  ecs::perform_system(prune_cache2__cache__, prune_cache2);
 }
 
-void dag_vector_pointers_virtual_update_func();
-
-ecs::SystemDescription dag_vector_pointers_virtual_update_descr("dag_vector_pointers_virtual_update", {
-}, {
-},
-{},
-{},
-dag_vector_pointers_virtual_update_func, "act", {}, false);
-
-void dag_vector_pointers_virtual_update_func()
+static void dag_vector_pointers_virtual_update_implementation()
 {
-  ecs::perform_system(dag_vector_pointers_virtual_update_descr, dag_vector_pointers_virtual_update);
+  ecs::perform_system(dag_vector_pointers_virtual_update__cache__, dag_vector_pointers_virtual_update);
 }
 
-void prune_cache3_func();
-
-ecs::SystemDescription prune_cache3_descr("prune_cache3", {
-}, {
-},
-{},
-{},
-prune_cache3_func, "act", {}, false);
-
-void prune_cache3_func()
+static void prune_cache3_implementation()
 {
-  ecs::perform_system(prune_cache3_descr, prune_cache3);
+  ecs::perform_system(prune_cache3__cache__, prune_cache3);
 }
 
-void dag_init_handler(const ecs::Event &event);
-void dag_init_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription dag_init_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "dag_init", {
-}, {
-},
-{},
-{},
-dag_init_handler, dag_init_singl_handler, {});
-
-void dag_init_handler(const ecs::Event &event)
+static void dag_init_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, dag_init_descr, dag_init);
-}
-void dag_init_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, dag_init_descr, eid, dag_init);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), dag_init__cache__, dag_init);
 }
 
+static void dag_init_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), dag_init__cache__, dag_init);
+}
 
+static void registration_pull_dagor_test()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "cache_trach",
+  &cache_trach__cache__,
+  {
+    {"data0", ecs::get_type_index<mat4>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<mat4>()},
+    {"data1", ecs::get_type_index<mat4>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<mat4>()},
+    {"data2", ecs::get_type_index<mat4>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<mat4>()},
+    {"data3", ecs::get_type_index<mat4>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<mat4>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &cache_trach_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "dag_soa_update",
+  &dag_soa_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &dag_soa_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "prune_cache_",
+  &prune_cache___cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &prune_cache__implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "dag_ecs_update",
+  &dag_ecs_update__cache__,
+  {
+    {"p", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
+    {"v", ecs::get_type_index<vec3>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<vec3>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &dag_ecs_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "prune_cache0",
+  &prune_cache0__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &prune_cache0_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "dag_vector_structs_update",
+  &dag_vector_structs_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &dag_vector_structs_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "prune_cache1",
+  &prune_cache1__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &prune_cache1_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "dag_vector_pointers_update",
+  &dag_vector_pointers_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &dag_vector_pointers_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "prune_cache2",
+  &prune_cache2__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &prune_cache2_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "dag_vector_pointers_virtual_update",
+  &dag_vector_pointers_virtual_update__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &dag_vector_pointers_virtual_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "prune_cache3",
+  &prune_cache3__cache__,
+  {},
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &prune_cache3_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "dag_init",
+  &dag_init__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &dag_init_handler, &dag_init_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_dagor_test)

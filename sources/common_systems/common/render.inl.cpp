@@ -1,240 +1,333 @@
 #include "render.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription find_light_descr("find_light", {
-  {ecs::get_type_hash<DirectionLight>(), ecs::get_name_hash("directionalLight"), false}
-}, {
-});
+static ecs::QueryCache find_light__cache__;
+
+static ecs::QueryCache find_collidable_entity__cache__;
+
+static ecs::QueryCache find_matrices__cache__;
+
+static ecs::QueryCache set_global_render_data__cache__;
+
+static ecs::QueryCache lod_selector__cache__;
+
+static ecs::QueryCache frustum_culling__cache__;
+
+static ecs::QueryCache process_mesh_position__cache__;
+
+static ecs::QueryCache render_sky_box__cache__;
+
+static ecs::QueryCache render_debug_arrows__cache__;
+
+static ecs::QueryCache main_instanced_render__cache__;
+
+static ecs::QueryCache render_collision__cache__;
+
+static ecs::QueryCache add_global_uniform__cache__;
+
+static ecs::QueryCache render_submenu__cache__;
+
+static ecs::QueryCache mesh_loader__cache__;
 
 template<typename Callable>
-void find_light(Callable lambda)
+static void find_light(Callable lambda)
 {
-  ecs::perform_query<DirectionLight&>
-  (find_light_descr, lambda);
+  ecs::perform_query<const DirectionLight&>(find_light__cache__, lambda);
 }
-
-
-ecs::QueryDescription find_collidable_entity_descr("find_collidable_entity", {
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false}
-}, {
-});
 
 template<typename Callable>
-void find_collidable_entity(Callable lambda)
+static void find_collidable_entity(Callable lambda)
 {
-  ecs::perform_query<Transform&, Asset<Mesh>&>
-  (find_collidable_entity_descr, lambda);
+  ecs::perform_query<const Transform&, const Asset<Mesh>&>(find_collidable_entity__cache__, lambda);
 }
-
-
-ecs::QueryDescription find_matrices_descr("find_matrices", {
-  {ecs::get_type_hash<ecs::vector<mat3x4>>(), ecs::get_name_hash("bones_matrices"), false}
-}, {
-});
 
 template<typename Callable>
-void find_matrices(ecs::EntityId eid, Callable lambda)
+static void find_matrices(ecs::EntityId eid, Callable lambda)
 {
-  ecs::perform_query<ecs::vector<mat3x4>&>
-  (find_matrices_descr, eid, lambda);
+  ecs::perform_query<const ecs::vector<mat3x4>&>(find_matrices__cache__, eid, lambda);
 }
 
-
-void render_submenu_func();
-
-ecs::SystemDescription render_submenu_descr("render_submenu", {
-  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-render_submenu_func, "ui_menu", {"editor"}, false);
-
-void render_submenu_func()
+static void set_global_render_data_implementation()
 {
-  ecs::perform_system(render_submenu_descr, render_submenu);
+  ecs::perform_system(set_global_render_data__cache__, set_global_render_data);
 }
 
-void set_global_render_data_func();
-
-ecs::SystemDescription set_global_render_data_descr("set_global_render_data", {
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false}
-}, {
-},
-{},
-{},
-set_global_render_data_func, "render", {}, false);
-
-void set_global_render_data_func()
+static void lod_selector_implementation()
 {
-  ecs::perform_system(set_global_render_data_descr, set_global_render_data);
+  ecs::perform_system(lod_selector__cache__, lod_selector);
 }
 
-void lod_selector_func();
-
-ecs::SystemDescription lod_selector_descr("lod_selector", {
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<ecs::vector<Asset<Mesh>>>(), ecs::get_name_hash("lods_meshes"), false},
-  {ecs::get_type_hash<ecs::vector<float>>(), ecs::get_name_hash("lods_distances"), false},
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
-  {ecs::get_type_hash<vec3>(), ecs::get_name_hash("lod_selector_axis"), true},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false}
-}, {
-},
-{"frustum_culling"},
-{},
-lod_selector_func, "render", {}, true);
-
-void lod_selector_func()
+static void frustum_culling_implementation()
 {
-  ecs::perform_job_system(lod_selector_descr, lod_selector);
+  ecs::perform_system(frustum_culling__cache__, frustum_culling);
 }
 
-void frustum_culling_func();
-
-ecs::SystemDescription frustum_culling_descr("frustum_culling", {
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_visible"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false},
-  {-1u, ecs::get_name_hash("useFrustumCulling"), false}
-}, {
-},
-{"process_mesh_position"},
-{},
-frustum_culling_func, "render", {}, true);
-
-void frustum_culling_func()
+static void process_mesh_position_implementation()
 {
-  ecs::perform_job_system(frustum_culling_descr, frustum_culling);
+  ecs::perform_system(process_mesh_position__cache__, process_mesh_position);
 }
 
-void process_mesh_position_func();
-
-ecs::SystemDescription process_mesh_position_descr("process_mesh_position", {
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("material"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<RenderQueue>(), ecs::get_name_hash("render"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_visible"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false}
-}, {
-},
-{"main_instanced_render"},
-{},
-process_mesh_position_func, "render", {}, false);
-
-void process_mesh_position_func()
+static void render_sky_box_implementation()
 {
-  ecs::perform_system(process_mesh_position_descr, process_mesh_position);
+  ecs::perform_system(render_sky_box__cache__, render_sky_box);
 }
 
-void render_sky_box_func();
-
-ecs::SystemDescription render_sky_box_descr("render_sky_box", {
-  {ecs::get_type_hash<SkyBox>(), ecs::get_name_hash("skyBox"), false}
-}, {
-},
-{},
-{"main_instanced_render"},
-render_sky_box_func, "render", {}, false);
-
-void render_sky_box_func()
+static void render_debug_arrows_implementation()
 {
-  ecs::perform_system(render_sky_box_descr, render_sky_box);
+  ecs::perform_system(render_debug_arrows__cache__, render_debug_arrows);
 }
 
-void render_debug_arrows_func();
-
-ecs::SystemDescription render_debug_arrows_descr("render_debug_arrows", {
-  {ecs::get_type_hash<DebugArrow>(), ecs::get_name_hash("debugArrows"), false},
-  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false}
-}, {
-},
-{},
-{"render_sky_box"},
-render_debug_arrows_func, "render", {}, false);
-
-void render_debug_arrows_func()
+static void main_instanced_render_implementation()
 {
-  ecs::perform_system(render_debug_arrows_descr, render_debug_arrows);
+  ecs::perform_system(main_instanced_render__cache__, main_instanced_render);
 }
 
-void main_instanced_render_func();
-
-ecs::SystemDescription main_instanced_render_descr("main_instanced_render", {
-  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false},
-  {ecs::get_type_hash<RenderQueue>(), ecs::get_name_hash("render"), false}
-}, {
-},
-{},
-{},
-main_instanced_render_func, "render", {}, false);
-
-void main_instanced_render_func()
+static void render_collision_implementation()
 {
-  ecs::perform_system(main_instanced_render_descr, main_instanced_render);
+  ecs::perform_system(render_collision__cache__, render_collision);
 }
 
-void render_collision_func();
-
-ecs::SystemDescription render_collision_descr("render_collision", {
-  {ecs::get_type_hash<EditorRenderSettings>(), ecs::get_name_hash("editorSettings"), false}
-}, {
-},
-{"render_sky_box"},
-{"process_mesh_position"},
-render_collision_func, "render", {}, false);
-
-void render_collision_func()
+static void add_global_uniform_handler(const ecs::Event &event)
 {
-  ecs::perform_system(render_collision_descr, render_collision);
+  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), add_global_uniform__cache__, add_global_uniform);
 }
 
-void add_global_uniform_handler(const ecs::Event &event);
-void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription add_global_uniform_descr(
-  ecs::get_mutable_event_handlers<ecs::OnSceneCreated>(), "add_global_uniform", {
-}, {
-},
-{},
-{},
-add_global_uniform_handler, add_global_uniform_singl_handler, {});
-
-void add_global_uniform_handler(const ecs::Event &event)
+static void add_global_uniform_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnSceneCreated&)event, add_global_uniform_descr, add_global_uniform);
-}
-void add_global_uniform_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnSceneCreated&)event, add_global_uniform_descr, eid, add_global_uniform);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), add_global_uniform__cache__, add_global_uniform);
 }
 
-void mesh_loader_handler(const ecs::Event &event);
-void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription mesh_loader_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "mesh_loader", {
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false}
-}, {
-},
-{},
-{},
-mesh_loader_handler, mesh_loader_singl_handler, {});
-
-void mesh_loader_handler(const ecs::Event &event)
+static void render_submenu_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, mesh_loader_descr, mesh_loader);
-}
-void mesh_loader_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, mesh_loader_descr, eid, mesh_loader);
+  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), render_submenu__cache__, render_submenu);
 }
 
+static void render_submenu_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), render_submenu__cache__, render_submenu);
+}
 
+static void mesh_loader_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), mesh_loader__cache__, mesh_loader);
+}
+
+static void mesh_loader_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), mesh_loader__cache__, mesh_loader);
+}
+
+static void registration_pull_render()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "find_light",
+  &find_light__cache__,
+  {
+    {"directionalLight", ecs::get_type_index<DirectionLight>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<DirectionLight>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "find_collidable_entity",
+  &find_collidable_entity__cache__,
+  {
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform>()},
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Mesh>>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "find_matrices",
+  &find_matrices__cache__,
+  {
+    {"bones_matrices", ecs::get_type_index<ecs::vector<mat3x4>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<mat3x4>>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "set_global_render_data",
+  &set_global_render_data__cache__,
+  {
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point"},
+  {},
+  &set_global_render_data_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "lod_selector",
+  &lod_selector__cache__,
+  {
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform>()},
+    {"lods_meshes", ecs::get_type_index<ecs::vector<Asset<Mesh>>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<Asset<Mesh>>>()},
+    {"lods_distances", ecs::get_type_index<ecs::vector<float>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<float>>()},
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Mesh>>()},
+    {"lod_selector_axis", ecs::get_type_index<vec3>(), ecs::AccessType::ReadOnly, true, ecs::is_singleton<vec3>()},
+    {"is_enabled", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point", "frustum_culling"},
+  {"render_begin_sync_point"},
+  {},
+  &lod_selector_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "frustum_culling",
+  &frustum_culling__cache__,
+  {
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform>()},
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Mesh>>()},
+    {"is_visible", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()},
+    {"is_enabled", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"useFrustumCulling", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  {"render_end_sync_point", "process_mesh_position"},
+  {"render_begin_sync_point"},
+  {},
+  &frustum_culling_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "process_mesh_position",
+  &process_mesh_position__cache__,
+  {
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Mesh>>()},
+    {"material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform>()},
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::EntityId>()},
+    {"render", ecs::get_type_index<RenderQueue>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<RenderQueue>()},
+    {"is_visible", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()},
+    {"is_enabled", ecs::get_type_index<bool>(), ecs::AccessType::Copy, false, ecs::is_singleton<bool>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point", "main_instanced_render"},
+  {"render_begin_sync_point"},
+  {},
+  &process_mesh_position_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "render_sky_box",
+  &render_sky_box__cache__,
+  {
+    {"skyBox", ecs::get_type_index<SkyBox>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SkyBox>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point", "main_instanced_render"},
+  {},
+  &render_sky_box_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "render_debug_arrows",
+  &render_debug_arrows__cache__,
+  {
+    {"debugArrows", ecs::get_type_index<DebugArrow>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<DebugArrow>()},
+    {"editorSettings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorRenderSettings>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point", "render_sky_box"},
+  {},
+  &render_debug_arrows_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "main_instanced_render",
+  &main_instanced_render__cache__,
+  {
+    {"editorSettings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorRenderSettings>()},
+    {"render", ecs::get_type_index<RenderQueue>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<RenderQueue>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point"},
+  {},
+  &main_instanced_render_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "render_collision",
+  &render_collision__cache__,
+  {
+    {"editorSettings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorRenderSettings>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point", "render_sky_box"},
+  {"render_begin_sync_point", "process_mesh_position"},
+  {},
+  &render_collision_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "add_global_uniform",
+  &add_global_uniform__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &add_global_uniform_handler, &add_global_uniform_single_handler),
+  ecs::EventIndex<ecs::OnSceneCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "render_submenu",
+  &render_submenu__cache__,
+  {
+    {"settings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorRenderSettings>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &render_submenu_handler, &render_submenu_single_handler),
+  ecs::EventIndex<ImguiMenuRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "mesh_loader",
+  &mesh_loader__cache__,
+  {
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Mesh>>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &mesh_loader_handler, &mesh_loader_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_render)

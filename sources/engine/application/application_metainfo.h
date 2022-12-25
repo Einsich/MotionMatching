@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "serialization/reflection.h"
-#include "config/config.h"
+#include <ecs/ecs_std.h>
 #include <string>
 
 struct ApplicationMetaInfo

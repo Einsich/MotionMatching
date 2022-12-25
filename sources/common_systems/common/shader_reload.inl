@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <resources/resources.h>
 #include <input.h>
 #include <render/shader/shader_factory.h>

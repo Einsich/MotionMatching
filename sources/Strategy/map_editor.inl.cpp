@@ -1,84 +1,118 @@
 #include "map_editor.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription toggle_water_descr("toggle_water", {
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("is_enabled"), false},
-  {-1u, ecs::get_name_hash("isWater"), false}
-}, {
-});
+static ecs::QueryCache toggle_water__cache__;
+
+static ecs::QueryCache country_builder__cache__;
+
+static ecs::QueryCache trace_province__cache__;
+
+static ecs::QueryCache selecte__cache__;
 
 template<typename Callable>
-void toggle_water(Callable lambda)
+static void toggle_water(Callable lambda)
 {
-  ecs::perform_query<bool&>
-  (toggle_water_descr, lambda);
+  ecs::perform_query<bool&>(toggle_water__cache__, lambda);
 }
 
-
-void country_builder_func();
-
-ecs::SystemDescription country_builder_descr("country_builder", {
-  {ecs::get_type_hash<MapEditor>(), ecs::get_name_hash("editor"), false},
-  {ecs::get_type_hash<PoliticalMap>(), ecs::get_name_hash("politicalMap"), false}
-}, {
-},
-{},
-{},
-country_builder_func, "ui", {"editor"}, false);
-
-void country_builder_func()
+static void country_builder_handler(const ecs::Event &event)
 {
-  ecs::perform_system(country_builder_descr, country_builder);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), country_builder__cache__, country_builder);
 }
 
-void trace_province_handler(const ecs::Event &event);
-void trace_province_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription trace_province_descr(
-  ecs::get_mutable_event_handlers<MouseClickEvent>(), "trace_province", {
-  {ecs::get_type_hash<Asset<Material>>(), ecs::get_name_hash("political_material"), false},
-  {ecs::get_type_hash<MapEditor>(), ecs::get_name_hash("editor"), false},
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
-  {ecs::get_type_hash<HeightMap>(), ecs::get_name_hash("heightMap"), false},
-  {ecs::get_type_hash<PoliticalMap>(), ecs::get_name_hash("politicalMap"), false}
-}, {
-},
-{},
-{},
-trace_province_handler, trace_province_singl_handler, {"editor"});
-
-void trace_province_handler(const ecs::Event &event)
+static void country_builder_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const MouseClickEvent&)event, trace_province_descr, trace_province);
-}
-void trace_province_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseClickEvent&)event, trace_province_descr, eid, trace_province);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), country_builder__cache__, country_builder);
 }
 
-void selecte_handler(const ecs::Event &event);
-void selecte_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription selecte_descr(
-  ecs::get_mutable_event_handlers<MouseClickEvent>(), "selecte", {
-  {ecs::get_type_hash<MainCamera>(), ecs::get_name_hash("mainCamera"), false},
-  {ecs::get_type_hash<HeightMap>(), ecs::get_name_hash("heightMap"), false},
-  {ecs::get_type_hash<PoliticalMap>(), ecs::get_name_hash("politicalMap"), false},
-  {ecs::get_type_hash<MapRenderData>(), ecs::get_name_hash("renderData"), false}
-}, {
-},
-{},
-{},
-selecte_handler, selecte_singl_handler, {});
-
-void selecte_handler(const ecs::Event &event)
+static void trace_province_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseClickEvent&)event, selecte_descr, selecte);
-}
-void selecte_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseClickEvent&)event, selecte_descr, eid, selecte);
+  ecs::perform_event(reinterpret_cast<const MouseClickEvent &>(event), trace_province__cache__, trace_province);
 }
 
+static void trace_province_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseClickEvent &>(event), trace_province__cache__, trace_province);
+}
 
+static void selecte_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const MouseClickEvent &>(event), selecte__cache__, selecte);
+}
+
+static void selecte_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseClickEvent &>(event), selecte__cache__, selecte);
+}
+
+static void registration_pull_map_editor()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "toggle_water",
+  &toggle_water__cache__,
+  {
+    {"is_enabled", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"isWater", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {}
+  ));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "country_builder",
+  &country_builder__cache__,
+  {
+    {"editor", ecs::get_type_index<MapEditor>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapEditor>()},
+    {"politicalMap", ecs::get_type_index<PoliticalMap>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<PoliticalMap>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &country_builder_handler, &country_builder_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "trace_province",
+  &trace_province__cache__,
+  {
+    {"political_material", ecs::get_type_index<Asset<Material>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Asset<Material>>()},
+    {"editor", ecs::get_type_index<MapEditor>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MapEditor>()},
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()},
+    {"heightMap", ecs::get_type_index<HeightMap>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<HeightMap>()},
+    {"politicalMap", ecs::get_type_index<PoliticalMap>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PoliticalMap>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &trace_province_handler, &trace_province_single_handler),
+  ecs::EventIndex<MouseClickEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "selecte",
+  &selecte__cache__,
+  {
+    {"mainCamera", ecs::get_type_index<MainCamera>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<MainCamera>()},
+    {"heightMap", ecs::get_type_index<HeightMap>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<HeightMap>()},
+    {"politicalMap", ecs::get_type_index<PoliticalMap>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<PoliticalMap>()},
+    {"renderData", ecs::get_type_index<MapRenderData>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<MapRenderData>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &selecte_handler, &selecte_single_handler),
+  ecs::EventIndex<MouseClickEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_map_editor)

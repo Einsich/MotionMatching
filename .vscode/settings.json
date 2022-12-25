@@ -98,7 +98,8 @@
     "format": "cpp",
     "stop_token": "cpp",
     "valarray": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "any": "cpp"
   },
   "launchOption.options": {
     "BuildType": [
@@ -161,7 +162,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "ECSbenchmark"
+      "name": "Strategy",
+      "delpoy_only_project_folder": "false"
     }
   },
   "cmake.configureOnOpen": false,

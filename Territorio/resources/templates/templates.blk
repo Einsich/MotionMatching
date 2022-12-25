@@ -17,8 +17,8 @@ map {
   width:i=128;
   height:i=128;
   //need to add all maps
-  mapTexture:Asset<Texture2D>{ } 
-  borderTexture:Asset<Texture2D>{ } 
+  mapTexture:Texture2D{ } 
+  borderTexture:Texture2D{ } 
   mapShader:Shader { }
   map_arrays:MapArrays{ }
   land_colors:vector<vec3>{ }

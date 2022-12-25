@@ -1,13 +1,21 @@
-#include <ecs.h>
-#include <type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <application/time.h>
+#include <application/application.h>
 #include <3dmath.h>
 #include "constanta.h"
 #include "data_block/data_block.h"
 #include "transform.h"
 
-ECS_REGISTER_TYPE(Data, Data, true, true)
-
+ECS_REGISTER_TYPE(Data, "Data", ecs::PODType)
+struct A
+{
+  A()
+  {
+    assert(0);
+  }
+} a;
+size_t z = (intptr_t)&z;
 struct TestClass
 {
   uint index;
@@ -42,7 +50,7 @@ EVENT() init(const ecs::OnSceneCreated &)
   debug_log("struct sizeof = %d", sizeof(TestClass));
   {
     TimeScope a("ecs_create");
-    const ecs::Template *tmpl = ecs::get_template("test_template");
+    ecs::prefab_id tmpl = ecs::get_prefab_id("test_template");
     for (uint i = 0; i < entityCount; i++)
     {
       ecs::create_entity(tmpl, {
@@ -129,7 +137,7 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   das::Module::Initialize();
 
   das::setDasRoot(root_path("sources/3rd_party/daScript"));
-  load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
+  auto ecsFile = load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
   file = load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
 return;
 
@@ -177,7 +185,7 @@ return;
   }
 }
 
-EVENT() term_das(const ecs::OnSceneDestroy &)
+EVENT() term_das(const ecs::OnSceneTerminated &)
 {
   clear_das_files();
   file.reset();

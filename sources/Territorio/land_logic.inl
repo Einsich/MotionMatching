@@ -1,6 +1,6 @@
 #include <set>
 #include <ecs.h>
-#include <type_registration.h>
+#include <ecs/type_registration.h>
 #include <application/time.h>
 #include "map_arrays.h"
 #include "game_events.h"

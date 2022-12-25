@@ -1,20 +1,35 @@
 #include "file_dialog.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void open_dialog_func();
+static ecs::QueryCache open_dialog__cache__;
 
-ecs::SystemDescription open_dialog_descr("open_dialog", {
-  {ecs::get_type_hash<EditorUI>(), ecs::get_name_hash("ui"), false}
-}, {
-},
-{},
-{},
-open_dialog_func, "ui_menu", {"editor"}, false);
-
-void open_dialog_func()
+static void open_dialog_handler(const ecs::Event &event)
 {
-  ecs::perform_system(open_dialog_descr, open_dialog);
+  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), open_dialog__cache__, open_dialog);
 }
 
+static void open_dialog_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), open_dialog__cache__, open_dialog);
+}
 
+static void registration_pull_file_dialog()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "open_dialog",
+  &open_dialog__cache__,
+  {
+    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorUI>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"editor"},
+  &open_dialog_handler, &open_dialog_single_handler),
+  ecs::EventIndex<ImguiMenuRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_file_dialog)
