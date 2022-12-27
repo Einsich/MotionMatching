@@ -1,68 +1,89 @@
 #include "person_controller.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void peson_controller_update_func();
+static ecs::QueryCache peson_controller_update__cache__;
 
-ecs::SystemDescription peson_controller_update_descr("peson_controller_update", {
-  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
-  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), true},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("controllerIndex"), true},
-  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
-}, {
-},
-{},
-{},
-peson_controller_update_func, "act", {"game"}, false);
+static ecs::QueryCache controller_mouse_move_handler__cache__;
 
-void peson_controller_update_func()
+static ecs::QueryCache controller_crouch_event_handler__cache__;
+
+static void peson_controller_update_implementation()
 {
-  ecs::perform_system(peson_controller_update_descr, peson_controller_update);
+  ecs::perform_system(peson_controller_update__cache__, peson_controller_update);
 }
 
-void controller_mouse_move_handler_handler(const ecs::Event &event);
-void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription controller_mouse_move_handler_descr(
-  ecs::get_mutable_event_handlers<ControllerMouseMoveEvent>(), "controller_mouse_move_handler", {
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-controller_mouse_move_handler_handler, controller_mouse_move_handler_singl_handler, {});
-
-void controller_mouse_move_handler_handler(const ecs::Event &event)
+static void controller_mouse_move_handler_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ControllerMouseMoveEvent&)event, controller_mouse_move_handler_descr, controller_mouse_move_handler);
-}
-void controller_mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ControllerMouseMoveEvent&)event, controller_mouse_move_handler_descr, eid, controller_mouse_move_handler);
+  ecs::perform_event(reinterpret_cast<const ControllerMouseMoveEvent &>(event), controller_mouse_move_handler__cache__, controller_mouse_move_handler);
 }
 
-void controller_crouch_event_handler_handler(const ecs::Event &event);
-void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription controller_crouch_event_handler_descr(
-  ecs::get_mutable_event_handlers<ControllerKeyBoardEvent>(), "controller_crouch_event_handler", {
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false}
-}, {
-},
-{},
-{},
-controller_crouch_event_handler_handler, controller_crouch_event_handler_singl_handler, {});
-
-void controller_crouch_event_handler_handler(const ecs::Event &event)
+static void controller_mouse_move_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ControllerKeyBoardEvent&)event, controller_crouch_event_handler_descr, controller_crouch_event_handler);
-}
-void controller_crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ControllerKeyBoardEvent&)event, controller_crouch_event_handler_descr, eid, controller_crouch_event_handler);
+  ecs::perform_event(eid, reinterpret_cast<const ControllerMouseMoveEvent &>(event), controller_mouse_move_handler__cache__, controller_mouse_move_handler);
 }
 
+static void controller_crouch_event_handler_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ControllerKeyBoardEvent &>(event), controller_crouch_event_handler__cache__, controller_crouch_event_handler);
+}
 
+static void controller_crouch_event_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ControllerKeyBoardEvent &>(event), controller_crouch_event_handler__cache__, controller_crouch_event_handler);
+}
+
+static void registration_pull_person_controller()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "peson_controller_update",
+  &peson_controller_update__cache__,
+  {
+    {"animationPlayer", ecs::get_type_index<AnimationPlayer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<AnimationPlayer>()},
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()},
+    {"animationTester", ecs::get_type_index<AnimationTester>(), ecs::AccessType::ReadWrite, true, ecs::is_singleton<AnimationTester>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()},
+    {"controllerIndex", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, true, ecs::is_singleton<int>()},
+    {"settingsContainer", ecs::get_type_index<SettingsContainer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SettingsContainer>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {"game"},
+  &peson_controller_update_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "controller_mouse_move_handler",
+  &controller_mouse_move_handler__cache__,
+  {
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &controller_mouse_move_handler_handler, &controller_mouse_move_handler_single_handler),
+  ecs::EventIndex<ControllerMouseMoveEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "controller_crouch_event_handler",
+  &controller_crouch_event_handler__cache__,
+  {
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &controller_crouch_event_handler_handler, &controller_crouch_event_handler_single_handler),
+  ecs::EventIndex<ControllerKeyBoardEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_person_controller)

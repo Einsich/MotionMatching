@@ -49,8 +49,7 @@ static void registration_pull_editor()
   &asset_viewer__cache__,
   {
     {"selectedAsset", ecs::get_type_index<SelectedAsset>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SelectedAsset>()},
-    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorUI>()},
-    {"widgets", ecs::get_type_index<EditorWidgets>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorWidgets>()}
+    {"ui", ecs::get_type_index<EditorUI>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorUI>()}
   },
   {},
   {},

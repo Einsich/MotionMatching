@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include "Animation/Test/animation_tester.h"
 #include "Animation/Test/animation_test.h"
 #include <transform.h>
@@ -94,7 +94,7 @@ SYSTEM(stage=act;tags=game) test_count(
   {
     int n = testers.size();
     testers.reserve(settings.testCount);
-    const ecs::Template *testerTmpl = ecs::get_template("tester_char");
+    const ecs::prefab_id testerTmpl = ecs::get_prefab_id("tester_char");
     for (int i = 0; !tests.empty() && i < d; ++i)
     {
       testers.emplace_back(ecs::create_entity(testerTmpl, {{"testerSeed", n + i}}));

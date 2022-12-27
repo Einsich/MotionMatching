@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <application/time.h>
 #include <input.h>
 #include "Animation/person_controller.h"

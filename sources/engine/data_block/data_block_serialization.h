@@ -1,8 +1,9 @@
 #pragma once
 #include <eastl/string.h>
 #include "data_block.h"
+#include <eastl/vector.h>
 #include "serialization/reflection.h"
-#include <ecs/ecs_std.h>
+#include <ecs/type_annotation.h>
 #include <magic_enum.hpp>
 
 template<typename T>
@@ -22,11 +23,11 @@ std::enable_if_t<!HasReflection<T>::value, void> read(const DataBlock &blk, T &t
     }
   }
 }
-template<typename T>
-void read(const DataBlock &blk, ecs::vector<T> &t)
+template<typename T, typename Vector>
+void read_vector(const DataBlock &blk, Vector &t)
 {
   t.clear();
-  if constexpr (std::is_same_v<T, eastl::string>)
+  if constexpr (std::is_same_v<T, eastl::string> || std::is_same_v<T, std::string>)
   {
     constexpr size_t needType = DataBlock::AllowedTypes::getIndexOfType<std::string>();
     for (size_t i = 0, n = blk.propertiesCount(); i < n; i++)
@@ -42,7 +43,8 @@ void read(const DataBlock &blk, ecs::vector<T> &t)
   }
   else
   {
-    constexpr const std::string_view &typeName = nameOf<T>::value;
+    const auto &types = ecs::get_all_registered_types();
+    const auto &typeName = types[ecs::TypeIndex<T>::value].name;
     for (size_t i = 0, n = blk.blockCount(); i < n; i++)
       if (blk.getBlock(i)->type() == typeName)
       {
@@ -50,6 +52,16 @@ void read(const DataBlock &blk, ecs::vector<T> &t)
         read(*blk.getBlock(i), arg);
       }
   }
+}
+template<typename T>
+void read(const DataBlock &blk, eastl::vector<T> &t)
+{
+  read_vector<T>(blk, t);
+}
+template<typename T>
+void read(const DataBlock &blk, std::vector<T> &t)
+{
+  read_vector<T>(blk, t);
 }
 
 template<typename T>

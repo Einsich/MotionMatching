@@ -1,5 +1,5 @@
-#include <ecs.h>
-#include <ecs/type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <render/debug_arrow.h>
 #include <resources/resource_registration.h>
 #include "Animation/AnimationDatabase/animation_database.h"
@@ -10,11 +10,11 @@
 #include "Animation/Test/animation_test.h"
 #include "Animation/settings.h"
 
-ECS_REGISTER_TYPE(AnimationDataBase, Asset<AnimationDataBase>)
-ECS_REGISTER_TYPE(PersonController, PersonController)
-ECS_REGISTER_TYPE(AnimationPlayer, AnimationPlayer)
-ECS_REGISTER_TYPE(AnimationTester, AnimationTester)
-ECS_REGISTER_TYPE(ThirdPersonController, ThirdPersonController)
+ECS_REGISTER_TYPE(Asset<AnimationDataBase>, "AnimationDataBase", ecs::DefaultType)
+ECS_REGISTER_TYPE(PersonController, "PersonController", ecs::DefaultType)
+ECS_REGISTER_TYPE(AnimationPlayer, "AnimationPlayer", ecs::DefaultType)
+ECS_REGISTER_TYPE(AnimationTester, "AnimationTester", ecs::DefaultType)
+ECS_REGISTER_TYPE(ThirdPersonController, "ThirdPersonController", ecs::DefaultType)
 
 
 EVENT(tags=game) init_anim_settings(const ecs::OnEntityCreated &,

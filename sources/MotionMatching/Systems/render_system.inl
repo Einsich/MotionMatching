@@ -1,4 +1,4 @@
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <algorithm>
 #include "Animation/animation_player.h"
 #include <transform.h>
@@ -7,7 +7,7 @@
 #include <render/global_uniform.h>
 #include "Animation/settings.h"
   
-SYSTEM(stage=render;) process_animation(
+SYSTEM(stage=render;after=lod_selector) process_animation(
   const Asset<Mesh> &mesh,
   const AnimationPlayer &animationPlayer,
   const Transform &transform,

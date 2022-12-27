@@ -5,6 +5,11 @@ extern size_t z;
 
 int main(int, char**)
 {
+  std::vector<int> x = {1, 2, 3, 4};
+
+  for (int z : x)
+    debug_log("%d", z);
+    
   //size_t w = x + y + z;
   //printf("%d", w);
   std::filesystem::path currentPath = std::filesystem::current_path();

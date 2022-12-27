@@ -2,7 +2,7 @@
 #include "3dmath.h"
 #include "AnimationDatabase/animation_feature.h"
 #include "serialization/reflection.h"
-#include <ecs_event.h>
+#include <ecs/event.h>
 class AnimationPlayer;
 class Transform;
 class PersonController

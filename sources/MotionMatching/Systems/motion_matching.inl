@@ -2,9 +2,11 @@
 #include "Animation/settings.h"
 #include <map>
 #include "application/profile_tracker.h"
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <camera.h>
 #include <render/material.h>
+ECS_REGISTER_SINGLETON(Settings)
+ECS_REGISTER_SINGLETON(SettingsContainer)
 
 AnimationIndex solve_motion_matching(
   AnimationDataBasePtr dataBase,
@@ -61,13 +63,13 @@ constexpr int MAX_SAMPLES = 10000;
 struct MMProfiler : ecs::Singleton
 {
   //vector<ProfileTracker> trackers;
-  vector<ProfileTracker> avgTrackers;
+  eastl::vector<ProfileTracker> avgTrackers;
   //Tag tagsCount;
   bool stopped = false;
   bool inited = false;
-  std::vector<int> counter;
+  eastl::vector<int> counter;
   MMProfiler()=default;
-  void init(const std::vector<std::pair<std::string, MotionMatchingOptimisationSettings>>&settings)
+  void init(const eastl::vector<std::pair<std::string, MotionMatchingOptimisationSettings>>&settings)
   {
     if (inited)
       return;
@@ -84,6 +86,7 @@ struct MMProfiler : ecs::Singleton
     return avgTrackers[solver];
   }
 };
+ECS_REGISTER_SINGLETON(MMProfiler)
 
 SYSTEM(stage=act;before=animation_player_update; tags=game) motion_matching_update(
   Transform &transform,

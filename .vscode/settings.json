@@ -162,8 +162,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "Territorio",
-      "delpoy_only_project_folder": "true"
+      "name": "MotionMatching",
+      "delpoy_only_project_folder": "false"
     }
   },
   "cmake.configureOnOpen": false,

@@ -1,84 +1,148 @@
 #include "ui_render.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void briefing_ui_func();
+static ecs::QueryCache briefing_ui__cache__;
 
-ecs::SystemDescription briefing_ui_descr("briefing_ui", {
-}, {
-},
-{},
-{},
-briefing_ui_func, "ui", {}, false);
+static ecs::QueryCache motion_matching_statistic__cache__;
 
-void briefing_ui_func()
+static ecs::QueryCache current_anim_index__cache__;
+
+static ecs::QueryCache menu_ui__cache__;
+
+static ecs::QueryCache mm_early_text_perf__cache__;
+
+static void briefing_ui_handler(const ecs::Event &event)
 {
-  ecs::perform_system(briefing_ui_descr, briefing_ui);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), briefing_ui__cache__, briefing_ui);
 }
 
-void motion_matching_statistic_func();
-
-ecs::SystemDescription motion_matching_statistic_descr("motion_matching_statistic", {
-  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
-  {ecs::get_type_hash<bool>(), ecs::get_name_hash("updateMMStatistic"), false},
-  {-1u, ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-motion_matching_statistic_func, "ui", {}, false);
-
-void motion_matching_statistic_func()
+static void briefing_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_system(motion_matching_statistic_descr, motion_matching_statistic);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), briefing_ui__cache__, briefing_ui);
 }
 
-void current_anim_index_func();
-
-ecs::SystemDescription current_anim_index_descr("current_anim_index", {
-  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
-  {-1u, ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-current_anim_index_func, "ui", {}, false);
-
-void current_anim_index_func()
+static void motion_matching_statistic_handler(const ecs::Event &event)
 {
-  ecs::perform_system(current_anim_index_descr, current_anim_index);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), motion_matching_statistic__cache__, motion_matching_statistic);
 }
 
-void menu_ui_func();
-
-ecs::SystemDescription menu_ui_descr("menu_ui", {
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
-  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
-}, {
-},
-{},
-{},
-menu_ui_func, "ui_menu", {}, false);
-
-void menu_ui_func()
+static void motion_matching_statistic_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_system(menu_ui_descr, menu_ui);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), motion_matching_statistic__cache__, motion_matching_statistic);
 }
 
-void mm_early_text_perf_func();
-
-ecs::SystemDescription mm_early_text_perf_descr("mm_early_text_perf", {
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-mm_early_text_perf_func, "ui", {}, false);
-
-void mm_early_text_perf_func()
+static void current_anim_index_handler(const ecs::Event &event)
 {
-  ecs::perform_system(mm_early_text_perf_descr, mm_early_text_perf);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), current_anim_index__cache__, current_anim_index);
 }
 
+static void current_anim_index_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), current_anim_index__cache__, current_anim_index);
+}
 
+static void menu_ui_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), menu_ui__cache__, menu_ui);
+}
+
+static void menu_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), menu_ui__cache__, menu_ui);
+}
+
+static void mm_early_text_perf_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), mm_early_text_perf__cache__, mm_early_text_perf);
+}
+
+static void mm_early_text_perf_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), mm_early_text_perf__cache__, mm_early_text_perf);
+}
+
+static void registration_pull_ui_render()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "briefing_ui",
+  &briefing_ui__cache__,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  &briefing_ui_handler, &briefing_ui_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "motion_matching_statistic",
+  &motion_matching_statistic__cache__,
+  {
+    {"animationPlayer", ecs::get_type_index<AnimationPlayer>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<AnimationPlayer>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()},
+    {"updateMMStatistic", ecs::get_type_index<bool>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<bool>()}
+  },
+  {
+    {"thirdPersonController", ecs::TypeIndex<ThirdPersonController>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &motion_matching_statistic_handler, &motion_matching_statistic_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "current_anim_index",
+  &current_anim_index__cache__,
+  {
+    {"animationPlayer", ecs::get_type_index<AnimationPlayer>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<AnimationPlayer>()}
+  },
+  {
+    {"thirdPersonController", ecs::TypeIndex<ThirdPersonController>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &current_anim_index_handler, &current_anim_index_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "menu_ui",
+  &menu_ui__cache__,
+  {
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Settings>()},
+    {"settingsContainer", ecs::get_type_index<SettingsContainer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SettingsContainer>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &menu_ui_handler, &menu_ui_single_handler),
+  ecs::EventIndex<ImguiMenuRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "mm_early_text_perf",
+  &mm_early_text_perf__cache__,
+  {
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &mm_early_text_perf_handler, &mm_early_text_perf_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_ui_render)

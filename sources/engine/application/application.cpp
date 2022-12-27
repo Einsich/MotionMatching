@@ -25,12 +25,16 @@ projectPath(root + "/" + project_name)
 {
   assert(scene);
   application = this;
+
+}
+static void start_ecs(SceneManager *scene)
+{
   ecs::init(false);
   ecs::init_singletones();
   ecs::init_stages({
-    {"act", [&]() { scene->pre_act(); }, nullptr},
-    {"before_render", [&]() { scene->pre_before_render(); }, nullptr},
-    {"render", [&]() { scene->pre_render(); }, nullptr},
+    {"act", [=]() { scene->pre_act(); }, nullptr},
+    {"before_render", [=]() { scene->pre_before_render(); }, nullptr},
+    {"render", [=]() { scene->pre_render(); }, nullptr},
   });
   
   ecs::vector<ecs::string> editorTags, gameTags;
@@ -41,7 +45,7 @@ projectPath(root + "/" + project_name)
   editorTags.emplace_back("editor");
   gameTags.emplace_back("game");
     
-  ecs::set_system_tags(editorTags);
+  ecs::set_system_tags(gameTags);
 
   ecs::pull_registered_files();
 }
@@ -70,7 +74,7 @@ void Application::start()
   ecs_ex::load_templates_from_blk();
   get_cpu_profiler();
   get_gpu_profiler();
-
+  start_ecs(scene);
   scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
 bool Application::sdl_event_handler()

@@ -1,71 +1,98 @@
 #include "test_recorder.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void recorder_ui_func();
+static ecs::QueryCache recorder_ui__cache__;
 
-ecs::SystemDescription recorder_ui_descr("recorder_ui", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
-}, {
-},
-{},
-{},
-recorder_ui_func, "ui", {}, false);
+static ecs::QueryCache listener_keybord__cache__;
 
-void recorder_ui_func()
+static ecs::QueryCache listener_mousemove__cache__;
+
+static void recorder_ui_handler(const ecs::Event &event)
 {
-  ecs::perform_system(recorder_ui_descr, recorder_ui);
+  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), recorder_ui__cache__, recorder_ui);
 }
 
-void listener_keybord_handler(const ecs::Event &event);
-void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription listener_keybord_descr(
-  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "listener_keybord", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
-}, {
-},
-{},
-{},
-listener_keybord_handler, listener_keybord_singl_handler, {});
-
-void listener_keybord_handler(const ecs::Event &event)
+static void recorder_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const KeyEventAnyActionKey&)event, listener_keybord_descr, listener_keybord);
-}
-void listener_keybord_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KeyEventAnyActionKey&)event, listener_keybord_descr, eid, listener_keybord);
+  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), recorder_ui__cache__, recorder_ui);
 }
 
-void listener_mousemove_handler(const ecs::Event &event);
-void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription listener_mousemove_descr(
-  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "listener_mousemove", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedTest"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("recordedState"), false},
-  {ecs::get_type_hash<float>(), ecs::get_name_hash("recorderStartTime"), false}
-}, {
-},
-{},
-{},
-listener_mousemove_handler, listener_mousemove_singl_handler, {});
-
-void listener_mousemove_handler(const ecs::Event &event)
+static void listener_keybord_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseMoveEvent&)event, listener_mousemove_descr, listener_mousemove);
-}
-void listener_mousemove_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseMoveEvent&)event, listener_mousemove_descr, eid, listener_mousemove);
+  ecs::perform_event(reinterpret_cast<const KeyEventAnyActionKey &>(event), listener_keybord__cache__, listener_keybord);
 }
 
+static void listener_keybord_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const KeyEventAnyActionKey &>(event), listener_keybord__cache__, listener_keybord);
+}
 
+static void listener_mousemove_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const MouseMoveEvent &>(event), listener_mousemove__cache__, listener_mousemove);
+}
+
+static void listener_mousemove_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseMoveEvent &>(event), listener_mousemove__cache__, listener_mousemove);
+}
+
+static void registration_pull_test_recorder()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "recorder_ui",
+  &recorder_ui__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"recordedTest", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()},
+    {"recordedState", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()},
+    {"recorderStartTime", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &recorder_ui_handler, &recorder_ui_single_handler),
+  ecs::EventIndex<ImguiRender>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "listener_keybord",
+  &listener_keybord__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"recordedTest", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"recordedState", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"recorderStartTime", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &listener_keybord_handler, &listener_keybord_single_handler),
+  ecs::EventIndex<KeyEventAnyActionKey>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "listener_mousemove",
+  &listener_mousemove__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"recordedTest", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"recordedState", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"recorderStartTime", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &listener_mousemove_handler, &listener_mousemove_single_handler),
+  ecs::EventIndex<MouseMoveEvent>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_test_recorder)

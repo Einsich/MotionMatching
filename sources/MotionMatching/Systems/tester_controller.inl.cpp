@@ -1,90 +1,123 @@
 #include "tester_controller.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription get_tests_descr("get_tests", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false}
-}, {
-});
+static ecs::QueryCache get_tests__cache__;
+
+static ecs::QueryCache get_tests2__cache__;
+
+static ecs::QueryCache tester_update__cache__;
+
+static ecs::QueryCache test_count__cache__;
+
+static ecs::QueryCache start_test__cache__;
 
 template<typename Callable>
-void get_tests(Callable lambda)
+static void get_tests(Callable lambda)
 {
-  ecs::perform_query<ecs::vector<AnimationTest>&>
-  (get_tests_descr, lambda);
+  ecs::perform_query<const ecs::vector<AnimationTest>&>(get_tests__cache__, lambda);
 }
-
-
-ecs::QueryDescription get_tests2_descr("get_tests2", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false}
-}, {
-});
 
 template<typename Callable>
-void get_tests2(Callable lambda)
+static void get_tests2(Callable lambda)
 {
-  ecs::perform_query<ecs::vector<AnimationTest>&>
-  (get_tests2_descr, lambda);
+  ecs::perform_query<const ecs::vector<AnimationTest>&>(get_tests2__cache__, lambda);
 }
 
-
-void tester_update_func();
-
-ecs::SystemDescription tester_update_descr("tester_update", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("testerSeed"), false},
-  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), false}
-}, {
-},
-{},
-{},
-tester_update_func, "act", {}, false);
-
-void tester_update_func()
+static void tester_update_implementation()
 {
-  ecs::perform_system(tester_update_descr, tester_update);
+  ecs::perform_system(tester_update__cache__, tester_update);
 }
 
-void test_count_func();
-
-ecs::SystemDescription test_count_descr("test_count", {
-  {ecs::get_type_hash<ecs::vector<ecs::EntityId>>(), ecs::get_name_hash("testers"), false},
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-test_count_func, "act", {"game"}, false);
-
-void test_count_func()
+static void test_count_implementation()
 {
-  ecs::perform_system(test_count_descr, test_count);
+  ecs::perform_system(test_count__cache__, test_count);
 }
 
-void start_test_handler(const ecs::Event &event);
-void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription start_test_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "start_test", {
-  {ecs::get_type_hash<AnimationTester>(), ecs::get_name_hash("animationTester"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
-  {ecs::get_type_hash<int>(), ecs::get_name_hash("testerSeed"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-start_test_handler, start_test_singl_handler, {});
-
-void start_test_handler(const ecs::Event &event)
+static void start_test_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, start_test_descr, start_test);
-}
-void start_test_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, start_test_descr, eid, start_test);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), start_test__cache__, start_test);
 }
 
+static void start_test_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), start_test__cache__, start_test);
+}
 
+static void registration_pull_tester_controller()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "get_tests",
+  &get_tests__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<AnimationTest>>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "get_tests2",
+  &get_tests2__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<ecs::vector<AnimationTest>>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "tester_update",
+  &tester_update__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"testerSeed", ecs::get_type_index<int>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<int>()},
+    {"animationTester", ecs::get_type_index<AnimationTester>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<AnimationTester>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &tester_update_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "test_count",
+  &test_count__cache__,
+  {
+    {"testers", ecs::get_type_index<ecs::vector<ecs::EntityId>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<ecs::EntityId>>()},
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {"game"},
+  &test_count_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "start_test",
+  &start_test__cache__,
+  {
+    {"animationTester", ecs::get_type_index<AnimationTester>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<AnimationTester>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()},
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()},
+    {"testerSeed", ecs::get_type_index<int>(), ecs::AccessType::Copy, false, ecs::is_singleton<int>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &start_test_handler, &start_test_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_tester_controller)

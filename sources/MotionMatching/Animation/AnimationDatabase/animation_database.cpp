@@ -76,7 +76,7 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
   vpTrees.clear();
   coverTrees.clear();
   kdTrees.clear();
-  if (ecs::get_singleton<SettingsContainer>().motionMatchingSettings.empty())
+  if (ecs::get_singleton<SettingsContainer>()->motionMatchingSettings.empty())
     return;
   TimeScope scope("Creating acceleration structs");
   map<Tag, size_t> tagMap;
@@ -105,7 +105,7 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
     }
   }
   vpTrees.reserve(nodes.size());
-  const auto &settings = ecs::get_singleton<SettingsContainer>().motionMatchingSettings[0].second;
+  const auto &settings = ecs::get_singleton<SettingsContainer>()->motionMatchingSettings[0].second;
   auto f = [&](const FrameFeature &a, const FrameFeature &b)
   {
     return get_score(a, b, settings).full_score;

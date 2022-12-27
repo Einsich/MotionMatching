@@ -1,10 +1,9 @@
 
-#include <ecs.h>
+#include <ecs/ecs.h>
 #include <imgui.h>
 #include "Animation/animation_player.h"
 #include "Animation/settings.h"
 #include "Animation/third_person_controller.h"
-#include <manager/type_info.h>
 #include <ecs/imgui.h>
 
 void show_scores(const AnimationDataBasePtr dataBase, const MotionMatching &mm)
@@ -191,7 +190,7 @@ void show_settings(T &settings, const char *settings_name)
   }
 }
 template<typename T>
-void settings_manager(vector<pair<string, T>> &settings, const char *settings_name)
+void settings_manager(eastl::vector<pair<string, T>> &settings, const char *settings_name)
 {
   constexpr int BUF_SIZE = 64;
   char buf[BUF_SIZE];

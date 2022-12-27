@@ -1,7 +1,7 @@
 
 
 mm_manager {
-  dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
+  dataBase:AnimationDataBase { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
   recordedTest:i = -1;
   recordedState:i = 0;
   recorderStartTime:f = 0;
@@ -31,7 +31,7 @@ animated_char {
   is_enabled:b=true;
 
   animationPlayer:AnimationPlayer {
-    dataBase:Asset<AnimationDataBase> { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
+    dataBase:AnimationDataBase { path:t = "resources/MotionMatching/AnimationDataBase/light_data_base.AnimationDataBase"; }
   }
   bone_remaped:b=false;
   personController:PersonController { }

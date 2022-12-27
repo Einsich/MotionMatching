@@ -55,7 +55,7 @@ EVENT(tags=debug) entity_viewer(const ImguiRender&, const EditorUI &ui)
           snprintf(buf, N, "%s %s", cmp.description.name.c_str(), typeInfo.name.c_str());
           if (ImGui::TreeNode(buf))
           {
-            bool edited = userTypes[cmp.description.typeIndex].componentEdition(cmp.data[chunk] + offset, false);
+            bool edited = userTypes[cmp.description.typeIndex].componentEdition(cmp.data[chunk] + offset * typeInfo.sizeOf, false);
             if (edited)
             {
               // ecs::send_event(eid, OnEntityEdited());

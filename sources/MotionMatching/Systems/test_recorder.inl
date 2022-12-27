@@ -1,12 +1,12 @@
-#include <ecs.h>
-#include <ecs/type_registration.h>
+#include <ecs/ecs.h>
+#include <ecs/registration.h>
 #include <imgui.h>
 #include "Animation/Test/animation_tester.h"
 #include "Animation/Test/animation_test.h"
 #include <application/time.h>
 #include <ecs/imgui.h>
 
-ECS_REGISTER_TYPE_AND_VECTOR(AnimationTest, AnimationTest, false, true);
+ECS_REGISTER_TYPE_AND_VECTOR(AnimationTest, "AnimationTest", ecs::TrivialMoveConstructor);
 
 EVENT() recorder_ui(const ImguiRender&, 
   ecs::vector<AnimationTest> &tests,

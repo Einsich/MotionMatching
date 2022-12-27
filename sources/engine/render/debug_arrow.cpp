@@ -78,7 +78,7 @@ void DebugArrow::add_arrow(const vec3 &from, const vec3 &to, vec3 color, float s
   else
     depthNotIgnore.emplace_back(Arrow{t * r * s, vec4(color, 1.f)});
 }
-void DebugArrow::render_depth_case(UniformBuffer &instanceData, vector<Arrow> &arrows, bool ignoreDepth, bool wire_frame)
+void DebugArrow::render_depth_case(UniformBuffer &instanceData, eastl::vector<Arrow> &arrows, bool ignoreDepth, bool wire_frame)
 {
   uint instanceCount = arrows.size(), instanceSize = arrowMaterial->buffer_size();
   if (instanceCount == 0)

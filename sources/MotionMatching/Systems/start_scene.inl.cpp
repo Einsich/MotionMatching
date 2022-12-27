@@ -1,51 +1,66 @@
 #include "start_scene.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void init_anim_settings_handler(const ecs::Event &event);
-void init_anim_settings_singl_handler(const ecs::Event &event, ecs::EntityId eid);
+static ecs::QueryCache init_anim_settings__cache__;
 
-ecs::EventDescription init_anim_settings_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "init_anim_settings", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
-  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
-}, {
-},
-{},
-{},
-init_anim_settings_handler, init_anim_settings_singl_handler, {"game"});
+static ecs::QueryCache scene_destroy__cache__;
 
-void init_anim_settings_handler(const ecs::Event &event)
+static void init_anim_settings_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, init_anim_settings_descr, init_anim_settings);
-}
-void init_anim_settings_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, init_anim_settings_descr, eid, init_anim_settings);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), init_anim_settings__cache__, init_anim_settings);
 }
 
-void scene_destroy_handler(const ecs::Event &event);
-void scene_destroy_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription scene_destroy_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityDestroyed>(), "scene_destroy", {
-  {ecs::get_type_hash<ecs::vector<AnimationTest>>(), ecs::get_name_hash("tests"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false},
-  {ecs::get_type_hash<SettingsContainer>(), ecs::get_name_hash("settingsContainer"), false}
-}, {
-},
-{},
-{},
-scene_destroy_handler, scene_destroy_singl_handler, {});
-
-void scene_destroy_handler(const ecs::Event &event)
+static void init_anim_settings_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityDestroyed&)event, scene_destroy_descr, scene_destroy);
-}
-void scene_destroy_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityDestroyed&)event, scene_destroy_descr, eid, scene_destroy);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), init_anim_settings__cache__, init_anim_settings);
 }
 
+static void scene_destroy_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityDestroyed &>(event), scene_destroy__cache__, scene_destroy);
+}
 
+static void scene_destroy_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityDestroyed &>(event), scene_destroy__cache__, scene_destroy);
+}
+
+static void registration_pull_start_scene()
+{
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "init_anim_settings",
+  &init_anim_settings__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Settings>()},
+    {"settingsContainer", ecs::get_type_index<SettingsContainer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<SettingsContainer>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {"game"},
+  &init_anim_settings_handler, &init_anim_settings_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "scene_destroy",
+  &scene_destroy__cache__,
+  {
+    {"tests", ecs::get_type_index<ecs::vector<AnimationTest>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<AnimationTest>>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()},
+    {"settingsContainer", ecs::get_type_index<SettingsContainer>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<SettingsContainer>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &scene_destroy_handler, &scene_destroy_single_handler),
+  ecs::EventIndex<ecs::OnEntityDestroyed>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_start_scene)

@@ -1,146 +1,193 @@
 #include "third_person_controller.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-ecs::QueryDescription update_attached_camera_descr("update_attached_camera", {
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false}
-}, {
-});
+static ecs::QueryCache update_attached_camera__cache__;
+
+static ecs::QueryCache third_peson_controller_update__cache__;
+
+static ecs::QueryCache third_controller_appear__cache__;
+
+static ecs::QueryCache mouse_move_handler__cache__;
+
+static ecs::QueryCache mouse_wheel_handler__cache__;
+
+static ecs::QueryCache crouch_event_handler__cache__;
+
+static ecs::QueryCache animation_player_handler__cache__;
 
 template<typename Callable>
-void update_attached_camera(ecs::EntityId eid, Callable lambda)
+static void update_attached_camera(ecs::EntityId eid, Callable lambda)
 {
-  ecs::perform_query<Transform&>
-  (update_attached_camera_descr, eid, lambda);
+  ecs::perform_query<Transform&>(update_attached_camera__cache__, eid, lambda);
 }
 
-
-void third_peson_controller_update_func();
-
-ecs::SystemDescription third_peson_controller_update_descr("third_peson_controller_update", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("attachedCamera"), false},
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
-  {ecs::get_type_hash<ThirdPersonController>(), ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-third_peson_controller_update_func, "act", {}, false);
-
-void third_peson_controller_update_func()
+static void third_peson_controller_update_implementation()
 {
-  ecs::perform_system(third_peson_controller_update_descr, third_peson_controller_update);
+  ecs::perform_system(third_peson_controller_update__cache__, third_peson_controller_update);
 }
 
-void third_controller_appear_handler(const ecs::Event &event);
-void third_controller_appear_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription third_controller_appear_descr(
-  ecs::get_mutable_event_handlers<ecs::OnEntityCreated>(), "third_controller_appear", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("attachedCamera"), false},
-  {ecs::get_type_hash<ThirdPersonController>(), ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-third_controller_appear_handler, third_controller_appear_singl_handler, {});
-
-void third_controller_appear_handler(const ecs::Event &event)
+static void third_controller_appear_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const ecs::OnEntityCreated&)event, third_controller_appear_descr, third_controller_appear);
-}
-void third_controller_appear_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const ecs::OnEntityCreated&)event, third_controller_appear_descr, eid, third_controller_appear);
+  ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), third_controller_appear__cache__, third_controller_appear);
 }
 
-void mouse_move_handler_handler(const ecs::Event &event);
-void mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription mouse_move_handler_descr(
-  ecs::get_mutable_event_handlers<MouseMoveEvent>(), "mouse_move_handler", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {ecs::get_type_hash<ThirdPersonController>(), ecs::get_name_hash("thirdPersonController"), false},
-  {ecs::get_type_hash<PersonController>(), ecs::get_name_hash("personController"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-mouse_move_handler_handler, mouse_move_handler_singl_handler, {});
-
-void mouse_move_handler_handler(const ecs::Event &event)
+static void third_controller_appear_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const MouseMoveEvent&)event, mouse_move_handler_descr, mouse_move_handler);
-}
-void mouse_move_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseMoveEvent&)event, mouse_move_handler_descr, eid, mouse_move_handler);
+  ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), third_controller_appear__cache__, third_controller_appear);
 }
 
-void mouse_wheel_handler_handler(const ecs::Event &event);
-void mouse_wheel_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription mouse_wheel_handler_descr(
-  ecs::get_mutable_event_handlers<MouseWheelEvent>(), "mouse_wheel_handler", {
-  {ecs::get_type_hash<ThirdPersonController>(), ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-mouse_wheel_handler_handler, mouse_wheel_handler_singl_handler, {});
-
-void mouse_wheel_handler_handler(const ecs::Event &event)
+static void mouse_move_handler_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const MouseWheelEvent&)event, mouse_wheel_handler_descr, mouse_wheel_handler);
-}
-void mouse_wheel_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const MouseWheelEvent&)event, mouse_wheel_handler_descr, eid, mouse_wheel_handler);
+  ecs::perform_event(reinterpret_cast<const MouseMoveEvent &>(event), mouse_move_handler__cache__, mouse_move_handler);
 }
 
-void crouch_event_handler_handler(const ecs::Event &event);
-void crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription crouch_event_handler_descr(
-  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "crouch_event_handler", {
-  {ecs::get_type_hash<ecs::EntityId>(), ecs::get_name_hash("eid"), false},
-  {-1u, ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-crouch_event_handler_handler, crouch_event_handler_singl_handler, {});
-
-void crouch_event_handler_handler(const ecs::Event &event)
+static void mouse_move_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
-  ecs::perform_event((const KeyEventAnyActionKey&)event, crouch_event_handler_descr, crouch_event_handler);
-}
-void crouch_event_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KeyEventAnyActionKey&)event, crouch_event_handler_descr, eid, crouch_event_handler);
+  ecs::perform_event(eid, reinterpret_cast<const MouseMoveEvent &>(event), mouse_move_handler__cache__, mouse_move_handler);
 }
 
-void animation_player_handler_handler(const ecs::Event &event);
-void animation_player_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid);
-
-ecs::EventDescription animation_player_handler_descr(
-  ecs::get_mutable_event_handlers<KeyEventAnyActionKey>(), "animation_player_handler", {
-  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
-  {-1u, ecs::get_name_hash("thirdPersonController"), false}
-}, {
-},
-{},
-{},
-animation_player_handler_handler, animation_player_handler_singl_handler, {});
-
-void animation_player_handler_handler(const ecs::Event &event)
+static void mouse_wheel_handler_handler(const ecs::Event &event)
 {
-  ecs::perform_event((const KeyEventAnyActionKey&)event, animation_player_handler_descr, animation_player_handler);
-}
-void animation_player_handler_singl_handler(const ecs::Event &event, ecs::EntityId eid)
-{
-  ecs::perform_event((const KeyEventAnyActionKey&)event, animation_player_handler_descr, eid, animation_player_handler);
+  ecs::perform_event(reinterpret_cast<const MouseWheelEvent &>(event), mouse_wheel_handler__cache__, mouse_wheel_handler);
 }
 
+static void mouse_wheel_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const MouseWheelEvent &>(event), mouse_wheel_handler__cache__, mouse_wheel_handler);
+}
 
+static void crouch_event_handler_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const KeyEventAnyActionKey &>(event), crouch_event_handler__cache__, crouch_event_handler);
+}
+
+static void crouch_event_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const KeyEventAnyActionKey &>(event), crouch_event_handler__cache__, crouch_event_handler);
+}
+
+static void animation_player_handler_handler(const ecs::Event &event)
+{
+  ecs::perform_event(reinterpret_cast<const KeyEventAnyActionKey &>(event), animation_player_handler__cache__, animation_player_handler);
+}
+
+static void animation_player_handler_single_handler(ecs::EntityId eid, const ecs::Event &event)
+{
+  ecs::perform_event(eid, reinterpret_cast<const KeyEventAnyActionKey &>(event), animation_player_handler__cache__, animation_player_handler);
+}
+
+static void registration_pull_third_person_controller()
+{
+  ecs::register_query(ecs::QueryDescription(
+  "",
+  "update_attached_camera",
+  &update_attached_camera__cache__,
+  {
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<Transform>()}
+  },
+  {},
+  {}
+  ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "third_peson_controller_update",
+  &third_peson_controller_update__cache__,
+  {
+    {"attachedCamera", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()},
+    {"thirdPersonController", ecs::get_type_index<ThirdPersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ThirdPersonController>()}
+  },
+  {},
+  {},
+  {"act_end_sync_point"},
+  {"act_begin_sync_point"},
+  {},
+  &third_peson_controller_update_implementation));
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "third_controller_appear",
+  &third_controller_appear__cache__,
+  {
+    {"attachedCamera", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::EntityId>()},
+    {"thirdPersonController", ecs::get_type_index<ThirdPersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ThirdPersonController>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &third_controller_appear_handler, &third_controller_appear_single_handler),
+  ecs::EventIndex<ecs::OnEntityCreated>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "mouse_move_handler",
+  &mouse_move_handler__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()},
+    {"thirdPersonController", ecs::get_type_index<ThirdPersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ThirdPersonController>()},
+    {"personController", ecs::get_type_index<PersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<PersonController>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &mouse_move_handler_handler, &mouse_move_handler_single_handler),
+  ecs::EventIndex<MouseMoveEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "mouse_wheel_handler",
+  &mouse_wheel_handler__cache__,
+  {
+    {"thirdPersonController", ecs::get_type_index<ThirdPersonController>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ThirdPersonController>()}
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  &mouse_wheel_handler_handler, &mouse_wheel_handler_single_handler),
+  ecs::EventIndex<MouseWheelEvent>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "crouch_event_handler",
+  &crouch_event_handler__cache__,
+  {
+    {"eid", ecs::get_type_index<ecs::EntityId>(), ecs::AccessType::Copy, false, ecs::is_singleton<ecs::EntityId>()}
+  },
+  {
+    {"thirdPersonController", ecs::TypeIndex<ThirdPersonController>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &crouch_event_handler_handler, &crouch_event_handler_single_handler),
+  ecs::EventIndex<KeyEventAnyActionKey>::value);
+
+  ecs::register_event(ecs::EventDescription(
+  "",
+  "animation_player_handler",
+  &animation_player_handler__cache__,
+  {
+    {"animationPlayer", ecs::get_type_index<AnimationPlayer>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<AnimationPlayer>()}
+  },
+  {
+    {"thirdPersonController", ecs::TypeIndex<ThirdPersonController>::value}
+  },
+  {},
+  {},
+  {},
+  {},
+  &animation_player_handler_handler, &animation_player_handler_single_handler),
+  ecs::EventIndex<KeyEventAnyActionKey>::value);
+
+}
+ECS_FILE_REGISTRATION(&registration_pull_third_person_controller)

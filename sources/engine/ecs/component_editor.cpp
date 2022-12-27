@@ -135,7 +135,7 @@ bool edit_component(mat2 &component, const char *name, bool view_only)
 
 bool edit_component(ecs::EntityId &component, const char *name, bool view_only)
 {
-  ImGui::Text("%s [%s] archetype %d, index %d", name, component.valid() ? "valid" : "not valid",
+  ImGui::Text("%s [%s] archetype %d, index %d", name, component ? "valid" : "not valid",
               component.description->archetype, component.description->index);
   bool edited = false;
   if (!view_only && strcmp(name, "eid"))

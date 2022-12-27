@@ -46,7 +46,7 @@ EVENT(tags=editor) resources_menu(const ImguiMenuRender&, SelectedAsset &selecte
   }
 }
 
-EVENT(tags=editor) asset_viewer(const ImguiRender&, SelectedAsset &selectedAsset, const EditorUI &ui, const EditorWidgets &widgets)
+EVENT(tags=editor) asset_viewer(const ImguiRender&, SelectedAsset &selectedAsset, const EditorUI &ui)//, const EditorWidgets &widgets
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

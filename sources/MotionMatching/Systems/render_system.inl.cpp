@@ -1,24 +1,33 @@
 #include "render_system.inl"
-#include <ecs_perform.h>
+#include <ecs/ecs_perform.h>
 //Code-generator production
 
-void process_animation_func();
+static ecs::QueryCache process_animation__cache__;
 
-ecs::SystemDescription process_animation_descr("process_animation", {
-  {ecs::get_type_hash<Asset<Mesh>>(), ecs::get_name_hash("mesh"), false},
-  {ecs::get_type_hash<AnimationPlayer>(), ecs::get_name_hash("animationPlayer"), false},
-  {ecs::get_type_hash<Transform>(), ecs::get_name_hash("transform"), false},
-  {ecs::get_type_hash<ecs::vector<mat3x4>>(), ecs::get_name_hash("bones_matrices"), false},
-  {ecs::get_type_hash<Settings>(), ecs::get_name_hash("settings"), false}
-}, {
-},
-{},
-{},
-process_animation_func, "render", {}, false);
-
-void process_animation_func()
+static void process_animation_implementation()
 {
-  ecs::perform_system(process_animation_descr, process_animation);
+  ecs::perform_system(process_animation__cache__, process_animation);
 }
 
+static void registration_pull_render_system()
+{
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "process_animation",
+  &process_animation__cache__,
+  {
+    {"mesh", ecs::get_type_index<Asset<Mesh>>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Asset<Mesh>>()},
+    {"animationPlayer", ecs::get_type_index<AnimationPlayer>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<AnimationPlayer>()},
+    {"transform", ecs::get_type_index<Transform>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Transform>()},
+    {"bones_matrices", ecs::get_type_index<ecs::vector<mat3x4>>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<ecs::vector<mat3x4>>()},
+    {"settings", ecs::get_type_index<Settings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<Settings>()}
+  },
+  {},
+  {},
+  {"render_end_sync_point"},
+  {"render_begin_sync_point", "lod_selector"},
+  {},
+  &process_animation_implementation));
 
+}
+ECS_FILE_REGISTRATION(&registration_pull_render_system)

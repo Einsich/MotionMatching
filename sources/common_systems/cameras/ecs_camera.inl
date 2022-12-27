@@ -44,7 +44,7 @@ EVENT(tags=editor) find_main_camera_editor(
     if (isMainCamera)
       editorCamera = eid;
   });
-  if (!editorCamera.valid())
+  if (!editorCamera)
   {
     Camera camera;
     camera.set_perspective(90.f, 0.01f, 5000.f);

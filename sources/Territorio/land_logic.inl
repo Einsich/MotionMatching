@@ -58,7 +58,7 @@ EVENT(require=ecs::Tag isPlayableLand) game_started(
 
 void try_add_invasion(uint &forces, ecs::vector<Invasion> &invasions, Invasion invasion)
 {
-  if (invasion.enemyEid.valid())
+  if (invasion.enemyEid)
   {
     auto prevInv = std::find_if(invasions.begin(), invasions.end(),
         [&](const Invasion &inv){return inv.enemyIndex == invasion.enemyIndex;});

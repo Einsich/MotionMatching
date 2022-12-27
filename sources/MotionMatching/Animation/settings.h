@@ -1,8 +1,9 @@
 #pragma once
 #include <functional>
 #include "3dmath.h"
+#include <eastl/vector.h>
 #include "AnimationDatabase/animation_nodes.h"
-#include "singleton.h"
+#include <ecs/singleton.h>
 struct Settings : ecs::Singleton
 {
   int TotalMMCount = 0;
@@ -96,9 +97,9 @@ struct SettingsContainer : ecs::Singleton
 {
   REFLECT(
     SettingsContainer,
-    (std::vector<std::pair<std::string, ControllerSettings>>) (controllerSettings),
-    (std::vector<std::pair<std::string, MotionMatchingSettings>>) (motionMatchingSettings),
-    (std::vector<std::pair<std::string, MotionMatchingOptimisationSettings>>) (motionMatchingOptimisationSettings)
+    (eastl::vector<std::pair<std::string, ControllerSettings>>) (controllerSettings),
+    (eastl::vector<std::pair<std::string, MotionMatchingSettings>>) (motionMatchingSettings),
+    (eastl::vector<std::pair<std::string, MotionMatchingOptimisationSettings>>) (motionMatchingOptimisationSettings)
   )
   void after_loading()
   {
