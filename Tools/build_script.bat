@@ -5,7 +5,7 @@ set CMAKE=%3
 
 cd sources
 if "%CMAKE%"=="yes" (
-    cmake -G Ninja  -DGAME=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/%BUILD_TYPE%
+    cmake -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DGAME=%PROJECT% -DBUILD_TYPE=%BUILD_TYPE% -B ../Builds/%BUILD_TYPE%
 )
 
 cd ../Builds/%BUILD_TYPE%

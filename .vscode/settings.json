@@ -162,8 +162,7 @@
   "launchOption.currentConfig": {
     "BuildType": "dev",
     "Project": {
-      "name": "Arcade",
-      "delpoy_only_project_folder": "false"
+      "name": "ECSbenchmark"
     }
   },
   "cmake.configureOnOpen": false,

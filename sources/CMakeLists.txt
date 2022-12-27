@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(${GAME})
 if(WIN32)
-    set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
-    set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang.exe")
     set(ADDITIONAL_LIBS winmm.lib Version.lib Setupapi.lib)
 else()
     set(ADDITIONAL_LIBS -ldl)
@@ -37,8 +35,10 @@ endif()
 if(BUILD_TYPE STREQUAL "rel")
     add_definitions(-DRELEASE)
 endif()
+
 include(3rd_party/daScript/CMakeCommon.txt)
 SETUP_COMPILER()
+
 set(GAME_CMAKE ${SRC_ROOT}/${GAME}/game.cmake)
 
 if(EXISTS ${GAME_CMAKE})
