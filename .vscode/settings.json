@@ -160,7 +160,7 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
       "name": "ECSbenchmark"
     }

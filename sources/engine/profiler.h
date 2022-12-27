@@ -1,0 +1,7 @@
+#pragma once
+#include <optick.h>
+
+#define PROFILER_EVENT(...) OPTICK_EVENT(__VA_ARGS__)
+#define PROFILER_GPU_EVENT(...) OPTICK_GPU_EVENT(__VA_ARGS__)
+#define PROFILER_PUSH(NAME) OPTICK_PUSH(NAME)
+#define PROFILER_POP() OPTICK_POP()

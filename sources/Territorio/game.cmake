@@ -9,6 +9,7 @@ set(RENDER_ON ON)
 
 include_library(eastl 3rd_party/eastl)
 include_library(ecsLib 3rd_party/ecs/sources/ecs)
+include_library(optick 3rd_party/optick/src)
 include_library(engine engine)
 include_library(common_systems common_systems)
 

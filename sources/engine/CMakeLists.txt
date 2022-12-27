@@ -7,6 +7,7 @@ include_directories(${SRC_ROOT}/3rd_party/include)
 include_directories(${SRC_ROOT}/3rd_party/eastl/include)
 include_directories(${SRC_ROOT}/3rd_party/imgui)
 include_directories(${SRC_ROOT}/3rd_party/ecs/include)
+include_directories(${SRC_ROOT}/3rd_party/optick/include)
 
 macro(add_folder folder)
   file(GLOB_RECURSE TMP_SOURCES RELATIVE ${MODULE_PATH} ${folder}/*.cpp)

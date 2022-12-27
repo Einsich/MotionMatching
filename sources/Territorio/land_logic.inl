@@ -5,7 +5,6 @@
 #include "map_arrays.h"
 #include "game_events.h"
 #include "game_structs.h"
-#include "profiler/profiler.h"
 #include <ecs/event_registration.h>
 
 ECS_EVENT_REGISTRATION(OnGameStarted)

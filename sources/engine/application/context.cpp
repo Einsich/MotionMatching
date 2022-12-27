@@ -4,6 +4,7 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 #include <SDL2/SDL.h>
+#include <profiler.h>
 
 
 // During init, enable debug output
@@ -51,6 +52,8 @@ void Context::start_imgui()
 }
 void Context::swap_buffer()
 {
+  PROFILER_EVENT("present")
+  OPTICK_GPU_FLIP(window);
   SDL_GL_SwapWindow(window);
 }
 Resolution Context::get_resolution() const

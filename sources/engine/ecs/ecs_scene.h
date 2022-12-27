@@ -1,14 +1,11 @@
 #pragma once
 #include <vector>
 #include <filesystem>
-#include <profiler/profiler.h>
 #include <data_block/data_block.h>
 
 class SceneManager
 {
 private:
-  ProfilerLabel perfLabel;
-  ProfilerLabelGPU perfLabelGPU;
   DataBlock rawScene;
   std::string scenePath;
 

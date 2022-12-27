@@ -4,12 +4,12 @@
 #include "glad/glad.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
-#include "profiler/profiler.h"
 #include <SDL2/SDL.h>
 #include "ecs/ecs_scene.h"
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"
 #include <ecs/ecs.h>
+#include <optick.h>
 
 namespace ecs_ex
 {
@@ -25,8 +25,9 @@ projectPath(root + "/" + project_name)
 {
   assert(scene);
   application = this;
-
+  OPTICK_APP(project_name.c_str());
 }
+
 static void start_ecs(SceneManager *scene)
 {
   ecs::init(false);
@@ -72,8 +73,7 @@ void Application::start()
   scene->start();
   create_all_resources_from_metadata();
   ecs_ex::load_templates_from_blk();
-  get_cpu_profiler();
-  get_gpu_profiler();
+
   start_ecs(scene);
   scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
@@ -119,9 +119,8 @@ void Application::main_loop()
   bool running = true;
   while (running)
   {
+    OPTICK_FRAME("MainThread");
     clear_tmp_allocation();
-    get_cpu_profiler().start_frame();
-    PROFILER(main_loop);
     timer.update();
     uint mainThreadJobsCount = mainThreadJobs.size();
     if (mainThreadJobsCount > 0)
@@ -131,11 +130,12 @@ void Application::main_loop()
       mainThreadJobs.erase(mainThreadJobs.begin(), mainThreadJobs.begin() + mainThreadJobsCount);
     }
     {
-      PROFILER(sdl_events) 
+      OPTICK_EVENT("sdl_events");
 		  running = sdl_event_handler();
     }
     if (running)
     {
+      OPTICK_EVENT("ecs");
       ecs::update_archetype_manager();
       ecs::perform_systems();
       scene->update_ui();
@@ -152,6 +152,7 @@ void Application::exit()
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
   SDL_Quit();
+  OPTICK_SHUTDOWN();
 }
 string project_path(const string &path)
 {

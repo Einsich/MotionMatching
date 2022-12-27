@@ -11,7 +11,7 @@
 #include "resources/resource_registration.h"
 #include "resources/resources.h"
 #include <imgui.h>
-#include <profiler/profiler.h>
+#include <profiler.h>
 #include <render/frustum.h>
 #include <parallel/thread_pool.h>
 #include <ecs/registration.h>
@@ -157,7 +157,7 @@ render_sky_box(SkyBox &skyBox)
 {
 	if ((skyBox.material && skyBox.material.try_load()))
   {
-    ProfilerLabelGPU label("skybox");
+    PROFILER_GPU_EVENT("skybox");
     skyBox.render();
   }
 }
@@ -224,7 +224,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
   
   //debug_log("start");
   {
-    ProfilerLabel transforms_copy("transforms copy");
+    PROFILER_GPU_EVENT("transforms copy");
     UniformBuffer &dynamicTransforms = get_buffer("DynamicTransforms");
     const uint instanceSize = sizeof(mat3x4);
     const uint n = render.queue.size();
@@ -242,6 +242,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
   bool startTransparentPass = false;
   bool zTestEnabled = true;
   //debug_log("start");
+  PROFILER_GPU_EVENT("dynamic render");
   for (uint i = 0, n = render.queue.size(); i < n; i++)
   {
     const RenderStuff &stuff = render.queue[i];
@@ -256,7 +257,7 @@ main_instanced_render(EditorRenderSettings &editorSettings, RenderQueue &render)
     bool needRender = i + 1 == n || matComparer(stuff, render.queue[i + 1]); // stuff < next stuff
     if (needRender)
     {
-      ProfilerLabelGPU label(stuff.label);
+      OPTICK_EVENT_DYNAMIC(stuff.label);
       if (shader.get_shader_program() != sp)//need use new shader
       {
         shader.use();
@@ -344,7 +345,7 @@ render_collision(const EditorRenderSettings &editorSettings)
   });
   if (instanceCount == 0)
     return;
-  ProfilerLabelGPU label("collision");
+  PROFILER_GPU_EVENT("collision");
   dynamicTransforms.bind();
   collisionMat->get_shader().use();
   dynamicTransforms.flush_buffer(instanceCount * instanceSize);
