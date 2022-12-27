@@ -119,3 +119,4 @@ static void registration_pull_text_render()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_text_render)
+ECS_PULL_DEFINITION(variable_pull_text_render)

@@ -36,3 +36,4 @@ static void registration_pull_motion_matching()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_motion_matching)
+ECS_PULL_DEFINITION(variable_pull_motion_matching)

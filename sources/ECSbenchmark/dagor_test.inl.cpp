@@ -2,7 +2,6 @@
 #include <ecs/ecs_perform.h>
 //Code-generator production
 
-size_t y = (intptr_t)&y;
 static ecs::QueryCache cache_trach__cache__;
 
 static ecs::QueryCache dag_soa_update__cache__;
@@ -249,3 +248,4 @@ static void registration_pull_dagor_test()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_dagor_test)
+ECS_PULL_DEFINITION(variable_pull_dagor_test)

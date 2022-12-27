@@ -1,17 +1,14 @@
 #include "application/application_data.h"
-extern size_t x;
-extern size_t y;
-extern size_t z;
+//extern 
+//size_t x;
+
+size_t ain();
 
 int main(int, char**)
 {
-  std::vector<int> x = {1, 2, 3, 4};
-
-  for (int z : x)
-    debug_log("%d", z);
-    
-  //size_t w = x + y + z;
-  //printf("%d", w);
+  
+  size_t w = ain();
+  printf("%d", w);
   std::filesystem::path currentPath = std::filesystem::current_path();
   std::filesystem::path root(currentPath.parent_path());
 

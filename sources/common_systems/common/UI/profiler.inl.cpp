@@ -31,3 +31,4 @@ static void registration_pull_profiler()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_profiler)
+ECS_PULL_DEFINITION(variable_pull_profiler)

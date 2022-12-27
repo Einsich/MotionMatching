@@ -116,3 +116,4 @@ static void registration_pull_map_editor()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_map_editor)
+ECS_PULL_DEFINITION(variable_pull_map_editor)

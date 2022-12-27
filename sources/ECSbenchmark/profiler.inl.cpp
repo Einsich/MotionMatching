@@ -1,7 +1,7 @@
 #include "profiler.inl"
 #include <ecs/ecs_perform.h>
 //Code-generator production
-size_t x = (intptr_t)&x;
+
 static ecs::QueryCache menu_profiler__cache__;
 
 static void menu_profiler_handler(const ecs::Event &event)
@@ -31,3 +31,4 @@ static void registration_pull_profiler()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_profiler)
+ECS_PULL_DEFINITION(variable_pull_profiler)

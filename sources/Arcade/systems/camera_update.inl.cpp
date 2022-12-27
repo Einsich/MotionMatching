@@ -80,3 +80,4 @@ static void registration_pull_camera_update()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_camera_update)
+ECS_PULL_DEFINITION(variable_pull_camera_update)

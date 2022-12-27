@@ -146,3 +146,4 @@ static void registration_pull_ui_render()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_ui_render)
+ECS_PULL_DEFINITION(variable_pull_ui_render)

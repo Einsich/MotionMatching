@@ -104,3 +104,4 @@ static void registration_pull_kills_statistic()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_kills_statistic)
+ECS_PULL_DEFINITION(variable_pull_kills_statistic)

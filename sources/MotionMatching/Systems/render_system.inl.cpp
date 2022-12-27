@@ -31,3 +31,4 @@ static void registration_pull_render_system()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_render_system)
+ECS_PULL_DEFINITION(variable_pull_render_system)

@@ -33,3 +33,4 @@ static void registration_pull_file_dialog()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_file_dialog)
+ECS_PULL_DEFINITION(variable_pull_file_dialog)

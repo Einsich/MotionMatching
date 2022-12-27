@@ -105,3 +105,4 @@ static void registration_pull_animation_player()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_animation_player)
+ECS_PULL_DEFINITION(variable_pull_animation_player)

@@ -60,3 +60,4 @@ static void registration_pull_entity_viewer()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_entity_viewer)
+ECS_PULL_DEFINITION(variable_pull_entity_viewer)

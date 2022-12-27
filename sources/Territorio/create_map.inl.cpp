@@ -62,3 +62,4 @@ static void registration_pull_create_map()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_create_map)
+ECS_PULL_DEFINITION(variable_pull_create_map)

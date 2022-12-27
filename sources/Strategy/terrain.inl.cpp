@@ -128,3 +128,4 @@ static void registration_pull_terrain()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_terrain)
+ECS_PULL_DEFINITION(variable_pull_terrain)

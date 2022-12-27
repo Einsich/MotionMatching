@@ -87,3 +87,4 @@ static void registration_pull_person_controller()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_person_controller)
+ECS_PULL_DEFINITION(variable_pull_person_controller)

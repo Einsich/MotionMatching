@@ -189,3 +189,4 @@ static void registration_pull_user_input()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_user_input)
+ECS_PULL_DEFINITION(variable_pull_user_input)

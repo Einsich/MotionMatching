@@ -104,3 +104,4 @@ static void registration_pull_shader_reload()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_shader_reload)
+ECS_PULL_DEFINITION(variable_pull_shader_reload)

@@ -34,3 +34,4 @@ static void registration_pull_init_game()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_init_game)
+ECS_PULL_DEFINITION(variable_pull_init_game)

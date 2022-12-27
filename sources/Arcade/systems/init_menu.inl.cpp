@@ -95,3 +95,4 @@ static void registration_pull_init_menu()
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_init_menu)
+ECS_PULL_DEFINITION(variable_pull_init_menu)
