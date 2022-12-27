@@ -9,7 +9,7 @@
             "command": "./Builds/rel/ECSCodeGen/ecs_code_gen.exe",
             "args": [
                 "'${workspaceFolder}/sources/common_systems'",
-                "'${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}'",
+                "'${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}'"
             ],
             "group": {
                 "kind": "build",
@@ -30,6 +30,7 @@
                 "'${workspaceFolder}/sources/Arcade'",
                 "'${workspaceFolder}/sources/Territorio'",
                 "'${workspaceFolder}/sources/Strategy'",
+                "-force_rebuild"
             ],
             "group": {
                 "kind": "build",

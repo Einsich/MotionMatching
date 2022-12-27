@@ -8,14 +8,7 @@
 #include "transform.h"
 
 ECS_REGISTER_TYPE(Data, "Data", ecs::PODType)
-struct A
-{
-  A()
-  {
-    assert(0);
-  }
-} a;
-size_t z = (intptr_t)&z;
+
 struct TestClass
 {
   uint index;

@@ -9,4 +9,8 @@ include_directories(${SRC_ROOT}/3rd_party/imgui)
 include_directories(${SRC_ROOT}/3rd_party/daScript/include)
 include_directories(${SRC_ROOT}/das)
 
+include(../ecs_pull.cmake)
+set(MODULE_ECS_SOURCES )
+ecs_pull_module()
+ecs_gather_modules(ecs_pull; ECSbenchmarkLib)
 include(../module.cmake)

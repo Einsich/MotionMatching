@@ -71,18 +71,3 @@ EVENT() menu_profiler(const ImguiMenuRender&)
   }
 }
 
-
-extern size_t x;
-size_t x = (uintptr_t)&x;
-
-#include <cstdlib>
-
-struct S
-{
-  S()
-  {
-    std::abort();
-  }
-};
-static S s;
-

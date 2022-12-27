@@ -1,4 +1,4 @@
-#include "render.inl"
+#include "render_2d.inl"
 #include <ecs/ecs_perform.h>
 //Code-generator production
 
@@ -17,7 +17,7 @@ static void render_scene_implementation()
   ecs::perform_system(render_scene__cache__, render_scene);
 }
 
-static void registration_pull_render()
+static void registration_pull_render_2d()
 {
   ecs::register_query(ecs::QueryDescription(
   "",
@@ -49,5 +49,5 @@ static void registration_pull_render()
   &render_scene_implementation));
 
 }
-ECS_FILE_REGISTRATION(&registration_pull_render)
-ECS_PULL_DEFINITION(variable_pull_render)
+ECS_FILE_REGISTRATION(&registration_pull_render_2d)
+ECS_PULL_DEFINITION(variable_pull_render_2d)
