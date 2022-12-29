@@ -52,8 +52,9 @@ static void registration_pull_animation_player()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &animation_player_update_implementation));
 
@@ -68,8 +69,9 @@ static void registration_pull_animation_player()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &update_bone_remap_implementation));
 

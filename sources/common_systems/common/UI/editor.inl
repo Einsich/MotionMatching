@@ -8,7 +8,7 @@
 #include <render/texture/texture2d.h>
 #include <eastl/vector.h>
 #include <memory/tmp_allocator.h>
-#include <ecs/imgui.h>
+
 
 
 EditorWidgets::EditorWidgets():
@@ -26,7 +26,7 @@ struct SelectedAsset : ecs::Singleton
 ECS_REGISTER_SINGLETON(SelectedAsset)
 ECS_REGISTER_SINGLETON(EditorWidgets)
 
-EVENT(tags=editor) resources_menu(const ImguiMenuRender&, SelectedAsset &selectedAsset)
+SYSTEM(tags=editor; stage=imgui_menu) resources_menu(SelectedAsset &selectedAsset)
 {
   if (ImGui::BeginMenu("Resources"))
   {
@@ -46,7 +46,7 @@ EVENT(tags=editor) resources_menu(const ImguiMenuRender&, SelectedAsset &selecte
   }
 }
 
-EVENT(tags=editor) asset_viewer(const ImguiRender&, SelectedAsset &selectedAsset, const EditorUI &ui)//, const EditorWidgets &widgets
+SYSTEM(tags=editor; stage=imgui_render) asset_viewer(SelectedAsset &selectedAsset, const EditorUI &ui)//, const EditorWidgets &widgets
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

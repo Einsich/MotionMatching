@@ -5,7 +5,7 @@
 #include <render/shader/shader.h>
 #include <render/render.h>
 #include <imgui.h>
-#include <ecs/imgui.h>
+
 #include <memory/tmp_allocator.h>
 #include <ecs/editor_events.h>
 
@@ -191,7 +191,7 @@ EVENT() text_appear(const ecs::OnEntityCreated&,
 template<typename Callable> 
 void gather_text(Callable);
 
-EVENT() text_render(const ImguiRender &, const EditorRenderSettings &editorSettings, const TextRender &textRender)
+SYSTEM(stage=imgui_render) text_render(const EditorRenderSettings &editorSettings, const TextRender &textRender)
 {
   if (textRender.invalid)
     return;

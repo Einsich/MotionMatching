@@ -15,7 +15,7 @@
 #include <render/frustum.h>
 #include <parallel/thread_pool.h>
 #include <ecs/registration.h>
-#include <ecs/imgui.h>
+
 
 ECS_REGISTER_TYPE_AND_VECTOR(Asset<Mesh>, "Mesh", ecs::DefaultType); 
 ECS_REGISTER_TYPE(Asset<Texture2D>, "Texture2D", ecs::DefaultType);
@@ -32,7 +32,7 @@ EVENT() add_global_uniform(const ecs::OnSceneCreated &)
   add_storage_buffer("MeshBones", 0, 4);
 }
 
-EVENT(tags=editor) render_submenu(const ImguiMenuRender&, EditorRenderSettings &settings)
+SYSTEM(tags=editor; stage=imgui_menu) render_submenu(EditorRenderSettings &settings)
 {
   if (ImGui::BeginMenu("Render"))
   {

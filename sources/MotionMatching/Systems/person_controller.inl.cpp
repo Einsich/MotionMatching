@@ -49,8 +49,9 @@ static void registration_pull_person_controller()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {"game"},
   &peson_controller_update_implementation));
 

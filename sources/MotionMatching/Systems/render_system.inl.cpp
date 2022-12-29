@@ -24,8 +24,9 @@ static void registration_pull_render_system()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point", "lod_selector"},
+  "render",
+  {},
+  {"lod_selector"},
   {},
   &process_animation_implementation));
 

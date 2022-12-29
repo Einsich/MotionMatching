@@ -8,6 +8,8 @@ static ecs::QueryCache find_collidable_entity__cache__;
 
 static ecs::QueryCache find_matrices__cache__;
 
+static ecs::QueryCache render_submenu__cache__;
+
 static ecs::QueryCache set_global_render_data__cache__;
 
 static ecs::QueryCache lod_selector__cache__;
@@ -25,8 +27,6 @@ static ecs::QueryCache main_instanced_render__cache__;
 static ecs::QueryCache render_collision__cache__;
 
 static ecs::QueryCache add_global_uniform__cache__;
-
-static ecs::QueryCache render_submenu__cache__;
 
 static ecs::QueryCache mesh_loader__cache__;
 
@@ -46,6 +46,11 @@ template<typename Callable>
 static void find_matrices(ecs::EntityId eid, Callable lambda)
 {
   ecs::perform_query<const ecs::vector<mat3x4>&>(find_matrices__cache__, eid, lambda);
+}
+
+static void render_submenu_implementation()
+{
+  ecs::perform_system(render_submenu__cache__, render_submenu);
 }
 
 static void set_global_render_data_implementation()
@@ -98,16 +103,6 @@ static void add_global_uniform_single_handler(ecs::EntityId eid, const ecs::Even
   ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), add_global_uniform__cache__, add_global_uniform);
 }
 
-static void render_submenu_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), render_submenu__cache__, render_submenu);
-}
-
-static void render_submenu_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), render_submenu__cache__, render_submenu);
-}
-
 static void mesh_loader_handler(const ecs::Event &event)
 {
   ecs::perform_event(reinterpret_cast<const ecs::OnEntityCreated &>(event), mesh_loader__cache__, mesh_loader);
@@ -156,6 +151,21 @@ static void registration_pull_render()
 
   ecs::register_system(ecs::SystemDescription(
   "",
+  "render_submenu",
+  &render_submenu__cache__,
+  {
+    {"settings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorRenderSettings>()}
+  },
+  {},
+  {},
+  "imgui_menu",
+  {},
+  {},
+  {"editor"},
+  &render_submenu_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
   "set_global_render_data",
   &set_global_render_data__cache__,
   {
@@ -163,8 +173,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point"},
+  "render",
+  {},
+  {},
   {},
   &set_global_render_data_implementation));
 
@@ -183,8 +194,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point", "frustum_culling"},
-  {"render_begin_sync_point"},
+  "render",
+  {"frustum_culling"},
+  {},
   {},
   &lod_selector_implementation));
 
@@ -203,8 +215,9 @@ static void registration_pull_render()
     {"useFrustumCulling", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"render_end_sync_point", "process_mesh_position"},
-  {"render_begin_sync_point"},
+  "render",
+  {"process_mesh_position"},
+  {},
   {},
   &frustum_culling_implementation));
 
@@ -223,8 +236,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point", "main_instanced_render"},
-  {"render_begin_sync_point"},
+  "render",
+  {"main_instanced_render"},
+  {},
   {},
   &process_mesh_position_implementation));
 
@@ -237,8 +251,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point", "main_instanced_render"},
+  "render",
+  {},
+  {"main_instanced_render"},
   {},
   &render_sky_box_implementation));
 
@@ -252,8 +267,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point", "render_sky_box"},
+  "render",
+  {},
+  {"render_sky_box"},
   {},
   &render_debug_arrows_implementation));
 
@@ -267,8 +283,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point"},
+  "render",
+  {},
+  {},
   {},
   &main_instanced_render_implementation));
 
@@ -281,8 +298,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point", "render_sky_box"},
-  {"render_begin_sync_point", "process_mesh_position"},
+  "render",
+  {"render_sky_box"},
+  {"process_mesh_position"},
   {},
   &render_collision_implementation));
 
@@ -298,21 +316,6 @@ static void registration_pull_render()
   {},
   &add_global_uniform_handler, &add_global_uniform_single_handler),
   ecs::EventIndex<ecs::OnSceneCreated>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "render_submenu",
-  &render_submenu__cache__,
-  {
-    {"settings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<EditorRenderSettings>()}
-  },
-  {},
-  {},
-  {},
-  {},
-  {"editor"},
-  &render_submenu_handler, &render_submenu_single_handler),
-  ecs::EventIndex<ImguiMenuRender>::value);
 
   ecs::register_event(ecs::EventDescription(
   "",

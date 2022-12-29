@@ -3,9 +3,9 @@
 #include <application/application.h>
 #include "editor_window.h"
 #include <imgui.h>
-#include <ecs/imgui.h>
 
-EVENT(tags=editor) open_dialog(const ImguiMenuRender&, EditorUI &ui)
+
+SYSTEM(tags=editor; stage=imgui_menu) open_dialog(EditorUI &ui)
 {
   if (ImGui::BeginMenu("Editor"))
   {

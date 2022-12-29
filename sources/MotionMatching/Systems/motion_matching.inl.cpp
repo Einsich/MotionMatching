@@ -29,8 +29,9 @@ static void registration_pull_motion_matching()
   },
   {},
   {},
-  {"act_end_sync_point", "animation_player_update"},
-  {"act_begin_sync_point"},
+  "act",
+  {"animation_player_update"},
+  {},
   {"game"},
   &motion_matching_update_implementation));
 

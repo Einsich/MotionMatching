@@ -80,8 +80,9 @@ static void registration_pull_test()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &ecs_update_implementation));
 
@@ -92,8 +93,9 @@ static void registration_pull_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &vector_structs_update_implementation));
 
@@ -104,8 +106,9 @@ static void registration_pull_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &vector_pointers_update_implementation));
 
@@ -121,8 +124,9 @@ static void registration_pull_test()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &das_update_implementation));
 

@@ -179,8 +179,9 @@ static void registration_pull_land_logic()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &update_bot_invasions_implementation));
 
@@ -201,8 +202,9 @@ static void registration_pull_land_logic()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &map_update_implementation));
 
@@ -216,8 +218,9 @@ static void registration_pull_land_logic()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &border_update_implementation));
 

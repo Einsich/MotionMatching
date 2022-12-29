@@ -71,8 +71,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point"},
+  "render",
+  {},
+  {},
   {},
   &render_scene_implementation));
 
@@ -87,8 +88,9 @@ static void registration_pull_render()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &update_map_textures_implementation));
 

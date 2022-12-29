@@ -65,8 +65,9 @@ static void registration_pull_kills_statistic()
     {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &check_winner_implementation));
 

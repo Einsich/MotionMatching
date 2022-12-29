@@ -55,8 +55,9 @@ static void registration_pull_camera_update()
     {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"before_render_end_sync_point"},
-  {"before_render_begin_sync_point"},
+  "before_render",
+  {},
+  {},
   {},
   &update_camera_pos_before_render_implementation));
 

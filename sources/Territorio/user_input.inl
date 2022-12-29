@@ -86,8 +86,8 @@ EVENT(require=ecs::Tag isPlayer) select_invasion(
 }
 
 #include <imgui.h>
-#include <ecs/imgui.h>
-EVENT(require=ecs::Tag isPlayer) change_invasion_weight(const ImguiRender&, float &invasion_weight, uint forces)
+
+SYSTEM(require=ecs::Tag isPlayer; stage=imgui_render) change_invasion_weight(float &invasion_weight, uint forces)
 {
   if (ImGui::Begin("invasion forces"))
   {
@@ -100,7 +100,7 @@ EVENT(require=ecs::Tag isPlayer) change_invasion_weight(const ImguiRender&, floa
   }
 
 }
-EVENT() check_mouse_over_ui(const ImguiRender&)
+SYSTEM(stage=imgui_render) check_mouse_over_ui()
 {
   Input::input().mouseOverUI = ImGui::GetIO().WantCaptureMouse;
 }

@@ -5,7 +5,7 @@
 #include <functional>
 #include "editor_window.h"
 #include <ecs/editor_events.h>
-#include <ecs/imgui.h>
+
 #include <ecs/user_type_info.h>
 
 constexpr uint lockFlag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
@@ -18,7 +18,7 @@ EVENT(tags=debug) init_imgui_style(const ecs::OnSceneCreated&, EditorUI &ui)
   ui.windowFlags = lockFlag;
 
 }
-EVENT(tags=debug) entity_viewer(const ImguiRender&, const EditorUI &ui)
+SYSTEM(tags=debug; stage=imgui_render) entity_viewer(const EditorUI &ui)
 {
   if(!ImGui::Begin("Entity viewer", nullptr, ui.windowFlags))
   {

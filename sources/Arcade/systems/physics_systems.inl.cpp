@@ -52,8 +52,9 @@ static void registration_pull_physics_systems()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &move_all_entity_with_velocity_implementation));
 
@@ -69,8 +70,9 @@ static void registration_pull_physics_systems()
     {"bullet", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &collision_detection_implementation));
 

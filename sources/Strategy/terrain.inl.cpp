@@ -70,8 +70,9 @@ static void registration_pull_terrain()
   },
   {},
   {},
-  {"render_end_sync_point"},
-  {"render_begin_sync_point"},
+  "render",
+  {},
+  {},
   {},
   &set_map_render_data_implementation));
 

@@ -1,6 +1,6 @@
 #include <ecs/ecs.h>
 #include <imgui.h>
-#include <ecs/imgui.h>
+
 #include "game_structs.h"
 
 EVENT(require=ecs::Tag mainHero) collect_kills(
@@ -11,7 +11,7 @@ EVENT(require=ecs::Tag mainHero) collect_kills(
   killsCount++;
 }
 
-EVENT() show_kill_stat(const ImguiRender&, int killsCount)
+SYSTEM(stage=imgui_render) show_kill_stat(int killsCount)
 {
   if (ImGui::Begin("Score"))
   {

@@ -8,7 +8,7 @@
 #include "political_map.h"
 #include "heightmap.h"
 #include "map_render_data.h"
-#include <ecs/imgui.h>
+
 
 struct MapEditor : ecs::Singleton
 {
@@ -24,7 +24,7 @@ ECS_REGISTER_SINGLETON(HeightMap)
 template<typename Callable>
 static void toggle_water(Callable);
 
-EVENT(tags=editor) country_builder(const ImguiRender&, 
+SYSTEM(tags=editor; stage=imgui_render) country_builder(
   MapEditor &editor,
   const PoliticalMap &politicalMap)
 {

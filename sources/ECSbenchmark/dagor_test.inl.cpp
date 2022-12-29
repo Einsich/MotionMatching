@@ -105,8 +105,9 @@ static void registration_pull_dagor_test()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &cache_trach_implementation));
 
@@ -117,8 +118,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &dag_soa_update_implementation));
 
@@ -129,8 +131,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &prune_cache__implementation));
 
@@ -144,8 +147,9 @@ static void registration_pull_dagor_test()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &dag_ecs_update_implementation));
 
@@ -156,8 +160,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &prune_cache0_implementation));
 
@@ -168,8 +173,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &dag_vector_structs_update_implementation));
 
@@ -180,8 +186,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &prune_cache1_implementation));
 
@@ -192,8 +199,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &dag_vector_pointers_update_implementation));
 
@@ -204,8 +212,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &prune_cache2_implementation));
 
@@ -216,8 +225,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &dag_vector_pointers_virtual_update_implementation));
 
@@ -228,8 +238,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &prune_cache3_implementation));
 

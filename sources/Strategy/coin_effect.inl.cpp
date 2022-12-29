@@ -39,8 +39,9 @@ static void registration_pull_coin_effect()
     {"coinEffect", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &coin_move_implementation));
 

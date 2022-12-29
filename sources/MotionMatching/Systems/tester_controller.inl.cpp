@@ -79,8 +79,9 @@ static void registration_pull_tester_controller()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &tester_update_implementation));
 
@@ -95,8 +96,9 @@ static void registration_pull_tester_controller()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {"game"},
   &test_count_implementation));
 

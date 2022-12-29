@@ -6,29 +6,19 @@ static ecs::QueryCache resources_menu__cache__;
 
 static ecs::QueryCache asset_viewer__cache__;
 
-static void resources_menu_handler(const ecs::Event &event)
+static void resources_menu_implementation()
 {
-  ecs::perform_event(reinterpret_cast<const ImguiMenuRender &>(event), resources_menu__cache__, resources_menu);
+  ecs::perform_system(resources_menu__cache__, resources_menu);
 }
 
-static void resources_menu_single_handler(ecs::EntityId eid, const ecs::Event &event)
+static void asset_viewer_implementation()
 {
-  ecs::perform_event(eid, reinterpret_cast<const ImguiMenuRender &>(event), resources_menu__cache__, resources_menu);
-}
-
-static void asset_viewer_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), asset_viewer__cache__, asset_viewer);
-}
-
-static void asset_viewer_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), asset_viewer__cache__, asset_viewer);
+  ecs::perform_system(asset_viewer__cache__, asset_viewer);
 }
 
 static void registration_pull_editor()
 {
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_system(ecs::SystemDescription(
   "",
   "resources_menu",
   &resources_menu__cache__,
@@ -37,13 +27,13 @@ static void registration_pull_editor()
   },
   {},
   {},
+  "imgui_menu",
   {},
   {},
   {"editor"},
-  &resources_menu_handler, &resources_menu_single_handler),
-  ecs::EventIndex<ImguiMenuRender>::value);
+  &resources_menu_implementation));
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_system(ecs::SystemDescription(
   "",
   "asset_viewer",
   &asset_viewer__cache__,
@@ -53,11 +43,11 @@ static void registration_pull_editor()
   },
   {},
   {},
+  "imgui_render",
   {},
   {},
   {"editor"},
-  &asset_viewer_handler, &asset_viewer_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
+  &asset_viewer_implementation));
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_editor)

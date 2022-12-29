@@ -1,6 +1,6 @@
 #include <ecs/ecs.h>
 #include <imgui.h>
-#include <ecs/imgui.h>
+
 #include <3dmath.h>
 
 static void NodeFont(ImFont* font)
@@ -89,7 +89,7 @@ static void NodeFont(ImFont* font)
 template<typename Callable>
 void gather_lands(Callable);
 
-EVENT() show_statistic(const ImguiRender&, ecs::vector<vec3> &land_colors)
+SYSTEM(stage=imgui_render) show_statistic(ecs::vector<vec3> &land_colors)
 {
   struct StatInfo
   {

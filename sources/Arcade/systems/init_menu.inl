@@ -5,7 +5,7 @@
 #include <application/application_data.h>
 #include "game_structs.h"
 #include <ecs/event_registration.h>
-#include <ecs/imgui.h>
+
 
 ECS_EVENT_REGISTRATION(StartGameEvent)
 ECS_EVENT_REGISTRATION(LoadSceneEvent)
@@ -31,7 +31,7 @@ EVENT() setup_camera(
 }
 
 //update menu
-EVENT(require=ecs::Tag startGameButton) start_game_button(const ImguiRender&, ecs::EntityId eid, const ScoreBoard &sb)
+SYSTEM(require=ecs::Tag startGameButton; stage=imgui_render) start_game_button(ecs::EntityId eid, const ScoreBoard &sb)
 {
   constexpr int N = 64;
   char buf[N];
@@ -48,7 +48,7 @@ EVENT(require=ecs::Tag startGameButton) start_game_button(const ImguiRender&, ec
 }
 
 
-EVENT() exit_menu_button(const ImguiRender&, bool isWinner, int killsCount, ScoreBoard &sb)
+SYSTEM(stage=imgui_render) exit_menu_button(bool isWinner, int killsCount, ScoreBoard &sb)
 {
   if (isWinner && ImGui::Begin("Result"))
   {

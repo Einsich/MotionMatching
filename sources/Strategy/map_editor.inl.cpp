@@ -16,14 +16,9 @@ static void toggle_water(Callable lambda)
   ecs::perform_query<bool&>(toggle_water__cache__, lambda);
 }
 
-static void country_builder_handler(const ecs::Event &event)
+static void country_builder_implementation()
 {
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), country_builder__cache__, country_builder);
-}
-
-static void country_builder_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), country_builder__cache__, country_builder);
+  ecs::perform_system(country_builder__cache__, country_builder);
 }
 
 static void trace_province_handler(const ecs::Event &event)
@@ -61,7 +56,7 @@ static void registration_pull_map_editor()
   {}
   ));
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_system(ecs::SystemDescription(
   "",
   "country_builder",
   &country_builder__cache__,
@@ -71,11 +66,11 @@ static void registration_pull_map_editor()
   },
   {},
   {},
+  "imgui_render",
   {},
   {},
   {"editor"},
-  &country_builder_handler, &country_builder_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
+  &country_builder_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",

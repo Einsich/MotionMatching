@@ -243,8 +243,9 @@ static void registration_pull_ecs_camera()
     {"camera", ecs::TypeIndex<Camera>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &set_main_camera_implementation));
 
@@ -260,8 +261,9 @@ static void registration_pull_ecs_camera()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &arcball_camera_update_implementation));
 
@@ -276,8 +278,9 @@ static void registration_pull_ecs_camera()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &freecamera_update_implementation));
 
@@ -290,8 +293,9 @@ static void registration_pull_ecs_camera()
   },
   {},
   {},
-  {"before_render_end_sync_point"},
-  {"before_render_begin_sync_point"},
+  "before_render",
+  {},
+  {},
   {"game"},
   &update_main_camera_game_transformations_implementation));
 
@@ -305,8 +309,9 @@ static void registration_pull_ecs_camera()
   },
   {},
   {},
-  {"before_render_end_sync_point"},
-  {"before_render_begin_sync_point"},
+  "before_render",
+  {},
+  {},
   {"editor"},
   &update_main_camera_editor_transformations_implementation));
 

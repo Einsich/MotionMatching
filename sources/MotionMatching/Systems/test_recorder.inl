@@ -4,11 +4,11 @@
 #include "Animation/Test/animation_tester.h"
 #include "Animation/Test/animation_test.h"
 #include <application/time.h>
-#include <ecs/imgui.h>
+
 
 ECS_REGISTER_TYPE_AND_VECTOR(AnimationTest, "AnimationTest", ecs::TrivialMoveConstructor);
 
-EVENT() recorder_ui(const ImguiRender&, 
+SYSTEM(stage=imgui_render) recorder_ui(
   ecs::vector<AnimationTest> &tests,
   int &recordedTest,
   int &recordedState,

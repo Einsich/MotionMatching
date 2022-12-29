@@ -17,10 +17,5 @@ public:
   void start_scene(const std::string &path, bool editor);
   void swap_editor_game_scene();
   
-  void pre_act();
-  void pre_before_render();
-  void pre_render();
-  
-  void update_ui();
   void destroy_scene();
 };

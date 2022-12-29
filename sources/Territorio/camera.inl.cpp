@@ -70,8 +70,9 @@ static void registration_pull_camera()
   },
   {},
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &camera_lerp_implementation));
 

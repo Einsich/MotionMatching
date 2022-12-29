@@ -73,8 +73,9 @@ static void registration_pull_core_logic()
     {"target", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &controll_targets_implementation));
 
@@ -91,8 +92,9 @@ static void registration_pull_core_logic()
     {"bullet", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &destroy_old_bullets_implementation));
 
@@ -109,8 +111,9 @@ static void registration_pull_core_logic()
     {"mainHero", ecs::TypeIndex<ecs::Tag>::value}
   },
   {},
-  {"act_end_sync_point"},
-  {"act_begin_sync_point"},
+  "act",
+  {},
+  {},
   {},
   &move_hero_implementation));
 

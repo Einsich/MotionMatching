@@ -9,7 +9,7 @@
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"
 #include <ecs/ecs.h>
-#include <optick.h>
+#include <profiler.h>
 
 namespace ecs_ex
 {
@@ -28,15 +28,26 @@ projectPath(root + "/" + project_name)
   OPTICK_APP(project_name.c_str());
 }
 
-static void start_ecs(SceneManager *scene)
+static void profiler_push(const char* label)
 {
+  OPTICK_PUSH_DYNAMIC(label);
+}
+static void profiler_pop()
+{
+  PROFILER_POP();
+}
+
+static void start_ecs()
+{
+  ecs::ecs_log = &debug_log;
+  ecs::ecs_error = &debug_error;
+
+  ecs::ecs_profiler_enabled = true;
+  ecs::ecs_profiler_push = &profiler_push;
+  ecs::ecs_profiler_pop = &profiler_pop;
+
   ecs::init(false);
   ecs::init_singletones();
-  ecs::init_stages({
-    {"act", [=]() { scene->pre_act(); }, nullptr},
-    {"before_render", [=]() { scene->pre_before_render(); }, nullptr},
-    {"render", [=]() { scene->pre_render(); }, nullptr},
-  });
   
   ecs::vector<ecs::string> editorTags, gameTags;
 #ifndef RELEASE
@@ -74,7 +85,7 @@ void Application::start()
   create_all_resources_from_metadata();
   ecs_ex::load_templates_from_blk();
 
-  start_ecs(scene);
+  start_ecs();
   scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
 bool Application::sdl_event_handler()
@@ -130,15 +141,37 @@ void Application::main_loop()
       mainThreadJobs.erase(mainThreadJobs.begin(), mainThreadJobs.begin() + mainThreadJobsCount);
     }
     {
-      OPTICK_EVENT("sdl_events");
+      PROFILER_EVENT("sdl_events");
 		  running = sdl_event_handler();
     }
     if (running)
     {
-      OPTICK_EVENT("ecs");
+      PROFILER_EVENT("ecs");
       ecs::update_archetype_manager();
-      ecs::perform_systems();
-      scene->update_ui();
+      ecs::perform_deffered_events();
+
+      ecs::perform_stage("act");
+      Application::instance().get_context().swap_buffer();
+      ecs::perform_stage("before_render");
+      {
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        ecs::perform_stage("render");
+      }
+      Application::instance().get_context().start_imgui();
+
+      {
+        ecs::perform_stage("imgui_render");
+        if (ImGui::BeginMainMenuBar())
+        {
+          ecs::perform_stage("imgui_menu");
+          ImGui::EndMainMenuBar();
+        }
+      }
+      
+      PROFILER_EVENT("imgui_render");
+      ImGui::Render();
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 	}
 }

@@ -4,16 +4,21 @@
 
 static ecs::QueryCache gather_text__cache__;
 
+static ecs::QueryCache text_render__cache__;
+
 static ecs::QueryCache text_changed__cache__;
 
 static ecs::QueryCache text_appear__cache__;
-
-static ecs::QueryCache text_render__cache__;
 
 template<typename Callable>
 static void gather_text(Callable lambda)
 {
   ecs::perform_query<const ecs::string&, const ecs::vector<vec4>&, ivec2, float, const vec4&>(gather_text__cache__, lambda);
+}
+
+static void text_render_implementation()
+{
+  ecs::perform_system(text_render__cache__, text_render);
 }
 
 static void text_changed_handler(const ecs::Event &event)
@@ -36,16 +41,6 @@ static void text_appear_single_handler(ecs::EntityId eid, const ecs::Event &even
   ecs::perform_event(eid, reinterpret_cast<const ecs::OnEntityCreated &>(event), text_appear__cache__, text_appear);
 }
 
-static void text_render_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), text_render__cache__, text_render);
-}
-
-static void text_render_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), text_render__cache__, text_render);
-}
-
 static void registration_pull_text_render()
 {
   ecs::register_query(ecs::QueryDescription(
@@ -62,6 +57,22 @@ static void registration_pull_text_render()
   {},
   {}
   ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "text_render",
+  &text_render__cache__,
+  {
+    {"editorSettings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorRenderSettings>()},
+    {"textRender", ecs::get_type_index<TextRender>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<TextRender>()}
+  },
+  {},
+  {},
+  "imgui_render",
+  {},
+  {},
+  {},
+  &text_render_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",
@@ -100,22 +111,6 @@ static void registration_pull_text_render()
   {},
   &text_appear_handler, &text_appear_single_handler),
   ecs::EventIndex<ecs::OnEntityCreated>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "text_render",
-  &text_render__cache__,
-  {
-    {"editorSettings", ecs::get_type_index<EditorRenderSettings>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<EditorRenderSettings>()},
-    {"textRender", ecs::get_type_index<TextRender>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<TextRender>()}
-  },
-  {},
-  {},
-  {},
-  {},
-  {},
-  &text_render_handler, &text_render_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_text_render)
