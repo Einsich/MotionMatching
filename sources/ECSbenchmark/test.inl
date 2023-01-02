@@ -50,6 +50,7 @@ EVENT() init(const ecs::OnSceneCreated &)
         {"index", i},
         {"pos", rand_vec3()},
         {"vel", rand_vec3()},
+        {"center", rand_vec3()},
         {"m", rand_float(1.f, 10.f)}
       });
     }
@@ -117,9 +118,8 @@ SYSTEM(stage=act;) vector_pointers_update()
 #include <daScript/daScript.h>
 #include <das_load.h>
 
-
-das::shared_ptr<DasFile> file;
 das::SimFunction *das_process_function;
+#include <parallel/thread_pool.h>
 
 EVENT() init_das(const ecs::OnSceneCreated &)
 {
@@ -127,75 +127,21 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   das::daScriptEnvironment::bound->das_def_tab_size = 2;
   NEED_ALL_DEFAULT_MODULES;
   NEED_MODULE(Module_ECS);
+  NEED_MODULE(Test_ECS);
   das::Module::Initialize();
 
   das::setDasRoot(root_path("sources/3rd_party/daScript"));
-  auto ecsFile = load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
-  file = load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
-return;
 
-  if (file)
-  {
-    for (uint32_t i = 0, n = file->get_function_count(); i < n; i++)
-    {
-      das::SimFunction *function = file->get_function(i);
-      das::FuncInfo &info = *function->debugInfo;
-      debug_log("name %s stackSize %d, count %d, locCount %d", function->name, function->stackSize, info.count, info.localCount);
-      for (int j = 0, m = info.count; j < m; j++)
-      {
-        break;
-        das::VarInfo &var = *info.fields[j];
-        debug_log("    name %s size %d const %d pod %d ref %d cppName %s",
-          var.name, var.size, var.isConst(), var.isPod(), var.isRef(), das::das_to_string(var.type).c_str());
-      }
-      bool verification = verify<void, float, float, das::float3 &, das::float3 &, das::float3>(*file, function);
-      debug_log("verification %d", verification);
-      if (verification)
-      {
-        float dt = 0.1;
-        float m = 1.f;
-        das::float3 p(0,1,2), v(-1,1,-1), c(100,100,100);
-
-        vec4f args[5] = {
-          das::cast<float>::from(dt),
-          das::cast<float>::from(m),
-          das::cast<das::float3&>::from(p),
-          das::cast<das::float3&>::from(v),
-          das::cast<das::float3>::from(c)
-        };
-        file->ctx->eval(function, args);
-        if (auto ex = file->ctx->getException()) {       // if function cased panic, report it
-          debug_log("exception: %s", ex);
-        }
-        else
-        {
-          das_process_function = function;
-          debug_log("dt = %f, m = %f, pos = %f,%f,%f, vel = %f,%f,%f, center = %f,%f,%f",
-          dt, m, p.x, p.y, p.z, v.x, v.y, v.z, c.x, c.y,c.z);
-        }
-      }
-    }
-  }
+  add_main_thread_job([]() {
+    load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
+    load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
+  });
 }
 
 EVENT() term_das(const ecs::OnSceneTerminated &)
 {
   clear_das_files();
-  file.reset();
   // shut-down daScript, free all memory
   das::Module::Shutdown();
-}
-
-
-SYSTEM(stage=act;) das_update(vec3 &pos, vec3 &vel, const vec3 &center, float m)
-{return;
-  vec4f args[5] = {
-    das::cast<float>::from(Time::delta_time()),
-    das::cast<float>::from(m),
-    das::cast<das::float3&>::from((das::float3&)pos),
-    das::cast<das::float3&>::from((das::float3&)vel),
-    das::cast<das::float3>::from((const das::float3&)center)
-  };
-  if (file)
-    file->ctx->eval(das_process_function, args);
+  fflush(stdout);
 }

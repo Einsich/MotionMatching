@@ -4,7 +4,7 @@ extern size_t ecs_pull;
 
 int main(int, char**)
 {
-  printf("ecs_pull %zu", ecs_pull);
+  printf("ecs_pull %zu\n", ecs_pull);
   std::filesystem::path currentPath = std::filesystem::current_path();
   std::filesystem::path root(currentPath.parent_path());
 

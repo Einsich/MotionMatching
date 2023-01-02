@@ -1,6 +1,8 @@
 #include <daScript/daScript.h>
 #include "das_load.h"
 
+void resolve_systems(const das::ContextPtr &ctx);
+
 das::TextPrinter tout;// output stream for all compiler messages (stdout. for stringstream use TextWriter)
 
 
@@ -34,6 +36,7 @@ DasFilePtr load_das_script(const char *path)
     return nullptr;
   }
   files.emplace(path, file);
+  resolve_systems(file->ctx);
   return file;
 }
 
@@ -46,7 +49,7 @@ das::SimFunction *DasFile::get_function(uint32_t i)
 {
   return ctx->getFunction(i);
 }
-das::SimFunction *DasFile::find_function(const char *name)
+das::SimFunction *DasFile::find_function(const char *name) const 
 {
   return ctx->findFunction(name);
 }

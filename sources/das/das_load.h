@@ -9,7 +9,7 @@ struct DasFile
 
   uint32_t get_function_count() const;
   das::SimFunction *get_function(uint32_t i);
-  das::SimFunction *find_function(const char *name);
+  das::SimFunction *find_function(const char *name) const;
 };
 using DasFilePtr = das::shared_ptr<DasFile>;
 

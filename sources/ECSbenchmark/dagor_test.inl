@@ -28,6 +28,7 @@ static vector<vec3> vData;
 volatile int cache0 = 0;
 void prune_cache()
 {
+  return;
   static vector<int> memory;
   if (!memory.size())
     memory.resize(4<<20, 1);
@@ -37,7 +38,7 @@ void prune_cache()
 
 EVENT() dag_init(const ecs::OnSceneCreated &)
 {
-
+  return;
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
   ecs::prefab_id tmpl1 = ecs::create_entity_prefab(ecs::EntityPrefab("test1", {
     {"p", vec3()},

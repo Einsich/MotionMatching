@@ -160,10 +160,9 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "dev",
     "Project": {
-      "name": "Strategy",
-      "delpoy_only_project_folder": "false"
+      "name": "ECSbenchmark"
     }
   },
   "cmake.configureOnOpen": false,

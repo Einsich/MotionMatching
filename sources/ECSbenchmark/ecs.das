@@ -114,43 +114,19 @@ class SystemMacro : AstFunctionAnnotation
     func.body := fblk
     return true
 
-def type_name(_type : TypeDeclPtr)
 
-  if _type.baseType==Type tHandle
-    return "{_type.annotation.name}"
-  if _type.baseType==Type tInt
-    return "int"
-  if _type.baseType==Type tInt2
-    return "int2"
-  if _type.baseType==Type tInt3
-    return "int3"
-  if _type.baseType==Type tInt4
-    return "int4"
-  elif _type.baseType==Type tFloat
-    return "float"
-  elif _type.baseType==Type tFloat2
-    return "float2"
-  elif _type.baseType==Type tFloat3
-    return "float3"
-  elif _type.baseType==Type tFloat4
-    return "float4"
-  elif _type.baseType==Type tDouble
-    return "double"
-  elif _type.baseType==Type tString
-    return "string"
-  elif _type.baseType==Type tBool
-    return "bool"
-
-  return "?"
+def parse_component_type(str : das_string)
+  let s = string(str)
+  let typeIdx = find(s, "`")
+  return [[auto slice(s, 0, typeIdx), slice(s, typeIdx+1)]]
 
 [function_macro(name="ecs")]
 class ECSSystemMacro : AstFunctionAnnotation
 
   def override apply ( var func:FunctionPtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
 
-    let argPass = find_arg("stage", args)
+    let stage = find_arg("stage", args)
 
-    func.flags |= FunctionFlags exports
 
     var req: array<tuple<string; string>>
     var not_req: array<tuple<string; string>>
@@ -160,9 +136,9 @@ class ECSSystemMacro : AstFunctionAnnotation
     for arg in args
       if arg.basicType == Type tString
         if arg.name == "required"
-          req |> push([[auto "", "{arg.sValue}"]])
+          req |> push(parse_component_type(arg.sValue))
         elif arg.name == "required_not"
-          not_req |> push([[auto "", "{arg.sValue}"]])
+          not_req |> push(parse_component_type(arg.sValue))
         elif arg.name == "before"
           before |> push("{arg.sValue}")
         elif arg.name == "after"
@@ -170,9 +146,50 @@ class ECSSystemMacro : AstFunctionAnnotation
         elif arg.name == "tags"
           tags |> push("{arg.sValue}")
 
-    for arg in func.arguments
-      req |> push([[auto type_name(arg._type), "{arg.name}"]])
+    
+    var vars : array<VariablePtr>
+    var prtInc : array<ExpressionPtr>
+    var ptrPass : array<ExpressionPtr>
+
+
+
+    vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
+
+    for arg in func.arguments  
   
-    register_system("{func.name}", "{argPass}", req, not_req, before, after, tags)
+      var vtype <- clone_type(arg._type)
+      vtype.baseType = Type tPointer
+      vtype.flags = bitfield(0)
+
+      prtInc |> emplace_new <| qmacro($i(arg.name)++)
+      if arg._type.isPointer
+        ptrPass |> emplace_new <| qmacro($i(arg.name))
+        vtype.firstType := clone_type(arg._type.firstType)
+      else
+        ptrPass |> emplace_new <| qmacro(*$i(arg.name))
+        vtype.firstType := clone_type(arg._type)
+      vtype.firstType.flags &= ~TypeDeclFlags ref
+     
+      
+      vars |> emplace_new <| new [[Variable() at=arg.at,
+          name := arg.name,
+          _type <- vtype
+        ]]
+
+
+    let systemName = string(func.name)
+    var systemLoop <- qmacro_function("{systemName}`implementation") <| $($a(vars))
+      unsafe
+        for i in range(n)
+          $c(systemName)($a(ptrPass))
+          $b(prtInc)
+      return
+    
+    //print(describe(systemLoop))
+    
+    systemLoop.flags |= FunctionFlags exports
+    compiling_module() |> add_function(systemLoop)
+
+    register_system("{stage}", req, not_req, before, after, tags, func)
   
     return true

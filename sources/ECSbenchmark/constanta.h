@@ -1,6 +1,6 @@
 #pragma once
-constexpr uint entityCount = 30000;
-constexpr uint dagorEntityCount = 100000;
+constexpr uint entityCount = 5000;
+constexpr uint dagorEntityCount = 1;
 
 
 struct Data

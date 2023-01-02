@@ -8,8 +8,6 @@ static ecs::QueryCache vector_structs_update__cache__;
 
 static ecs::QueryCache vector_pointers_update__cache__;
 
-static ecs::QueryCache das_update__cache__;
-
 static ecs::QueryCache init__cache__;
 
 static ecs::QueryCache init_das__cache__;
@@ -29,11 +27,6 @@ static void vector_structs_update_implementation()
 static void vector_pointers_update_implementation()
 {
   ecs::perform_system(vector_pointers_update__cache__, vector_pointers_update);
-}
-
-static void das_update_implementation()
-{
-  ecs::perform_system(das_update__cache__, das_update);
 }
 
 static void init_handler(const ecs::Event &event)
@@ -111,24 +104,6 @@ static void registration_pull_test()
   {},
   {},
   &vector_pointers_update_implementation));
-
-  ecs::register_system(ecs::SystemDescription(
-  "",
-  "das_update",
-  &das_update__cache__,
-  {
-    {"pos", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
-    {"vel", ecs::get_type_index<vec3>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<vec3>()},
-    {"center", ecs::get_type_index<vec3>(), ecs::AccessType::ReadOnly, false, ecs::is_singleton<vec3>()},
-    {"m", ecs::get_type_index<float>(), ecs::AccessType::Copy, false, ecs::is_singleton<float>()}
-  },
-  {},
-  {},
-  "act",
-  {},
-  {},
-  {},
-  &das_update_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",
