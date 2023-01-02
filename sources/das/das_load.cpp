@@ -13,12 +13,16 @@ void clear_das_files()
   files.clear();
 }
 
+std::string root_path(const std::string &path);
+
 DasFilePtr load_das_script(const char *path)
 {
+  static auto fsAccess = das::make_smart<das::FsFileAccess>(root_path("sources/das/common.das_project"), das::make_smart<das::FsFileAccess>());
+  das::ModuleGroup dummyLibGroup;
   auto file = das::make_shared<DasFile>();
-  static auto fsAccess = das::make_smart<das::FsFileAccess>();
+
   // compile program
-  file->program = das::compileDaScript(path, fsAccess, tout, file->dummyLibGroup);
+  file->program = das::compileDaScript(path, fsAccess, tout, dummyLibGroup);
   if (file->program->failed() ) {
     tout << "failed to compile\n";
     for ( auto & err : file->program->errors ) {

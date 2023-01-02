@@ -1,0 +1,48 @@
+require engine
+require strings
+require daslib/strings_boost
+
+typedef
+  module_info = tuple<string;string;string> const
+
+var
+  DAS_PAK_ROOT = "./"
+
+let moduleMap : table<string; string> <- {{
+  "ecs" => "{root_path()}/sources/das/ecs.das"
+}}
+
+def module_default(req,from:string) : module_info
+  let rs <- split_by_chars(req,"./")
+  var fr <- split_by_chars(from,"/")
+  //print("{rs}")
+  let mod_name = rs[length(rs)-1]
+
+  let path = moduleMap |> find(mod_name)
+  if path != null
+    //print("0 resolved as {*path}\n")
+    return [[auto mod_name, *path, ""]]
+
+
+  if length(rs)==1
+    //print("1 resolved as {req + ".das"}\n")
+    return [[auto mod_name, req + ".das", ""]]
+  elif length(rs)==2 && rs[0]=="daslib"
+    let resolvedPath = "{get_das_root()}/daslib/{mod_name}.das"
+    //print("2 resolved as {resolvedPath}\n")
+    return [[auto mod_name, resolvedPath, ""]]
+  else
+    pop(fr)
+    for se in rs
+      push(fr,se)
+    let path_name = join(fr,"/") + ".das"
+    //print("3 resolved as {path_name}\n")
+    return [[auto mod_name, path_name, ""]]
+
+[export]
+def module_get(req,from:string) : module_info
+  //print("looking for {req} from {from}\n")
+
+  return module_default(req,from)
+
+

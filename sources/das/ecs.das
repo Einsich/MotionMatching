@@ -3,12 +3,10 @@ module ecs shared
 require daslib/ast_boost
 require daslib/templates_boost
 require daslib/strings_boost
-require daslib/ast_block_to_loop
-require daslib/decs
 
 require ecs_impl
 
-enum private DecsQueryType
+/* enum private DecsQueryType
   query
   eid_query
   find_query
@@ -113,7 +111,7 @@ class SystemMacro : AstFunctionAnnotation
     //fblk.list |> emplace(cqq)
     func.body := fblk
     return true
-
+ */
 
 def parse_component_type(str : das_string)
   let s = string(str)

@@ -99,7 +99,9 @@
     "stop_token": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "any": "cpp"
+    "any": "cpp",
+    "ranges": "cpp",
+    "span": "cpp"
   },
   "launchOption.options": {
     "BuildType": [
@@ -160,7 +162,7 @@
     ]
   },
   "launchOption.currentConfig": {
-    "BuildType": "dev",
+    "BuildType": "dbg",
     "Project": {
       "name": "ECSbenchmark"
     }

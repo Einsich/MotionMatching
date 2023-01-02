@@ -133,7 +133,6 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   das::setDasRoot(root_path("sources/3rd_party/daScript"));
 
   add_main_thread_job([]() {
-    load_das_script(root_path("sources/ECSbenchmark/ecs.das").c_str());
     load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
   });
 }

@@ -3,7 +3,6 @@
 
 struct DasFile
 {
-  das::ModuleGroup dummyLibGroup;
   das::ProgramPtr program;
   das::ContextPtr ctx;
 
@@ -15,10 +14,3 @@ using DasFilePtr = das::shared_ptr<DasFile>;
 
 DasFilePtr load_das_script(const char *path);
 void clear_das_files();
-
-
-template<typename T, typename ...Args>
-bool verify(const DasFile &file, das::SimFunction *das_function)
-{
-  return das_function && das::verifyCall<T, Args...>(das_function->debugInfo, file.dummyLibGroup);
-}

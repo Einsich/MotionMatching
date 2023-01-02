@@ -6,3 +6,4 @@ include(../module.cmake)
 
 include_directories(${SRC_ROOT}/3rd_party/daScript/include)
 include_directories(${SRC_ROOT}/3rd_party/ecs/include)
+include_directories(${SRC_ROOT}/3rd_party/eastl/include)

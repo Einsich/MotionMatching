@@ -25,7 +25,6 @@ projectPath(root + "/" + project_name)
 {
   assert(scene);
   application = this;
-  OPTICK_APP(project_name.c_str());
 }
 
 static void profiler_push(const char* label)
@@ -191,7 +190,7 @@ string project_path(const string &path)
 {
   return Application::instance().projectPath + "/" + path;
 }
-string project_path()
+const string &project_path()
 {
   return Application::instance().projectPath;
 }
@@ -199,7 +198,7 @@ string root_path(const std::string &path)
 {
   return Application::instance().root + "/" + path;
 }
-string root_path()
+const string &root_path()
 {
   return Application::instance().root;
 }
