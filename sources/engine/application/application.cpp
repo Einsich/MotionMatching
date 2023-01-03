@@ -19,7 +19,7 @@ namespace ecs_ex
 void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 
-Application::Application(const string &project_name, const string &root, int width, int height, bool full_screen):
+Application::Application(const std::string &project_name, const std::string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
 root(root),
 projectPath(root + "/" + project_name)
@@ -62,7 +62,7 @@ static void start_ecs()
   ecs::pull_registered_files();
 }
 
-static void copy_paths(const std::string &root, const ecs::vector<ecs::string> &src, vector<filesystem::path> &dst)
+static void copy_paths(const std::string &root, const ecs::vector<ecs::string> &src, std::vector<filesystem::path> &dst)
 {
   dst.resize(src.size());
   for (int i = 0, n = src.size(); i < n; i++)
@@ -195,19 +195,19 @@ void Application::exit()
   SDL_Quit();
   OPTICK_SHUTDOWN();
 }
-string project_path(const string &path)
+std::string project_path(const std::string &path)
 {
   return Application::instance().projectPath + "/" + path;
 }
-const string &project_path()
+const std::string &project_path()
 {
   return Application::instance().projectPath;
 }
-string root_path(const std::string &path)
+std::string root_path(const std::string &path)
 {
   return Application::instance().root + "/" + path;
 }
-const string &root_path()
+const std::string &root_path()
 {
   return Application::instance().root;
 }

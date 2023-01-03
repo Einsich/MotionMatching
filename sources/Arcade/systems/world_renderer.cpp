@@ -2,8 +2,8 @@
 
 WorldRenderer::WorldRenderer()
 {
-  vector<uint> indices = {0,1,2,0,2,3};
-  vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
+  std::vector<uint> indices = {0,1,2,0,2,3};
+  std::vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
   spriteVao = Mesh(indices, corners);
 }
 

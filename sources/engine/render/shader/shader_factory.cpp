@@ -12,7 +12,7 @@
 
 namespace fs = filesystem;
 
-static vector<PrecompiledShader> precompiledShaders;
+static std::vector<PrecompiledShader> precompiledShaders;
 
 template<typename T>
 void load_obj(const char *file_name, T & obj)
@@ -31,7 +31,7 @@ void save_obj(const char *file_name, T & obj)
 
 
 void add_shader_path(const fs::path &path);
-bool compile_shader(const string &shaderName, const vector<pair<GLuint, string>> &shaders, GLuint &program);
+bool compile_shader(const std::string &shaderName, const std::vector<std::pair<GLuint, std::string>> &shaders, GLuint &program);
 void process_codegen_shaders();
 
 

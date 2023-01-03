@@ -14,7 +14,7 @@ CubeMap::CubeMap()
   wrapping = TextureWrappFormat::Repeat;
   glGenTextures(1, &textureObject);
 }
-CubeMap::CubeMap(string cubemap_path_from_textures_folder,
+CubeMap::CubeMap(std::string cubemap_path_from_textures_folder,
   TextureColorFormat color_format, 
   TextureFormat texture_format, 
   TexturePixelFormat pixel_format)
@@ -52,10 +52,10 @@ void CubeMap::load(const filesystem::path &, bool , AssetStatus &status)
 void CubeMap::load_stbi()
 {
   int size = -1;
-  string path = root_path(textureName);
+  std::string path = root_path(textureName);
   for (int i = 0; i < 6; i++)
   {
-    string fullpath = path + "/" + to_string(i) + ".jpg";
+    std::string fullpath = path + "/" + std::to_string(i) + ".jpg";
     int w, h, ch;
     images[i] = stbi_load(fullpath.c_str(), &w, &h, &ch, 0);
     if (!images[i])

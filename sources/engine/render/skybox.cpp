@@ -6,8 +6,8 @@ ECS_REGISTER_TYPE(SkyBox, "SkyBox", ecs::DefaultType);
 
 SkyBox::SkyBox()
 {
-	vector<unsigned int> indices;
-	vector<vec3> vertecs;
+	std::vector<unsigned int> indices;
+	std::vector<vec3> vertecs;
   for (int face = 0; face < 3; face++)
 	{
 		for (int d = -1; d <= 1; d += 2)

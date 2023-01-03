@@ -51,7 +51,7 @@ protected:
   TextureWrappFormat wrapping;
   TexturePixelFormat pixelFormat;
   int textureWidth, textureHeight, textureDepth;
-  string textureName;
+  std::string textureName;
   bool powerOfTwo;
   GLenum get_internal_format(TextureColorFormat colorFormat, TextureFormat textureFormat);
   bool texture_edit();
@@ -61,7 +61,7 @@ public:
   Texture():textureObject(0), textureDepth(1){}
   void bind(const Shader &shader, const char * textureName) const;
   void bind(const Shader &shader, const char * textureName, int slot) const;
-  const string &get_name() const;
+  const std::string &get_name() const;
   uint get_texture_object() const;
   uint get_texture_type() const;
   void unbind() const;

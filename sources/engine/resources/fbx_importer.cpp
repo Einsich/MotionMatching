@@ -7,7 +7,7 @@
 void FBXMeta::create_assets() const
 {
 
-  for (const string &str : meshMetaData)
+  for (const std::string &str : meshMetaData)
   { 
     Asset<Mesh> mesh(str);
   }
@@ -34,7 +34,7 @@ void FBXMeta::read_file_info(const filesystem::path &path)
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
-  string fbxPath = path.parent_path().string() + "\\" + path.stem().string();
+  std::string fbxPath = path.parent_path().string() + "\\" + path.stem().string();
   importer.ReadFile(fbxPath, aiPostProcessSteps::aiProcess_Triangulate | aiPostProcessSteps::aiProcess_LimitBoneWeights |
     aiPostProcessSteps::aiProcess_GenNormals | aiProcess_GlobalScale | aiProcess_FlipWindingOrder);
 
@@ -47,7 +47,7 @@ void FBXMeta::read_file_info(const filesystem::path &path)
   filesystem::path resourceRoot = root_path();
   for (uint i = 0; i < scene->mNumMeshes; ++i)
   {
-    filesystem::path path_ = (fbxPath + "[" + to_string(i) + "]" );
+    filesystem::path path_ = (fbxPath + "[" + std::to_string(i) + "]" );
     meshMetaData.emplace_back(path_.lexically_relative(resourceRoot).string());
     debug_log("find new mesh %s", meshMetaData.back().c_str());
   }

@@ -7,7 +7,7 @@ class Texture3D : public Texture
 public:
   Texture3D(){}
   Texture3D(int size_x, int size_y, int size_z,
-  const string & name,
+  const std::string & name,
   TextureColorFormat color_format = TextureColorFormat::R, 
   TextureFormat texture_format = TextureFormat::Float, 
   TexturePixelFormat pixelFormat = TexturePixelFormat::Linear,

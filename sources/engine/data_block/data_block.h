@@ -172,6 +172,6 @@ constexpr auto get_functions##function_name(std::index_sequence<Is...>)\
   return std::array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), N> {\
       (&function_name<DataBlock::AllowedTypes::TypeOf<Is>>)...};\
 }\
-static constexpr array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), DataBlock::AllowedTypes::size>\
+static constexpr std::array<decltype(&function_name<DataBlock::AllowedTypes::TypeOf<0>>), DataBlock::AllowedTypes::size>\
   array_name = get_functions##function_name(std::make_index_sequence<DataBlock::AllowedTypes::size>());
 

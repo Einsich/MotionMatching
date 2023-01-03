@@ -7,12 +7,12 @@
 const int MaxQueueSize = 32;
 struct Message
 {
-  string message;
+  std::string message;
   bool status;
 };
-list<Message> &messages_list()
+std::list<Message> &messages_list()
 {
-  static list<Message> q;
+  static std::list<Message> q;
   return q;
 }
 
@@ -29,7 +29,7 @@ void debug_common(const char *fmt, int status, va_list args)
     q.pop_front();
   }
 
-  q.push_back({string(timeBuf) + string(messageBuf), (bool)status});
+  q.push_back({std::string(timeBuf) + std::string(messageBuf), (bool)status});
 
   if (!status)
   {

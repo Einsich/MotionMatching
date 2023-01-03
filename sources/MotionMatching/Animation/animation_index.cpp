@@ -184,7 +184,7 @@ AnimationIndex AnimationLerpedIndex::current_index() const
 {
   return indexes.back();
 }
-const vector<AnimationIndex> &AnimationLerpedIndex::get_indexes() const
+const std::vector<AnimationIndex> &AnimationLerpedIndex::get_indexes() const
 {
   return indexes;
 }

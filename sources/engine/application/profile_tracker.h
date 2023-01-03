@@ -4,13 +4,13 @@
 class ProfileTracker
 {
 private:
-  string path;
-  vector<float> times;
+  std::string path;
+  std::vector<float> times;
   size_t frameCount; 
   bool stopped;
 public:
   float maxTime, averageTime;
-  ProfileTracker(const string &path, size_t frame_count):
+  ProfileTracker(const std::string &path, size_t frame_count):
     path(path), frameCount(frame_count), stopped(false)
   {
     times.reserve(frame_count);

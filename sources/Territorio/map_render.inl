@@ -27,8 +27,8 @@ SYSTEM(stage=render) render_scene(
   const Transform2D &transform,
   WorldRenderer &wr)
 {
-  static vector<uint> indices = {0,1,2,0,2,3};
-  static vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
+  static std::vector<uint> indices = {0,1,2,0,2,3};
+  static std::vector<vec2> corners =  {vec2(-1, -1), vec2(1,-1), vec2(1,1),vec2(-1,1)};
   static Mesh squadVao(indices, corners);
   wr.screenToWorld = transform.get_matrix();
   mat3 viewProjection = cameraProjection * glm::inverse(wr.screenToWorld);

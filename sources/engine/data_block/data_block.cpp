@@ -8,15 +8,15 @@
 #include "3dmath.h"
 
 #define OUT_VEC(vec2, vec3, vec4)\
-ostream& operator<<(ostream& os, const vec2& v)\
+std::ostream& operator<<(std::ostream& os, const vec2& v)\
 {\
   return os << v.x << ',' << v.y;\
 }\
-ostream& operator<<(ostream& os, const vec3& v)\
+std::ostream& operator<<(std::ostream& os, const vec3& v)\
 {\
   return os << v.x << ',' << v.y << ',' << v.z;\
 }\
-ostream& operator<<(ostream& os, const vec4& v)\
+std::ostream& operator<<(std::ostream& os, const vec4& v)\
 {\
   return os << v.x << ',' << v.y << ',' << v.z << ',' << v.w;\
 }
@@ -26,7 +26,7 @@ OUT_VEC(uvec2, uvec3, uvec4)
 
 struct Stream
 {
-  string content;
+  std::string content;
   size_t current, line;
   Stream(std::ifstream &stream) :
   content(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()),
@@ -96,7 +96,7 @@ static void skip_spaces(Stream &stream)
   }
 }
 
-static bool read_var(Stream &stream, string &var)
+static bool read_var(Stream &stream, std::string &var)
 {
   var.clear();
   skip_spaces(stream);
@@ -110,7 +110,7 @@ static bool read_var(Stream &stream, string &var)
   return true;
 }
 
-static bool read_type(Stream &stream, string &type)
+static bool read_type(Stream &stream, std::string &type)
 {
   type.clear();
   skip_spaces(stream);
@@ -140,7 +140,7 @@ template<int N, typename T>
 static bool parse(Stream &stream, vec<N, T, defaultp> &value)
 {
   int n = 0, read = 0;
-  if constexpr (is_same_v<T, float>)
+  if constexpr (std::is_same_v<T, float>)
   {
     if constexpr (N == 2)
       read = sscanf(stream.data(), "%f,%f%n", &value.x, &value.y, &n);
@@ -210,7 +210,7 @@ static bool parse(Stream &stream, bool &value)
   return false;
 }
 
-static bool parse(Stream &stream, string &value)
+static bool parse(Stream &stream, std::string &value)
 {
   skip_spaces(stream);
   bool result = false;
@@ -232,7 +232,7 @@ string_start:
         stream.get();
         c = stream.peek();
         constexpr int N = 4;
-        pair<char, char> specialCharacters[N] = 
+        std::pair<char, char> specialCharacters[N] = 
             {{'"', '\"'}, {'n', '\n'}, {'\\', '\\'}, {'\'', '\''}};
         bool found = false;
         for (int i = 0; i < N; i++)
@@ -276,7 +276,7 @@ static bool try_parse_value(Stream &stream, DataBlock &blk, const char *varName,
   }
 }
 //must be parrallel with DataBlock::AllowedTypes
-static array<const char*, DataBlock::AllowedTypes::size> types_literals
+static std::array<const char*, DataBlock::AllowedTypes::size> types_literals
 {
   "i", "i2","i3", "i4",
   "u", "u2", "u3", "u4",
@@ -287,7 +287,7 @@ static array<const char*, DataBlock::AllowedTypes::size> types_literals
 
 GET_FUNCTIONS(parsers, try_parse_value)
 
-static bool add_variable(Stream &stream, DataBlock &block, const string &varName, const string &varType)
+static bool add_variable(Stream &stream, DataBlock &block, const std::string &varName, const std::string &varType)
 {
   for (uint32_t i = 0, n = types_literals.size(); i < n; i++)
     if (strcmp(varType.c_str(), types_literals[i]) == 0)
@@ -300,7 +300,7 @@ static bool add_variable(Stream &stream, DataBlock &block, const string &varName
 
 static bool read_blk(Stream &stream, DataBlock &block);
 
-static bool add_block(Stream &stream, DataBlock &block, const string &varName, const string &varType)
+static bool add_block(Stream &stream, DataBlock &block, const std::string &varName, const std::string &varType)
 {
   DataBlock *nextBlock = block.addBlock(varName.c_str(), varType.c_str());
   /* if (varType != "")
@@ -312,7 +312,7 @@ static bool add_block(Stream &stream, DataBlock &block, const string &varName, c
 
 static bool read_blk(Stream &stream, DataBlock &block)
 {
-  string varName, varType;
+  std::string varName, varType;
   for (int c; (c = stream.peek()) != EOF; stream.get())
   {
     if (std::isspace(c))
@@ -373,7 +373,7 @@ DataBlock::DataBlock(const char *name, const char *type):
 }
 DataBlock::DataBlock(const std::string &path)
 {
-  if (!filesystem::exists(path))
+  if (!std::filesystem::exists(path))
   {
     debug_error("don't exist file %s", path.c_str());
     return;
@@ -410,7 +410,7 @@ static void write_to_stream(std::ofstream &stream, const char *name, float value
 {
   stream << name << ":f=" << value << ";\n";
 }
-static void write_to_stream(std::ofstream &stream, const char *name, const string &value)
+static void write_to_stream(std::ofstream &stream, const char *name, const std::string &value)
 {
   stream << name << ":t=\"" << value << "\";\n";
 }
@@ -479,12 +479,12 @@ void DataBlock::save(const std::string &path) const
 }
 
 
-const string& DataBlock::name() const
+const std::string& DataBlock::name() const
 {
   return blockName;
 }
 
-const string& DataBlock::type() const
+const std::string& DataBlock::type() const
 {
   return blockType;
 }
@@ -505,7 +505,7 @@ DataBlock *DataBlock::getBlock(const char *name)
 
 const DataBlock *DataBlock::getBlock(const char *name) const
 {
-  for (const shared_ptr<DataBlock> &block : blocks)
+  for (const std::shared_ptr<DataBlock> &block : blocks)
     if (block->name() == name)
       return block.get();
   return nullptr;
@@ -523,7 +523,7 @@ const DataBlock *DataBlock::getBlock(size_t index) const
 
 DataBlock* DataBlock::addBlock(const char *name, const char *type)
 {
-  return blocks.emplace_back(make_shared<DataBlock>(name, type)).get();
+  return blocks.emplace_back(std::make_shared<DataBlock>(name, type)).get();
 }
 
 const DataBlock::Property &DataBlock::getProperty(size_t index) const

@@ -8,7 +8,7 @@
 
 
 // During init, enable debug output
-Context::Context(string window_name, int width, int height, bool full_screen)
+Context::Context(std::string window_name, int width, int height, bool full_screen)
 {
   resolution = Resolution{width, height};
   SDL_Init(SDL_INIT_EVERYTHING);

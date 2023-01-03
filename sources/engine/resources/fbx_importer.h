@@ -6,7 +6,7 @@ class FBXMeta : public IAsset
 {
   REFLECT(FBXMeta,
   (bool) (loaded),
-  (vector<string>) (meshMetaData))
+  (std::vector<std::string>) (meshMetaData))
   void create_assets() const;
   void read_file_info(const filesystem::path &path);
 public:

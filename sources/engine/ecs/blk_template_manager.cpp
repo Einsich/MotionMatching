@@ -22,9 +22,9 @@ namespace ecs_ex
   {
     std::string name;
     const DataBlock *blk;
-    vector<ecs::ComponentPrefab> components;
-    vector<std::string> extends;
-    vector<size_t> extendsIdx;
+    std::vector<ecs::ComponentPrefab> components;
+    std::vector<std::string> extends;
+    std::vector<size_t> extendsIdx;
   };
   template <typename T>
   ecs::ComponentPrefab create_instance(const DataBlock &blk, const DataBlock::Property &property)
@@ -38,7 +38,7 @@ namespace ecs_ex
   }
   GET_FUNCTIONS(instantiate, create_instance)
 
-  static void collect_template_files(vector<TemplateFile> &templatesFiles)
+  static void collect_template_files(std::vector<TemplateFile> &templatesFiles)
   {
     templatesFiles.clear();
     for (const auto &path : Application::instance().templatePaths)
@@ -56,7 +56,7 @@ namespace ecs_ex
     }
   }
 
-  static void fill_raw_template(const vector<TemplateFile> &templateFiles, vector<RawTemplate> &rawTemplates)
+  static void fill_raw_template(const std::vector<TemplateFile> &templateFiles, std::vector<RawTemplate> &rawTemplates)
   {
     for (const TemplateFile &file : templateFiles)
     {
@@ -86,7 +86,7 @@ namespace ecs_ex
     NOT_VERIFIED
   };
 
-  static bool validate_template(const vector<RawTemplate> &templates, size_t templateId, vector<int> &status)
+  static bool validate_template(const std::vector<RawTemplate> &templates, size_t templateId, std::vector<int> &status)
   {
     if (status[templateId] == VERIFIED)
       return true;
@@ -111,9 +111,9 @@ namespace ecs_ex
     return true;
   }
 
-  static void validate_templates(vector<RawTemplate> &templates)
+  static void validate_templates(std::vector<RawTemplate> &templates)
   {
-    vector<int> status(templates.size(), NOT_VISITED);
+    std::vector<int> status(templates.size(), NOT_VISITED);
     for (size_t i = 0, n = templates.size(); i < n; ++i)
     {
       if (!validate_template(templates, i, status))
@@ -135,7 +135,7 @@ namespace ecs_ex
     templates.erase(templates.begin() + first, templates.end());
   }
 
-  static void init_templates(vector<RawTemplate> &rawTemplates)
+  static void init_templates(std::vector<RawTemplate> &rawTemplates)
   {
     for (RawTemplate &rawTmpl : rawTemplates)
     {
@@ -151,7 +151,7 @@ namespace ecs_ex
     }
   }
 
-  void init_components_from_blk(const DataBlock *tmpl, vector<ecs::ComponentPrefab> &components)
+  void init_components_from_blk(const DataBlock *tmpl, std::vector<ecs::ComponentPrefab> &components)
   {
     for (size_t i = 0, n = tmpl->propertiesCount(); i < n; i++)
     {
@@ -176,7 +176,7 @@ namespace ecs_ex
     }
   }
 
-  static void init_components(const RawTemplate &rawTemplate, vector<ecs::ComponentPrefab> &components)
+  static void init_components(const RawTemplate &rawTemplate, std::vector<ecs::ComponentPrefab> &components)
   {
     init_components_from_blk(rawTemplate.blk, components);
   }
@@ -207,7 +207,7 @@ namespace ecs_ex
   {
     patch_components_impl(components, std::move(patch));
   }
-  static void linearize_extends(vector<RawTemplate> &rawTemplates, size_t templateId)
+  static void linearize_extends(std::vector<RawTemplate> &rawTemplates, size_t templateId)
   {
     RawTemplate &blkTemplate = rawTemplates[templateId];
     if (!blkTemplate.components.empty())
@@ -218,12 +218,12 @@ namespace ecs_ex
       linearize_extends(rawTemplates, i);
       patch_components(blkTemplate.components, rawTemplates[i].components);
     }
-    vector<ecs::ComponentPrefab> components;
+    std::vector<ecs::ComponentPrefab> components;
     init_components(rawTemplates[templateId], components);
     patch_components(blkTemplate.components, std::move(components));
   }
 
-  static void linearize_extends(vector<RawTemplate> &rawTemplates)
+  static void linearize_extends(std::vector<RawTemplate> &rawTemplates)
   {
     for (size_t i = 0, n = rawTemplates.size(); i < n; ++i)
     {
@@ -233,11 +233,11 @@ namespace ecs_ex
 
   void load_templates_from_blk()
   {
-    static vector<TemplateFile> templatesFiles;
+    static std::vector<TemplateFile> templatesFiles;
     templatesFiles.clear();
     collect_template_files(templatesFiles);
 
-    vector<RawTemplate> rawTemplates;
+    std::vector<RawTemplate> rawTemplates;
     fill_raw_template(templatesFiles, rawTemplates);
 
     validate_templates(rawTemplates); // remove cyclic dependencies

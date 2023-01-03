@@ -30,7 +30,7 @@ SYSTEM(stage=render;after=lod_selector) process_animation(
   {
     mat4 t = transform.get_transform();
     const AnimationTree &tree = animationPlayer.tree;
-    static vector<vec3> boneOffsets;
+    static std::vector<vec3> boneOffsets;
     if (boneOffsets.size() != tree.nodes.size())
       boneOffsets.resize(tree.nodes.size());
 

@@ -8,14 +8,9 @@ static ecs::QueryCache listener_keybord__cache__;
 
 static ecs::QueryCache listener_mousemove__cache__;
 
-static void recorder_ui_handler(const ecs::Event &event)
+static void recorder_ui_implementation()
 {
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), recorder_ui__cache__, recorder_ui);
-}
-
-static void recorder_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), recorder_ui__cache__, recorder_ui);
+  ecs::perform_system(recorder_ui__cache__, recorder_ui);
 }
 
 static void listener_keybord_handler(const ecs::Event &event)
@@ -40,7 +35,7 @@ static void listener_mousemove_single_handler(ecs::EntityId eid, const ecs::Even
 
 static void registration_pull_test_recorder()
 {
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_system(ecs::SystemDescription(
   "",
   "recorder_ui",
   &recorder_ui__cache__,
@@ -52,11 +47,11 @@ static void registration_pull_test_recorder()
   },
   {},
   {},
+  "imgui_render",
   {},
   {},
   {},
-  &recorder_ui_handler, &recorder_ui_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
+  &recorder_ui_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",

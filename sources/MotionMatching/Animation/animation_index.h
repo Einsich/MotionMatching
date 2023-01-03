@@ -29,9 +29,9 @@ class AnimationLerpedIndex
 {
 private:
   AnimationDataBasePtr dataBase;
-  vector<AnimationIndex> indexes;//1+n
-  vector<float> indexesT;//1+n
-  vector<float> mixWeights;//n
+  std::vector<AnimationIndex> indexes;//1+n
+  std::vector<float> indexesT;//1+n
+  std::vector<float> mixWeights;//n
 public:
   AnimationLerpedIndex(AnimationDataBasePtr dataBase = nullptr, int clip1 = -1, int cadr1 = -1);
   AnimationCadr get_lerped_cadr();
@@ -41,5 +41,5 @@ public:
   void update(float dt, float lerpTime);
   void play_lerped(AnimationIndex next, int maxLerpIndex);
   AnimationIndex current_index() const;
-  const vector<AnimationIndex> &get_indexes() const;
+  const std::vector<AnimationIndex> &get_indexes() const;
 };

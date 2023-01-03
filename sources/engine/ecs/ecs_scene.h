@@ -2,6 +2,7 @@
 #include <vector>
 #include <filesystem>
 #include <data_block/data_block.h>
+namespace filesystem = std::filesystem;
 
 class SceneManager
 {

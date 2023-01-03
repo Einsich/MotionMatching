@@ -10,7 +10,7 @@ mat4 AnimationNode::get_transform() const
 {
   return translation * rotation;
 }
-const string &AnimationNode::get_name() const
+const std::string &AnimationNode::get_name() const
 {
   return data.name;
 }
@@ -33,7 +33,7 @@ AnimationTree::AnimationTree(const AnimationTreeData *tree_data):
     nodes.emplace_back(data->nodes[i]);
   }
 }
-int AnimationTree::get_child(const string& name) const
+int AnimationTree::get_child(const std::string& name) const
 {
   return data->get_child(name);
 }

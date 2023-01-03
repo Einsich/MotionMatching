@@ -2,7 +2,7 @@
 #include "stb_image.h"
 
 Texture3D::Texture3D(int size_x, int size_y, int size_z,
-  const string & name,
+  const std::string & name,
   TextureColorFormat color_format, 
   TextureFormat texture_format, 
   TexturePixelFormat pixelFormat,

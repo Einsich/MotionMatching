@@ -15,7 +15,7 @@ int AnimationDataBase::cadr_count() const
 }
 void reload_tree(AnimationTreeData &tree, const filesystem::path &path)
 {
-  string fbxPath = path.parent_path().string() + "/" + path.stem().string();
+  std::string fbxPath = path.parent_path().string() + "/" + path.stem().string();
   Assimp::Importer importer;
   importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
   importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
@@ -79,8 +79,8 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
   if (ecs::get_singleton<SettingsContainer>()->motionMatchingSettings.empty())
     return;
   TimeScope scope("Creating acceleration structs");
-  map<Tag, size_t> tagMap;
-  vector<AnimationTags> treeTags;
+  std::map<Tag, size_t> tagMap;
+  std::vector<AnimationTags> treeTags;
   for (const AnimationClip &clip : clips)
   {
     auto it = tagMap.find(clip.tags.tags);
@@ -90,9 +90,9 @@ void AnimationDataBase::acceleration_structs(bool check_existance)
       treeTags.emplace_back(clip.tags);
     }
   }
-  vector<vector<VPTree::Node>> nodes(tagMap.size());
-  vector<vector<CoverTree::Node>> nodes2(tagMap.size());
-  vector<vector<KdTree::Node>> nodes3(tagMap.size());
+  std::vector<std::vector<VPTree::Node>> nodes(tagMap.size());
+  std::vector<std::vector<CoverTree::Node>> nodes2(tagMap.size());
+  std::vector<std::vector<KdTree::Node>> nodes3(tagMap.size());
 
   for (uint i = 0; i < clips.size(); i++)
   {

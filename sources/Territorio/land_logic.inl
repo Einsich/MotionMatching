@@ -1,4 +1,4 @@
-#include <set>
+#include <eastl/set.h>
 #include <ecs/ecs.h>
 #include <ecs/registration.h>
 #include <application/time.h>
@@ -171,7 +171,7 @@ SYSTEM(stage=act) map_update(
           uint defendersPerCell = forces / landCount ;
           uint defendersPerCellWithGarrison = defendersPerCell + 1;
           const auto &border = map_arrays.borders[invadersIndex];
-          vector<ivec2> borderTmp(border.size());
+          eastl::vector<ivec2> borderTmp(border.size());
           std::copy(border.begin(), border.end(), borderTmp.begin());
           for (ivec2 p : borderTmp)
           {
@@ -235,7 +235,7 @@ SYSTEM(stage=act) border_update(
   )
   {
     uint invadersIndex = landIndex;
-    set<uint> uniqNeighborsIdx;
+    eastl::set<uint> uniqNeighborsIdx;
     for (ivec2 p : map_arrays.borders[landIndex])
     {
       uniqNeighborsIdx.insert(map_arrays.color_indices[p.y][p.x]);

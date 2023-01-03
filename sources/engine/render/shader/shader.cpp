@@ -41,9 +41,9 @@ GLuint Shader::get_shader_program() const
   return shaderIdx < 0 ? BAD_PROGRAM : shaderList[shaderIdx].second.program;
 }
 
-const string& Shader::get_name() const
+const std::string& Shader::get_name() const
 {
-  static string dummy = "";
+  static std::string dummy = "";
   return shaderIdx < 0 ? dummy : shaderList[shaderIdx].first;
 }
 
@@ -70,7 +70,7 @@ void Shader::use() const
 {
   glUseProgram(get_shader_program());
 }
-const vector<const char*>get_shaders_names()
+const std::vector<const char*>get_shaders_names()
 {
   std::vector<const char *> shadersNames(shaderList.size());
   for (uint i = 0; i < shaderList.size(); ++i)
@@ -85,7 +85,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
     return;
   ShaderBuffer &buffer = shader.buffer;
   buffer.materialFields.clear();
-  vector<SamplerUniform> &samplers = buffer.samplers;
+  std::vector<SamplerUniform> &samplers = buffer.samplers;
   samplers.clear();
   int count;
   const GLsizei bufSize = 128;
@@ -93,7 +93,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
   GLsizei length;
   GLenum property;
 
-  map<uint, int> typeToOffset;
+  std::map<uint, int> typeToOffset;
   glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
   for (int i = 0, texBinding = 0; i < count; i++)
   {
@@ -115,7 +115,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
     //case GL_SAMPLER_2D_SHADOW:
 
       GLint texLocation = glGetUniformLocation(program, name);
-      samplers.emplace_back(SamplerUniform{string(name), type, texLocation, texBinding, typeToOffset[type]});
+      samplers.emplace_back(SamplerUniform{std::string(name), type, texLocation, texBinding, typeToOffset[type]});
       //debug_log("Sampler #%d Type: %u Name: %s, Location %d", i, type, name, texLocation);
       texBinding++;
       typeToOffset[type]++;
@@ -143,7 +143,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
     //debug_log("buffer %s (binding = %d), size %d", name, binding, size);
 
     property = GL_ACTIVE_VARIABLES;
-    vector<GLint> varId(numVar);
+    std::vector<GLint> varId(numVar);
     glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resInx, 1, &property, varId.size(), nullptr, varId.data());
     bool isInstance = !strcmp(name, "InstanceData");
     int bufferNameLen = isInstance ? sizeof("instances[0]") : 0;
@@ -157,7 +157,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
       //debug_error("Shader %s contains %s uniform buffer. Allow only instance uniform buffer", shader_name.c_str(), name);
       continue;
     }
-    vector<BufferField> &fields = buffer.materialFields;
+    std::vector<BufferField> &fields = buffer.materialFields;
     for (GLint i = 0; i < numVar; i++) 
     {
       constexpr int N = 4;
@@ -172,7 +172,7 @@ void read_shader_info(const std::string &/* shader_name */, ShaderInfo &shader)
           bufSize, &strLength, name);
       char *matterPart = name + bufferNameLen;
       
-      fields.emplace_back(BufferField{string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
+      fields.emplace_back(BufferField{std::string(matterPart), params[0], params[1], params[2], params[3], typeToOffset[params[0]]});
       typeToOffset[params[0]] += params[2];
       //debug_log("Field[%d] %s, type %d offset %d, size %d, array stride %d", i, matterPart, params[0], params[1], params[2], params[3]);
     }
@@ -183,12 +183,12 @@ const ShaderBuffer &Shader::get_instance_data() const
   return shaderList[shaderIdx].second.buffer;
 }
 
-const vector<SamplerUniform> &Shader::get_samplers() const
+const std::vector<SamplerUniform> &Shader::get_samplers() const
 {
   return shaderList[shaderIdx].second.buffer.samplers;
 }
 
-void load_precompiled_shaders(const vector<PrecompiledShader> &shaders)
+void load_precompiled_shaders(const std::vector<PrecompiledShader> &shaders)
 {
   for (const PrecompiledShader &shader : shaders)
   {
@@ -202,7 +202,7 @@ void load_precompiled_shaders(const vector<PrecompiledShader> &shaders)
   }
 }
 
-void save_precompiled_shaders(vector<PrecompiledShader> &shaders)
+void save_precompiled_shaders(std::vector<PrecompiledShader> &shaders)
 {
   for (const auto &info : shaderList)
   {

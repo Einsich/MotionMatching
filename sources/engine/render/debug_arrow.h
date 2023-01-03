@@ -17,7 +17,7 @@ private:
   Mesh arrow;
   eastl::vector<Arrow> depthIgnore;
   eastl::vector<Arrow> depthNotIgnore;
-  void add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vector<vec3> &vert, vector<vec3> &normal);
+  void add_triangle(vec3 a, vec3 b, vec3 c, std::vector<uint> &indices, std::vector<vec3> &vert, std::vector<vec3> &normal);
   void render_depth_case(UniformBuffer &instanceData, eastl::vector<Arrow> &arrows, bool ignoreDepth, bool wire_frame);
 public:
   DebugArrow();

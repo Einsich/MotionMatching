@@ -90,7 +90,7 @@ struct KeyEventAnyActionKey : public ecs::Event
 class Input
 {
 
-  map<SDL_Keycode, pair<int, float>> keyMap;
+  std::map<SDL_Keycode, std::pair<int, float>> keyMap;
   struct WheelData
   {
     float lastTime = 0, lastValue = 0, targetValue = 0;

@@ -3,7 +3,7 @@
 #include "global_uniform.h"
 #include "glad/glad.h"
 
-static map<string, UniformBuffer> nameToArray;
+static std::map<std::string, UniformBuffer> nameToArray;
 
 template<uint BUF_TYPE>
 void add_buffer(const char *name, size_t size, int binding)
@@ -16,7 +16,7 @@ void add_buffer(const char *name, size_t size, int binding)
     glBindBuffer(BUF_TYPE, uniformBuffer);
     glBufferData(BUF_TYPE, size, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(BUF_TYPE, 0);
-    nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, size, vector<char>(size), string(name));
+    nameToArray.try_emplace(name, uniformBuffer, BUF_TYPE, binding, size, std::vector<char>(size), std::string(name));
   }
 }
 void add_uniform_buffer(const char *name, size_t size, int binding)
@@ -59,7 +59,7 @@ void UniformBuffer::flush_buffer(size_t flush_size) const
     bufSize = size();
   }
   else
-    glBufferSubData(bufType, 0, min(size(), flush_size), buffer.data());
+    glBufferSubData(bufType, 0, std::min(size(), flush_size), buffer.data());
 }
 char *UniformBuffer::get_buffer(uint offset, uint size)
 {

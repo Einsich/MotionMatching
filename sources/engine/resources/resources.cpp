@@ -17,7 +17,7 @@ void create_all_resources_from_metadata(const fs::path &path)
       if (path.extension() == ".meta")
       {
         //debug_log("meta file %s", path.stem().string().c_str());
-        string strPath = path.string();
+        std::string strPath = path.string();
         fs::path resPath = strPath.substr(0, strPath.size() - 5);
         if (!fs::exists(resPath))
         {
@@ -28,8 +28,8 @@ void create_all_resources_from_metadata(const fs::path &path)
       }
       else
       {
-        string ext = path.extension().string();
-        const string_view &extView = Resources::instance().extToAssetName[ext];
+        std::string ext = path.extension().string();
+        const std::string_view &extView = Resources::instance().extToAssetName[ext];
         auto it = assets.find(extView);
         if (it != assets.end())
         {
@@ -97,7 +97,7 @@ void save_all_resources_to_metadata()
   }
 }
 
-bool register_asset(const string &assetName, const string_view &typeName, const Asset<AssetStub> &asset)
+bool register_asset(const std::string &assetName, const std::string_view &typeName, const Asset<AssetStub> &asset)
 {
   auto &resourcesMap = Resources::instance().assets[typeName];
   auto it = resourcesMap.resources.find(assetName);

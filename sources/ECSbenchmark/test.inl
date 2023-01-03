@@ -19,8 +19,8 @@ struct TestClass
   Data data;
 };
 
-static vector<TestClass> list0;
-static vector<TestClass*> list1;
+static std::vector<TestClass> list0;
+static std::vector<TestClass*> list1;
 
 EVENT() init(const ecs::OnSceneCreated &)
 {

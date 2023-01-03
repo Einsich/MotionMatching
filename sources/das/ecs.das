@@ -183,7 +183,7 @@ class ECSSystemMacro : AstFunctionAnnotation
           $b(prtInc)
       return
     
-    //print(describe(systemLoop))
+    print(describe(systemLoop))
     
     systemLoop.flags |= FunctionFlags exports
     compiling_module() |> add_function(systemLoop)

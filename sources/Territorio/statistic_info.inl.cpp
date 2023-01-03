@@ -14,14 +14,9 @@ static void gather_lands(Callable lambda)
   ecs::perform_query<uint, int, uint>(gather_lands__cache__, lambda);
 }
 
-static void show_statistic_handler(const ecs::Event &event)
+static void show_statistic_implementation()
 {
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), show_statistic__cache__, show_statistic);
-}
-
-static void show_statistic_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), show_statistic__cache__, show_statistic);
+  ecs::perform_system(show_statistic__cache__, show_statistic);
 }
 
 static void move_text_handler(const ecs::Event &event)
@@ -51,7 +46,7 @@ static void registration_pull_statistic_info()
   {}
   ));
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_system(ecs::SystemDescription(
   "",
   "show_statistic",
   &show_statistic__cache__,
@@ -60,11 +55,11 @@ static void registration_pull_statistic_info()
   },
   {},
   {},
+  "imgui_render",
   {},
   {},
   {},
-  &show_statistic_handler, &show_statistic_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
+  &show_statistic_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",

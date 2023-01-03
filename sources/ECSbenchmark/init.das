@@ -23,6 +23,9 @@ def hi_func(m : float; var pos, vel : float3&; center: float3)
 
 [ecs(stage=act)]
 def test_c()
-  print("b\n")
+  print("c\n")
 
+[ecs(stage=act)]
+def test_a()
+  print("a\n")
 

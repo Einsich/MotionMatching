@@ -1,4 +1,4 @@
-#include "render.inl"
+#include "map_render.inl"
 #include <ecs/ecs_perform.h>
 //Code-generator production
 
@@ -32,7 +32,7 @@ static void update_map_textures_implementation()
   ecs::perform_system(update_map_textures__cache__, update_map_textures);
 }
 
-static void registration_pull_render()
+static void registration_pull_map_render()
 {
   ecs::register_query(ecs::QueryDescription(
   "",
@@ -95,5 +95,5 @@ static void registration_pull_render()
   &update_map_textures_implementation));
 
 }
-ECS_FILE_REGISTRATION(&registration_pull_render)
-ECS_PULL_DEFINITION(variable_pull_render)
+ECS_FILE_REGISTRATION(&registration_pull_map_render)
+ECS_PULL_DEFINITION(variable_pull_map_render)

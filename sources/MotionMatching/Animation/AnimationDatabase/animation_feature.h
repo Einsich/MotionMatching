@@ -11,10 +11,10 @@
 class NodeFeatures 
 {
 public:
-  array<vec3, (int)AnimationFeaturesNode::Count> nodes;
-  array<vec3, (int)AnimationFeaturesNode::Count> nodesVelocity;
+  std::array<vec3, (int)AnimationFeaturesNode::Count> nodes;
+  std::array<vec3, (int)AnimationFeaturesNode::Count> nodesVelocity;
 
-  void set_feature(const string& name, vec3 feature);
+  void set_feature(const std::string& name, vec3 feature);
 };
 
 struct TrajectoryPoint
@@ -28,7 +28,7 @@ class AnimationTrajectory
 public: 
   static const int PathLength = 3;
   static constexpr std::array<float, PathLength> timeDelays = { 0.15f, 0.3f, 0.5f};
-  array<TrajectoryPoint, PathLength> trajectory;
+  std::array<TrajectoryPoint, PathLength> trajectory;
 };
 
 struct FrameFeature

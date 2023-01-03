@@ -12,12 +12,12 @@ class Mesh : public  IAsset
   int numIndices;
   int numVert;
   int numFaces;
-  vector<uint> indices;
-  vector<vec3> normals;
-  vector<vec3> positions;
-  vector<vec2> uvs;
-  vector<vec4> weights;
-  vector<uvec4> weightsIndex;
+  std::vector<uint> indices;
+  std::vector<vec3> normals;
+  std::vector<vec3> positions;
+  std::vector<vec2> uvs;
+  std::vector<vec4> weights;
+  std::vector<uvec4> weightsIndex;
   BoundingBox box;
   void create_vertex_array();
   void create_indices(const std::vector<unsigned int> &indices);
@@ -36,7 +36,7 @@ class Mesh : public  IAsset
   }
   void load_assimp(const aiMesh *mesh);
 public:
-  map<string, int> bonesMap;//FIX IT
+  std::map<std::string, int> bonesMap;//FIX IT
   Mesh() = default;  
   template<typename... Channel>
   void init(const std::vector<unsigned int> &indices, const Channel&... channels)
@@ -54,7 +54,7 @@ public:
   Mesh(const aiMesh *mesh);
   virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
   virtual bool edit() override;
-  virtual string asset_name(const filesystem::path &path) override;
+  virtual std::string asset_name(const filesystem::path &path) override;
   uint get_vao() const;
   const BoundingBox &get_bounding_box() const;
   void render(bool wire_frame = false) const;

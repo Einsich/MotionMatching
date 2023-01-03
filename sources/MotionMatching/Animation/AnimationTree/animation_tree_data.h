@@ -7,7 +7,7 @@
 class AnimationNodeData
 {
 public:
-  string name;
+  std::string name;
   mat4 avatarTransform;
   mat4 transform;
   mat4 meshToBone;
@@ -15,19 +15,19 @@ public:
   quat rotation;
   vec3 translation;
   vec3 localPosition, worldPosition;
-  vector<int> childs;
-  AnimationNodeData(string && name, const mat4 &transform,  const mat4 &meshToBone, int parent);
+  std::vector<int> childs;
+  AnimationNodeData(std::string && name, const mat4 &transform,  const mat4 &meshToBone, int parent);
 
 };
 class AnimationTreeData
 {
 private:
-  map<string, int> childMap;
+  std::map<std::string, int> childMap;
   void build_tree(aiNode *node, mat4 m, int index, int parent);
   void apply_transforms();
 public:
-  vector<AnimationNodeData> nodes;
+  std::vector<AnimationNodeData> nodes;
   AnimationTreeData(aiNode * node);
   AnimationTreeData() = default;
-  int get_child(const string& name) const;
+  int get_child(const std::string& name) const;
 };

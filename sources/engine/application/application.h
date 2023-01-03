@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <filesystem>
+namespace filesystem = std::filesystem;
 
 std::string project_path(const std::string &path);
 const std::string &project_path();

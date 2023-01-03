@@ -8,14 +8,14 @@ struct Provinces
   int w, h;
   float pixelScale;
   const eastl::vector<uint> &provinces;
-  eastl::map<uint, pair<int, bool>> &borderIdx;
+  eastl::map<uint, eastl::pair<int, bool>> &borderIdx;
   eastl::vector<Province> &provincesData;
-  vector<bool> borderFlags;
-  map<uint, vector<uint>> bordersMap;
-  vector<vec2> border, borderUp;
-  vector<vec2> position, uv;
-  vector<uint> indices;
-  vector<uvec1> borderId;
+  eastl::vector<bool> borderFlags;
+  eastl::map<uint, eastl::vector<uint>> bordersMap;
+  eastl::vector<vec2> border, borderUp;
+  std::vector<vec2> position, uv;
+  std::vector<uint> indices;
+  std::vector<uvec1> borderId;
   Provinces(PoliticalMap &political_map, float pixel_scale) :
     w(political_map.w), h(political_map.h), pixelScale(pixel_scale),
     provinces(political_map.provincesIdx), borderIdx(political_map.borderIndexes), provincesData(political_map.provinces),
@@ -69,7 +69,7 @@ struct Provinces
   void start_mark_border(uint a, uint b, ivec2 p, uint direction, bool cyclic)
   {
     ivec2 off[4] = {ivec2(0,-1), ivec2(1, 0), ivec2(0, 1), ivec2(-1,0)};
-    vector<vec2> borderRaw;
+    std::vector<vec2> borderRaw;
     borderRaw.push_back(p);
     p += off[direction];
     uint dirOpposite = (direction + 2)&3;

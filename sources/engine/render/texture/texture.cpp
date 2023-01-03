@@ -32,7 +32,7 @@ void Texture::bind(const Shader &shader, const char * textureName, int slot) con
   glBindTexture(textureType, textureObject);
   glUniform1i(glGetUniformLocation(shader.get_shader_program(), textureName), slot);
 }
-const string &Texture::get_name() const
+const std::string &Texture::get_name() const
 {
   return textureName;
 }
@@ -98,7 +98,7 @@ GLenum Texture::get_internal_format(TextureColorFormat colorFormat, TextureForma
 }
 
 template<int N, typename E>
-bool list_box(const array<const char *, N> &str, const array<E, N> &e, const char* label, E &curE)
+bool list_box(const std::array<const char *, N> &str, const std::array<E, N> &e, const char* label, E &curE)
 {
   static int curStr = -1;
   static bool buttonPressed = false;

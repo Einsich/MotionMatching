@@ -17,7 +17,7 @@ std::map<std::string, int> featureMap = {
 
 
 
-void NodeFeatures::set_feature(const string& name, vec3 feature)
+void NodeFeatures::set_feature(const std::string& name, vec3 feature)
 {
   auto it = featureMap.find(name);
   if (it != featureMap.end())

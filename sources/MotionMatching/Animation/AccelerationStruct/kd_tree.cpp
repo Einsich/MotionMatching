@@ -90,13 +90,13 @@ struct Solver
 {
   It begin, end, out;
   const KdTree::T &point;
-  const vector<float> &weights;
-  const vector<int> &weightsId;
+  const std::vector<float> &weights;
+  const std::vector<int> &weightsId;
   float search_radius;
   float tolerance_erorr;
   int counter;
   const std::function<float(const KdTree::T&, const KdTree::T&)> &norma;
-  Solver(It begin, It end, const KdTree::T &point, const vector<float> &weights, const vector<int> &weightsId,
+  Solver(It begin, It end, const KdTree::T &point, const std::vector<float> &weights, const std::vector<int> &weightsId,
       float tolerance_erorr,
       const std::function<float(const KdTree::T&, const KdTree::T&)> &norma)
   : begin(begin), end(end), out(end), 

@@ -85,6 +85,7 @@ DasFilePtr load_das_script(const char *path)
 
 void reload_das_script(const std::string &file_path)
 {
+  das::Module::ClearSharedModules();
   das::ModuleGroup dummyLibGroup;
 
   for (auto&[path, file] : files)

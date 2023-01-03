@@ -6,7 +6,7 @@ struct CoverTree
   using T = FrameFeature;
   struct Node
   {
-    vector<uint> childs;
+    std::vector<uint> childs;
     const T *p;
     uint clip, frame;
     float nearestNeighbor, bound;

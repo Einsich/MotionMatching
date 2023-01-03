@@ -12,7 +12,7 @@ private:
 public:
 
   CubeMap();
-  CubeMap(string cubemap_path_from_textures_folder,
+  CubeMap(std::string cubemap_path_from_textures_folder,
   TextureColorFormat color_format = TextureColorFormat::RGB, 
   TextureFormat texture_format = TextureFormat::UnsignedByte, 
   TexturePixelFormat pixelFormat = TexturePixelFormat::Linear);

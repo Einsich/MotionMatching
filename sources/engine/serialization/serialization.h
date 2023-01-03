@@ -101,7 +101,7 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> write(std::ostream& fil
   file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
   //auto beg = file.tellp();
   value.reflect([&](const auto &arg, const char *name){ 
-    fileSize += write(file, string(name)); 
+    fileSize += write(file, std::string(name)); 
     auto p = file.tellp();
     file.seekp((size_t)file.tellp() + sizeof(std::uint32_t));
 
@@ -288,7 +288,7 @@ inline std::enable_if_t<HasReflection<T>::value, size_t> read(std::istream& file
 
   size_t fileSize = 0;
   std::uint32_t objSize = 0;
-  string buf_name="";
+  std::string buf_name="";
   //auto beg = file.tellg();
   while (file.peek() != EOF && file.tellg() - beginObj < curObjSize && read(file, buf_name))
   {
@@ -329,7 +329,7 @@ size_t save_object_path(const T &object, const std::filesystem::path &path)
 template <typename T>
 size_t save_object_path(const T &object, const std::string &path)
 {
-  std::ofstream file (path, ios::binary);
+  std::ofstream file (path, std::ios::binary);
   size_t fileSize = write(file, object);
   print_file_size(path, fileSize);
   file.close();
@@ -357,7 +357,7 @@ size_t load_object_path(T &object, const std::filesystem::path &path)
 template <typename T>
 size_t load_object_path(T &object, const std::string &path)
 {
-  std::ifstream file(path, ios::binary);
+  std::ifstream file(path, std::ios::binary);
   if (file.fail())
   {
     debug_error("Can not open %s, skip load object", path.c_str());

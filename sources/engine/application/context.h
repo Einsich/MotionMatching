@@ -13,7 +13,7 @@ private:
   SDL_GLContext gl_context;
   Resolution resolution;
 public:
-  Context(string window_name, int width, int height, bool full_screen = false);
+  Context(std::string window_name, int width, int height, bool full_screen = false);
   void start_imgui();
   void swap_buffer();
   Resolution get_resolution() const;

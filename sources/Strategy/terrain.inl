@@ -6,6 +6,7 @@
 #include "heightmap.h"
 #include <render/global_uniform.h>
 #include "map_render_data.h"
+#include <eastl/map.h>
 
 EVENT() add_map_uniform(const ecs::OnSceneCreated &)
 {
@@ -20,9 +21,9 @@ static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod)
 { 
   uint tris = h * w * 2 * 3;
   uint vert = (h+1)*(w+1);
-  vector<uint> indices(tris); 
-  vector<vec3> poses(vert), normes(vert); 
-  vector<vec2> uves(vert); 
+  std::vector<uint> indices(tris); 
+  std::vector<vec3> poses(vert), normes(vert); 
+  std::vector<vec2> uves(vert); 
 
   int k = 0;
   float dx = 1.f / w, dy = 1.f / h;
@@ -48,11 +49,11 @@ static Asset<Mesh> create_detailed_plane(uint h, uint w, int lod)
       indices[k+5]=c;
       k += 6;
     }
-  string name = "terrain_lod[" + to_string(lod) + "]";
+  std::string name = "terrain_lod[" + std::to_string(lod) + "]";
   return Asset<Mesh>(name, indices, poses, normes, uves); 
 } 
 
-static vector<uint> terrain_types(
+static eastl::vector<uint> terrain_types(
   const ecs::string &terrain_texture,
   const ecs::vector<ivec3> &terrain_type_color,
   const ecs::vector<int> &terrain_type_index)
@@ -62,8 +63,8 @@ static vector<uint> terrain_types(
   stbi_set_flip_vertically_on_load(true);
   auto image = stbi_load(path.c_str(), &w, &h, &ch, 0);
   auto imPtr = image;
-  vector<uint> terrainTypes(h*w, terrain_type_color.size());
-  map<uint, int> colorMap;
+  eastl::vector<uint> terrainTypes(h*w, terrain_type_color.size());
+  eastl::map<uint, int> colorMap;
   for (uint j = 0; j < terrain_type_color.size(); j++)
   {
     ivec3 c = terrain_type_color[j];
@@ -199,7 +200,7 @@ EVENT() create_terrain(const ecs::OnSceneCreated&,
   data.mapSize = vec4(map_size, 1.f / map_size);
   transform.set_scale(vec3(mapWidth, 1, mapHeight));
   
-  string path = heights_texture.asset_path().string();
+  std::string path = heights_texture.asset_path().string();
   path.resize(path.size() - sizeof("meta"));
   heigth_map.load_heightmap(path, 1.f, water_level);
   heigth_map.worldOffset = vec2(0, 0);
@@ -218,7 +219,7 @@ EVENT() create_terrain(const ecs::OnSceneCreated&,
     Texture2D(w, h, TextureColorFormat::RI, TextureFormat::UnsignedInt, TexturePixelFormat::Pixel, TextureWrappFormat::ClampToEdge));
   if (terrain_type_color.size() == terrain_type_index.size())
   {
-    vector<uint> terrainTypes = terrain_types(terrain_texture, terrain_type_color, terrain_type_index);
+    eastl::vector<uint> terrainTypes = terrain_types(terrain_texture, terrain_type_color, terrain_type_index);
     terrain_types_texture->update_sub_region(0, 0, 0, w, h, terrainTypes.data());
   }
   else

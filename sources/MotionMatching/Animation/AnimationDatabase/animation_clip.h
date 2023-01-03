@@ -12,9 +12,9 @@ class AnimationClip final : public ISerializable
 private:
   void ground_calculate();
   void leg_process(int leg_index, u8 leg);
-  vector<AnimationChannel> channels;
-  vector<vec3> hipsTranslation, hipsVelocity;
-  vector<float> hipsRotation, hipsAngularVelocity;
+  std::vector<AnimationChannel> channels;
+  std::vector<vec3> hipsTranslation, hipsVelocity;
+  std::vector<float> hipsRotation, hipsAngularVelocity;
 
 
   uint hipsChannelIndex;
@@ -23,20 +23,20 @@ private:
 public:
   AnimationClip()=default;
   ~AnimationClip()=default;
-  AnimationClip(uint duration, float ticksPerSecond, const string &name, const AnimationTreeData& tree,
-  map<string, vector<quat>> & quats, map<string, vector<vec3>> & vecs, AnimationTags tags,
-  bool loopable, string nextClip, bool rotatable);
+  AnimationClip(uint duration, float ticksPerSecond, const std::string &name, const AnimationTreeData& tree,
+  std::map<std::string, std::vector<quat>> & quats, std::map<std::string, std::vector<vec3>> & vecs, AnimationTags tags,
+  bool loopable, std::string nextClip, bool rotatable);
   uint duration;
   float ticksPerSecond;
-  string name;
+  std::string name;
   AnimationTags tags;
   bool loopable;
-  string nextClip;
+  std::string nextClip;
   int nextClipIdx;
   bool rotatable;
-  vector<FrameFeature> features;
+  std::vector<FrameFeature> features;
 
-  vector<u8> onGround;
+  std::vector<u8> onGround;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
   AnimationCadr get_frame(uint frame) const;

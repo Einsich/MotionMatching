@@ -107,11 +107,11 @@ void Mesh::load_assimp(const aiMesh *mesh)
     weights.resize(numVert, vec4(0.f));
     weightsIndex.resize(numVert);
     int numBones = mesh->mNumBones;
-    vector<int> weightsOffset(numVert, 0);
+    std::vector<int> weightsOffset(numVert, 0);
     for (int i = 0; i < numBones; i++)
     {
       const aiBone * bone = mesh->mBones[i];
-      bonesMap[string(bone->mName.C_Str())] = i;
+      bonesMap[std::string(bone->mName.C_Str())] = i;
 
       for (uint j = 0; j < bone->mNumWeights; j++)
       {
@@ -135,7 +135,7 @@ void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
 {
   if (reload || path.empty())
     return;
-  string pathStr = path.string();
+  std::string pathStr = path.string();
   
   if (pathStr == "cube")
     *this = *cube_mesh(true);
@@ -158,17 +158,17 @@ void Mesh::load(const filesystem::path &path, bool reload, AssetStatus &status)
     {
       //debug_log("async loaded mesh %s", pathStr.c_str());
       add_job([this, pathStr, &status](){
-        const string &indexedName = pathStr;
+        const std::string &indexedName = pathStr;
         size_t bracketPosBegin = indexedName.find_last_of('[');
         size_t bracketPosEnd = indexedName.find_last_of(']');
-        if (bracketPosBegin == string::npos || bracketPosEnd == string::npos || bracketPosBegin > bracketPosEnd)
+        if (bracketPosBegin == std::string::npos || bracketPosEnd == std::string::npos || bracketPosBegin > bracketPosEnd)
         {
           debug_error("bad mesh index in %s", indexedName.c_str());
           return;
         }
         int bracketCount = bracketPosEnd - bracketPosBegin - 1;
         int ind = std::stoi(indexedName.substr(bracketPosBegin+1, bracketCount));
-        string strPath = root_path(indexedName.substr(0, bracketPosBegin));
+        std::string strPath = root_path(indexedName.substr(0, bracketPosBegin));
         Assimp::Importer importer;
         importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
         importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f);
@@ -222,7 +222,7 @@ bool Mesh::edit()
   return false;
 }
 
-string Mesh::asset_name(const filesystem::path &path)
+std::string Mesh::asset_name(const filesystem::path &path)
 {
   if (!path.parent_path().empty())
     return path.filename().string();
@@ -238,10 +238,10 @@ Asset<Mesh> plane_mesh(bool create_uv)
   static Asset<Mesh> notUvMesh;
   if (!uvMesh || !notUvMesh)
   {
-    vector<vec3> vertices = {vec3(-1,0,-1), vec3(1,0,-1), vec3(1,0,1), vec3(-1,0,1)};
-    vector<vec3> normals(4, vec3(0,1,0));
-    vector<uint> indices = {0,1,2,0,2,3};
-    vector<vec2> uv =  {vec2(0,0), vec2(1,0), vec2(1,1),vec2(0,1)};
+    std::vector<vec3> vertices = {vec3(-1,0,-1), vec3(1,0,-1), vec3(1,0,1), vec3(-1,0,1)};
+    std::vector<vec3> normals(4, vec3(0,1,0));
+    std::vector<uint> indices = {0,1,2,0,2,3};
+    std::vector<vec2> uv =  {vec2(0,0), vec2(1,0), vec2(1,1),vec2(0,1)};
     uvMesh = Asset<Mesh>("plane", indices, vertices, normals, uv);
     notUvMesh = Asset<Mesh>("plane (without uv)", indices, vertices, normals);
   }
@@ -254,9 +254,9 @@ Asset<Mesh> cube_mesh(bool create_uv)
   static Asset<Mesh> notUvMesh;
   if (!uvMesh || !notUvMesh)
   {
-    vector<uint> indices;
-    vector<vec3> vertices, normals;
-    vector<vec2> uv;
+    std::vector<uint> indices;
+    std::vector<vec3> vertices, normals;
+    std::vector<vec2> uv;
     for (int face = 0; face < 3; face++)
     {
       for (int d = -1; d <= 1; d += 2)
@@ -315,9 +315,9 @@ Asset<Mesh> sphere_mesh(int detailed, bool create_uv)
     int n = detailed + 2;
     int m = detailed + 2;
 
-    vector<uint> indices;
-    vector<vec3> vertices, normals;
-    vector<vec2> uv;
+    std::vector<uint> indices;
+    std::vector<vec3> vertices, normals;
+    std::vector<vec2> uv;
     for (int i = 0; i <= n; i++)
       for (int j = 0; j <= m; j++)
       {
@@ -346,12 +346,12 @@ Asset<Mesh> sphere_mesh(int detailed, bool create_uv)
       }
     {
       int r = detailed * (1 + 1);
-      string name = "sphere " + to_string(detailed);
+      std::string name = "sphere " + std::to_string(detailed);
       spheres[r] = Asset<Mesh>(name, indices, vertices, normals, uv);
     }
     {
       int r = detailed * (1 + 0);
-      string name = "sphere " + to_string(detailed) + " (without uv)";
+      std::string name = "sphere " + std::to_string(detailed) + " (without uv)";
       spheres[r] = Asset<Mesh>(name, indices, vertices, normals);
     }
   }

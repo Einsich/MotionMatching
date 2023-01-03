@@ -22,9 +22,9 @@ public:
   }
 	void use() const;
 	GLuint get_shader_program() const;
-	const string& get_name() const;
+	const std::string& get_name() const;
 	const ShaderBuffer &get_instance_data() const;
-	const vector<SamplerUniform> &get_samplers() const;
+	const std::vector<SamplerUniform> &get_samplers() const;
 
 	int get_uniform_location(const char *name)
 	{
@@ -77,7 +77,7 @@ public:
 	{
 		glUniform3fv(glGetUniformLocation(get_shader_program(), name), 1, glm::value_ptr(v));
   }
-	void set_vec3(const char*name, const vector<vec3> &v) const
+	void set_vec3(const char*name, const std::vector<vec3> &v) const
 	{
 		if (!v.empty())
 			glUniform3fv(glGetUniformLocation(get_shader_program(), name), v.size(), glm::value_ptr(v[0]));
@@ -91,7 +91,7 @@ public:
 	{
 		glUniform3fv(uniform_location, 1, glm::value_ptr(v));
   }
-	void set_vec3(int uniform_location, const vector<vec3> &v) const
+	void set_vec3(int uniform_location, const std::vector<vec3> &v) const
 	{
 		if (!v.empty())
 			glUniform3fv(uniform_location, v.size(), glm::value_ptr(v[0]));
@@ -108,4 +108,4 @@ public:
 };
 
 Shader get_shader(const std::string &shader_name, bool with_log = true);
-const vector<const char*>get_shaders_names();
+const std::vector<const char*>get_shaders_names();

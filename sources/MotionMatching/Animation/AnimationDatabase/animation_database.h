@@ -14,9 +14,9 @@ class AnimationDataBase : public  IAsset
 public:
   AnimationTreeData tree;
   REFLECT(AnimationDataBase,
-    (vector<AnimationClip>) (clips),
+    (std::vector<AnimationClip>) (clips),
     (Asset<FBXMeta>) (treeSource),
-    (vector<string>) (tagsNames)
+    (std::vector<std::string>) (tagsNames)
   )
   void acceleration_structs(bool check_existance = false);
   bool needForceReload;

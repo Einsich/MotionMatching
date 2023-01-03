@@ -15,7 +15,7 @@ struct Joint
 
 void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, vec3 target_point, vec3 target_normal, int node,  int node_static_node)
 {
-  vector<Joint> joints;
+  std::vector<Joint> joints;
   mat4 toRoot = mat4(1.f);
   vec3 rootPos = vec3(0.f);
   quat rootRot = quat(1,0,0,0);
@@ -88,7 +88,7 @@ void process_IK(AnimationTree &tree, AnimationCadr &cadr, const mat4 &toWorld, v
     }
   }
 
-  vector<mat4> worldTransform(joints.size());
+  std::vector<mat4> worldTransform(joints.size());
   for (uint i = 0; i < joints.size(); i++)
   {
     worldTransform[i] = translate(mat4(1.f), joints[i].worldPosition) * mat4(joints[i].worldRotation);

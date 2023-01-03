@@ -10,6 +10,7 @@
 #include "utils/compile_time_string.h"
 #include "serialization/serialization.h"
 #include "data_block/data_block.h"
+namespace filesystem = std::filesystem;
 
 enum class AssetStatus : uint32_t
 {
@@ -38,7 +39,7 @@ public:
   {
     return false;
   }
-  virtual string asset_name(const filesystem::path &path)
+  virtual std::string asset_name(const filesystem::path &path)
   {
     return path.stem().string();
   }
@@ -53,7 +54,7 @@ template<typename T>
 class Asset;
 
 template<typename T>
-Asset<T> create_asset_by_id(const string &name);
+Asset<T> create_asset_by_id(const std::string &name);
 
 
 class AssetStub : public  IAsset
@@ -64,18 +65,18 @@ public:
   virtual bool edit() override{return false;}
 };
 
-bool register_asset(const string &assetName, const string_view &typeName, const Asset<AssetStub> &asset);
+bool register_asset(const std::string &assetName, const std::string_view &typeName, const Asset<AssetStub> &asset);
 
 template<typename T>
 struct AssetImplementation
 {
   filesystem::path path;
-  string name;
+  std::string name;
   AssetStatus status;
   bool edited, isCopy, userPathUsage;
   T asset;
   AssetImplementation() = default;
-  AssetImplementation(const filesystem::path &path, const string &name,
+  AssetImplementation(const filesystem::path &path, const std::string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage, const T &asset):
   path(path), name(name),
   status(loaded ? AssetStatus::Loaded : AssetStatus::NotLoaded),
@@ -83,7 +84,7 @@ struct AssetImplementation
   asset(asset)
   {    }
 template<typename ...Args>
-  AssetImplementation(const filesystem::path &path, const string &name,
+  AssetImplementation(const filesystem::path &path, const std::string &name,
     bool loaded, bool edited, bool isCopy, bool userPathUsage,  Args &&...args):
   path(path), name(name),
   status(loaded ? AssetStatus::Loaded : AssetStatus::NotLoaded),
@@ -131,7 +132,7 @@ public:
   {
 
     asset->name = asset->asset.asset_name(path_or_name);
-    constexpr const string_view &typeName = nameOf<T>::value;
+    constexpr const std::string_view &typeName = nameOf<T>::value;
     register_asset(asset->name, typeName, *this);
   }
     Asset(const T &instance) :
@@ -163,7 +164,7 @@ public:
   {
 
     asset->name = asset->asset.asset_name(path_or_name);
-    constexpr const string_view &typeName = nameOf<T>::value;
+    constexpr const std::string_view &typeName = nameOf<T>::value;
     register_asset(asset->name, typeName, *this);
   }
   template<typename U>
@@ -213,7 +214,7 @@ public:
   {
     asset->reload();
   }
-  void save(ofstream &file)
+  void save(std::ofstream &file)
   {
     if (asset)
     {
@@ -228,7 +229,7 @@ public:
       asset->asset.before_save();
       if (!asset->userPathUsage)
       { 
-        ofstream file(asset->path, ios::binary);
+        std::ofstream file(asset->path, std::ios::binary);
         if (!file.fail())
         {
           write(file, asset->name);
@@ -255,9 +256,9 @@ public:
   {
     return asset->isCopy;
   }
-  const string& asset_name() const
+  const std::string& asset_name() const
   {
-    static string dummy = "null";
+    static std::string dummy = "null";
     return asset ? asset->name : dummy;
   }
   const filesystem::path &asset_path() const
@@ -271,7 +272,7 @@ public:
   }
   virtual size_t deserialize(std::istream& is) override
   {
-    string name;
+    std::string name;
     size_t size = read(is, name);
     if (name != "null" && name != "")
       *this = create_asset_by_id<T>(name);

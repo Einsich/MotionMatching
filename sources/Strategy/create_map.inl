@@ -5,9 +5,9 @@
 
 Asset<Mesh> create_flag(float flag_h, float flag_w, float stick_h, float stick_w) 
 { 
-  vector<uint> indices; 
-  vector<vec3> poses, normes; 
-  vector<vec2> uves; 
+  std::vector<uint> indices; 
+  std::vector<vec3> poses, normes; 
+  std::vector<vec2> uves; 
    
   uint N = 20; 
   for (uint i = 0; i <= N; i++) 

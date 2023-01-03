@@ -24,10 +24,10 @@ struct PoliticalMap : ecs::Singleton
   eastl::vector<Country> countries;
   eastl::vector<uint> provincesIdx;
   //readonly
-  vector<uvec2> provincesInfo;
+  eastl::vector<uvec2> provincesInfo;
   eastl::vector<Province> provinces;
   //key = a << 16 | b, a < b, value = {border index, swaped}
-  eastl::map<uint, pair<int, bool>> borderIndexes;
+  eastl::map<uint, eastl::pair<int, bool>> borderIndexes;
   enum
   {
     MAX_PROVINCES = 1 << 10,

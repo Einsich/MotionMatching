@@ -18,18 +18,18 @@ struct DagorTestEntity
 };
 
 
-static vector<DagorTestEntity> list0;
-static vector<DagorTestEntity*> list1;
-static vector<DagorTestEntity*> list2;
+static std::vector<DagorTestEntity> list0;
+static std::vector<DagorTestEntity*> list1;
+static std::vector<DagorTestEntity*> list2;
 
-static vector<vec3> pData;
-static vector<vec3> vData;
+static std::vector<vec3> pData;
+static std::vector<vec3> vData;
 
 volatile int cache0 = 0;
 void prune_cache()
 {
   return;
-  static vector<int> memory;
+  static std::vector<int> memory;
   if (!memory.size())
     memory.resize(4<<20, 1);
   for (auto i:memory)

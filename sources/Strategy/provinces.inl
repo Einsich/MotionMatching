@@ -46,7 +46,7 @@ EVENT() create_provinces(const ecs::OnSceneCreated&,
   DataBlock countries(root_path("resources/Strategy/Content/countries.blk"));
   DataBlock provincesOwn(root_path(load_provinces_info.c_str()));
   auto &states = politicalMap.countries;
-  vector<vec3> countriesColors;
+  eastl::vector<vec3> countriesColors;
   for (uint i = 0; i < countries.blockCount(); i++)
   {
     const DataBlock *state = countries.getBlock(i);

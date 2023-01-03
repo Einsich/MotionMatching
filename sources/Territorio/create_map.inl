@@ -7,9 +7,9 @@
 ECS_REGISTER_TYPE(MapArrays, "MapArrays", ecs::DefaultType)
 
 
-static vector<ivec2> get_player_start_points(int h, int w, int n)
+static eastl::vector<ivec2> get_player_start_points(int h, int w, int n)
 {
-  vector<ivec2> points(n);
+  eastl::vector<ivec2> points(n);
   for (int i = 0; i < n; i++)
   {
 again:
@@ -82,7 +82,7 @@ EVENT() create_map(
     {"landCount", height*width - botsCount}
   });
 
-  vector<ivec2> startPoints = get_player_start_points(width, height, botsCount);
+  eastl::vector<ivec2> startPoints = get_player_start_points(width, height, botsCount);
   const ecs::prefab_id botTemplate = ecs::get_prefab_id("bot");
   for (int i = 0; i < botsCount; i++)
   {

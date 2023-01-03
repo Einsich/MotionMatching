@@ -2,23 +2,24 @@
 #include <ostream>
 #include <fstream>
 #include "profile_tracker.h"
+namespace filesystem = std::filesystem;
 
 void ProfileTracker::stop()
 {
   if (stopped)
     return;
   stopped = true;
-  string file_name = path.substr(0, path.size() - 4);//without .csv
-  string histo_path = file_name + "_histogramm.csv";
+  std::string file_name = path.substr(0, path.size() - 4);//without .csv
+  std::string histo_path = file_name + "_histogramm.csv";
   if (filesystem::exists(path))
   {
     for (int i = 1;true;i++)
     {
-      string next_path = file_name + "(" + to_string(i) + ").csv";
+      std::string next_path = file_name + "(" + std::to_string(i) + ").csv";
       if (!filesystem::exists(next_path))
       {
         path = next_path;
-        histo_path = file_name + "_histogramm" + "(" + to_string(i) + ").csv";
+        histo_path = file_name + "_histogramm" + "(" + std::to_string(i) + ").csv";
         break;
       }
     }
@@ -38,14 +39,14 @@ void ProfileTracker::stop()
   }
   
   {
-    ofstream os(histo_path);
+    std::ofstream os(histo_path);
 
     os << "time;count\n";
-    vector<int> histogramm(BinsCount, 0);
+    std::vector<int> histogramm(BinsCount, 0);
     for (size_t i = 0; i < times.size(); i++)
     {
       int binInd = (times[i] / maxMsTime) * BinsCount;
-      binInd = clamp(binInd, 0, BinsCount - 1);
+      binInd = std::clamp(binInd, 0, BinsCount - 1);
       histogramm[binInd]++;
     }
 
@@ -56,7 +57,7 @@ void ProfileTracker::stop()
     }
   }
   {
-    ofstream os(path);
+    std::ofstream os(path);
     os << "frame;time;average\n";
     double sum = 0;
     int maxSamples = std::min(BinsCount, (int)times.size());

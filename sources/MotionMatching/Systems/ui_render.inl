@@ -14,7 +14,7 @@ void show_scores(const AnimationDataBasePtr dataBase, const MotionMatching &mm)
     ImGui::End();
     return;
   }
-  const vector<AnimationClip> &animations = dataBase->clips;
+  const std::vector<AnimationClip> &animations = dataBase->clips;
   const auto &matchingScore = dataBase->matchingScore;
   AnimationIndex cur = mm.get_index().current_index();
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -188,11 +188,11 @@ void show_settings(T &settings, const char *settings_name)
   }
 }
 template<typename T>
-void settings_manager(eastl::vector<pair<string, T>> &settings, const char *settings_name)
+void settings_manager(eastl::vector<std::pair<std::string, T>> &settings, const char *settings_name)
 {
   constexpr int BUF_SIZE = 64;
   char buf[BUF_SIZE];
-  static string lastName = "";
+  static std::string lastName = "";
 
   if (ImGui::BeginMenu(settings_name))
   {
@@ -200,7 +200,7 @@ void settings_manager(eastl::vector<pair<string, T>> &settings, const char *sett
 
     if (add)
     {
-      settings.emplace_back("preset" + to_string(settings.size()), settings.empty() ? T() : settings.back().second);
+      settings.emplace_back("preset" + std::to_string(settings.size()), settings.empty() ? T() : settings.back().second);
       settings.back().first.reserve(BUF_SIZE);
     }
     

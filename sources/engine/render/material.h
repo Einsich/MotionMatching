@@ -19,26 +19,26 @@ class Material : public IAsset
 {
 private:
   Shader shader;
-  map<string, int> uniformMap;
-  #define TYPE(T, _) vector<T> T##s;
-  #define SAMPLER(T, gl_type) vector<T> gl_type##s;
+  std::map<std::string, int> uniformMap;
+  #define TYPE(T, _) std::vector<T> T##s;
+  #define SAMPLER(T, gl_type) std::vector<T> gl_type##s;
   TYPES
   SAMPLERS
   #undef TYPE
   #undef SAMPLER
   
-  #define SAMPLER(T, gl_type) (vector<pair<string, T>>) (gl_type##savable),
-  #define TYPE(T, _) (vector<pair<string, vector<T>>>) (T##savable),
+  #define SAMPLER(T, gl_type) (std::vector<std::pair<std::string, T>>) (gl_type##savable),
+  #define TYPE(T, _) (std::vector<std::pair<std::string, std::vector<T>>>) (T##savable),
   REFLECT(Material,
   TYPES
   SAMPLERS
-  (string) (shaderName),
+  (std::string) (shaderName),
   (bool) (isTransparent),
   (bool) (disableZTest),
   (int) (drawOrder))
   #undef SAMPLER
   #undef TYPE
-  pair<int, int> get_uniform_index(const char *name, int gl_type) const;
+  std::pair<int, int> get_uniform_index(const char *name, int gl_type) const;
   int get_texture_index(const char *name, int gl_type) const;
 public:
   Material() = default;
@@ -57,7 +57,7 @@ public:
   {
     return drawOrder;
   }
-  virtual void load(const filesystem::path &path, bool reload, AssetStatus &status) override;
+  virtual void load(const std::filesystem::path &path, bool reload, AssetStatus &status) override;
   
   virtual bool require_immediate_load() const override
   {
@@ -77,7 +77,15 @@ public:
       T##s[offset] = value;\
     return offset >= 0;\
   }\
-  bool set_property(const char *name, const vector<T> &value)\
+  bool set_property(const char *name, const std::vector<T> &value)\
+  {\
+    auto [offset, size] = get_uniform_index(name, gl_type);\
+    if (offset >= 0)\
+      for (uint i = 0, n = glm::min(size, (int)value.size()); i < n; ++i)\
+        T##s[offset + i] = value[i];\
+    return offset >= 0;\
+  }\
+  bool set_property(const char *name, const eastl::vector<T> &value)\
   {\
     auto [offset, size] = get_uniform_index(name, gl_type);\
     if (offset >= 0)\

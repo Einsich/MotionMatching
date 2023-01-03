@@ -84,10 +84,10 @@ edit_component(T &v, const char *name, bool view_only)
 }
 
 template <typename T>
-std::enable_if_t<is_base_of<IAsset, T>::value, bool>
+std::enable_if_t<std::is_base_of<IAsset, T>::value, bool>
 edit_component(Asset<T> &component, const char *, bool view_only)
 {
-  constexpr const string_view &tName = nameOf<T>::value;
+  constexpr const std::string_view &tName = nameOf<T>::value;
   constexpr int BUFN = 255;
   char buf[BUFN];
   if (component)
@@ -112,8 +112,8 @@ edit_component(Asset<T> &component, const char *, bool view_only)
         select = !select;
       if (select)
       {
-        vector<const char *> names;
-        vector<const string *> keys;
+        std::vector<const char *> names;
+        std::vector<const std::string *> keys;
         const auto &resMap = Resources::instance().assets[tName];
         for (const auto &asset : resMap.resources)
         {

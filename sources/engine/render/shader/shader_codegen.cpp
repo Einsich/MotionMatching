@@ -17,19 +17,19 @@ namespace fs = filesystem;
 #define SPACE_REGEX "[" SPACE_SYM "]+"
 #define NAME_REGEX "[" NAME_SYM "]+"
 #define ARGS_REGEX "[" SPACE_SYM "," NAME_SYM "]*"
-static const regex shader_regex("#shader" SPACE_REGEX NAME_REGEX);
-static const regex variant_regex("#variant" SPACE_REGEX NAME_REGEX SPACE_REGEX ARGS_REGEX "[;]");
-static const regex vs_regex("#vertex_shader");
-static const regex ps_regex("#pixel_shader");
-static const regex include_regex("#include" SPACE_REGEX NAME_REGEX);
-static const regex include_with_defines_regex("#include" SPACE_REGEX NAME_REGEX SPACE_REGEX "(" ARGS_REGEX ")");//todo
+static const std::regex shader_regex("#shader" SPACE_REGEX NAME_REGEX);
+static const std::regex variant_regex("#variant" SPACE_REGEX NAME_REGEX SPACE_REGEX ARGS_REGEX "[;]");
+static const std::regex vs_regex("#vertex_shader");
+static const std::regex ps_regex("#pixel_shader");
+static const std::regex include_regex("#include" SPACE_REGEX NAME_REGEX);
+static const std::regex include_with_defines_regex("#include" SPACE_REGEX NAME_REGEX SPACE_REGEX "(" ARGS_REGEX ")");//todo
 
 
 void get_matches(std::vector<MatchRange> & v, std::string& str, const std::regex &reg, ShaderLexema type)
 {
   std::sregex_iterator curMatch(str.begin(), str.end(), reg);
   std::sregex_iterator lastMatch;
-  string::iterator begin = str.begin();
+  std::string::iterator begin = str.begin();
   for (; curMatch != lastMatch; ++curMatch)
   {
     int beginInd = curMatch->position();
@@ -55,8 +55,8 @@ void try_load_shader_code(ShaderFileDependency &shader)
   }
   //debug_log("loaded %s", shader.path.stem().string().c_str());
 
-  ifstream shaderFile(shader.path);
-  stringstream shaderStream;
+  std::ifstream shaderFile(shader.path);
+  std::stringstream shaderStream;
   shaderStream << shaderFile.rdbuf();  
   shaderFile.close();
   shader.content = shaderStream.str();
@@ -78,12 +78,12 @@ void try_load_shader_code(ShaderFileDependency &shader)
     char buf[255];
     int x;
     char c;
-    stringstream ss;
+    std::stringstream ss;
     switch (r.type)
     {
     case ShaderLexema::SHADER_NAME: sscanf(&(*r.begin), "#shader %s", buf); r.typeContent.assign(buf); break;
     case ShaderLexema::VARIANT:
-      ss = stringstream(string((const char*)&(*r.begin), (const char*)&(*r.end)));
+      ss = std::stringstream(std::string((const char*)&(*r.begin), (const char*)&(*r.end)));
       ss >> r.typeContent;//#variant
       ss >> r.typeContent;//real name
       shader.intervals.push_back({r.typeContent, {}});
@@ -102,14 +102,14 @@ void try_load_shader_code(ShaderFileDependency &shader)
     }
   }
 }
-static map<string, ShaderFileDependency> shaderFiles;
-map<string, ShaderFileDependency> &getShaderFiles()
+static std::map<std::string, ShaderFileDependency> shaderFiles;
+std::map<std::string, ShaderFileDependency> &getShaderFiles()
 {
   return shaderFiles;
 }
 void update_file(const fs::path &file_path)
 {
-  string fileName = file_path.stem().string();
+  std::string fileName = file_path.stem().string();
   auto it = shaderFiles.find(fileName);
   fs::file_time_type last_write = fs::last_write_time(file_path);
   if (it != shaderFiles.end())
@@ -125,12 +125,12 @@ void update_file(const fs::path &file_path)
     shaderFiles.try_emplace(fileName, ShaderFileDependency{last_write, {}, file_path, false, false, true, false, "", {}, {}});
   }
 }
-static set<string> invalidation_list;
-void dependency_unvalidation_recursively(const string &name, ShaderFileDependency &file)
+static std::set<std::string> invalidation_list;
+void dependency_unvalidation_recursively(const std::string &name, ShaderFileDependency &file)
 {
   invalidation_list.insert(name);
   file.valid = false;
-  for (const string &dependency : file.dependencies)
+  for (const std::string &dependency : file.dependencies)
   {
     if (!invalidation_list.contains(dependency))
     {
@@ -150,7 +150,7 @@ void dependency_unvalidation()
     if (!file.valid && !invalidation_list.contains(name))
       dependency_unvalidation_recursively(name, file);
 }
-ShaderFileDependency *get_codegen_shader(const string &name)
+ShaderFileDependency *get_codegen_shader(const std::string &name)
 {
   auto it = shaderFiles.find(name);
   if (it != shaderFiles.end())
@@ -162,7 +162,7 @@ ShaderFileDependency *get_codegen_shader(const string &name)
     return nullptr;
 }
 
-void insert_includes(string &text, const string &file_name, const string &source_text, const std::vector<MatchRange> &lexems, int &curLexema)
+void insert_includes(std::string &text, const std::string &file_name, const std::string &source_text, const std::vector<MatchRange> &lexems, int &curLexema)
 {
   if (lexems.empty())
   {
@@ -218,8 +218,8 @@ void insert_includes(string &text, const string &file_name, const string &source
 
 struct ParseState
 {
-  string commonPart, currentShader;
-  string vsPart, psPart;
+  std::string commonPart, currentShader;
+  std::string vsPart, psPart;
   bool startShader, startPs, startVs;
   void clear()
   {
@@ -228,12 +228,12 @@ struct ParseState
 
   }
 };
-static void create_shader_from_parsed_state(const fs::path &path, const ParseState &state, const string &predefine)
+static void create_shader_from_parsed_state(const fs::path &path, const ParseState &state, const std::string &predefine)
 {
-  string vsPart = "#version 450\n#define VS 1\n" + predefine + state.commonPart + state.vsPart;
-  string psPart = "#version 450\n#define PS 1\n" + predefine + state.commonPart + state.psPart;
+  std::string vsPart = "#version 450\n#define VS 1\n" + predefine + state.commonPart + state.vsPart;
+  std::string psPart = "#version 450\n#define PS 1\n" + predefine + state.commonPart + state.psPart;
   
-  vector<pair<uint, const char*>> shaderCode{
+  std::vector<std::pair<uint, const char*>> shaderCode{
     {GL_VERTEX_SHADER, vsPart.c_str()},
     {GL_FRAGMENT_SHADER, psPart.c_str()}
   };
@@ -246,11 +246,11 @@ static void create_shader_from_parsed_state(const fs::path &path, const ParseSta
   {
     debug_error("shader %s doesn't compiled", state.currentShader.c_str());
     {
-      ofstream file(fs::path(path).concat("." + state.currentShader + ".ps"));
+      std::ofstream file(fs::path(path).concat("." + state.currentShader + ".ps"));
       file << psPart;
     }
     {
-      ofstream file(fs::path(path).concat("." + state.currentShader + ".vs"));
+      std::ofstream file(fs::path(path).concat("." + state.currentShader + ".vs"));
       file << vsPart;
     }
   }
@@ -263,9 +263,9 @@ static void create_shader_from_parsed_state(const ShaderFileDependency &shader, 
   }
   else
   {
-    string originalName = state.currentShader;
+    std::string originalName = state.currentShader;
     int n = shader.intervals.size();
-    vector<int> intervals(n);
+    std::vector<int> intervals(n);
     int count = 1;
     for (int i = 0; i < n; i++)
     {
@@ -275,13 +275,13 @@ static void create_shader_from_parsed_state(const ShaderFileDependency &shader, 
     for (int v = 0; v < count; v++)
     {
       int vTmp = v;
-      string predefine, variantName = "(";
+      std::string predefine, variantName = "(";
       for (int i = 0; i < n; i++)
       {
         int value = vTmp % intervals[i];
-        predefine += "#define " + shader.intervals[i].first + " " + to_string(value) + "\n";
+        predefine += "#define " + shader.intervals[i].first + " " + std::to_string(value) + "\n";
         vTmp /= intervals[i];
-        variantName += shader.intervals[i].first + "=" + to_string(value) + (i == n-1 ? ")" : ",");
+        variantName += shader.intervals[i].first + "=" + std::to_string(value) + (i == n-1 ? ")" : ",");
       }
       state.currentShader = originalName + variantName;
       create_shader_from_parsed_state(shader.path, state, predefine);

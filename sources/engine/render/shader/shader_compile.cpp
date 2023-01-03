@@ -5,9 +5,9 @@
 #include <map>
 #include "shader_gen.h"
 
-namespace fs = filesystem;
+namespace fs = std::filesystem;
 
-static map<fs::path, GLuint> shaderTypeMap = 
+static std::map<fs::path, GLuint> shaderTypeMap = 
 {{".vert", GL_VERTEX_SHADER}, {".frag", GL_FRAGMENT_SHADER}, {".comp", GL_COMPUTE_SHADER}, 
 {".geom", 0}, {".tesc", 0}, {".tese", 0}};
 
@@ -20,9 +20,9 @@ fs::path shader_extension(GLuint shader)
   return extension;
 }
 
-bool compile_shader(const string &shaderName, const vector<pair<GLuint, const char*>> &shaders, GLuint &program)
+bool compile_shader(const std::string &shaderName, const std::vector<std::pair<GLuint, const char*>> &shaders, GLuint &program)
 {
-    vector<GLuint> compiled_shaders;
+    std::vector<GLuint> compiled_shaders;
     compiled_shaders.reserve(shaders.size());
     GLchar infoLog[1024];
     GLint success;
@@ -63,9 +63,9 @@ bool compile_shader(const string &shaderName, const vector<pair<GLuint, const ch
   return true;
 }
 
-bool compile_shader(const string &shaderName, const vector<pair<GLuint, string>> &shaders, GLuint &program)
+bool compile_shader(const std::string &shaderName, const std::vector<std::pair<GLuint, std::string>> &shaders, GLuint &program)
 {
-  vector<pair<GLuint, const char *>> shadersCopy;
+  std::vector<std::pair<GLuint, const char *>> shadersCopy;
   for (const auto &p :shaders)
     shadersCopy.emplace_back(p.first, p.second.c_str());
   return compile_shader(shaderName, shadersCopy, program);

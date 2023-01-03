@@ -1,9 +1,10 @@
 #include "animation_clip.h"
 #include "animation_nodes.h"
 
-AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &name,
- const AnimationTreeData& tree, map<string, vector<quat>>& quats, map<string, vector<vec3>>& vecs, AnimationTags tags,
- bool loopable, string nextClip, bool rotatable):
+AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const std::string &name,
+ const AnimationTreeData& tree, std::map<std::string, std::vector<quat>>& quats, 
+ std::map<std::string, std::vector<vec3>>& vecs, AnimationTags tags,
+ bool loopable, std::string nextClip, bool rotatable):
  hipsTranslation(duration), 
  hipsVelocity(duration), 
  hipsRotation(duration),
@@ -17,14 +18,14 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
 {
   debug_log("Animation %s was added, duration %d", name.c_str(), duration);
 
-  string hips = "Hips";
+  std::string hips = "Hips";
   for (uint i = 0; i < tree.nodes.size(); i++)
   {
-    const string & nodeName = tree.nodes[i].name;
+    const std::string & nodeName = tree.nodes[i].name;
     auto itVec = vecs.find(nodeName);
     auto itQuat = quats.find(nodeName);
-    vector<vec3> zeroVec = {vec3(0.f)};
-    vector<quat> zeroQuat = {quat(1,0,0,0)};
+    std::vector<vec3> zeroVec = {vec3(0.f)};
+    std::vector<quat> zeroQuat = {quat(1,0,0,0)};
     if (nodeName == hips)
       hipsChannelIndex = i;
     //else itVec = vecs.end(), itQuat = quats.end();
@@ -33,7 +34,7 @@ AnimationClip::AnimationClip(uint duration, float ticksPerSecond, const string &
   }
   bool idle = tags.contains("Idle");
   bool crouch = tags.contains("Crouch");
-  vector<mat4> transfroms(tree.nodes.size());
+  std::vector<mat4> transfroms(tree.nodes.size());
   for (uint i = 0; i < duration; i++)
   {
     for (uint j = 0; j < tree.nodes.size(); j++)
@@ -187,8 +188,8 @@ AnimationTrajectory AnimationClip::get_frame_trajectory(uint frame) const
 
 void AnimationClip::leg_process(int leg_index, u8 leg)
 {
-  vector<float> h(features.size());
-  vector<int> g(features.size());
+  std::vector<float> h(features.size());
+  std::vector<int> g(features.size());
   for (uint i = 0; i < h.size(); i++)
     h[i] = features[i].features.nodes[leg_index].y;
 

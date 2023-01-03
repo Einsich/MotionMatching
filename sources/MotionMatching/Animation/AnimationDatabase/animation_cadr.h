@@ -13,7 +13,7 @@ public:
   float rootAngularVelocity;
 
   vec3 nodeTranslation;
-  vector<quat> nodeRotation;
+  std::vector<quat> nodeRotation;
   virtual size_t serialize(std::ostream& os) const override;
   virtual size_t deserialize(std::istream& is) override;
 };

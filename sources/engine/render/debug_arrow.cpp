@@ -24,7 +24,7 @@ void draw_transform(const Transform &transform)
     draw_arrow(p, p + rotation * n * 0.3f, n, 0.03f, false);
   }
 }
-void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vector<vec3> &vert, vector<vec3> &normal)
+void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, std::vector<uint> &indices, std::vector<vec3> &vert, std::vector<vec3> &normal)
 {
   uint k = vert.size();
   vec3 n = normalize(cross(b - a, c - a));
@@ -36,9 +36,9 @@ void DebugArrow::add_triangle(vec3 a, vec3 b, vec3 c, vector<uint> &indices, vec
 DebugArrow::DebugArrow()
 {
   arrowMaterial = get_resource<Material>("arrows");
-  vector<uint> indices;
-  vector<vec3> vert;
-  vector<vec3> normal;
+  std::vector<uint> indices;
+  std::vector<vec3> vert;
+  std::vector<vec3> normal;
   vec3 c = vec3(0, 1, 0);
   const int N = 4;
   vec3 p[N];

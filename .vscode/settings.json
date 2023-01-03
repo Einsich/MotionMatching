@@ -164,7 +164,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "ECSbenchmark"
+      "name": "MotionMatching",
+      "delpoy_only_project_folder": "false"
     }
   },
   "cmake.configureOnOpen": false,

@@ -3,7 +3,7 @@
 #include "imgui.h"
 
 template<typename T>
-bool edit_vector(vector<T> &component, const char *name, std::function<bool(T&)> component_edit)
+bool edit_vector(std::vector<T> &component, const char *name, std::function<bool(T&)> component_edit)
 {
   constexpr int BUFN = 255;
   char buf[BUFN];

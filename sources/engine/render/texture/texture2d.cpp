@@ -16,7 +16,7 @@ Texture2D::Texture2D()
   textureName = "";
   glGenTextures(1, &textureObject);
 }
-Texture2D::Texture2D(string texture_path_from_textures_folder,
+Texture2D::Texture2D(std::string texture_path_from_textures_folder,
   TextureColorFormat color_format, 
   TextureFormat texture_format, 
   TexturePixelFormat pixel_format,
@@ -56,13 +56,13 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
     create_from_pointer(nullptr, h, w, 0);
 
   }
-  void Texture2D::load(const filesystem::path &path, bool reload, AssetStatus &status)
+  void Texture2D::load(const std::filesystem::path &path, bool reload, AssetStatus &status)
   {
     if ((!reload && status == AssetStatus::NotLoaded) || reload)
     {
       add_job([this, path]()
       {
-        filesystem::path tmp = path;
+        std::filesystem::path tmp = path;
         tmp.replace_extension("");
         load_from_path(tmp);//without .meta
         add_main_thread_job([this]()
@@ -85,7 +85,7 @@ Texture2D::Texture2D(string texture_path_from_textures_folder,
   }
   
 
-  void Texture2D::load_from_path(const filesystem::path &path)
+  void Texture2D::load_from_path(const std::filesystem::path &path)
   {
     textureName = path.stem().string();
     int ch;

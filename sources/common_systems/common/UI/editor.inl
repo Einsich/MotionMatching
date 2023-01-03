@@ -19,7 +19,7 @@ back("back_button.png", vec2(25, 25))
 struct SelectedAsset : ecs::Singleton
 {
   Asset<AssetStub> *asset = nullptr;
-  string_view name;
+  std::string_view name;
   ResourceMap *resourceType = nullptr;
   bool selectNewResourceType = false;
 };
@@ -73,7 +73,7 @@ SYSTEM(tags=editor; stage=imgui_render) asset_viewer(SelectedAsset &selectedAsse
             wantCopy = !wantCopy, stub = Asset<AssetStub>();
           if (wantCopy)
           {
-            static string searchString = "";
+            static std::string searchString = "";
             snprintf(buf, BUFN, "%s", searchString.c_str());
             if (ImGui::InputText("Search substr", buf, BUFN))
             {
@@ -84,13 +84,13 @@ SYSTEM(tags=editor; stage=imgui_render) asset_viewer(SelectedAsset &selectedAsse
             
             for (auto &asset : selectedAsset.resourceType->resources)
             {
-              const string &assetName = asset.second.asset_name();
+              const std::string &assetName = asset.second.asset_name();
               if (strstr(assetName.c_str(), searchString.c_str()))
                 names.push_back(assetName.c_str());
             }
             if (ImGui::ListBox("", &curCopy, names.data(), names.size()))
             {
-              stub = selectedAsset.resourceType->resources[string(names[curCopy])];
+              stub = selectedAsset.resourceType->resources[std::string(names[curCopy])];
               copyName = names[curCopy];
             }
           }
@@ -148,7 +148,7 @@ SYSTEM(tags=editor; stage=imgui_render) asset_viewer(SelectedAsset &selectedAsse
         {
           for (auto &asset : selectedAsset.resourceType->resources)
           {
-            const string &assetName = asset.second.asset_name();
+            const std::string &assetName = asset.second.asset_name();
             if (ImGui::Button(assetName.c_str()))
             {
               selectedAsset.asset = &asset.second;

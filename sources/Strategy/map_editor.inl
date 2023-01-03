@@ -33,8 +33,8 @@ SYSTEM(tags=editor; stage=imgui_render) country_builder(
     ImGui::Checkbox("Edit provinces", &editor.editProvinces);
     if (editor.editProvinces)
     {
-      vector<const char *> names;
-      vector<int> keys;
+      eastl::vector<const char *> names;
+      eastl::vector<int> keys;
       names.emplace_back("None");
       keys.emplace_back(PoliticalMap::MAX_PROVINCES);
       for (const auto &state : politicalMap.countries)
@@ -57,11 +57,11 @@ SYSTEM(tags=editor; stage=imgui_render) country_builder(
         is_enabled = editor.enableWater;
       });
     }
-    string provincesFile;
+    std::string provincesFile;
     if (ImGui::Button("Save provinces") && get_save_file(provincesFile, ".blk"))
     {
       DataBlock provicesData;
-      vector<DataBlock *> states(politicalMap.countries.size());
+      eastl::vector<DataBlock *> states(politicalMap.countries.size());
       for (int i = 0, n = politicalMap.countries.size(); i < n; i++)
         states[i] = provicesData.addBlock(politicalMap.countries[i].name.c_str());
       for (int i = 0, n = politicalMap.provincesInfo.size(); i < n; i++)

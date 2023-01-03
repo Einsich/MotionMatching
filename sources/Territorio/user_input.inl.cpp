@@ -6,15 +6,15 @@ static ecs::QueryCache is_game_started__cache__;
 
 static ecs::QueryCache select_map_query__cache__;
 
+static ecs::QueryCache change_invasion_weight__cache__;
+
+static ecs::QueryCache check_mouse_over_ui__cache__;
+
 static ecs::QueryCache start_game__cache__;
 
 static ecs::QueryCache select_spawn_point__cache__;
 
 static ecs::QueryCache select_invasion__cache__;
-
-static ecs::QueryCache change_invasion_weight__cache__;
-
-static ecs::QueryCache check_mouse_over_ui__cache__;
 
 template<typename Callable>
 static void is_game_started(Callable lambda)
@@ -26,6 +26,16 @@ template<typename Callable>
 static void select_map_query(Callable lambda)
 {
   ecs::perform_query<const MapArrays&>(select_map_query__cache__, lambda);
+}
+
+static void change_invasion_weight_implementation()
+{
+  ecs::perform_system(change_invasion_weight__cache__, change_invasion_weight);
+}
+
+static void check_mouse_over_ui_implementation()
+{
+  ecs::perform_system(check_mouse_over_ui__cache__, check_mouse_over_ui);
 }
 
 static void start_game_handler(const ecs::Event &event)
@@ -58,26 +68,6 @@ static void select_invasion_single_handler(ecs::EntityId eid, const ecs::Event &
   ecs::perform_event(eid, reinterpret_cast<const MouseButtonDownEvent<MouseButton::LeftButton> &>(event), select_invasion__cache__, select_invasion);
 }
 
-static void change_invasion_weight_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), change_invasion_weight__cache__, change_invasion_weight);
-}
-
-static void change_invasion_weight_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), change_invasion_weight__cache__, change_invasion_weight);
-}
-
-static void check_mouse_over_ui_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ImguiRender &>(event), check_mouse_over_ui__cache__, check_mouse_over_ui);
-}
-
-static void check_mouse_over_ui_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ImguiRender &>(event), check_mouse_over_ui__cache__, check_mouse_over_ui);
-}
-
 static void registration_pull_user_input()
 {
   ecs::register_query(ecs::QueryDescription(
@@ -101,6 +91,37 @@ static void registration_pull_user_input()
   {},
   {}
   ));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "change_invasion_weight",
+  &change_invasion_weight__cache__,
+  {
+    {"invasion_weight", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
+    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()}
+  },
+  {
+    {"isPlayer", ecs::TypeIndex<ecs::Tag>::value}
+  },
+  {},
+  "imgui_render",
+  {},
+  {},
+  {},
+  &change_invasion_weight_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "check_mouse_over_ui",
+  &check_mouse_over_ui__cache__,
+  {},
+  {},
+  {},
+  "imgui_render",
+  {},
+  {},
+  {},
+  &check_mouse_over_ui_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",
@@ -155,37 +176,6 @@ static void registration_pull_user_input()
   {},
   &select_invasion_handler, &select_invasion_single_handler),
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "change_invasion_weight",
-  &change_invasion_weight__cache__,
-  {
-    {"invasion_weight", ecs::get_type_index<float>(), ecs::AccessType::ReadWrite, false, ecs::is_singleton<float>()},
-    {"forces", ecs::get_type_index<uint>(), ecs::AccessType::Copy, false, ecs::is_singleton<uint>()}
-  },
-  {
-    {"isPlayer", ecs::TypeIndex<ecs::Tag>::value}
-  },
-  {},
-  {},
-  {},
-  {},
-  &change_invasion_weight_handler, &change_invasion_weight_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "check_mouse_over_ui",
-  &check_mouse_over_ui__cache__,
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  &check_mouse_over_ui_handler, &check_mouse_over_ui_single_handler),
-  ecs::EventIndex<ImguiRender>::value);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_user_input)

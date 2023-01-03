@@ -18,7 +18,7 @@ class AnimationPlayer
   AnimationLerpedIndex index;
   MotionMatching motionMatching;
   AnimationTree tree;
-  vector<int> treeBoneToMesh;
+  std::vector<int> treeBoneToMesh;
   struct IKFoot
   {
     bool onGround = false;

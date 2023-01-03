@@ -195,7 +195,7 @@ afterMM:
           if (mmOptimisationIndex >= (int)settingsContainer.motionMatchingOptimisationSettings.size())
           {
             settings.startTesting = false;
-            ofstream os(project_path("profile/average.txt"));
+            std::ofstream os(project_path("profile/average.txt"));
             os << "name;average;max;avg_ratio;max_ratio\n";
             const auto &tracker = profiler.get_tracker(0);
             float avgBruteForce = tracker.averageTime;
