@@ -17,12 +17,13 @@ std::string root_path(const std::string &path);
 
 DasFilePtr load_das_script(const char *path)
 {
+  das::string filePath = path;
   static auto fsAccess = das::make_smart<das::FsFileAccess>(root_path("sources/das/common.das_project"), das::make_smart<das::FsFileAccess>());
   das::ModuleGroup dummyLibGroup;
   auto file = das::make_shared<DasFile>();
 
   // compile program
-  file->program = das::compileDaScript(path, fsAccess, tout, dummyLibGroup);
+  file->program = das::compileDaScript(filePath, fsAccess, tout, dummyLibGroup);
   if (file->program->failed() ) {
     tout << "failed to compile\n";
     for ( auto & err : file->program->errors ) {
@@ -39,22 +40,40 @@ DasFilePtr load_das_script(const char *path)
     }
     return nullptr;
   }
+  das::vector<das::ModuleInfo> req;
+  das::vector<das::string> missing, circular, notAllowed;
+  das::das_set<das::string> dependencies;
+  das::getPrerequisits(filePath, fsAccess, req, missing, circular, notAllowed, dependencies, dummyLibGroup, nullptr, 0, false);
+
+  for (const auto &mod : req)
+  {
+    file->dependencies.emplace(mod.fileName);
+  }
+
   files.emplace(path, file);
   resolve_systems(file->ctx);
   return file;
 }
 
-uint32_t DasFile::get_function_count() const
+
+#include <application/file_watcher.h>
+
+static void track_das_file(const std::string &file, FileWatchStatus status)
 {
-  return ctx->getTotalFunctions();
+  switch (status)
+  {
+  case FileWatchStatus::Added : 
+    break;
+  
+  case FileWatchStatus::Changed : 
+    break;
+  case FileWatchStatus::Removed : 
+    break;
+  }
 }
 
-das::SimFunction *DasFile::get_function(uint32_t i)
-{
-  return ctx->getFunction(i);
-}
-das::SimFunction *DasFile::find_function(const char *name) const 
-{
-  return ctx->findFunction(name);
-}
 
+void setup_das_watcher()
+{
+  setup_track_callback(".das", &track_das_file);
+}

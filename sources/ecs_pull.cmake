@@ -4,7 +4,7 @@ macro(ecs_pull_module)
   
   set(ECS_PULLS )
   file(GLOB_RECURSE MODULE_ECS_SOURCES ${MODULE_PATH}/*.inl)
-
+ 
   foreach(PATH ${MODULE_ECS_SOURCES})
     
     set(FILE_NAME )

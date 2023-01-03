@@ -11,7 +11,8 @@ struct ApplicationMetaInfo
     (bool) (startGame),
     (ecs::vector<ecs::string>) (shadersPaths),
     (ecs::vector<ecs::string>) (resourcesPaths),
-    (ecs::vector<ecs::string>) (templatePaths)
+    (ecs::vector<ecs::string>) (templatePaths),
+    (ecs::vector<ecs::string>) (scriptFolders)
   )
   ApplicationMetaInfo(const std::string &path);
 };

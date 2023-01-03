@@ -5,12 +5,11 @@ struct DasFile
 {
   das::ProgramPtr program;
   das::ContextPtr ctx;
+  das::das_set<das::string> dependencies;//module names
 
-  uint32_t get_function_count() const;
-  das::SimFunction *get_function(uint32_t i);
-  das::SimFunction *find_function(const char *name) const;
 };
 using DasFilePtr = das::shared_ptr<DasFile>;
 
 DasFilePtr load_das_script(const char *path);
 void clear_das_files();
+void setup_das_watcher();

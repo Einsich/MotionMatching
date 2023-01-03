@@ -9,6 +9,7 @@
 #include "application_metainfo.h"
 #include "memory/tmp_allocator.h"
 #include <ecs/ecs.h>
+#include "file_watcher.h"
 #include <profiler.h>
 
 namespace ecs_ex
@@ -74,6 +75,9 @@ void Application::start()
   copy_paths(root, metaInfo.shadersPaths, shadersPaths);
   copy_paths(root, metaInfo.resourcesPaths, resourcesPaths);
   copy_paths(root, metaInfo.templatePaths, templatePaths);
+
+  setup_directory_watch(metaInfo.scriptFolders);
+
   compile_shaders();
   bool editor = !metaInfo.startGame;
   
@@ -132,6 +136,11 @@ void Application::main_loop()
     OPTICK_FRAME("MainThread");
     clear_tmp_allocation();
     timer.update();
+    
+    {
+      PROFILER_EVENT("file watching");
+      update_watching();
+    }
     uint mainThreadJobsCount = mainThreadJobs.size();
     if (mainThreadJobsCount > 0)
     {

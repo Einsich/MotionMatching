@@ -118,7 +118,6 @@ SYSTEM(stage=act;) vector_pointers_update()
 #include <daScript/daScript.h>
 #include <das_load.h>
 
-das::SimFunction *das_process_function;
 #include <parallel/thread_pool.h>
 
 EVENT() init_das(const ecs::OnSceneCreated &)
@@ -131,6 +130,8 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   das::Module::Initialize();
 
   das::setDasRoot(root_path("sources/3rd_party/daScript"));
+  
+  setup_das_watcher();
 
   add_main_thread_job([]() {
     load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
