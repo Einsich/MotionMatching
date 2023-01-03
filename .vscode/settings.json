@@ -101,7 +101,8 @@
     "variant": "cpp",
     "any": "cpp",
     "ranges": "cpp",
-    "span": "cpp"
+    "span": "cpp",
+    "climits": "cpp"
   },
   "launchOption.options": {
     "BuildType": [
@@ -164,8 +165,7 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "MotionMatching",
-      "delpoy_only_project_folder": "false"
+      "name": "ECSbenchmark"
     }
   },
   "cmake.configureOnOpen": false,

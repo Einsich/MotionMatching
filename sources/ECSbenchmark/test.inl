@@ -129,7 +129,7 @@ EVENT() init_das(const ecs::OnSceneCreated &)
   NEED_MODULE(Test_ECS);
   das::Module::Initialize();
 
-  das::setDasRoot(root_path("sources/3rd_party/daScript"));
+  das::setDasRoot(eastl::string(root_path("sources/3rd_party/daScript").c_str()));
   
   setup_das_watcher();
 

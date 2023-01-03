@@ -4,7 +4,7 @@
 
 struct DasFile
 {
-  std::string filePath;
+  das::string filePath;
   das::ProgramPtr program;
   das::ContextPtr ctx;
   das::das_set<das::string> dependencies;//module names

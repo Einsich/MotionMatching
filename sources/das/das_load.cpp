@@ -17,7 +17,7 @@ std::string root_path(const std::string &path);
 static das::smart_ptr<das::FsFileAccess> get_file_access()
 {
   return das::make_smart<das::FsFileAccess>(
-    root_path("sources/das/common.das_project"),
+    das::string(root_path("sources/das/common.das_project").c_str()),
     das::make_smart<das::FsFileAccess>());
 }
 
@@ -83,7 +83,7 @@ DasFilePtr load_das_script(const char *path)
   return file;
 }
 
-void reload_das_script(const std::string &file_path)
+void reload_das_script(const eastl::string &file_path)
 {
   das::Module::ClearSharedModules();
   das::ModuleGroup dummyLibGroup;
@@ -114,7 +114,7 @@ static void track_das_file(const std::string &file, FileWatchStatus status)
   {
   case FileWatchStatus::Added : load_das_script(file.c_str()); break;
   
-  case FileWatchStatus::Changed : reload_das_script(file); break;
+  case FileWatchStatus::Changed : reload_das_script(file.c_str()); break;
   case FileWatchStatus::Removed : 
     break;
   }

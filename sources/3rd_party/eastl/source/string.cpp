@@ -448,7 +448,19 @@ namespace eastl
 
 
 } // namespace eastl
+#include <cstdio>
 
+namespace EA
+{
+	namespace StdC
+	{
+		int Vsnprintf(char*  EA_RESTRICT pDestination, size_t n, const char*  EA_RESTRICT pFormat, va_list arguments)
+		{
+			return vsnprintf(pDestination, n, pFormat, arguments);
+		}
+
+	}
+}
 
 
 
