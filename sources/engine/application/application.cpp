@@ -19,7 +19,7 @@ namespace ecs_ex
 void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 
-Application::Application(const string &project_name,const string &root, int width, int height, bool full_screen):
+Application::Application(const string &project_name, const string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
 root(root),
 projectPath(root + "/" + project_name)

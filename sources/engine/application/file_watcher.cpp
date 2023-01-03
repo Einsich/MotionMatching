@@ -1,6 +1,4 @@
-
 #include <FileWatcher/FileWatcher.h>
-#include <iostream>
 #include "file_watcher.h"
 #include <eastl/map.h>
 #include <eastl/vector.h>
@@ -49,9 +47,8 @@ public:
           status = FileWatchStatus::Changed;
         else if (action == FW::Action::Delete)
           status = FileWatchStatus::Removed;
-        std::string path = dir + "/" + filename; 
-        std::replace(path.begin(), path.end(), '\\', '/');
-        try_add_change(std::move(path), it->second, status);
+ 
+        try_add_change(dir + "/" + filename, it->second, status);
         
       }
     }
@@ -62,7 +59,6 @@ public:
     for (const auto &elem : changes)
     {
       elem.callback(elem.path, elem.status);
-		    std::cout << elem.path << " status " << (int)elem.status  <<std::endl;
     }
     changes.clear();
   }

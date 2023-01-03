@@ -115,6 +115,12 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, const das::ContextPtr
 {
   constexpr int ArgsCnt = 32;
   vec4f args[ArgsCnt];
+  if (cache.noArchetype)
+  {
+    *args = das::cast<uint32_t>::from(1u);
+    ctx->call(loopFunc, args, nullptr);
+    return;
+  }
   const ecs::ArchetypeManager &manager = ecs::get_archetype_manager();
  
   for (const auto &p : cache.archetypes)
@@ -152,8 +158,15 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, const das::ContextPtr
 }
 
 
-void resolve_systems(const das::ContextPtr &ctx)
+void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
 {
+
+  for(auto &system : file.resolvedSystems)
+  {
+    ECS_ASSERT(ecs::remove_system(system, true));
+  }
+  file.resolvedSystems.clear();
+
 
   for(auto &system : unresolvedSystems)
   {
@@ -163,12 +176,11 @@ void resolve_systems(const das::ContextPtr &ctx)
     {
       continue;
     }
-    const_cast<ecs::SystemDescription::SystemHandler&>(system.system) =
-      [cache = system.cache, ctx, loopFunc]()
+    system.system = [cache = system.cache, ctx, loopFunc]()
       {
         perform_ecs_loop(*cache, ctx, loopFunc);
       };
-    ecs::register_system(std::move(system));
+    file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
   unresolvedSystems.clear();
 }

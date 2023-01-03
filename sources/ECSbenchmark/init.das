@@ -21,4 +21,8 @@ def hi_func(m : float; var pos, vel : float3&; center: float3)
   //print("dt = {dt}, m = {m}, pos = {pos}, vel = {vel}, center = {center}\n");
 
 
+[ecs(stage=act)]
+def test_c()
+  print("b\n")
+
 

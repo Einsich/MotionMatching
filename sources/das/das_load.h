@@ -1,11 +1,15 @@
 #pragma once
 #include <daScript/daScript.h>
+#include <ecs/query_description.h>
 
 struct DasFile
 {
+  std::string filePath;
   das::ProgramPtr program;
   das::ContextPtr ctx;
   das::das_set<das::string> dependencies;//module names
+
+  das::vector<ecs::SystemHandle> resolvedSystems;
 
 };
 using DasFilePtr = das::shared_ptr<DasFile>;
