@@ -9,13 +9,13 @@ var
   DAS_PAK_ROOT = "./"
 
 let moduleMap : table<string; string> <- {{
-  "ecs" => "{get_das_root()}../../sources/das/ecs.das"
+  "ecs" => "{get_das_root()}/../../das/ecs.das"
 }}
 
 def module_default(req,from:string) : module_info
   let rs <- split_by_chars(req,"./")
   var fr <- split_by_chars(from,"/")
-  //print("{rs}")
+  //print("rs = {rs}\n")
   let mod_name = rs[length(rs)-1]
 
   let path = moduleMap |> find(mod_name)

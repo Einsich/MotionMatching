@@ -3,13 +3,7 @@
 #include <ecs/archetype_manager.h>
 #include "das_load.h"
 
-MAKE_EXTERNAL_TYPE_FACTORY(Function, das::Function)
-MAKE_EXTERNAL_TYPE_FACTORY(ExprBlock, das::ExprBlock)
-
-
-static das::ContextPtr sharedContext;
-
-ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *descr)
+static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *descr)
 {
   ecs::vector<ecs::string> v(a.size);
   const char **data = (const char **)a.data;
@@ -21,7 +15,7 @@ ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *de
   return v;
 }
 
-ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array &a, const char *descr)
+static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array &a, const char *descr)
 {
   ecs::vector<ecs::ComponentDescription> v;
   struct Arg
@@ -38,7 +32,7 @@ ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array &a, co
   return v;
 }
 
-const char* get_das_type_name(const das::TypeDecl &type)
+static const char* get_das_type_name(const das::TypeDecl &type)
 {
   type.baseType;
   switch (type.baseType)
@@ -59,7 +53,8 @@ const char* get_das_type_name(const das::TypeDecl &type)
   default: return "unsopported type"; break;
   } 
 }
-ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments)
+
+static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments)
 {
   ecs::vector<ecs::ArgumentDescription> v;
   for (const auto &arg : arguments)
@@ -85,6 +80,7 @@ ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::Va
 
 static thread_local das::vector<ecs::SystemDescription> unresolvedSystems;
 static thread_local das::vector<ecs::QueryDescription> unresolvedQueries;
+
 
 void register_system(
     const char *stage,
@@ -183,7 +179,6 @@ void perform_query(const das::Block &block, das::Context *context, das::LineInfo
 }
 
 
-
 void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
 {
   for(auto &system : file.resolvedQueries)
@@ -221,30 +216,3 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
   unresolvedQueries.clear();
   unresolvedSystems.clear();
 }
-
-class Module_ECS : public das::Module
-{
-public:
-  Module_ECS() : Module("ecs_impl")
-  {
-    das::ModuleLibrary lib;
-    lib.addModule(this);
-    lib.addBuiltInModule();
-
-    addExtern<DAS_BIND_FUN(register_system)>(*this, lib, "register_system", das::SideEffects::modifyExternal, "register_system");
-    addExtern<DAS_BIND_FUN(register_query)>(*this, lib, "register_query", das::SideEffects::modifyExternal, "register_query");
-    addExtern<DAS_BIND_FUN(perform_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "perform_query");
-
-    verifyAotReady();
-    sharedContext = das::make_shared<das::Context>(4 * 1024);
-  }
-  virtual das::ModuleAotType aotRequire(das::TextWriter &tw) const override
-  {
-    // specifying which include files are required for this module
-    // tw << "#include \"tutorial02aot.h\"\n";
-    // specifying AOT type, in this case direct cpp mode (and not hybrid mode)
-    return das::ModuleAotType::cpp;
-  }
-};
-
-REGISTER_MODULE(Module_ECS);

@@ -127,13 +127,13 @@ SYSTEM(stage=act;) vector_pointers_update()
 
 #include <parallel/thread_pool.h>
 
+void require_project_specific_modules();
+
 EVENT() init_das(const ecs::OnSceneCreated &)
 {
   das::daScriptEnvironment::ensure();
-  das::daScriptEnvironment::bound->das_def_tab_size = 2;
   NEED_ALL_DEFAULT_MODULES;
-  NEED_MODULE(Module_ECS);
-  NEED_MODULE(Test_ECS);
+  require_project_specific_modules();
   das::Module::Initialize();
 
   das::setDasRoot(eastl::string(root_path("sources/3rd_party/daScript").c_str()));

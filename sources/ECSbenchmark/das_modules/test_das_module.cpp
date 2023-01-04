@@ -1,12 +1,7 @@
 #include <daScript/daScript.h>
 #include <application/time.h>
-#include <application/application.h>
+//#include <application/application.h>
 
-
-inline float get_delta_time()
-{
-  return Time::delta_time();
-}
 
 class Test_ECS : public das::Module
 {
@@ -18,8 +13,8 @@ public:
     lib.addBuiltInModule();
 
     addExtern<DAS_BIND_FUN(get_delta_time)>(*this, lib, "get_delta_time", das::SideEffects::accessExternal, "get_delta_time");
-    addExtern<DAS_BIND_FUN(project_path_str)>(*this, lib, "project_path", das::SideEffects::accessExternal, "project_path_str");
-    addExtern<DAS_BIND_FUN(root_path_ctr)>(*this, lib, "root_path", das::SideEffects::accessExternal, "root_path_ctr");
+    //addExtern<DAS_BIND_FUN(project_path_str)>(*this, lib, "project_path", das::SideEffects::accessExternal, "project_path_str");
+    //addExtern<DAS_BIND_FUN(root_path_ctr)>(*this, lib, "root_path", das::SideEffects::accessExternal, "root_path_ctr");
 
     verifyAotReady();
   }

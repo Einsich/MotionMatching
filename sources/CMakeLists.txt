@@ -67,14 +67,9 @@ set(EXE_SOURCES )
 
 if(IS_AOT_COMPILER)
     set(EXE_SOURCES ${SRC_ROOT}/3rd_party/daScript/utils/daScript/main.cpp)
-
-    set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} libDaScript eastl)
-    add_subdirectory(3rd_party/daScript)
-    add_subdirectory(3rd_party/eastl)
-    
     include_directories(${SRC_ROOT}/3rd_party/daScript/include)
-    include_directories(${SRC_ROOT}/3rd_party/ecs/include) #only for ska map
     include_directories(${SRC_ROOT}/3rd_party/eastl/include)
+    include_directories(${SRC_ROOT}/3rd_party/ecs/include)
 endif()
 
 set(GAME_CMAKE ${SRC_ROOT}/${GAME}/game.cmake)

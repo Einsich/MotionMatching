@@ -80,3 +80,8 @@ public:
       stop();
   }
 };
+
+inline float get_delta_time()
+{
+  return Time::delta_time();
+}
