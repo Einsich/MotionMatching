@@ -188,11 +188,13 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
 {
   for(auto &system : file.resolvedQueries)
   {
-    ECS_ASSERT(ecs::remove_query(system, true));
+    bool result = ecs::remove_query(system, true);
+    ECS_ASSERT(result);
   }
   for(auto &system : file.resolvedSystems)
   {
-    ECS_ASSERT(ecs::remove_system(system, true));
+    bool result = ecs::remove_system(system, true);
+    ECS_ASSERT(result);
   }
   file.resolvedQueries.clear();
   file.resolvedSystems.clear();

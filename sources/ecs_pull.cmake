@@ -3,9 +3,9 @@
 macro(ecs_pull_module)
   
   set(ECS_PULLS )
-  file(GLOB_RECURSE MODULE_ECS_SOURCES ${MODULE_PATH}/*.inl)
+  file(GLOB_RECURSE TMP_ECS_SOURCES RELATIVE ${MODULE_PATH} *.inl)
  
-  foreach(PATH ${MODULE_ECS_SOURCES})
+  foreach(PATH ${TMP_ECS_SOURCES})
     
     set(FILE_NAME )
     get_filename_component(FILE_NAME ${PATH} NAME_WE)
@@ -25,7 +25,7 @@ macro(ecs_pull_module)
       "size_t variable_pull_${MODULE_NAME} = 0 + PULL_VARS ;\n"
       "#undef PULL\n"
     )
-    set (MODULE_ECS_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/ecs_pulls.cpp)
+    set (SOURCES ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/ecs_pulls.cpp)
 
   endif()
 endmacro()
@@ -48,6 +48,6 @@ macro(ecs_gather_modules OUT_VAR)
     "size_t ${OUT_VAR} = 0 + PULL_VARS ;\n"
     "#undef PULL\n"
   )
-  set (MODULE_ECS_SOURCES ${MODULE_ECS_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/ecs_gather_modules.cpp)
+  set (SOURCES ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/ecs_gather_modules.cpp)
 
 endmacro()

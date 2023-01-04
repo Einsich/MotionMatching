@@ -14,4 +14,5 @@ add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 add_definitions(-DEASTL_OPENSOURCE=1)
 
 include_directories(${MODULE_PATH}/include)
+set(SOURCES_DIRS source)
 include(../../module.cmake)

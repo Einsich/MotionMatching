@@ -1,4 +1,4 @@
-require engine
+options indenting = 2
 require strings
 require daslib/strings_boost
 
@@ -9,7 +9,7 @@ var
   DAS_PAK_ROOT = "./"
 
 let moduleMap : table<string; string> <- {{
-  "ecs" => "{root_path()}/sources/das/ecs.das"
+  "ecs" => "{get_das_root()}../../sources/das/ecs.das"
 }}
 
 def module_default(req,from:string) : module_info

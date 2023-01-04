@@ -60,6 +60,27 @@
         },
         {
             "type": "shell",
+            "label": "Build aot compiler",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "./Tools/build_script.sh",
+            "args": [
+                "${config:launchOption.currentConfig.Project.name}",
+                "rel",
+                "yes",
+                "yes"
+            ],
+            "windows": {
+                "command": "Tools/build_script.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
             "label": "Deploy release",
             "options": {
                 "cwd": "${workspaceFolder}"
