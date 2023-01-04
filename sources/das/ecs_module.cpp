@@ -4,8 +4,8 @@
 #include "das_load.h"
 
 MAKE_EXTERNAL_TYPE_FACTORY(Function, das::Function)
+MAKE_EXTERNAL_TYPE_FACTORY(ExprBlock, das::ExprBlock)
 
-using namespace das;
 
 static das::ContextPtr sharedContext;
 
@@ -59,11 +59,10 @@ const char* get_das_type_name(const das::TypeDecl &type)
   default: return "unsopported type"; break;
   } 
 }
-ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::FunctionPtr &function)
+ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments)
 {
-  printf("%s\n", function->describe().c_str());
   ecs::vector<ecs::ArgumentDescription> v;
-  for (const auto &arg : function->arguments)
+  for (const auto &arg : arguments)
   {
     ecs::AccessType access = ecs::AccessType::Copy;
     const auto&type = *arg->type;
@@ -85,6 +84,7 @@ ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::FunctionPtr &f
 
 
 static thread_local das::vector<ecs::SystemDescription> unresolvedSystems;
+static thread_local das::vector<ecs::QueryDescription> unresolvedQueries;
 
 void register_system(
     const char *stage,
@@ -97,10 +97,10 @@ void register_system(
 {
   const char *name = system->name.c_str();
   printf("system %s, stage %s\n", name, stage);
+  printf("%s\n", system->describe().c_str());
 
-  
   unresolvedSystems.emplace_back(system->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
-      to_ecs_arguments(system),
+      to_ecs_arguments(system->arguments),
       to_ecs_components(require_args, "required"),
       to_ecs_components(require_not_args, "not required"),
       stage,
@@ -108,17 +108,34 @@ void register_system(
       to_ecs_string_array(after, "after"),
       to_ecs_string_array(tags, "tags"),
       nullptr);
-       
 }
 
-static void perform_ecs_loop(const ecs::QueryCache &cache, const das::ContextPtr &ctx, const das::SimFunction *loopFunc)
+void register_query(
+    const das::Array &require_args,
+    const das::Array &require_not_args,
+    das::smart_ptr<das::ExprBlock> block)
+{
+  auto name = block->at.fileInfo->name + eastl::to_string(block->at.line);
+  auto cache = new ecs::QueryCache();
+  unresolvedQueries.emplace_back(block->at.fileInfo->name.c_str(), name.c_str(), cache,
+      to_ecs_arguments(block->arguments),
+      to_ecs_components(require_args, "required"),
+      to_ecs_components(require_not_args, "not required"));
+  block->annotationData = intptr_t(cache);
+  auto mangledName = block->getMangledName(true,true);
+
+  block->annotationDataSid = das::hash_blockz64((uint8_t *)mangledName.c_str());
+}
+
+template<typename C>
+static void perform_ecs_loop(const ecs::QueryCache &cache, C call)
 {
   constexpr int ArgsCnt = 32;
   vec4f args[ArgsCnt];
   if (cache.noArchetype)
   {
     *args = das::cast<uint32_t>::from(1u);
-    ctx->call(loopFunc, args, nullptr);
+    call(args);
     return;
   }
   const ecs::ArchetypeManager &manager = ecs::get_archetype_manager();
@@ -140,7 +157,7 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, const das::ContextPtr
       {
         *argPtr++ = das::cast<void*>::from(archetype.components[cmpIdx].data[binIdx]);
       }
-      ctx->call(loopFunc, args, nullptr);
+      call(args);
       
     }
     ecs::uint lastBinSize = archetype.entityCount - (binN << archetype.chunkPower);
@@ -152,21 +169,38 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, const das::ContextPtr
       {
         *argPtr++ = das::cast<void*>::from(archetype.components[cmpIdx].data[binN]);
       }
-      ctx->call(loopFunc, args, nullptr);
+      call(args);
     }
   }
 }
 
+void perform_query(const das::Block &block, das::Context *context, das::LineInfoArg *line)
+{
+  auto closureBlock = (das::SimNode_ClosureBlock*)block.body;
+  auto cache = (ecs::QueryCache*)closureBlock->annotationData;
+
+  perform_ecs_loop(*cache, [&](vec4f *args) { context->invoke(block, args, nullptr, line);});
+}
+
+
 
 void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
 {
-
+  for(auto &system : file.resolvedQueries)
+  {
+    ECS_ASSERT(ecs::remove_query(system, true));
+  }
   for(auto &system : file.resolvedSystems)
   {
     ECS_ASSERT(ecs::remove_system(system, true));
   }
+  file.resolvedQueries.clear();
   file.resolvedSystems.clear();
 
+  for(auto &system : unresolvedQueries)
+  {
+    file.resolvedQueries.emplace_back(ecs::register_query(std::move(system)));
+  }
 
   for(auto &system : unresolvedSystems)
   {
@@ -178,33 +212,36 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     }
     system.system = [cache = system.cache, ctx, loopFunc]()
       {
-        perform_ecs_loop(*cache, ctx, loopFunc);
+        perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);});
       };
     file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
+  unresolvedQueries.clear();
   unresolvedSystems.clear();
 }
 
-class Module_ECS : public Module
+class Module_ECS : public das::Module
 {
 public:
   Module_ECS() : Module("ecs_impl")
   {
-    ModuleLibrary lib;
+    das::ModuleLibrary lib;
     lib.addModule(this);
     lib.addBuiltInModule();
 
-    addExtern<DAS_BIND_FUN(register_system)>(*this, lib, "register_system", SideEffects::accessExternal, "register_system");
+    addExtern<DAS_BIND_FUN(register_system)>(*this, lib, "register_system", das::SideEffects::modifyExternal, "register_system");
+    addExtern<DAS_BIND_FUN(register_query)>(*this, lib, "register_query", das::SideEffects::modifyExternal, "register_query");
+    addExtern<DAS_BIND_FUN(perform_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "perform_query");
 
     verifyAotReady();
     sharedContext = das::make_shared<das::Context>(4 * 1024);
   }
-  virtual ModuleAotType aotRequire(TextWriter &tw) const override
+  virtual das::ModuleAotType aotRequire(das::TextWriter &tw) const override
   {
     // specifying which include files are required for this module
     // tw << "#include \"tutorial02aot.h\"\n";
     // specifying AOT type, in this case direct cpp mode (and not hybrid mode)
-    return ModuleAotType::cpp;
+    return das::ModuleAotType::cpp;
   }
 };
 

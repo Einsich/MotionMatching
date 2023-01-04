@@ -83,6 +83,13 @@ EVENT() init(const ecs::OnSceneCreated &)
       });
     }
   }
+
+  ecs::prefab_id tmpl2 = ecs::create_entity_prefab(ecs::EntityPrefab("test2", {
+    {"counter", 0},
+    {"name", ecs::string("lolik")}
+  }));
+
+  ecs::create_entity(tmpl2);
   fflush(stdout);
 }
 static void process(float dt, vec3 &pos, vec3 &vel, const vec3 &center, float m)

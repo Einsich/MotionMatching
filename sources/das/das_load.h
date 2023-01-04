@@ -9,6 +9,7 @@ struct DasFile
   das::ContextPtr ctx;
   das::das_set<das::string> dependencies;//module names
 
+  das::vector<ecs::QueryHandle> resolvedQueries;
   das::vector<ecs::SystemHandle> resolvedSystems;
 
 };

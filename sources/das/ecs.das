@@ -4,7 +4,7 @@ require daslib/ast_boost
 require daslib/templates_boost
 require daslib/strings_boost
 
-require ecs_impl
+require ecs_impl public
 
 /* enum private DecsQueryType
   query
@@ -118,6 +118,75 @@ def parse_component_type(str : das_string)
   let typeIdx = find(s, "`")
   return [[auto slice(s, 0, typeIdx), slice(s, typeIdx+1)]]
 
+
+[block_macro(name="eq")]
+class ECSQueryMacro : AstBlockAnnotation
+
+  def override apply ( var blk:smart_ptr<ExprBlock>; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    var req: array<tuple<string; string>>
+    var not_req: array<tuple<string; string>>
+    for arg in args
+      if arg.basicType == Type tString
+        if arg.name == "required"
+          req |> push(parse_component_type(arg.sValue))
+        elif arg.name == "required_not"
+          not_req |> push(parse_component_type(arg.sValue))
+        //else process errors
+
+    
+    var vars : array<VariablePtr>
+    var prtInc : array<ExpressionPtr>
+    var ptrPass : array<ExpressionPtr>
+
+    var queryBody <- blk.list[0]
+    var blockBody <- [{ auto queryBody}]
+
+    vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
+
+    for arg in blk.arguments  
+  
+      var vtype <- clone_type(arg._type)
+      vtype.baseType = Type tPointer
+      vtype.flags = bitfield(0)
+      let argName = "{arg.name}`ptr"
+      prtInc |> emplace_new <| qmacro($i(argName)++)
+      if arg._type.isPointer
+        ptrPass |> emplace_new <| qmacro($i(argName))
+        vtype.firstType := clone_type(arg._type.firstType)
+      else
+        ptrPass |> emplace_new <| qmacro(*$i(argName))
+        vtype.firstType := clone_type(arg._type)
+      vtype.firstType.flags &= ~TypeDeclFlags ref
+     
+      
+      vars |> emplace_new <| new [[Variable() at=arg.at,
+          name := argName,
+          _type <- vtype
+        ]]
+
+
+
+    register_query(req, not_req, blk)
+  
+
+    var queryBlock <- qmacro_block <| 
+      unsafe
+        for i in range(n)
+          invoke( $($a(blk.arguments)) {$b(blockBody);}, $a(ptrPass))
+          
+          $b(prtInc)
+      return
+    
+    blk.list |> clear()
+    blk.arguments |> clear()
+    for v in vars
+      blk.arguments |> emplace(v)
+    blk.list |> emplace(queryBlock) 
+    
+    //print(describe(blk))
+
+    return true
+
 [function_macro(name="ecs")]
 class ECSSystemMacro : AstFunctionAnnotation
 
@@ -143,6 +212,7 @@ class ECSSystemMacro : AstFunctionAnnotation
           after |> push("{arg.sValue}")
         elif arg.name == "tags"
           tags |> push("{arg.sValue}")
+        //else process errors
 
     
     var vars : array<VariablePtr>
@@ -183,7 +253,7 @@ class ECSSystemMacro : AstFunctionAnnotation
           $b(prtInc)
       return
     
-    print(describe(systemLoop))
+    //print(describe(systemLoop))
     
     systemLoop.flags |= FunctionFlags exports
     compiling_module() |> add_function(systemLoop)

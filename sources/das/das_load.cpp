@@ -68,7 +68,6 @@ static void gather_dependencies(DasFile &file)
 
 DasFilePtr load_das_script(const char *path)
 {
-  das::ModuleGroup dummyLibGroup;
   auto file = das::make_shared<DasFile>();
   file->filePath = path;
 
@@ -76,17 +75,16 @@ DasFilePtr load_das_script(const char *path)
   {
     gather_dependencies(*file);
 
-    files.emplace(path, file);
     resolve_systems(file->ctx, *file);
 
   }
+  files.emplace(path, file);
   return file;
 }
 
 void reload_das_script(const eastl::string &file_path)
 {
   das::Module::ClearSharedModules();
-  das::ModuleGroup dummyLibGroup;
 
   for (auto&[path, file] : files)
   {
@@ -98,7 +96,7 @@ void reload_das_script(const eastl::string &file_path)
         gather_dependencies(*file);
 
         resolve_systems(file->ctx, *file);
-        printf("succesfuly recompiled %s", file_path.c_str());
+        printf("succesfuly recompiled %s\n", file_path.c_str());
       }
     }
   }

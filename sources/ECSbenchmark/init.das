@@ -25,5 +25,11 @@ def hi_func(m : float; var pos, vel : float3&; center: float3)
 def test_c()
   print("c\n")
 
+  query() <| $ [eq](counter : int)
+    print("counter = {counter}")
+
+  query() <| $ [eq](var counter : int&)
+    counter = 0
+
 
 
