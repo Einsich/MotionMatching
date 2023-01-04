@@ -14,10 +14,6 @@ then
     rm -r -f $PROJECT/$BUILD_TYPE
 fi
 
-if [ $ECS_CODEGEN = "yes" ]
-then
-    ./ECSCodeGen/ECSCodeGen-rel.exe $CWD/Common/Sources/Systems $CWD/Projects/$PROJECT/Sources/Systems
-fi
 cd ../../Projects
 if [ $CMAKE = "yes" ]
 then

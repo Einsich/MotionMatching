@@ -128,12 +128,6 @@
         }
       },
       {
-        "name": "ECSCodeGen",
-        "value": {
-          "name": "ECSCodeGen",
-        }
-      },
-      {
         "name": "ECSbenchmark",
         "value": {
           "name": "ECSbenchmark",

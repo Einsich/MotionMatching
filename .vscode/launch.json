@@ -28,19 +28,5 @@
                 "type": "cppdbg",
             }
         },
-        {
-            "name": "Run ecs codegen",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/Builds/rel/ECSCodeGen.exe",
-            "args": [
-                "${workspaceFolder}/sources/${config:launchOption.currentConfig.Project.name}",
-            ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/ECSCodeGen",
-            "linux": {
-                "type": "cppdbg",
-            }
-        },
     ]
 }

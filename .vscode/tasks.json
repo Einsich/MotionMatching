@@ -39,26 +39,6 @@
         },
         {
             "type": "shell",
-            "label": "Build ecs code generator",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "./Tools/build_script.sh",
-            "args": [
-                "ECSCodeGen",
-                "rel",
-                "yes"
-            ],
-            "windows": {
-                "command": "Tools/build_script.bat"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "type": "shell",
             "label": "Build and configure project",
             "options": {
                 "cwd": "${workspaceFolder}"
