@@ -125,7 +125,9 @@ def validate_macro_args(args : AnnotationArgumentList; t : QueryType; var errors
 
       var ok = ((arg.name == "required" || arg.name == "required_not")
              || (t != QueryType Query && (arg.name == "before" || arg.name == "after" || arg.name == "tags"))
-             || (t == QueryType System && arg.name == "stage"))
+             || (t == QueryType System && arg.name == "stage")
+             || (t == QueryType Event && arg.name == "on_event")
+             || (t == QueryType Request && arg.name == "on_request"))
       if !ok
         errors := "unsupported name in macro argument {arg.name}"
         return false
@@ -236,6 +238,13 @@ def get_system_type(sys_args : dasvector`smart_ptr`Variable; args:AnnotationArgu
   if length(sys_args) == 0
     return QueryType System
   let name = get_das_type_name(*sys_args[0]._type)
+
+  if name == "Event"
+    return QueryType Event
+
+  if name == "Request"
+    return QueryType Request
+
   let eventIdx = get_event_idx(name)
   print("type {name} is {eventIdx}\n")
   if eventIdx >= 0
@@ -287,8 +296,36 @@ class ECSSystemMacro : AstFunctionAnnotation
       register_system("{stage}", req, not_req, before, after, tags, func)
   
     elif sysType == QueryType Event
-      register_event(req, not_req, before, after, tags, func)
+      let name = get_das_type_name(*func.arguments[0]._type)
+      if !(*func.arguments[0]._type).isConst
+        errors := "event {systemName} should receive const {name}"
+        return false
 
+      var on_event <- gather_strings(args, "on_event")
+      if name == "Event" && empty(on_event)
+        errors := "event {systemName} should have not empty on_event macro arg or receive not abstract \"Event\""
+        return false
+      if name != "Event" && !empty(on_event)
+        errors := "event {systemName} should have empty on_event macro arg when receive {name}"
+        return false
+
+      return register_event(req, not_req, before, after, tags, on_event, func)
+    
+    elif sysType == QueryType Request
+      let name = get_das_type_name(*func.arguments[0]._type)
+      if (*func.arguments[0]._type).isConst
+        errors := "request {systemName} should receive not const {name}"
+        return false
+
+      var on_request <- gather_strings(args, "on_request")
+      if name == "Request" && empty(on_request)
+        errors := "request {systemName} should have not empty on_request macro arg or receive not abstract \"Event\""
+        return false
+      if name != "Request" && !empty(on_request)
+        errors := "request {systemName} should have empty on_request macro arg when receive {name}"
+        return false
+
+      return register_request(req, not_req, before, after, tags, on_request, func)
     else
       return false
     return true

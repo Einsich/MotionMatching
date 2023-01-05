@@ -10,6 +10,8 @@ static ecs::QueryCache vector_pointers_update__cache__;
 
 static ecs::QueryCache test_event_send__cache__;
 
+static ecs::QueryCache test_request_send__cache__;
+
 static ecs::QueryCache init__cache__;
 
 static ecs::QueryCache init_das__cache__;
@@ -34,6 +36,11 @@ static void vector_pointers_update_implementation()
 static void test_event_send_implementation()
 {
   ecs::perform_system(test_event_send__cache__, test_event_send);
+}
+
+static void test_request_send_implementation()
+{
+  ecs::perform_system(test_request_send__cache__, test_request_send);
 }
 
 static void init_handler(const ecs::Event &event)
@@ -124,6 +131,19 @@ static void registration_pull_test()
   {},
   {},
   &test_event_send_implementation));
+
+  ecs::register_system(ecs::SystemDescription(
+  "",
+  "test_request_send",
+  &test_request_send__cache__,
+  {},
+  {},
+  {},
+  "act",
+  {},
+  {},
+  {},
+  &test_request_send_implementation));
 
   ecs::register_event(ecs::EventDescription(
   "",

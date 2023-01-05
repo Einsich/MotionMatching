@@ -165,3 +165,19 @@ SYSTEM(stage=act) test_event_send()
 {
   ecs::send_event_immediate(TestEvent{{},13});
 }
+
+
+#include <ecs/request_registration.h>
+struct TestRequest : ecs::Request
+{
+  int sum = 0;
+};
+
+ECS_REQUEST_REGISTRATION(TestRequest)
+
+SYSTEM(stage=act) test_request_send()
+{
+  TestRequest r;
+  ecs::send_request(r);
+  debug_log("sum = %d", r.sum);
+}

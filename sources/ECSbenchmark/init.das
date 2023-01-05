@@ -32,10 +32,16 @@ def test_c()
     counter = 0 */
 
 struct TestEvent
-  inc : int
+  inc : int  
 
 [ecs]
-def test_event(event : TestEvent; counter : int)
-  print("counter = {counter} inc = {event.inc}\n")
+def test_event(event : TestEvent; var counter : int&)
+  //print("counter = {counter} inc = {event.inc}\n")
+  counter += event.inc
 
+struct TestRequest
+  sum : int  
 
+[ecs]
+def test_request(var request : TestRequest; counter : int)
+  request.sum += counter

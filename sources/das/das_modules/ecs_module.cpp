@@ -6,6 +6,14 @@ MAKE_EXTERNAL_TYPE_FACTORY(Function, das::Function)
 MAKE_EXTERNAL_TYPE_FACTORY(ExprBlock, das::ExprBlock)
 MAKE_EXTERNAL_TYPE_FACTORY(TypeDecl, das::TypeDecl)
 
+struct EventAnnotation : das::ManagedStructureAnnotation <ecs::Event> {
+  EventAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("Event", ml, "ecs::Event") {
+  }
+};
+struct RequestAnnotation : das::ManagedStructureAnnotation <ecs::Request> {
+  RequestAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("Request", ml, "ecs::Request") {
+  }
+};
 
 class Module_ECS : public das::Module
 {
@@ -15,11 +23,14 @@ public:
     das::ModuleLibrary lib;
     lib.addModule(this);
     lib.addBuiltInModule();
+    addAnnotation(das::make_smart<EventAnnotation>(lib));
+    addAnnotation(das::make_smart<RequestAnnotation>(lib));
 
     addExtern<DAS_BIND_FUN(::get_das_type_name)>(*this, lib, "get_das_type_name", das::SideEffects::modifyExternal, "::get_das_type_name");
     
     addExtern<DAS_BIND_FUN(::register_system)>(*this, lib, "register_system", das::SideEffects::modifyExternal, "::register_system");
     addExtern<DAS_BIND_FUN(::register_event)>(*this, lib, "register_event", das::SideEffects::modifyExternal, "::register_event");
+    addExtern<DAS_BIND_FUN(::register_request)>(*this, lib, "register_request", das::SideEffects::modifyExternal, "::register_request");
     addExtern<DAS_BIND_FUN(::register_query)>(*this, lib, "register_query", das::SideEffects::modifyExternal, "::register_query");
     addExtern<DAS_BIND_FUN(::perform_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "::perform_query");
     

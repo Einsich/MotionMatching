@@ -79,15 +79,27 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
   return v;
 }
 
-static eastl::vector<eastl::string> get_event_types(const das::VariablePtr &var)
+static ecs::vector<ecs::string> get_event_types(const char *def_name, const das::VariablePtr &var, ecs::vector<ecs::string> &&on_event)
 {
-  return { get_das_type_name(*var->type) };
+  ecs::vector<ecs::string> v;
+  ecs::string name = get_das_type_name(*var->type);
+  if (name == def_name)
+  {
+    assert(!on_event.empty());
+    return std::move(on_event);
+  }
+  else
+  {
+    assert(on_event.empty() && "on_event|on_request should be empty");
+    return { name };
+  }
 }
 
 
 static thread_local das::vector<ecs::SystemDescription> unresolvedSystems;
 static thread_local das::vector<ecs::QueryDescription> unresolvedQueries;
-static thread_local das::vector<eastl::pair<ecs::EventDescription, eastl::vector<eastl::string>>> unresolvedEvents;
+static thread_local das::vector<eastl::pair<ecs::EventDescription, ecs::vector<ecs::string>>> unresolvedEvents;
+static thread_local das::vector<eastl::pair<ecs::RequestDescription, ecs::vector<ecs::string>>> unresolvedRequests;
 
 
 static void clear_unresolved_systems()
@@ -95,6 +107,7 @@ static void clear_unresolved_systems()
   unresolvedSystems.clear();
   unresolvedQueries.clear();
   unresolvedEvents.clear();
+  unresolvedRequests.clear();
 }
 
 
@@ -128,6 +141,7 @@ bool register_event(
     const das::Array &before,
     const das::Array &after,
     const das::Array &tags,
+    const das::Array &on_event,
     const das::FunctionPtr &event)
 {
   if (event->arguments.size() == 0)
@@ -145,7 +159,36 @@ bool register_event(
       to_ecs_string_array(after, "after"),
       to_ecs_string_array(tags, "tags"),
       nullptr,
-      nullptr), get_event_types(event->arguments[0]));
+      nullptr), get_event_types("Event", event->arguments[0], to_ecs_string_array(on_event, "on_event")));
+
+  return true;
+}
+
+bool register_request(
+    const das::Array &require_args,
+    const das::Array &require_not_args,
+    const das::Array &before,
+    const das::Array &after,
+    const das::Array &tags,
+    const das::Array &on_request,
+    const das::FunctionPtr &request)
+{
+  if (request->arguments.size() == 0)
+    return false;
+
+  const char *name = request->name.c_str();
+  printf("event %s\n", name);
+  printf("%s\n", request->describe().c_str());
+
+  unresolvedRequests.emplace_back(ecs::RequestDescription(request->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
+      to_ecs_arguments(request->arguments, false),
+      to_ecs_components(require_args, "required"),
+      to_ecs_components(require_not_args, "not required"),
+      to_ecs_string_array(before, "before"),
+      to_ecs_string_array(after, "after"),
+      to_ecs_string_array(tags, "tags"),
+      nullptr,
+      nullptr), get_event_types("Request", request->arguments[0], to_ecs_string_array(on_request, "on_request")));
 
   return true;
 }
@@ -273,7 +316,7 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
   
-  for(auto &[system, types] : unresolvedEvents)
+  for (auto &[system, types] : unresolvedEvents)
   {
     auto systemName = system.name + "`implementation";
     auto loopFunc = ctx->findFunction(systemName.c_str());
@@ -295,5 +338,26 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     }
   }
 
+  for (auto &[system, types] : unresolvedRequests)
+  {
+    auto systemName = system.name + "`implementation";
+    auto loopFunc = ctx->findFunction(systemName.c_str());
+    if (loopFunc == nullptr)
+    {
+      continue;
+    }
+    system.broadcastRequestHandler = [cache = system.cache, ctx, loopFunc](ecs::Request &request)
+      {
+        vec4f eventArg = das::cast<ecs::Request &>::from(request);
+        perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
+      };
+    
+    for (const auto &type : types)
+    {
+      auto eventCopy = system;
+      int eventId = ecs::request_name_to_index(type.c_str());
+      file.resolvedRequests.emplace_back(ecs::register_request(std::move(eventCopy), eventId));
+    }
+  }
   clear_unresolved_systems();
 }
