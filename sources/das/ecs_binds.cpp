@@ -32,11 +32,12 @@ static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array
   return v;
 }
 
-static const char* get_das_type_name(const das::TypeDecl &type)
+const char* get_das_type_name(const das::TypeDecl &type)
 {
-  type.baseType;
+
   switch (type.baseType)
   {
+  case das::Type::tStructure: return type.structType->name.c_str(); break;
   case das::Type::tHandle: return type.annotation->name.c_str(); break;
   case das::Type::tInt: return "int"; break;
   case das::Type::tInt2: return "int2"; break;
@@ -54,11 +55,12 @@ static const char* get_das_type_name(const das::TypeDecl &type)
   } 
 }
 
-static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments)
+static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments, bool with_first_arg = true)
 {
   ecs::vector<ecs::ArgumentDescription> v;
-  for (const auto &arg : arguments)
+  for (auto it = arguments.begin() + (with_first_arg ? 0 : 1), to = arguments.end(); it != to; ++it)
   {
+    const auto &arg = *it;
     ecs::AccessType access = ecs::AccessType::Copy;
     const auto&type = *arg->type;
     if (type.isRef())
@@ -77,9 +79,23 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
   return v;
 }
 
+static eastl::vector<eastl::string> get_event_types(const das::VariablePtr &var)
+{
+  return { get_das_type_name(*var->type) };
+}
+
 
 static thread_local das::vector<ecs::SystemDescription> unresolvedSystems;
 static thread_local das::vector<ecs::QueryDescription> unresolvedQueries;
+static thread_local das::vector<eastl::pair<ecs::EventDescription, eastl::vector<eastl::string>>> unresolvedEvents;
+
+
+static void clear_unresolved_systems()
+{
+  unresolvedSystems.clear();
+  unresolvedQueries.clear();
+  unresolvedEvents.clear();
+}
 
 
 void register_system(
@@ -106,6 +122,34 @@ void register_system(
       nullptr);
 }
 
+bool register_event(
+    const das::Array &require_args,
+    const das::Array &require_not_args,
+    const das::Array &before,
+    const das::Array &after,
+    const das::Array &tags,
+    const das::FunctionPtr &event)
+{
+  if (event->arguments.size() == 0)
+    return false;
+
+  const char *name = event->name.c_str();
+  printf("event %s\n", name);
+  printf("%s\n", event->describe().c_str());
+
+  unresolvedEvents.emplace_back(ecs::EventDescription(event->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
+      to_ecs_arguments(event->arguments, false),
+      to_ecs_components(require_args, "required"),
+      to_ecs_components(require_not_args, "not required"),
+      to_ecs_string_array(before, "before"),
+      to_ecs_string_array(after, "after"),
+      to_ecs_string_array(tags, "tags"),
+      nullptr,
+      nullptr), get_event_types(event->arguments[0]));
+
+  return true;
+}
+
 void register_query(
     const das::Array &require_args,
     const das::Array &require_not_args,
@@ -124,13 +168,19 @@ void register_query(
 }
 
 template<typename C>
-static void perform_ecs_loop(const ecs::QueryCache &cache, C call)
+static void perform_ecs_loop(const ecs::QueryCache &cache, C call, vec4f *event = nullptr)
 {
   constexpr int ArgsCnt = 32;
   vec4f args[ArgsCnt];
+  uint32_t argumentOffset = 1;
+  if (event)
+  {
+    args[1] = *event;
+    argumentOffset = 2;
+  }
   if (cache.noArchetype)
   {
-    *args = das::cast<uint32_t>::from(1u);
+    args[0] = das::cast<uint32_t>::from(1u);
     call(args);
     return;
   }
@@ -147,8 +197,8 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, C call)
     ecs::uint binN = archetype.entityCount >> archetype.chunkPower;
     for (ecs::uint binIdx = 0; binIdx < binN; ++binIdx)
     {
-      vec4f *argPtr = args;
-      *argPtr++ = das::cast<uint32_t>::from(archetype.chunkSize);
+      args[0] = das::cast<uint32_t>::from(archetype.chunkSize);
+      vec4f *argPtr = args + argumentOffset;
       for (int cmpIdx : cachedArchetype)
       {
         *argPtr++ = das::cast<void*>::from(archetype.components[cmpIdx].data[binIdx]);
@@ -159,8 +209,8 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, C call)
     ecs::uint lastBinSize = archetype.entityCount - (binN << archetype.chunkPower);
     if (lastBinSize > 0)
     {
-      vec4f *argPtr = args;
-      *argPtr++ = das::cast<uint32_t>::from(lastBinSize);
+      args[0] = das::cast<uint32_t>::from(lastBinSize);
+      vec4f *argPtr = args + argumentOffset;
       for (int cmpIdx : cachedArchetype)
       {
         *argPtr++ = das::cast<void*>::from(archetype.components[cmpIdx].data[binN]);
@@ -191,8 +241,17 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     bool result = ecs::remove_system(system, true);
     ECS_ASSERT(result);
   }
-  file.resolvedQueries.clear();
-  file.resolvedSystems.clear();
+  for(auto &system : file.resolvedEvents)
+  {
+    bool result = ecs::remove_event(system, true);
+    ECS_ASSERT(result);
+  }
+  for(auto &system : file.resolvedRequests)
+  {
+    bool result = ecs::remove_request(system, true);
+    ECS_ASSERT(result);
+  }
+  file.clearResolvedSystems();
 
   for(auto &system : unresolvedQueries)
   {
@@ -213,6 +272,28 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
       };
     file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
-  unresolvedQueries.clear();
-  unresolvedSystems.clear();
+  
+  for(auto &[system, types] : unresolvedEvents)
+  {
+    auto systemName = system.name + "`implementation";
+    auto loopFunc = ctx->findFunction(systemName.c_str());
+    if (loopFunc == nullptr)
+    {
+      continue;
+    }
+    system.broadcastEventHandler = [cache = system.cache, ctx, loopFunc](const ecs::Event &event)
+      {
+        vec4f eventArg = das::cast<const ecs::Event &>::from(event);
+        perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
+      };
+    
+    for (const auto &type : types)
+    {
+      auto eventCopy = system;
+      int eventId = ecs::event_name_to_index(type.c_str());
+      file.resolvedEvents.emplace_back(ecs::register_event(std::move(eventCopy), eventId));
+    }
+  }
+
+  clear_unresolved_systems();
 }

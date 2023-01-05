@@ -224,16 +224,39 @@ class ECSQueryMacro : AstBlockAnnotation
 
     return true
 
+def get_system_type(sys_args : dasvector`smart_ptr`Variable; args:AnnotationArgumentList)
+  
+  if !(find_arg("stage", args) is nothing)
+    return QueryType System
+  if !(find_arg("on_event", args) is nothing)
+    return QueryType Event
+  if !(find_arg("on_request", args) is nothing)
+    return QueryType Request
+  
+  if length(sys_args) == 0
+    return QueryType System
+  let name = get_das_type_name(*sys_args[0]._type)
+  let eventIdx = get_event_idx(name)
+  print("type {name} is {eventIdx}\n")
+  if eventIdx >= 0
+    return QueryType Event
+  let requestIdx = get_request_idx(name)
+  print("type {name} is {requestIdx}\n")
+  if requestIdx >= 0
+    return QueryType Request
+
+  return QueryType System
+
 [function_macro(name="ecs")]
 class ECSSystemMacro : AstFunctionAnnotation
 
   def override apply ( var func:FunctionPtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
 
-    
-    if !validate_macro_args(args, QueryType System, errors)
+    let sysType = get_system_type(func.arguments, args)
+    print("{func.name} is {sysType}\n")
+    if !validate_macro_args(args, sysType, errors)
       return false
 
-    let stage = find_arg("stage", args)
 
     let req <- gather_requirements(args, "required")
     let not_req <- gather_requirements(args, "required_not")
@@ -242,6 +265,9 @@ class ECSSystemMacro : AstFunctionAnnotation
     var tags <- gather_strings(args, "tags")
 
     var vars <- gather_query_args(func.arguments)
+
+    if sysType != QueryType System
+      vars.prtInc |> erase(0)
 
     let systemName = string(func.name)
     var systemLoop <- qmacro_function("{systemName}`implementation") <| $($a(vars.vars))
@@ -256,6 +282,13 @@ class ECSSystemMacro : AstFunctionAnnotation
     systemLoop.flags |= FunctionFlags exports
     compiling_module() |> add_function(systemLoop)
 
-    register_system("{stage}", req, not_req, before, after, tags, func)
+    if sysType == QueryType System
+      let stage = find_arg("stage", args)
+      register_system("{stage}", req, not_req, before, after, tags, func)
   
+    elif sysType == QueryType Event
+      register_event(req, not_req, before, after, tags, func)
+
+    else
+      return false
     return true

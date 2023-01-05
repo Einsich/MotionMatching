@@ -152,3 +152,16 @@ EVENT() term_das(const ecs::OnSceneTerminated &)
   das::Module::Shutdown();
   fflush(stdout);
 }
+
+#include <ecs/event_registration.h>
+struct TestEvent : ecs::Event
+{
+  int inc;
+};
+
+ECS_EVENT_REGISTRATION(TestEvent)
+
+SYSTEM(stage=act) test_event_send()
+{
+  ecs::send_event_immediate(TestEvent{{},13});
+}

@@ -11,6 +11,16 @@ struct DasFile
 
   das::vector<ecs::QueryHandle> resolvedQueries;
   das::vector<ecs::SystemHandle> resolvedSystems;
+  das::vector<ecs::EventHandle> resolvedEvents;
+  das::vector<ecs::RequestHandle> resolvedRequests;
+
+  void clearResolvedSystems()
+  {
+    resolvedQueries.clear();
+    resolvedSystems.clear();
+    resolvedEvents.clear();
+    resolvedRequests.clear();
+  }
 
 };
 using DasFilePtr = das::shared_ptr<DasFile>;
