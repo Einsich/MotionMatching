@@ -113,73 +113,110 @@ class SystemMacro : AstFunctionAnnotation
     return true
  */
 
+enum QueryType
+  Query
+  System
+  Event
+  Request
+
+def validate_macro_args(args : AnnotationArgumentList; t : QueryType; var errors : das_string)
+  for arg in args
+    if arg.basicType == Type tString
+
+      var ok = ((arg.name == "required" || arg.name == "required_not")
+             || (t != QueryType Query && (arg.name == "before" || arg.name == "after" || arg.name == "tags"))
+             || (t == QueryType System && arg.name == "stage"))
+      if !ok
+        errors := "unsupported name in macro argument {arg.name}"
+        return false
+    else
+      errors := "unsupported type in macro argument {arg.name}"
+      return false
+  return true
+
 def parse_component_type(str : das_string)
   let s = string(str)
   let typeIdx = find(s, "`")
   return [[auto slice(s, 0, typeIdx), slice(s, typeIdx+1)]]
 
+def gather_requirements(args : AnnotationArgumentList; name : string)
+  var req: array<tuple<string; string>>
+  for arg in args
+    if arg.basicType == Type tString
+      if arg.name == name
+        req |> push(parse_component_type(arg.sValue))
+  return <- req
+
+def gather_strings(args : AnnotationArgumentList; name : string)
+  var names: array<string>
+  for arg in args
+    if arg.basicType == Type tString
+      if arg.name == name
+        names |> push("{arg.sValue}")
+  return <- names
+
+struct QueryArguments
+  vars : array<VariablePtr>
+  prtInc : array<ExpressionPtr>
+  ptrPass : array<ExpressionPtr>
+
+
+def gather_query_args(query_args : dasvector`smart_ptr`Variable )
+
+  var args : QueryArguments
+
+
+  args.vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
+
+  for arg in query_args 
+
+    var vtype <- clone_type(arg._type)
+    vtype.baseType = Type tPointer
+    vtype.flags = bitfield(0)
+    let argName = "{arg.name}`ptr"
+    args.prtInc |> emplace_new <| qmacro($i(argName)++)
+    if arg._type.isPointer
+      args.ptrPass |> emplace_new <| qmacro($i(argName))
+      vtype.firstType := clone_type(arg._type.firstType)
+    else
+      args.ptrPass |> emplace_new <| qmacro(*$i(argName))
+      vtype.firstType := clone_type(arg._type)
+    vtype.firstType.flags &= ~TypeDeclFlags ref
+    
+    
+    args.vars |> emplace_new <| new [[Variable() at=arg.at,
+        name := argName,
+        _type <- vtype
+      ]]
+  return <- args
 
 [block_macro(name="eq")]
 class ECSQueryMacro : AstBlockAnnotation
 
   def override apply ( var blk:smart_ptr<ExprBlock>; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
-    var req: array<tuple<string; string>>
-    var not_req: array<tuple<string; string>>
-    for arg in args
-      if arg.basicType == Type tString
-        if arg.name == "required"
-          req |> push(parse_component_type(arg.sValue))
-        elif arg.name == "required_not"
-          not_req |> push(parse_component_type(arg.sValue))
-        //else process errors
-
     
-    var vars : array<VariablePtr>
-    var prtInc : array<ExpressionPtr>
-    var ptrPass : array<ExpressionPtr>
+    if !validate_macro_args(args, QueryType Query, errors)
+      return false
 
-    var queryBody <- blk.list[0]
-    var blockBody <- [{ auto queryBody}]
+    let req <- gather_requirements(args, "required")
+    let not_req <- gather_requirements(args, "required_not")
 
-    vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
-
-    for arg in blk.arguments  
-  
-      var vtype <- clone_type(arg._type)
-      vtype.baseType = Type tPointer
-      vtype.flags = bitfield(0)
-      let argName = "{arg.name}`ptr"
-      prtInc |> emplace_new <| qmacro($i(argName)++)
-      if arg._type.isPointer
-        ptrPass |> emplace_new <| qmacro($i(argName))
-        vtype.firstType := clone_type(arg._type.firstType)
-      else
-        ptrPass |> emplace_new <| qmacro(*$i(argName))
-        vtype.firstType := clone_type(arg._type)
-      vtype.firstType.flags &= ~TypeDeclFlags ref
-     
-      
-      vars |> emplace_new <| new [[Variable() at=arg.at,
-          name := argName,
-          _type <- vtype
-        ]]
-
-
+    var vars <- gather_query_args(blk.arguments)
 
     register_query(req, not_req, blk)
-  
+    var queryBody <- blk.list[0]
+    var blockBody <- [{ auto queryBody}]
 
     var queryBlock <- qmacro_block <| 
       unsafe
         for i in range(n)
-          invoke( $($a(blk.arguments)) {$b(blockBody);}, $a(ptrPass))
-          
-          $b(prtInc)
+          invoke( $($a(blk.arguments)) {$b(blockBody);}, $a(vars.ptrPass))
+          $b(vars.prtInc)
       return
     
     blk.list |> clear()
     blk.arguments |> clear()
-    for v in vars
+    for v in vars.vars
       blk.arguments |> emplace(v)
     blk.list |> emplace(queryBlock) 
     
@@ -192,65 +229,26 @@ class ECSSystemMacro : AstFunctionAnnotation
 
   def override apply ( var func:FunctionPtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
 
+    
+    if !validate_macro_args(args, QueryType System, errors)
+      return false
+
     let stage = find_arg("stage", args)
 
+    let req <- gather_requirements(args, "required")
+    let not_req <- gather_requirements(args, "required_not")
+    var before <- gather_strings(args, "before")
+    var after <- gather_strings(args, "after")
+    var tags <- gather_strings(args, "tags")
 
-    var req: array<tuple<string; string>>
-    var not_req: array<tuple<string; string>>
-    var before: array<string>
-    var after: array<string>
-    var tags: array<string>
-    for arg in args
-      if arg.basicType == Type tString
-        if arg.name == "required"
-          req |> push(parse_component_type(arg.sValue))
-        elif arg.name == "required_not"
-          not_req |> push(parse_component_type(arg.sValue))
-        elif arg.name == "before"
-          before |> push("{arg.sValue}")
-        elif arg.name == "after"
-          after |> push("{arg.sValue}")
-        elif arg.name == "tags"
-          tags |> push("{arg.sValue}")
-        //else process errors
-
-    
-    var vars : array<VariablePtr>
-    var prtInc : array<ExpressionPtr>
-    var ptrPass : array<ExpressionPtr>
-
-
-
-    vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
-
-    for arg in func.arguments  
-  
-      var vtype <- clone_type(arg._type)
-      vtype.baseType = Type tPointer
-      vtype.flags = bitfield(0)
-
-      prtInc |> emplace_new <| qmacro($i(arg.name)++)
-      if arg._type.isPointer
-        ptrPass |> emplace_new <| qmacro($i(arg.name))
-        vtype.firstType := clone_type(arg._type.firstType)
-      else
-        ptrPass |> emplace_new <| qmacro(*$i(arg.name))
-        vtype.firstType := clone_type(arg._type)
-      vtype.firstType.flags &= ~TypeDeclFlags ref
-     
-      
-      vars |> emplace_new <| new [[Variable() at=arg.at,
-          name := arg.name,
-          _type <- vtype
-        ]]
-
+    var vars <- gather_query_args(func.arguments)
 
     let systemName = string(func.name)
-    var systemLoop <- qmacro_function("{systemName}`implementation") <| $($a(vars))
+    var systemLoop <- qmacro_function("{systemName}`implementation") <| $($a(vars.vars))
       unsafe
         for i in range(n)
-          $c(systemName)($a(ptrPass))
-          $b(prtInc)
+          $c(systemName)($a(vars.ptrPass))
+          $b(vars.prtInc)
       return
     
     //print(describe(systemLoop))
