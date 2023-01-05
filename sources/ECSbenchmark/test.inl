@@ -85,7 +85,7 @@ EVENT() init(const ecs::OnSceneCreated &)
   }
 
   ecs::prefab_id tmpl2 = ecs::create_entity_prefab(ecs::EntityPrefab("test2", {
-    {"counter", 0},
+    {"counter", 7},
     {"name", ecs::string("lolik")}
   }));
 
@@ -179,5 +179,5 @@ SYSTEM(stage=act) test_request_send()
 {
   TestRequest r;
   ecs::send_request(r);
-  debug_log("sum = %d", r.sum);
+  //debug_log("sum = %d", r.sum);
 }

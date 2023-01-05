@@ -15,6 +15,11 @@ struct RequestAnnotation : das::ManagedStructureAnnotation <ecs::Request> {
   }
 };
 
+struct EntityIdAnnotation : das::ManagedValueAnnotation <ecs::EntityId> {
+  EntityIdAnnotation() : ManagedValueAnnotation("EntityId", "ecs::EntityId") {
+  }
+};
+
 class Module_ECS : public das::Module
 {
 public:
@@ -25,6 +30,7 @@ public:
     lib.addBuiltInModule();
     addAnnotation(das::make_smart<EventAnnotation>(lib));
     addAnnotation(das::make_smart<RequestAnnotation>(lib));
+    addAnnotation(das::make_smart<EntityIdAnnotation>());
 
     addExtern<DAS_BIND_FUN(::get_das_type_name)>(*this, lib, "get_das_type_name", das::SideEffects::modifyExternal, "::get_das_type_name");
     
@@ -33,6 +39,7 @@ public:
     addExtern<DAS_BIND_FUN(::register_request)>(*this, lib, "register_request", das::SideEffects::modifyExternal, "::register_request");
     addExtern<DAS_BIND_FUN(::register_query)>(*this, lib, "register_query", das::SideEffects::modifyExternal, "::register_query");
     addExtern<DAS_BIND_FUN(::perform_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "::perform_query");
+    addExtern<DAS_BIND_FUN(::perform_eid_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "::perform_eid_query");
     
     addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::modifyExternal, "ecs::event_name_to_index");
     addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::modifyExternal, "ecs::request_name_to_index");

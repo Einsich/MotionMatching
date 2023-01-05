@@ -199,6 +199,7 @@ void register_query(
     das::smart_ptr<das::ExprBlock> block)
 {
   auto name = block->at.fileInfo->name + eastl::to_string(block->at.line);
+  printf("query %s\n", name.c_str());
   auto cache = new ecs::QueryCache();
   unresolvedQueries.emplace_back(block->at.fileInfo->name.c_str(), name.c_str(), cache,
       to_ecs_arguments(block->arguments),
@@ -213,8 +214,7 @@ void register_query(
 template<typename C>
 static void perform_ecs_loop(const ecs::QueryCache &cache, C call, vec4f *event = nullptr)
 {
-  constexpr int ArgsCnt = 32;
-  vec4f args[ArgsCnt];
+  vec4f args[DAS_MAX_FUNCTION_ARGUMENTS];
   uint32_t argumentOffset = 1;
   if (event)
   {
@@ -263,12 +263,58 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, C call, vec4f *event 
   }
 }
 
+template<typename C>
+static void perform_ecs_eid_query(ecs::EntityId eid, const ecs::QueryCache &cache, C call, vec4f *event = nullptr)
+{
+  vec4f args[DAS_MAX_FUNCTION_ARGUMENTS];
+  uint32_t argumentOffset = 1;
+  if (event)
+  {
+    args[1] = *event;
+    argumentOffset = 2;
+  }
+  ecs::uint archetypeIdx, index;
+  ecs::EntityState state;
+  bool acceptDestoyQueue = false;
+  if (eid.get_info(archetypeIdx, index, state) &&
+      (state == ecs::EntityState::CreatedAndInited || (acceptDestoyQueue && state == ecs::EntityState::InDestroyQueue)))
+  {
+    auto it = cache.archetypes.find(archetypeIdx);
+    if (it != cache.archetypes.end())
+    {
+      const ecs::ArchetypeManager &manager = ecs::get_archetype_manager();
+      const ecs::Archetype &archetype = manager.archetypes[archetypeIdx];
+      const auto &types = ecs::get_all_registered_types();
+      const auto &cachedArchetype = it->second;
+      ecs::uint binIdx = index >> archetype.chunkPower;
+      ecs::uint inBinIdx = index & archetype.chunkMask;
+
+      args[0] = das::cast<uint32_t>::from(1);
+      vec4f *argPtr = args + argumentOffset;
+      for (int cmpIdx : cachedArchetype)
+      {
+        const auto &cmp = archetype.components[cmpIdx];
+        
+        *argPtr++ = das::cast<void*>::from(cmp.get(binIdx, inBinIdx, types[cmp.description.typeIndex].sizeOf));
+      }
+      call(args);
+    }
+  }
+}
+
 void perform_query(const das::Block &block, das::Context *context, das::LineInfoArg *line)
 {
   auto closureBlock = (das::SimNode_ClosureBlock*)block.body;
   auto cache = (ecs::QueryCache*)closureBlock->annotationData;
 
   perform_ecs_loop(*cache, [&](vec4f *args) { context->invoke(block, args, nullptr, line);});
+}
+
+void perform_eid_query(ecs::EntityId eid, const das::Block &block, das::Context *context, das::LineInfoArg *line)
+{
+  auto closureBlock = (das::SimNode_ClosureBlock*)block.body;
+  auto cache = (ecs::QueryCache*)closureBlock->annotationData;
+  perform_ecs_eid_query(eid, *cache, [&](vec4f *args) { context->invoke(block, args, nullptr, line);});
 }
 
 
@@ -330,6 +376,11 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
       };
     
+    system.unicastEventHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, const ecs::Event &event)
+      {
+        vec4f eventArg = das::cast<const ecs::Event &>::from(event);
+        perform_ecs_eid_query(eid, *cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
+      };
     for (const auto &type : types)
     {
       auto eventCopy = system;
@@ -352,6 +403,11 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
       };
     
+    system.unicastRequestHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, ecs::Request &event)
+      {
+        vec4f eventArg = das::cast<ecs::Request &>::from(event);
+        perform_ecs_eid_query(eid, *cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
+      };
     for (const auto &type : types)
     {
       auto eventCopy = system;

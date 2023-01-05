@@ -29,15 +29,24 @@ def test_c()
     print("counter = {counter}")
 
   query() <| $ [eq](var counter : int&)
-    counter = 0 */
+    counter = 0
+    print("counter = {counter}") */
+
+struct OnEntityCreated {}
+
+[ecs]
+def created_event(event : OnEntityCreated; counter : int)
+  print("hello {counter}\n")
 
 struct TestEvent
   inc : int  
 
 [ecs]
-def test_event(event : TestEvent; var counter : int&)
-  //print("counter = {counter} inc = {event.inc}\n")
-  counter += event.inc
+def test_event(event : TestEvent; eid : EntityId)
+
+  query(eid) <| $[eq] (var counter : int&)
+    counter += event.inc
+    //print("counter = {counter} inc = {event.inc}\n")
 
 struct TestRequest
   sum : int  
