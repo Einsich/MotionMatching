@@ -19,6 +19,15 @@ static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const c
   return v;
 }
 
+const char * remap_type_name(const char *name)
+{
+  //remap
+  constexpr eastl::string_view ecsStr = "ecs_string";
+  if (name == ecsStr)
+    return "string";
+  return name;
+}
+
 static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array &a, const char *descr)
 {
   ecs::vector<ecs::ComponentDescription> v;
@@ -30,7 +39,7 @@ static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array
   const Arg *data = (const Arg *)a.data;
   for (int i = 0, n = a.size; i < n; i++)
   {
-    v.emplace_back(data[i].name, ecs::type_name_to_index(data[i].type));
+    v.emplace_back(data[i].name, ecs::type_name_to_index(remap_type_name(data[i].type)));
     if (log_system_arguments)
       printf("%s %s : %s\n", descr, data[i].name, data[i].type);
   }
@@ -46,12 +55,16 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
     const auto &arg = *it;
     ecs::AccessType access = ecs::AccessType::Copy;
     const auto&type = *arg->type;
+    if (type.baseType == das::Type::tString)
+      access = ecs::AccessType::ReadOnly;
     if (type.isRef())
     {
        access = type.isConst() ? ecs::AccessType::ReadOnly : ecs::AccessType::ReadWrite;
     }
     bool optional = type.isPointer();
-    const char *typeName = get_das_type_name(optional ? *type.firstType : type);
+    const char *typeName = remap_type_name(get_das_type_name(optional ? *type.firstType : type));
+
+
     const auto &a = v.emplace_back(arg->name.c_str(),
       ecs::type_name_to_index(typeName), access, optional, false);
 
@@ -81,11 +94,33 @@ static ecs::vector<ecs::string> get_event_types(const char *def_name, const das:
   }
 }
 
+struct UnresolvedSystem
+{
+  ecs::SystemDescription descr;
+  uint64_t mangledHash;
+  UnresolvedSystem(ecs::SystemDescription&&descr, uint64_t hash) : descr(std::move(descr)), mangledHash(hash) {}
+};
+struct UnresolvedEvent
+{
+  ecs::EventDescription descr;
+  ecs::vector<ecs::string> types;
+  uint64_t mangledHash;
+  UnresolvedEvent(ecs::EventDescription &&descr, ecs::vector<ecs::string> &&types, uint64_t hash) :
+     descr(std::move(descr)), types(std::move(types)), mangledHash(hash) {}
+};
+struct UnresolvedRequest
+{
+  ecs::RequestDescription descr;
+  ecs::vector<ecs::string> types;
+  uint64_t mangledHash;
+  UnresolvedRequest(ecs::RequestDescription &&descr, ecs::vector<ecs::string> &&types, uint64_t hash) :
+     descr(std::move(descr)), types(std::move(types)), mangledHash(hash) {}
+};
 
-static thread_local das::vector<ecs::SystemDescription> unresolvedSystems;
 static thread_local das::vector<ecs::QueryDescription> unresolvedQueries;
-static thread_local das::vector<eastl::pair<ecs::EventDescription, ecs::vector<ecs::string>>> unresolvedEvents;
-static thread_local das::vector<eastl::pair<ecs::RequestDescription, ecs::vector<ecs::string>>> unresolvedRequests;
+static thread_local das::vector<UnresolvedSystem> unresolvedSystems;
+static thread_local das::vector<UnresolvedEvent> unresolvedEvents;
+static thread_local das::vector<UnresolvedRequest> unresolvedRequests;
 
 
 static void clear_unresolved_systems()
@@ -104,12 +139,13 @@ void register_system(
     const das::Array &before,
     const das::Array &after,
     const das::Array &tags,
-    const das::FunctionPtr &system)
+    const das::FunctionPtr &system,
+    uint64_t mangled_hash)
 {
   const char *name = system->name.c_str();
   printf("System(stage=%s): %s\n", stage, system->describe().c_str());
 
-  unresolvedSystems.emplace_back(system->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
+  unresolvedSystems.emplace_back(ecs::SystemDescription(system->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
       to_ecs_arguments(system->arguments),
       to_ecs_components(require_args, "required"),
       to_ecs_components(require_not_args, "not required"),
@@ -117,7 +153,7 @@ void register_system(
       to_ecs_string_array(before, "before"),
       to_ecs_string_array(after, "after"),
       to_ecs_string_array(tags, "tags"),
-      nullptr);
+      nullptr), mangled_hash);
 }
 
 bool register_event(
@@ -127,7 +163,8 @@ bool register_event(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_event,
-    const das::FunctionPtr &event)
+    const das::FunctionPtr &event,
+    uint64_t mangled_hash)
 {
   if (event->arguments.size() == 0)
     return false;
@@ -143,7 +180,9 @@ bool register_event(
       to_ecs_string_array(after, "after"),
       to_ecs_string_array(tags, "tags"),
       nullptr,
-      nullptr), get_event_types("Event", event->arguments[0], to_ecs_string_array(on_event, "on_event")));
+      nullptr),
+      get_event_types("Event", event->arguments[0], to_ecs_string_array(on_event, "on_event")),
+      mangled_hash);
 
   return true;
 }
@@ -155,7 +194,8 @@ bool register_request(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_request,
-    const das::FunctionPtr &request)
+    const das::FunctionPtr &request,
+    uint64_t mangled_hash)
 {
   if (request->arguments.size() == 0)
     return false;
@@ -171,7 +211,9 @@ bool register_request(
       to_ecs_string_array(after, "after"),
       to_ecs_string_array(tags, "tags"),
       nullptr,
-      nullptr), get_event_types("Request", request->arguments[0], to_ecs_string_array(on_request, "on_request")));
+      nullptr),
+      get_event_types("Request", request->arguments[0], to_ecs_string_array(on_request, "on_request")),
+      mangled_hash);
 
   return true;
 }
@@ -330,10 +372,9 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     file.resolvedQueries.emplace_back(ecs::register_query(std::move(system)));
   }
 
-  for(auto &system : unresolvedSystems)
+  for(auto &[system, mangledHash] : unresolvedSystems)
   {
-    auto systemName = system.name + "`implementation";
-    auto loopFunc = ctx->findFunction(systemName.c_str());
+    auto loopFunc = ctx->fnByMangledName(mangledHash);
     if (loopFunc == nullptr)
     {
       continue;
@@ -345,10 +386,9 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
   
-  for (auto &[system, types] : unresolvedEvents)
+  for (auto &[system, types, mangledHash] : unresolvedEvents)
   {
-    auto systemName = system.name + "`implementation";
-    auto loopFunc = ctx->findFunction(systemName.c_str());
+    auto loopFunc = ctx->fnByMangledName(mangledHash);
     if (loopFunc == nullptr)
     {
       continue;
@@ -372,10 +412,9 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     }
   }
 
-  for (auto &[system, types] : unresolvedRequests)
+  for (auto &[system, types, mangledHash] : unresolvedRequests)
   {
-    auto systemName = system.name + "`implementation";
-    auto loopFunc = ctx->findFunction(systemName.c_str());
+    auto loopFunc = ctx->fnByMangledName(mangledHash);
     if (loopFunc == nullptr)
     {
       continue;

@@ -7,17 +7,31 @@ MAKE_EXTERNAL_TYPE_FACTORY(ExprBlock, das::ExprBlock)
 MAKE_EXTERNAL_TYPE_FACTORY(TypeDecl, das::TypeDecl)
 MAKE_EXTERNAL_TYPE_FACTORY(Structure, das::Structure)
 
-struct EventAnnotation : das::ManagedStructureAnnotation <ecs::Event> {
-  EventAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("Event", ml, "ecs::Event") {
-  }
-};
-struct RequestAnnotation : das::ManagedStructureAnnotation <ecs::Request> {
-  RequestAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("Request", ml, "ecs::Request") {
-  }
-};
+#define VOID_STRUCTURE_ANNOTATION(ANNOTATION, NAME, CPP_TYPE)                                \
+struct ANNOTATION : das::ManagedStructureAnnotation <CPP_TYPE> {                             \
+  ANNOTATION(das::ModuleLibrary & ml) : ManagedStructureAnnotation (NAME, ml, #CPP_TYPE) {}  \
+}
+#define VOID_VALUE_ANNOTATION(ANNOTATION, NAME, CPP_TYPE)                                \
+struct ANNOTATION : das::ManagedValueAnnotation <CPP_TYPE> {                             \
+  ANNOTATION() : ManagedValueAnnotation (NAME, #CPP_TYPE) {}                             \
+}
 
-struct EntityIdAnnotation : das::ManagedValueAnnotation <ecs::EntityId> {
-  EntityIdAnnotation() : ManagedValueAnnotation("EntityId", "ecs::EntityId") {
+VOID_STRUCTURE_ANNOTATION(EventAnnotation, "Event", ecs::Event);
+VOID_STRUCTURE_ANNOTATION(RequestAnnotation, "Request", ecs::Request);
+VOID_VALUE_ANNOTATION(EntityIdAnnotation, "EntityId", ecs::EntityId);
+
+VOID_STRUCTURE_ANNOTATION(OnEntityCreatedAnnotation, "OnEntityCreated", ecs::OnEntityCreated);
+VOID_STRUCTURE_ANNOTATION(OnEntityDestroyedAnnotation, "OnEntityDestroyed", ecs::OnEntityDestroyed);
+VOID_STRUCTURE_ANNOTATION(OnEntityTerminatedAnnotation, "OnEntityTerminated", ecs::OnEntityTerminated);
+VOID_STRUCTURE_ANNOTATION(OnSceneCreatedAnnotation, "OnSceneCreated", ecs::OnSceneCreated);
+VOID_STRUCTURE_ANNOTATION(OnSceneTerminatedAnnotation, "OnSceneTerminated", ecs::OnSceneTerminated);
+
+
+struct StringAnnotation : das::ManagedStructureAnnotation <ecs::string> {
+  StringAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("ecs_string", ml, "ecs::string")
+  {
+    addProperty<DAS_BIND_MANAGED_PROP(size)>("length", "size");
+    addProperty<DAS_BIND_MANAGED_PROP(c_str)>("c_str", "c_str");
   }
 };
 
@@ -32,6 +46,12 @@ public:
     addAnnotation(das::make_smart<EventAnnotation>(lib));
     addAnnotation(das::make_smart<RequestAnnotation>(lib));
     addAnnotation(das::make_smart<EntityIdAnnotation>());
+    addAnnotation(das::make_smart<OnEntityCreatedAnnotation>(lib));
+    addAnnotation(das::make_smart<OnEntityDestroyedAnnotation>(lib));
+    addAnnotation(das::make_smart<OnEntityTerminatedAnnotation>(lib));
+    addAnnotation(das::make_smart<OnSceneCreatedAnnotation>(lib));
+    addAnnotation(das::make_smart<OnSceneTerminatedAnnotation>(lib));
+    addAnnotation(das::make_smart<StringAnnotation>(lib));
 
     addExtern<DAS_BIND_FUN(::get_das_type_name)>(*this, lib, "get_das_type_name", das::SideEffects::modifyExternal, "::get_das_type_name");
     

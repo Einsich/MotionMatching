@@ -134,8 +134,13 @@ def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
       args.ptrPass |> emplace_new <| qmacro($i(argName))
       vtype.firstType := clone_type(arg._type.firstType)
     else
-      args.ptrPass |> emplace_new <| qmacro(*$i(argName))
-      vtype.firstType := clone_type(arg._type)
+      if arg._type.baseType != Type tString
+        args.ptrPass |> emplace_new <| qmacro(*$i(argName))
+        vtype.firstType := clone_type(arg._type)
+      else
+        args.ptrPass |> emplace_new <| qmacro((*$i(argName)).c_str)
+        vtype.firstType := qmacro_type <| type<ecs_string>
+
     vtype.firstType.flags &= ~TypeDeclFlags ref
     
     
@@ -245,11 +250,12 @@ class ECSSystemMacro : AstFunctionAnnotation
     //print(describe(systemLoop))
     
     systemLoop.flags |= FunctionFlags exports
+    let functionHash = systemLoop.getMangledNameHash
     compiling_module() |> add_function(systemLoop)
 
     if sysType == QueryType System
       let stage = find_arg("stage", args)
-      register_system("{stage}", req, not_req, before, after, tags, func)
+      register_system("{stage}", req, not_req, before, after, tags, func, functionHash)
   
     elif sysType == QueryType Event
       let name = get_das_type_name(*func.arguments[0]._type)
@@ -265,7 +271,7 @@ class ECSSystemMacro : AstFunctionAnnotation
         errors := "event {systemName} should have empty on_event macro arg when receive {name}"
         return false
 
-      return register_event(req, not_req, before, after, tags, on_event, func)
+      return register_event(req, not_req, before, after, tags, on_event, func, functionHash)
     
     elif sysType == QueryType Request
       let name = get_das_type_name(*func.arguments[0]._type)
@@ -281,7 +287,7 @@ class ECSSystemMacro : AstFunctionAnnotation
         errors := "request {systemName} should have empty on_request macro arg when receive {name}"
         return false
 
-      return register_request(req, not_req, before, after, tags, on_request, func)
+      return register_request(req, not_req, before, after, tags, on_request, func, functionHash)
     else
       return false
     return true

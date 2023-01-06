@@ -148,6 +148,7 @@ ECS_EVENT_REGISTRATION(TestEvent)
 SYSTEM(stage=act) test_event_send()
 {
   ecs::send_event_immediate(TestEvent{{},13});
+  //ecs::create_entity()
 }
 
 

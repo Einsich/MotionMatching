@@ -2,9 +2,15 @@
 #include <daScript/daScript.h>
 #include <ecs/ecs.h>
 
+MAKE_TYPE_FACTORY(string, ecs::string)
 MAKE_TYPE_FACTORY(Event, ecs::Event)
 MAKE_TYPE_FACTORY(Request, ecs::Request)
 MAKE_TYPE_FACTORY(EntityId, ecs::EntityId)
+MAKE_TYPE_FACTORY(OnEntityCreated, ecs::OnEntityCreated)
+MAKE_TYPE_FACTORY(OnEntityDestroyed, ecs::OnEntityDestroyed)
+MAKE_TYPE_FACTORY(OnEntityTerminated, ecs::OnEntityTerminated)
+MAKE_TYPE_FACTORY(OnSceneCreated, ecs::OnSceneCreated)
+MAKE_TYPE_FACTORY(OnSceneTerminated, ecs::OnSceneTerminated)
 
 namespace das {
   template <>
@@ -22,7 +28,8 @@ void register_system(
     const das::Array &before,
     const das::Array &after,
     const das::Array &tags,
-    const das::FunctionPtr &system);
+    const das::FunctionPtr &system,
+    uint64_t mangled_hash);
 
 bool register_event(
     const das::Array &require_args,
@@ -31,7 +38,8 @@ bool register_event(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_event,
-    const das::FunctionPtr &event);
+    const das::FunctionPtr &event,
+    uint64_t mangled_hash);
 
 bool register_request(
     const das::Array &require_args,
@@ -40,7 +48,8 @@ bool register_request(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_request,
-    const das::FunctionPtr &request);
+    const das::FunctionPtr &request,
+    uint64_t mangled_hash);
 
 void register_query(
     const das::Array &require_args,

@@ -32,11 +32,16 @@ def test_c()
     counter = 0
     print("counter = {counter}") */
 
-struct OnEntityCreated {}
 
 [ecs]
-def created_event(event : OnEntityCreated; counter : int)
-  print("hello {counter}\n")
+def created_event(event : OnSceneCreated)
+  print("hello world!\n")
+  print("hello world!!\n")
+  print("hello world!!!\n")
+
+[ecs]
+def created_event(event : OnEntityCreated; counter : int; name : string)
+  print("hello {counter} {name}\n")
 
 [ecs_cpp_event]
 struct TestEvent
@@ -52,6 +57,7 @@ struct MyEvent
 
 [ecs]
 def my_event_handler(event : MyEvent)
+  return
   print("event = {event}\n")
 
 

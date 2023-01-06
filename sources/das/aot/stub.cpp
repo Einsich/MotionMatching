@@ -7,7 +7,8 @@ void register_system(
     const das::Array &before,
     const das::Array &after,
     const das::Array &tags,
-    const das::FunctionPtr &system)
+    const das::FunctionPtr &system,
+    uint64_t mangled_hash)
 {
   printf("register_system %s\n", system->name.c_str());
 }
@@ -20,7 +21,8 @@ bool register_event(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_event,
-    const das::FunctionPtr &event)
+    const das::FunctionPtr &event,
+    uint64_t mangled_hash)
 {
   printf("register_event %s\n", event->name.c_str());
   return true;
@@ -33,7 +35,8 @@ bool register_request(
     const das::Array &after,
     const das::Array &tags,
     const das::Array &on_request,
-    const das::FunctionPtr &request)
+    const das::FunctionPtr &request,
+    uint64_t mangled_hash)
 {
   printf("register_request %s\n", request->name.c_str());
   return true;
