@@ -11,6 +11,8 @@ MAKE_TYPE_FACTORY(OnEntityDestroyed, ecs::OnEntityDestroyed)
 MAKE_TYPE_FACTORY(OnEntityTerminated, ecs::OnEntityTerminated)
 MAKE_TYPE_FACTORY(OnSceneCreated, ecs::OnSceneCreated)
 MAKE_TYPE_FACTORY(OnSceneTerminated, ecs::OnSceneTerminated)
+using ComponentInitializer = ecs::vector<ecs::ComponentPrefab>;
+MAKE_TYPE_FACTORY(ComponentInitializer, ComponentInitializer)
 
 namespace das {
   template <>
@@ -100,3 +102,16 @@ void builtin_send_event_immediate(int size_of, int eventId, const void *event);
 void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event);
 void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventId, const void *event);
 void builtin_send_request(int size_of, int eventId, const void *event);
+
+
+using InitBlock = das::TBlock<void, das::TTemporary<ComponentInitializer&>>;
+
+ecs::EntityId create_entity_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
+ecs::EntityId create_entity_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
+ecs::EntityId create_entity(const char *prefab_name);
+ecs::EntityId create_entity_n(ecs::prefab_id id);
+ecs::EntityId create_entity_immediate_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
+ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
+ecs::EntityId create_entity_immediate(const char *prefab_name);
+ecs::EntityId create_entity_immediate_n(ecs::prefab_id id);
+ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at);

@@ -74,3 +74,13 @@ void builtin_send_event_immediate(int size_of, int eventId, const void *event) {
 void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event) { assert(0); }
 void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventId, const void *event) { assert(0); }
 void builtin_send_request(int size_of, int eventId, const void *event) { assert(0); }
+
+ecs::EntityId create_entity_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity(const char *prefab_name) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_n(ecs::prefab_id id) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_immediate_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_immediate(const char *prefab_name) { assert(0); return ecs::EntityId(); }
+ecs::EntityId create_entity_immediate_n(ecs::prefab_id id) { assert(0); return ecs::EntityId(); }
+ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::invalidPrefabId; }

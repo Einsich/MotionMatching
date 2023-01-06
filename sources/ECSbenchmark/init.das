@@ -41,7 +41,7 @@ def created_event(event : OnSceneCreated)
 
 [ecs]
 def created_event(event : OnEntityCreated; counter : int; name : string)
-  print("hello {counter} {name}\n")
+  print("hello counter={counter} name={name}\n")
 
 [ecs_cpp_event]
 struct TestEvent
@@ -60,6 +60,14 @@ def my_event_handler(event : MyEvent)
   return
   print("event = {event}\n")
 
+[ecs(stage=act)]
+def creation_test() 
+  let p = get_prefab_id("test2")
+
+  create_entity(p)
+  create_entity("test2")
+  create_entity_immediate(p)
+  create_entity_immediate("test2")
 
 [ecs(required=counter`int)]
 def test_event(event : TestEvent; eid : EntityId)     

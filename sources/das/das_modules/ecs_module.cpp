@@ -19,6 +19,7 @@ struct ANNOTATION : das::ManagedValueAnnotation <CPP_TYPE> {                    
 VOID_STRUCTURE_ANNOTATION(EventAnnotation, "Event", ecs::Event);
 VOID_STRUCTURE_ANNOTATION(RequestAnnotation, "Request", ecs::Request);
 VOID_VALUE_ANNOTATION(EntityIdAnnotation, "EntityId", ecs::EntityId);
+VOID_STRUCTURE_ANNOTATION(ComponentInitializerAnnotation, "ComponentInitializer", ComponentInitializer);
 
 VOID_STRUCTURE_ANNOTATION(OnEntityCreatedAnnotation, "OnEntityCreated", ecs::OnEntityCreated);
 VOID_STRUCTURE_ANNOTATION(OnEntityDestroyedAnnotation, "OnEntityDestroyed", ecs::OnEntityDestroyed);
@@ -52,6 +53,7 @@ public:
     addAnnotation(das::make_smart<OnSceneCreatedAnnotation>(lib));
     addAnnotation(das::make_smart<OnSceneTerminatedAnnotation>(lib));
     addAnnotation(das::make_smart<StringAnnotation>(lib));
+    addAnnotation(das::make_smart<ComponentInitializerAnnotation>(lib));
 
     addExtern<DAS_BIND_FUN(::get_das_type_name)>(*this, lib, "get_das_type_name", das::SideEffects::modifyExternal, "::get_das_type_name");
     
@@ -76,6 +78,18 @@ public:
     
     addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::modifyExternal, "ecs::event_name_to_index");
     addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::modifyExternal, "ecs::request_name_to_index");
+
+
+    addExtern<ecs::uint(*)(const char*), ecs::get_prefab_id>(*this, lib, "get_prefab_id", das::SideEffects::accessExternal, "ecs::get_prefab_id");
+    addExtern<DAS_BIND_FUN(::create_entity_with_init)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity_with_init");
+    addExtern<DAS_BIND_FUN(::create_entity_with_init_n)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity_with_init_n");
+    addExtern<DAS_BIND_FUN(::create_entity)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity");
+    addExtern<DAS_BIND_FUN(::create_entity_n)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity_n");
+    addExtern<DAS_BIND_FUN(::create_entity_immediate_with_init)>(*this, lib, "create_entity_immediate", das::SideEffects::modifyExternal, "::create_entity_immediate_with_init");
+    addExtern<DAS_BIND_FUN(::create_entity_immediate_with_init_n)>(*this, lib, "create_entity_immediate", das::SideEffects::modifyExternal, "::create_entity_immediate_with_init_n");
+    addExtern<DAS_BIND_FUN(::create_entity_immediate)>(*this, lib, "create_entity_immediate", das::SideEffects::modifyExternal, "::create_entity_immediate");
+    addExtern<DAS_BIND_FUN(::create_entity_immediate_n)>(*this, lib, "create_entity_immediate", das::SideEffects::modifyExternal, "::create_entity_immediate_n");
+    addExtern<DAS_BIND_FUN(::create_entity_prefab)>(*this, lib, "create_entity_prefab", das::SideEffects::modifyExternal, "::create_entity_prefab");
 
     verifyAotReady();
   }

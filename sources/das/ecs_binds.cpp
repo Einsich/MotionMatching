@@ -542,3 +542,70 @@ void builtin_send_request(int size_of, int eventId, const void *event)
 {
   ecs::get_query_manager().sendRequest(*((ecs::Request *)event), eventId);
 }
+
+
+ecs::EntityId create_entity_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
+{
+  if (id == ecs::invalidPrefabId)
+    return ecs::EntityId();
+  
+  ComponentInitializer overrides_list;
+  vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
+  context->invoke(block, &args, nullptr, at);
+  return ecs::create_entity(id, std::move(overrides_list));
+}
+
+ecs::EntityId create_entity_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
+{
+  return create_entity_with_init(ecs::get_prefab_id(prefab_name), block, context, at);
+}
+
+ecs::EntityId create_entity(const char *prefab_name)
+{
+  return ecs::create_entity(prefab_name);
+}
+
+ecs::EntityId create_entity_n(ecs::prefab_id id)
+{
+  return ecs::create_entity(id);
+}
+
+ecs::EntityId create_entity_immediate_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
+{
+  if (id == ecs::invalidPrefabId)
+    return ecs::EntityId();
+  
+  ComponentInitializer overrides_list;
+  vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
+  context->invoke(block, &args, nullptr, at);
+  return ecs::create_entity_immediate(id, std::move(overrides_list));
+}
+
+ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
+{
+  return create_entity_with_init(ecs::get_prefab_id(prefab_name), block, context, at);
+}
+
+ecs::EntityId create_entity_immediate(const char *prefab_name)
+{
+  return ecs::create_entity_immediate(prefab_name);
+}
+
+ecs::EntityId create_entity_immediate_n(ecs::prefab_id id)
+{
+  return ecs::create_entity_immediate(id);
+}
+
+ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
+{
+  ecs::prefab_id id = ecs::get_prefab_id(name);
+  if (id != ecs::invalidPrefabId)
+  {
+    ECS_ERROR("prefab \"%s\" already exists!", name);
+    return ecs::invalidPrefabId;
+  }
+  ComponentInitializer overrides_list;
+  vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
+  context->invoke(block, &args, nullptr, at);
+  return ecs::create_entity_prefab(ecs::EntityPrefab(name, std::move(overrides_list)));
+}
