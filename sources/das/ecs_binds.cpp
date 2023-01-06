@@ -181,7 +181,7 @@ void register_query(
     const das::Array &require_not_args,
     das::smart_ptr<das::ExprBlock> block)
 {
-  auto name = block->at.fileInfo->name + eastl::to_string(block->at.line);
+  auto name = block->at.fileInfo->name + ":" + eastl::to_string(block->at.line);
   printf("Query: %s\n", name.c_str());
   auto cache = new ecs::QueryCache();
   unresolvedQueries.emplace_back(block->at.fileInfo->name.c_str(), name.c_str(), cache,

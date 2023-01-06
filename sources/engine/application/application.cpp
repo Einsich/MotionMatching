@@ -19,6 +19,10 @@ namespace ecs_ex
 void create_all_resources_from_metadata();
 void save_all_resources_to_metadata();
 
+//daScript functionality
+void init_dascript();
+void close_dascript();
+
 Application::Application(const std::string &project_name, const std::string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
 root(root),
@@ -89,6 +93,9 @@ void Application::start()
   ecs_ex::load_templates_from_blk();
 
   start_ecs();
+
+  init_dascript();//should be called after start_ecs
+  
   scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
 bool Application::sdl_event_handler()
@@ -187,6 +194,7 @@ void Application::exit()
 {
   save_shader_info();
   scene->destroy_scene();
+  close_dascript();//after ecs destroy_scene
   save_all_resources_to_metadata();
   delete scene;
   ImGui_ImplOpenGL3_Shutdown();

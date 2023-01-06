@@ -124,33 +124,17 @@ SYSTEM(stage=act;) vector_pointers_update()
 }
 #include <daScript/daScript.h>
 #include <das_load.h>
+#include <daScript/daScriptModule.h>
 
-#include <parallel/thread_pool.h>
 
-void require_project_specific_modules();
-
-EVENT() init_das(const ecs::OnSceneCreated &)
+void require_game_das_modules()
 {
-  das::daScriptEnvironment::ensure();
-  NEED_ALL_DEFAULT_MODULES;
-  require_project_specific_modules();
-  das::Module::Initialize();
-
-  das::setDasRoot(eastl::string(root_path("sources/3rd_party/daScript").c_str()));
-  
-  setup_das_watcher();
-
-  add_main_thread_job([]() {
-    load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
-  });
+  NEED_MODULE(Test_ECS);
 }
 
-EVENT() term_das(const ecs::OnSceneTerminated &)
+void load_das_files()
 {
-  clear_das_files();
-  // shut-down daScript, free all memory
-  das::Module::Shutdown();
-  fflush(stdout);
+  load_das_script(root_path("sources/ECSbenchmark/init.das").c_str());
 }
 
 #include <ecs/event_registration.h>

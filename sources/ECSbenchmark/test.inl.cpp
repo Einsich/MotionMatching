@@ -14,10 +14,6 @@ static ecs::QueryCache test_request_send__cache__;
 
 static ecs::QueryCache init__cache__;
 
-static ecs::QueryCache init_das__cache__;
-
-static ecs::QueryCache term_das__cache__;
-
 static void ecs_update_implementation()
 {
   ecs::perform_system(ecs_update__cache__, ecs_update);
@@ -51,26 +47,6 @@ static void init_handler(const ecs::Event &event)
 static void init_single_handler(ecs::EntityId eid, const ecs::Event &event)
 {
   ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), init__cache__, init);
-}
-
-static void init_das_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ecs::OnSceneCreated &>(event), init_das__cache__, init_das);
-}
-
-static void init_das_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneCreated &>(event), init_das__cache__, init_das);
-}
-
-static void term_das_handler(const ecs::Event &event)
-{
-  ecs::perform_event(reinterpret_cast<const ecs::OnSceneTerminated &>(event), term_das__cache__, term_das);
-}
-
-static void term_das_single_handler(ecs::EntityId eid, const ecs::Event &event)
-{
-  ecs::perform_event(eid, reinterpret_cast<const ecs::OnSceneTerminated &>(event), term_das__cache__, term_das);
 }
 
 static void registration_pull_test()
@@ -157,32 +133,6 @@ static void registration_pull_test()
   {},
   &init_handler, &init_single_handler),
   ecs::EventIndex<ecs::OnSceneCreated>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "init_das",
-  &init_das__cache__,
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  &init_das_handler, &init_das_single_handler),
-  ecs::EventIndex<ecs::OnSceneCreated>::value);
-
-  ecs::register_event(ecs::EventDescription(
-  "",
-  "term_das",
-  &term_das__cache__,
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  &term_das_handler, &term_das_single_handler),
-  ecs::EventIndex<ecs::OnSceneTerminated>::value);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_test)
