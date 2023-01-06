@@ -57,17 +57,17 @@ void perform_eid_query(ecs::EntityId eid, const das::Block &block, das::Context 
   assert(0);
 }
 
-void register_das_event(const das::StructurePtr &st)
+int register_das_event(const das::StructurePtr &st)
 {
   printf("register_das_event %s\n", st->name.c_str());
 }
 
-void register_das_request(const das::StructurePtr &st)
+int register_das_request(const das::StructurePtr &st)
 {
   printf("register_das_event %s\n", st->name.c_str());
 }
-void builtin_send_event(int size_of, const char *name, const void *event) { assert(0); }
-void builtin_send_event_immediate(int size_of, const char *name, const void *event) { assert(0); }
-void builtin_send_eid_event(ecs::EntityId eid, int size_of, const char *name, const void *event) { assert(0); }
-void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, const char *name, const void *event) { assert(0); }
-void builtin_send_request(int size_of, const char *name, const void *event) { assert(0); }
+void builtin_send_event(int size_of, int eventId, const void *event) { assert(0); }
+void builtin_send_event_immediate(int size_of, int eventId, const void *event) { assert(0); }
+void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event) { assert(0); }
+void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventId, const void *event) { assert(0); }
+void builtin_send_request(int size_of, int eventId, const void *event) { assert(0); }

@@ -1,6 +1,6 @@
 module ecs shared public
 
-require ast
+require ast public
 require daslib/ast_boost
 require daslib/templates_boost
 require daslib/strings_boost
@@ -8,27 +8,61 @@ require daslib/safe_addr
 
 require ecs_impl public
 
+[typeinfo_macro(name="ecs_event_type_id")]
+class ECSEventTypeId : AstTypeInfoMacro
+  def override getAstChange (expr:smart_ptr<ExprTypeInfo>; var errors:das_string ) : ExpressionPtr
+    if expr.typeexpr != null
+      return new [[ExprConstInt() at=expr.at, value=get_event_idx(get_das_type_name(*expr.typeexpr))]]
+    errors := "type is missing or not inferred"
+    return [[ExpressionPtr]]
 
+[typeinfo_macro(name="ecs_request_type_id")]
+class ECSRequestTypeId : AstTypeInfoMacro
+  def override getAstChange (expr:smart_ptr<ExprTypeInfo>; var errors:das_string ) : ExpressionPtr
+    if expr.typeexpr != null
+      return new [[ExprConstInt() at=expr.at, value=get_request_idx(get_das_type_name(*expr.typeexpr))]]
+    errors := "type is missing or not inferred"
+    return [[ExpressionPtr]]
 
 def send_event(event : auto(TT))
   unsafe
-    builtin_send_event(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+    let typeId = typeinfo(ecs_event_type_id event)
+    if typeId >= 0
+      builtin_send_event(typeinfo(sizeof event), typeId, addr(event))
+    else
+      print("need to call default initializer in send_event([[{typeinfo(stripped_typename event)}() ...]])\n")
 
 def send_event_immediate(event : auto(TT))
   unsafe
-    builtin_send_event_immediate(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+    let typeId = typeinfo(ecs_event_type_id event)
+    if typeId >= 0
+      builtin_send_event_immediate(typeinfo(sizeof event), typeId, addr(event))
+    else
+      print("need to call default initializer in send_event_immediate([[{typeinfo(stripped_typename event)}() ... ]])\n")
 
 def send_event(eid : EntityId; event : auto(TT))
   unsafe
-    builtin_send_eid_event(eid, typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+    let typeId = typeinfo(ecs_event_type_id event)
+    if typeId >= 0
+      builtin_send_eid_event(eid, typeinfo(sizeof event), typeId, addr(event))
+    else
+      print("need to call default initializer in send_event(eid, [[{typeinfo(stripped_typename event)}() ... ]])\n")
 
 def send_event_immediate(eid : EntityId; event : auto(TT))
   unsafe
-    builtin_send_eid_event_immediate(eid, typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+    let typeId = typeinfo(ecs_event_type_id event)
+    if typeId >= 0
+      builtin_send_eid_event_immediate(eid, typeinfo(sizeof event), typeId, addr(event))
+    else
+      print("need to call default initializer in send_event_immediate(eid, [[{typeinfo(stripped_typename event)}() ... ]])\n")
 
 def send_request(var event : auto(TT)&)
   unsafe
-    builtin_send_request(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+    let typeId = typeinfo(ecs_request_type_id event)
+    if typeId >= 0
+      builtin_send_request(typeinfo(sizeof event), typeId, addr(event))
+    else
+      print("need to call default initializer in send_request([[{typeinfo(stripped_typename event)}() ... ]])\n")
 
 
 enum QueryType
@@ -184,7 +218,7 @@ class ECSSystemMacro : AstFunctionAnnotation
   def override apply ( var func:FunctionPtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
 
     let sysType = get_system_type(func.arguments, args)
-    print("{func.name} is {sysType}\n")
+    //print("{func.name} is {sysType}\n")
     if !validate_macro_args(args, sysType, errors)
       return false
 
@@ -252,16 +286,17 @@ class ECSSystemMacro : AstFunctionAnnotation
       return false
     return true
 
-    
 
-def private validate_event(st : StructurePtr; typeIdx, cppSizeOf : int; var errors : das_string; typeName : string)
-  if typeIdx < 0
+
+def private validate_event(var st : StructurePtr; typeId, cppSizeOf : int; var errors : das_string; typeName : string)
+  if typeId < 0
     errors := "there isn't registered {typeName} {st.name} in c++ part"
     return false
   let dasSizeOf = (*st).sizeOf
   if cppSizeOf != dasSizeOf
     errors := "different sizeof of {typeName} {st.name} in das <{dasSizeOf}> and in c++ <{cppSizeOf}>"
     return false
+
   return true
 
 [structure_macro(name=ecs_cpp_event)]

@@ -10,7 +10,7 @@ require engine
 //tags=(tags)
 
 [ecs(stage=act,required_not=(a`int))]
-def hi_func(m : float; var pos, vel : float3&; center: float3)
+def hi_func(m : float; var pos, vel : float3&; center: float3)  
   let dt = get_delta_time()
   let dir = center - pos
   let distance = length(dir)
@@ -48,6 +48,7 @@ struct MyEvent
   x : int
   y : int
   z : string
+  w : int = 999
 
 [ecs]
 def my_event_handler(event : MyEvent)
@@ -57,12 +58,13 @@ def my_event_handler(event : MyEvent)
 [ecs(required=counter`int)]
 def test_event(event : TestEvent; eid : EntityId)     
 
-  send_event([[MyEvent x=0, y=11, z="aaa"]])              
+  send_event([[MyEvent() x=0, y=11, z="aaa"]])               
   //send_event(10)               
   query(eid) <| $[eq] (var counter : int&)
     counter += event.inc  
     //    print("counter = {counter} inc = {event.inc}\n")
 
+[ecs_cpp_request]
 struct TestRequest
   sum : int  
 

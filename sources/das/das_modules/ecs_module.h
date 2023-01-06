@@ -72,8 +72,8 @@ inline const char* get_das_type_name(const das::TypeDecl &type)
   default: return "unsopported type"; break;
   } 
 }
-void register_das_event(const das::StructurePtr &st);
-void register_das_request(const das::StructurePtr &st);
+int register_das_event(const das::StructurePtr &st);
+int register_das_request(const das::StructurePtr &st);
 
 inline int get_event_sizeof(int type_id)
 {
@@ -86,8 +86,8 @@ inline int get_request_sizeof(int type_id)
   const auto &types = ecs::get_all_registered_requests();
   return (uint32_t)type_id < types.size() ? types[type_id].sizeOf : 0;
 }
-void builtin_send_event(int size_of, const char *name, const void *event);
-void builtin_send_event_immediate(int size_of, const char *name, const void *event);
-void builtin_send_eid_event(ecs::EntityId eid, int size_of, const char *name, const void *event);
-void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, const char *name, const void *event);
-void builtin_send_request(int size_of, const char *name, const void *event);
+void builtin_send_event(int size_of, int eventId, const void *event);
+void builtin_send_event_immediate(int size_of, int eventId, const void *event);
+void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event);
+void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventId, const void *event);
+void builtin_send_request(int size_of, int eventId, const void *event);

@@ -4,6 +4,8 @@
 #include "das_load.h"
 #include "das_modules/ecs_module.h"
 
+static bool log_system_arguments = false;
+
 static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *descr)
 {
   ecs::vector<ecs::string> v(a.size);
@@ -11,7 +13,8 @@ static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const c
   for (int i = 0, n = a.size; i < n; i++)
   {
     v[i] = data[i];
-    printf("%s %s\n", descr, data[i]);
+    if (log_system_arguments)
+      printf("%s %s\n", descr, data[i]);
   }
   return v;
 }
@@ -28,7 +31,8 @@ static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array
   for (int i = 0, n = a.size; i < n; i++)
   {
     v.emplace_back(data[i].name, ecs::type_name_to_index(data[i].type));
-    printf("%s %s : %s\n", descr, data[i].name, data[i].type);
+    if (log_system_arguments)
+      printf("%s %s : %s\n", descr, data[i].name, data[i].type);
   }
   return v;
 }
@@ -51,9 +55,12 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
     const auto &a = v.emplace_back(arg->name.c_str(),
       ecs::type_name_to_index(typeName), access, optional, false);
 
-    printf("comp %s, type %s<%d>, optional %d, %s\n", a.name.c_str(), typeName, a.typeIndex, optional, 
-    access == ecs::AccessType::Copy ? "Copy" :
-     (access == ecs::AccessType::ReadOnly ? "ReadOnly" : "ReadWrite"));
+    if (log_system_arguments)
+    {
+      printf("comp %s, type %s<%d>, optional %d, %s\n", a.name.c_str(), typeName, a.typeIndex, optional, 
+        access == ecs::AccessType::Copy ? "Copy" :
+        (access == ecs::AccessType::ReadOnly ? "ReadOnly" : "ReadWrite"));
+    }
   }
   return v;
 }
@@ -100,8 +107,7 @@ void register_system(
     const das::FunctionPtr &system)
 {
   const char *name = system->name.c_str();
-  printf("system %s, stage %s\n", name, stage);
-  printf("%s\n", system->describe().c_str());
+  printf("System(stage=%s): %s\n", stage, system->describe().c_str());
 
   unresolvedSystems.emplace_back(system->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
       to_ecs_arguments(system->arguments),
@@ -127,8 +133,7 @@ bool register_event(
     return false;
 
   const char *name = event->name.c_str();
-  printf("event %s\n", name);
-  printf("%s\n", event->describe().c_str());
+  printf("Event: %s\n", event->describe().c_str());
 
   unresolvedEvents.emplace_back(ecs::EventDescription(event->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
       to_ecs_arguments(event->arguments, false),
@@ -156,8 +161,7 @@ bool register_request(
     return false;
 
   const char *name = request->name.c_str();
-  printf("event %s\n", name);
-  printf("%s\n", request->describe().c_str());
+  printf("Request: %s\n", request->describe().c_str());
 
   unresolvedRequests.emplace_back(ecs::RequestDescription(request->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
       to_ecs_arguments(request->arguments, false),
@@ -178,7 +182,7 @@ void register_query(
     das::smart_ptr<das::ExprBlock> block)
 {
   auto name = block->at.fileInfo->name + eastl::to_string(block->at.line);
-  printf("query %s\n", name.c_str());
+  printf("Query: %s\n", name.c_str());
   auto cache = new ecs::QueryCache();
   unresolvedQueries.emplace_back(block->at.fileInfo->name.c_str(), name.c_str(), cache,
       to_ecs_arguments(block->arguments),
@@ -419,24 +423,26 @@ static ecs::RequestTypeDescription get_request_desc(const das::StructurePtr &st)
   return ecs::RequestTypeDescription{st->name.c_str(), (ecs::uint)st->getSizeOf()};
 }
 
-void register_das_event(const das::StructurePtr &st)
+int register_das_event(const das::StructurePtr &st)
 {
-  printf("register_das_event %s\n", st->name.c_str());
   int idx = ecs::event_name_to_index(st->name.c_str());
   if (idx < 0)
-    ecs::register_event(ecs::get_next_event_index(), get_event_desc(st));
+    ecs::register_event(idx = ecs::get_next_event_index(), get_event_desc(st));
   else
     ecs::update_event(idx, get_event_desc(st));
+  printf("register_das_event %s <%d>\n", st->name.c_str(), idx);
+  return idx;
 }
 
-void register_das_request(const das::StructurePtr &st)
+int register_das_request(const das::StructurePtr &st)
 {
-  printf("register_das_request %s\n", st->name.c_str());
   int idx = ecs::request_name_to_index(st->name.c_str());
   if (idx < 0)
-    ecs::register_request(ecs::get_next_request_index(), get_request_desc(st));
+    ecs::register_request(idx = ecs::get_next_request_index(), get_request_desc(st));
   else
     ecs::update_request(idx, get_request_desc(st));
+  printf("register_das_request %s <%d>\n", st->name.c_str(), idx);
+  return idx;
 }
 
 
@@ -472,47 +478,28 @@ struct DasDefferedEidEvent
   }
 };
 
-static int verify_event(const char *name, int &eventId)
+
+void builtin_send_event(int size_of, int eventId, const void *event)
 {
-  eventId = ecs::event_name_to_index(name);
-  if (eventId < 0)
-  {
-    printf("unsupported event %s\n", name);
-  }
-  return eventId < 0;
+  ecs::get_query_manager().eventsQueue.push(DasDefferedEvent(size_of, event, eventId));
 }
 
-void builtin_send_event(int size_of, const char *name, const void *event)
+void builtin_send_event_immediate(int size_of, int eventId, const void *event)
 {
-  int eventId;
-  if (verify_event(name, eventId))
-    ecs::get_query_manager().eventsQueue.push(DasDefferedEvent(size_of, event, eventId));
+  ecs::get_query_manager().sendEventImmediate(*((const ecs::Event *)event), eventId);
 }
 
-void builtin_send_event_immediate(int size_of, const char *name, const void *event)
+void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event)
 {
-  int eventId;
-  if (verify_event(name, eventId))
-    ecs::get_query_manager().sendEventImmediate(*((const ecs::Event *)event), eventId);
+  ecs::get_query_manager().eventsQueue.push(DasDefferedEidEvent(eid, size_of, event, eventId));
 }
 
-void builtin_send_eid_event(ecs::EntityId eid, int size_of, const char *name, const void *event)
+void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventId, const void *event)
 {
-  int eventId;
-  if (verify_event(name, eventId))
-    ecs::get_query_manager().eventsQueue.push(DasDefferedEidEvent(eid, size_of, event, eventId));
+  ecs::get_query_manager().sendEventImmediate(eid, *((const ecs::Event *)event), eventId);
 }
 
-void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, const char *name, const void *event)
+void builtin_send_request(int size_of, int eventId, const void *event)
 {
-  int eventId;
-  if (verify_event(name, eventId))
-    ecs::get_query_manager().sendEventImmediate(eid, *((const ecs::Event *)event), eventId);
-}
-
-void builtin_send_request(int size_of, const char *name, const void *event)
-{
-  int eventId;
-  if (verify_event(name, eventId))
-    ecs::get_query_manager().sendRequest(*((ecs::Request *)event), eventId);
+  ecs::get_query_manager().sendRequest(*((ecs::Request *)event), eventId);
 }
