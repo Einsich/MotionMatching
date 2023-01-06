@@ -49,6 +49,9 @@ static bool compile_script(const das::string &file_path, das::ProgramPtr &out_pr
   return true;
 }
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 static void gather_dependencies(DasFile &file)
 {
   das::ModuleGroup dummyLibGroup;
@@ -61,8 +64,14 @@ static void gather_dependencies(DasFile &file)
   file.dependencies.clear();
   for (const auto &mod : req)
   {
-    file.dependencies.emplace(mod.fileName);
-    //printf("%s\n", mod.fileName.c_str());
+    if (mod.fileName.find("sources/3rd_party/daScript/") < mod.fileName.size())
+      continue;//don't watch daScript src files
+
+    auto clearPath = fs::canonical(fs::path(mod.fileName.c_str())).string();
+    std::replace(clearPath.begin(), clearPath.end(), '\\', '/');
+
+    file.dependencies.emplace(clearPath.c_str());
+    printf("%s\n", clearPath.c_str());
   }
 }
 
