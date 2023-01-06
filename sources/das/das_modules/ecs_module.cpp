@@ -5,6 +5,7 @@
 MAKE_EXTERNAL_TYPE_FACTORY(Function, das::Function)
 MAKE_EXTERNAL_TYPE_FACTORY(ExprBlock, das::ExprBlock)
 MAKE_EXTERNAL_TYPE_FACTORY(TypeDecl, das::TypeDecl)
+MAKE_EXTERNAL_TYPE_FACTORY(Structure, das::Structure)
 
 struct EventAnnotation : das::ManagedStructureAnnotation <ecs::Event> {
   EventAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("Event", ml, "ecs::Event") {
@@ -38,8 +39,20 @@ public:
     addExtern<DAS_BIND_FUN(::register_event)>(*this, lib, "register_event", das::SideEffects::modifyExternal, "::register_event");
     addExtern<DAS_BIND_FUN(::register_request)>(*this, lib, "register_request", das::SideEffects::modifyExternal, "::register_request");
     addExtern<DAS_BIND_FUN(::register_query)>(*this, lib, "register_query", das::SideEffects::modifyExternal, "::register_query");
+    addExtern<DAS_BIND_FUN(::register_das_event)>(*this, lib, "register_das_event", das::SideEffects::modifyExternal, "::register_das_event");
+    addExtern<DAS_BIND_FUN(::register_das_request)>(*this, lib, "register_das_request", das::SideEffects::modifyExternal, "::register_das_request");
+    
     addExtern<DAS_BIND_FUN(::perform_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "::perform_query");
     addExtern<DAS_BIND_FUN(::perform_eid_query)>(*this, lib, "query", das::SideEffects::modifyExternal, "::perform_eid_query");
+    
+    addExtern<DAS_BIND_FUN(::builtin_send_event)>(*this, lib, "builtin_send_event", das::SideEffects::modifyExternal, "::builtin_send_event");
+    addExtern<DAS_BIND_FUN(::builtin_send_event_immediate)>(*this, lib, "builtin_send_event_immediate", das::SideEffects::modifyExternal, "::builtin_send_event_immediate");
+    addExtern<DAS_BIND_FUN(::builtin_send_eid_event)>(*this, lib, "builtin_send_eid_event", das::SideEffects::modifyExternal, "::builtin_send_eid_event");
+    addExtern<DAS_BIND_FUN(::builtin_send_eid_event_immediate)>(*this, lib, "builtin_send_eid_event_immediate", das::SideEffects::modifyExternal, "::builtin_send_eid_event_immediate");
+    addExtern<DAS_BIND_FUN(::builtin_send_request)>(*this, lib, "builtin_send_request", das::SideEffects::modifyExternal, "::builtin_send_request");
+
+    addExtern<DAS_BIND_FUN(::get_event_sizeof)>(*this, lib, "get_event_sizeof", das::SideEffects::accessExternal, "::get_event_sizeof");
+    addExtern<DAS_BIND_FUN(::get_request_sizeof)>(*this, lib, "get_request_sizeof", das::SideEffects::accessExternal, "::get_request_sizeof");
     
     addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::modifyExternal, "ecs::event_name_to_index");
     addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::modifyExternal, "ecs::request_name_to_index");

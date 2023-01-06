@@ -38,15 +38,30 @@ struct OnEntityCreated {}
 def created_event(event : OnEntityCreated; counter : int)
   print("hello {counter}\n")
 
+[ecs_cpp_event]
 struct TestEvent
-  inc : int  
+  inc : int
+
+
+[ecs_event]
+struct MyEvent
+  x : int
+  y : int
+  z : string
 
 [ecs]
-def test_event(event : TestEvent; eid : EntityId)
+def my_event_handler(event : MyEvent)
+  print("event = {event}\n")
 
+
+[ecs(required=counter`int)]
+def test_event(event : TestEvent; eid : EntityId)     
+
+  send_event([[MyEvent x=0, y=11, z="aaa"]])              
+  //send_event(10)               
   query(eid) <| $[eq] (var counter : int&)
-    counter += event.inc
-    //print("counter = {counter} inc = {event.inc}\n")
+    counter += event.inc  
+    //    print("counter = {counter} inc = {event.inc}\n")
 
 struct TestRequest
   sum : int  

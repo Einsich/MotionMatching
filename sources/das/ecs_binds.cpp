@@ -2,6 +2,7 @@
 #include <ecs/ecs.h>
 #include <ecs/archetype_manager.h>
 #include "das_load.h"
+#include "das_modules/ecs_module.h"
 
 static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *descr)
 {
@@ -32,28 +33,6 @@ static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array
   return v;
 }
 
-const char* get_das_type_name(const das::TypeDecl &type)
-{
-
-  switch (type.baseType)
-  {
-  case das::Type::tStructure: return type.structType->name.c_str(); break;
-  case das::Type::tHandle: return type.annotation->name.c_str(); break;
-  case das::Type::tInt: return "int"; break;
-  case das::Type::tInt2: return "int2"; break;
-  case das::Type::tInt3: return "int3"; break;
-  case das::Type::tInt4: return "int4"; break;
-  case das::Type::tFloat: return "float"; break;
-  case das::Type::tFloat2: return "vec2"; break;
-  case das::Type::tFloat3: return "vec3"; break;
-  case das::Type::tFloat4: return "vec4"; break;
-  case das::Type::tDouble: return "double"; break;
-  case das::Type::tString: return "string"; break;
-  case das::Type::tBool: return "bool"; break;
-  
-  default: return "unsopported type"; break;
-  } 
-}
 
 static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<das::VariablePtr> &arguments, bool with_first_arg = true)
 {
@@ -416,4 +395,124 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     }
   }
   clear_unresolved_systems();
+}
+
+
+namespace ecs
+{
+  int get_next_event_index();
+  void register_event(int, EventTypeDescription);
+  void update_event(int, EventTypeDescription);
+  
+  int get_next_request_index();
+  void register_request(int, RequestTypeDescription);
+  void update_request(int, RequestTypeDescription);
+}
+
+static ecs::EventTypeDescription get_event_desc(const das::StructurePtr &st)
+{
+  return ecs::EventTypeDescription{st->name.c_str(), (ecs::uint)st->getSizeOf(), true};
+}
+
+static ecs::RequestTypeDescription get_request_desc(const das::StructurePtr &st)
+{
+  return ecs::RequestTypeDescription{st->name.c_str(), (ecs::uint)st->getSizeOf()};
+}
+
+void register_das_event(const das::StructurePtr &st)
+{
+  printf("register_das_event %s\n", st->name.c_str());
+  int idx = ecs::event_name_to_index(st->name.c_str());
+  if (idx < 0)
+    ecs::register_event(ecs::get_next_event_index(), get_event_desc(st));
+  else
+    ecs::update_event(idx, get_event_desc(st));
+}
+
+void register_das_request(const das::StructurePtr &st)
+{
+  printf("register_das_request %s\n", st->name.c_str());
+  int idx = ecs::request_name_to_index(st->name.c_str());
+  if (idx < 0)
+    ecs::register_request(ecs::get_next_request_index(), get_request_desc(st));
+  else
+    ecs::update_request(idx, get_request_desc(st));
+}
+
+
+struct DasDefferedEvent
+{
+  char *data;
+  int eventId;
+  DasDefferedEvent(int size_of, const void *src_data, int event_id) : data(new char[size_of]), eventId(event_id)
+  {
+    memcpy(data, src_data, size_of);
+  }
+  void operator()() const
+  {
+    ecs::get_query_manager().sendEventImmediate(*((const ecs::Event *)data), eventId);
+    delete[] data;
+  }
+};
+
+struct DasDefferedEidEvent
+{
+  char *data;
+  int eventId;
+  ecs::EntityId eid;
+  DasDefferedEidEvent(ecs::EntityId eid, int size_of, const void *src_data, int event_id) :
+  data(new char[size_of]), eventId(event_id), eid(eid)
+  {
+    memcpy(data, src_data, size_of);
+  }
+  void operator()() const
+  {
+    ecs::get_query_manager().sendEventImmediate(eid, *((const ecs::Event *)data), eventId);
+    delete[] data;
+  }
+};
+
+static int verify_event(const char *name, int &eventId)
+{
+  eventId = ecs::event_name_to_index(name);
+  if (eventId < 0)
+  {
+    printf("unsupported event %s\n", name);
+  }
+  return eventId < 0;
+}
+
+void builtin_send_event(int size_of, const char *name, const void *event)
+{
+  int eventId;
+  if (verify_event(name, eventId))
+    ecs::get_query_manager().eventsQueue.push(DasDefferedEvent(size_of, event, eventId));
+}
+
+void builtin_send_event_immediate(int size_of, const char *name, const void *event)
+{
+  int eventId;
+  if (verify_event(name, eventId))
+    ecs::get_query_manager().sendEventImmediate(*((const ecs::Event *)event), eventId);
+}
+
+void builtin_send_eid_event(ecs::EntityId eid, int size_of, const char *name, const void *event)
+{
+  int eventId;
+  if (verify_event(name, eventId))
+    ecs::get_query_manager().eventsQueue.push(DasDefferedEidEvent(eid, size_of, event, eventId));
+}
+
+void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, const char *name, const void *event)
+{
+  int eventId;
+  if (verify_event(name, eventId))
+    ecs::get_query_manager().sendEventImmediate(eid, *((const ecs::Event *)event), eventId);
+}
+
+void builtin_send_request(int size_of, const char *name, const void *event)
+{
+  int eventId;
+  if (verify_event(name, eventId))
+    ecs::get_query_manager().sendRequest(*((ecs::Request *)event), eventId);
 }

@@ -1,10 +1,35 @@
-module ecs shared
+module ecs shared public
 
+require ast
 require daslib/ast_boost
 require daslib/templates_boost
 require daslib/strings_boost
+require daslib/safe_addr
 
 require ecs_impl public
+
+
+
+def send_event(event : auto(TT))
+  unsafe
+    builtin_send_event(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+
+def send_event_immediate(event : auto(TT))
+  unsafe
+    builtin_send_event_immediate(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+
+def send_event(eid : EntityId; event : auto(TT))
+  unsafe
+    builtin_send_eid_event(eid, typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+
+def send_event_immediate(eid : EntityId; event : auto(TT))
+  unsafe
+    builtin_send_eid_event_immediate(eid, typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+
+def send_request(var event : auto(TT)&)
+  unsafe
+    builtin_send_request(typeinfo(sizeof event), typeinfo(stripped_typename event), addr(event))
+
 
 enum QueryType
   Query
@@ -12,7 +37,8 @@ enum QueryType
   Event
   Request
 
-def validate_macro_args(args : AnnotationArgumentList; t : QueryType; var errors : das_string)
+def private validate_macro_args(args : AnnotationArgumentList; t : QueryType; var errors : das_string)
+
   for arg in args
     if arg.basicType == Type tString
 
@@ -29,12 +55,12 @@ def validate_macro_args(args : AnnotationArgumentList; t : QueryType; var errors
       return false
   return true
 
-def parse_component_type(str : das_string)
+def private parse_component_type(str : das_string)
   let s = string(str)
   let typeIdx = find(s, "`")
   return [[auto slice(s, 0, typeIdx), slice(s, typeIdx+1)]]
 
-def gather_requirements(args : AnnotationArgumentList; name : string)
+def private gather_requirements(args : AnnotationArgumentList; name : string)
   var req: array<tuple<string; string>>
   for arg in args
     if arg.basicType == Type tString
@@ -56,7 +82,7 @@ struct QueryArguments
   ptrPass : array<ExpressionPtr>
 
 
-def gather_query_args(query_args : dasvector`smart_ptr`Variable )
+def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
 
   var args : QueryArguments
 
@@ -118,11 +144,11 @@ class ECSQueryMacro : AstBlockAnnotation
       blk.arguments |> emplace(v)
     blk.list |> emplace(queryBlock) 
     
-    print(describe(blk))
+    //print(describe(blk))
 
     return true
 
-def get_system_type(sys_args : dasvector`smart_ptr`Variable; args:AnnotationArgumentList)
+def private get_system_type(sys_args : dasvector`smart_ptr`Variable; args:AnnotationArgumentList)
   
   if !(find_arg("stage", args) is nothing)
     return QueryType System
@@ -224,4 +250,42 @@ class ECSSystemMacro : AstFunctionAnnotation
       return register_request(req, not_req, before, after, tags, on_request, func)
     else
       return false
+    return true
+
+    
+
+def private validate_event(st : StructurePtr; typeIdx, cppSizeOf : int; var errors : das_string; typeName : string)
+  if typeIdx < 0
+    errors := "there isn't registered {typeName} {st.name} in c++ part"
+    return false
+  let dasSizeOf = (*st).sizeOf
+  if cppSizeOf != dasSizeOf
+    errors := "different sizeof of {typeName} {st.name} in das <{dasSizeOf}> and in c++ <{cppSizeOf}>"
+    return false
+  return true
+
+[structure_macro(name=ecs_cpp_event)]
+class CppEvent : AstStructureAnnotation
+  def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    let typeIdx = get_event_idx(string(st.name))
+    return validate_event(st, typeIdx, get_event_sizeof(typeIdx), errors, "event")
+
+[structure_macro(name=ecs_cpp_request)]
+class CppRequest : AstStructureAnnotation
+  def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    let typeIdx = get_request_idx(string(st.name))
+    return validate_event(st, typeIdx, get_request_sizeof(typeIdx), errors, "request")
+
+
+    
+[structure_macro(name=ecs_event)]
+class DasEvent : AstStructureAnnotation
+  def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    register_das_event(st)
+    return true
+    
+[structure_macro(name=ecs_request)]
+class DasRequest : AstStructureAnnotation
+  def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    register_das_request(st)
     return true
