@@ -127,10 +127,6 @@ SYSTEM(stage=act;) vector_pointers_update()
 #include <daScript/daScriptModule.h>
 
 
-void require_game_das_modules()
-{
-  NEED_MODULE(Test_ECS);
-}
 
 void load_das_files()
 {

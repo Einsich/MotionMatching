@@ -9,19 +9,16 @@ das::TextPrinter tout;// output stream for all compiler messages (stdout. for st
 
 das::das_hash_map<das::string, DasFilePtr> files;
 
-void require_common_das_modules();
-void require_game_das_modules();
 
 void load_das_files();
 
+void require_project_specific_modules();
 
 void init_dascript()
 {
   das::daScriptEnvironment::ensure();
-  das::daScriptEnvironment::bound->das_def_tab_size = 2;
   NEED_ALL_DEFAULT_MODULES;
-  require_common_das_modules();
-  require_game_das_modules();
+  require_project_specific_modules();
   das::Module::Initialize();
 
   das::setDasRoot(eastl::string(root_path("sources/3rd_party/daScript").c_str()));
