@@ -67,7 +67,7 @@ inline const char* get_das_type_name(const das::TypeDecl &type)
   switch (type.baseType)
   {
   case das::Type::tStructure: return type.structType->name.c_str(); break;
-  case das::Type::tHandle: return type.annotation->name.c_str(); break;
+  case das::Type::tHandle: return type.annotation->name != "ecs_string" ? type.annotation->name.c_str() : "string"; break;
   case das::Type::tInt: return "int"; break;
   case das::Type::tInt2: return "int2"; break;
   case das::Type::tInt3: return "int3"; break;
@@ -104,7 +104,7 @@ void builtin_send_eid_event_immediate(ecs::EntityId eid, int size_of, int eventI
 void builtin_send_request(int size_of, int eventId, const void *event);
 
 
-using InitBlock = das::TBlock<void, das::TTemporary<ComponentInitializer&>>;
+using InitBlock = das::TBlock<void, das::TTemporary<ComponentInitializer>>;
 
 ecs::EntityId create_entity_with_init(ecs::prefab_id id, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
 ecs::EntityId create_entity_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
@@ -115,3 +115,4 @@ ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const
 ecs::EntityId create_entity_immediate(const char *prefab_name);
 ecs::EntityId create_entity_immediate_n(ecs::prefab_id id);
 ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at);
+vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *args);

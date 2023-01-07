@@ -8,6 +8,14 @@ require daslib/safe_addr
 
 require ecs_impl public
 
+[typeinfo_macro(name="ecs_component_type_id")]
+class ECSComponentTypeId : AstTypeInfoMacro
+  def override getAstChange (expr:smart_ptr<ExprTypeInfo>; var errors:das_string ) : ExpressionPtr
+    if expr.typeexpr != null
+      return new [[ExprConstInt() at=expr.at, value=get_component_type_idx(get_das_type_name(*expr.typeexpr))]]
+    errors := "type is missing or not inferred"
+    return [[ExpressionPtr]]
+
 [typeinfo_macro(name="ecs_event_type_id")]
 class ECSEventTypeId : AstTypeInfoMacro
   def override getAstChange (expr:smart_ptr<ExprTypeInfo>; var errors:das_string ) : ExpressionPtr
@@ -330,3 +338,7 @@ class DasRequest : AstStructureAnnotation
   def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
     register_das_request(st)
     return true
+
+def set(var override_list : ComponentInitializer implicit; name : string; component)
+
+  builtin_init(typeinfo(ast_typedecl component), typeinfo(ecs_component_type_id component), override_list, name, component)

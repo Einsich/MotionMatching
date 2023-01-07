@@ -76,8 +76,9 @@ public:
     addExtern<DAS_BIND_FUN(::get_event_sizeof)>(*this, lib, "get_event_sizeof", das::SideEffects::accessExternal, "::get_event_sizeof");
     addExtern<DAS_BIND_FUN(::get_request_sizeof)>(*this, lib, "get_request_sizeof", das::SideEffects::accessExternal, "::get_request_sizeof");
     
-    addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::modifyExternal, "ecs::event_name_to_index");
-    addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::modifyExternal, "ecs::request_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::accessExternal, "ecs::event_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::accessExternal, "ecs::request_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::type_name_to_index)>(*this, lib, "get_component_type_idx", das::SideEffects::accessExternal, "ecs::type_name_to_index");
 
 
     addExtern<ecs::uint(*)(const char*), ecs::get_prefab_id>(*this, lib, "get_prefab_id", das::SideEffects::accessExternal, "ecs::get_prefab_id");
@@ -91,6 +92,7 @@ public:
     addExtern<DAS_BIND_FUN(::create_entity_immediate_n)>(*this, lib, "create_entity_immediate", das::SideEffects::modifyExternal, "::create_entity_immediate_n");
     addExtern<DAS_BIND_FUN(::create_entity_prefab)>(*this, lib, "create_entity_prefab", das::SideEffects::modifyExternal, "::create_entity_prefab");
 
+    addInterop<::init_component, void, const das::TypeDeclPtr, int, ComponentInitializer&, const char*, vec4f>(*this, lib, "builtin_init", das::SideEffects::modifyArgumentAndExternal, "::init_component");
     verifyAotReady();
   }
   virtual das::ModuleAotType aotRequire(das::TextWriter &tw) const override

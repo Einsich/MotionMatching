@@ -63,13 +63,13 @@ void perform_eid_query(ecs::EntityId eid, const das::Block &block, das::Context 
 int register_das_event(const das::StructurePtr &st)
 {
   printf("register_das_event %s\n", st->name.c_str());
-  return -1;
+  return 0;
 }
 
 int register_das_request(const das::StructurePtr &st)
 {
   printf("register_das_event %s\n", st->name.c_str());
-  return -1;
+  return 0;
 }
 void builtin_send_event(int size_of, int eventId, const void *event) { assert(0); }
 void builtin_send_event_immediate(int size_of, int eventId, const void *event) { assert(0); }
@@ -86,3 +86,4 @@ ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const
 ecs::EntityId create_entity_immediate(const char *prefab_name) { assert(0); return ecs::EntityId(); }
 ecs::EntityId create_entity_immediate_n(ecs::prefab_id id) { assert(0); return ecs::EntityId(); }
 ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at) { assert(0); return ecs::invalidPrefabId; }
+vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *args) { assert(0); return v_zero(); }

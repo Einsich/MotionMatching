@@ -39,7 +39,11 @@ static ecs::vector<ecs::ComponentDescription> to_ecs_components(const das::Array
   const Arg *data = (const Arg *)a.data;
   for (int i = 0, n = a.size; i < n; i++)
   {
-    v.emplace_back(data[i].name, ecs::type_name_to_index(remap_type_name(data[i].type)));
+    int typeId = ecs::type_name_to_index(remap_type_name(data[i].type));
+    if (typeId >= 0)
+      v.emplace_back(data[i].name, typeId);
+    else
+      ECS_ERROR("undefined type \"%s\"", data[i].name);
     if (log_system_arguments)
       printf("%s %s : %s\n", descr, data[i].name, data[i].type);
   }
@@ -62,7 +66,7 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
        access = type.isConst() ? ecs::AccessType::ReadOnly : ecs::AccessType::ReadWrite;
     }
     bool optional = type.isPointer();
-    const char *typeName = remap_type_name(get_das_type_name(optional ? *type.firstType : type));
+    const char *typeName = get_das_type_name(optional ? *type.firstType : type);
 
 
     const auto &a = v.emplace_back(arg->name.c_str(),
@@ -583,7 +587,7 @@ ecs::EntityId create_entity_immediate_with_init(ecs::prefab_id id, const InitBlo
 
 ecs::EntityId create_entity_immediate_with_init_n(const char *prefab_name, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
 {
-  return create_entity_with_init(ecs::get_prefab_id(prefab_name), block, context, at);
+  return create_entity_immediate_with_init(ecs::get_prefab_id(prefab_name), block, context, at);
 }
 
 ecs::EntityId create_entity_immediate(const char *prefab_name)
@@ -608,4 +612,46 @@ ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, da
   vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
   context->invoke(block, &args, nullptr, at);
   return ecs::create_entity_prefab(ecs::EntityPrefab(name, std::move(overrides_list)));
+}
+
+#include <3dmath.h>
+
+vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *args)
+{
+  auto typeDecl = das::cast<const das::TypeDeclPtr>::to(args[0]);
+  auto typeId = das::cast<int>::to(args[1]);
+  auto&list = das::cast<ComponentInitializer&>::to(args[2]);
+  auto name = das::cast<const char *>::to(args[3]);
+  auto rawDataPtr = das::cast<const void *>::to(args[4]);
+  auto rawData = args[4];
+  //ECS_LOG("init_component %s:<%s> type<%d>", name, get_das_type_name(*typeDecl), typeId);
+  if (typeId >= 0)
+  {
+    #define BASE_TYPE(enumType, cppType) case das::Type::enumType: list.emplace_back(name, typeId, *(const cppType*)&rawData); break
+    
+    switch (typeDecl->baseType)
+    {
+    //case das::Type::tStructure: return type.structType->name.c_str(); break;
+    //case das::Type::tHandle: return type.annotation->name != "ecs_string" ? type.annotation->name.c_str() : "string"; break;
+    BASE_TYPE(tInt, int);
+    BASE_TYPE(tInt2, ivec2);
+    BASE_TYPE(tInt3, ivec3);
+    BASE_TYPE(tInt4, ivec4);
+    BASE_TYPE(tFloat, float);
+    BASE_TYPE(tFloat2, vec2);
+    BASE_TYPE(tFloat3, vec3);
+    BASE_TYPE(tFloat4, vec4);
+    BASE_TYPE(tDouble, double);
+    BASE_TYPE(tBool, bool);
+    case das::Type::tString: list.emplace_back(name, typeId, ecs::string((const char*)rawDataPtr)); break;
+    
+    default: ECS_LOG("unsopported init_component %s:<%s> type<%d>", name, get_das_type_name(*typeDecl), typeId); break;
+
+    } 
+  }
+  else
+  {
+    ECS_LOG("not registered type init_component %s:<%s> type<%d>", name, get_das_type_name(*typeDecl), typeId);
+  }
+  return v_zero();
 }

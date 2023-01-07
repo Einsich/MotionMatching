@@ -32,6 +32,8 @@ def test_c()
     counter = 0
     print("counter = {counter}") */
 
+struct XXXStruct
+  inc : int
 
 [ecs]
 def created_event(event : OnSceneCreated)
@@ -39,7 +41,35 @@ def created_event(event : OnSceneCreated)
   print("hello world!!\n")
   print("hello world!!!\n")
 
+  let p = create_entity_prefab("das_prefab") <| $(init)
+    //let x <- [{ auto 1;2;3;4;5 }]
+    init |> set("i", 1)
+    init |> set("f", 1.f)
+    init |> set("s", "xxxx0000xxxiiii")
+    init |> set("f3", float3(1,2,3))
+    //init |> set(EntityId)
+    //init |> set("str", [[XXXStruct]])
+    //init |> set("arr", x)
+
+  create_entity(p) <| $(init)
+    init |> set("s", "lolkek")
+    init |> set("i", 55)
+
+  create_entity(p) <| $(init)
+    init |> set("s", "chebureck")
+    init |> set("i", 1111111111)
+
+
+  create_entity_immediate("das_prefab") <| $(init)
+    init |> set("s", "immediate")
+    init |> set("i", 609)
+  
 [ecs]
+def created_event(event : OnEntityCreated; i : int; f : float; s : string; f3 : float3)
+  print("hello i={i} f={f} s={s}, f3={f3}\n")
+
+
+[ecs(required=name`ecs_string)]
 def created_event(event : OnEntityCreated; counter : int; name : string)
   print("hello counter={counter} name={name}\n")
 
@@ -60,7 +90,7 @@ def my_event_handler(event : MyEvent)
   return
   print("event = {event}\n")
 
-[ecs(stage=act)]
+[ecs(stage=act, required=(x`int))]
 def creation_test() 
   let p = get_prefab_id("test2")
 
