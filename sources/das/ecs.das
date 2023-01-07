@@ -131,7 +131,7 @@ def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
 
   args.vars |> emplace_new <| new [[Variable() name := "n", _type<-qmacro_type(type<uint>)]]
 
-  for arg in query_args 
+  for arg in query_args
 
     var vtype <- clone_type(arg._type)
     vtype.baseType = Type tPointer
@@ -150,8 +150,8 @@ def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
         vtype.firstType := qmacro_type <| type<ecs_string>
 
     vtype.firstType.flags &= ~TypeDeclFlags ref
-    
-    
+
+
     args.vars |> emplace_new <| new [[Variable() at=arg.at,
         name := argName,
         _type <- vtype
@@ -162,7 +162,7 @@ def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
 class ECSQueryMacro : AstBlockAnnotation
 
   def override apply ( var blk:smart_ptr<ExprBlock>; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
-    
+
     if !validate_macro_args(args, QueryType Query, errors)
       return false
 
@@ -178,32 +178,32 @@ class ECSQueryMacro : AstBlockAnnotation
       var cp <- x
       blockBody |> emplace(cp)
 
-    var queryBlock <- qmacro_block <| 
+    var queryBlock <- qmacro_block <|
       unsafe
         for i in range(n)
           invoke( $($a(blk.arguments)) {$b(blockBody);}, $a(vars.ptrPass))
           $b(vars.prtInc)
       return
-    
+
     blk.list |> clear()
     blk.arguments |> clear()
     for v in vars.vars
       blk.arguments |> emplace(v)
-    blk.list |> emplace(queryBlock) 
-    
+    blk.list |> emplace(queryBlock)
+
     //print(describe(blk))
 
     return true
 
 def private get_system_type(sys_args : dasvector`smart_ptr`Variable; args:AnnotationArgumentList)
-  
+
   if !(find_arg("stage", args) is nothing)
     return QueryType System
   if !(find_arg("on_event", args) is nothing)
     return QueryType Event
   if !(find_arg("on_request", args) is nothing)
     return QueryType Request
-  
+
   if length(sys_args) == 0
     return QueryType System
   let name = get_das_type_name(*sys_args[0]._type)
@@ -254,9 +254,9 @@ class ECSSystemMacro : AstFunctionAnnotation
           $c(systemName)($a(vars.ptrPass))
           $b(vars.prtInc)
       return
-    
+
     //print(describe(systemLoop))
-    
+
     systemLoop.flags |= FunctionFlags exports
     let functionHash = systemLoop.getMangledNameHash
     compiling_module() |> add_function(systemLoop)
@@ -264,7 +264,7 @@ class ECSSystemMacro : AstFunctionAnnotation
     if sysType == QueryType System
       let stage = find_arg("stage", args)
       register_system("{stage}", req, not_req, before, after, tags, func, functionHash)
-  
+
     elif sysType == QueryType Event
       let name = get_das_type_name(*func.arguments[0]._type)
       if !(*func.arguments[0]._type).isConst
@@ -280,7 +280,7 @@ class ECSSystemMacro : AstFunctionAnnotation
         return false
 
       return register_event(req, not_req, before, after, tags, on_event, func, functionHash)
-    
+
     elif sysType == QueryType Request
       let name = get_das_type_name(*func.arguments[0]._type)
       if (*func.arguments[0]._type).isConst
@@ -326,13 +326,13 @@ class CppRequest : AstStructureAnnotation
     return validate_event(st, typeIdx, get_request_sizeof(typeIdx), errors, "request")
 
 
-    
+
 [structure_macro(name=ecs_event)]
 class DasEvent : AstStructureAnnotation
   def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
     register_das_event(st)
     return true
-    
+
 [structure_macro(name=ecs_request)]
 class DasRequest : AstStructureAnnotation
   def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool

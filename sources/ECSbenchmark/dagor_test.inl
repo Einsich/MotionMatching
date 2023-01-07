@@ -4,7 +4,7 @@
 #include "constanta.h"
 #include <thread>
 
- 
+
 struct DagorTestEntity
 {
   mat4 transform;

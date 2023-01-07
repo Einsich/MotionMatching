@@ -5,5 +5,5 @@ constexpr uint dagorEntityCount = 1;
 
 struct Data
 {
-  //char data[1<<1]; 
+  //char data[1<<1];
 };

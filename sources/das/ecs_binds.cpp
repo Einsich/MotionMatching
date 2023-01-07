@@ -74,7 +74,7 @@ static ecs::vector<ecs::ArgumentDescription> to_ecs_arguments(const das::vector<
 
     if (log_system_arguments)
     {
-      printf("comp %s, type %s<%d>, optional %d, %s\n", a.name.c_str(), typeName, a.typeIndex, optional, 
+      printf("comp %s, type %s<%d>, optional %d, %s\n", a.name.c_str(), typeName, a.typeIndex, optional,
         access == ecs::AccessType::Copy ? "Copy" :
         (access == ecs::AccessType::ReadOnly ? "ReadOnly" : "ReadWrite"));
     }
@@ -257,7 +257,7 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, C call, vec4f *event 
     return;
   }
   const ecs::ArchetypeManager &manager = ecs::get_archetype_manager();
- 
+
   for (const auto &p : cache.archetypes)
   {
     const auto &cachedArchetype = p.second;
@@ -276,7 +276,7 @@ static void perform_ecs_loop(const ecs::QueryCache &cache, C call, vec4f *event 
         *argPtr++ = das::cast<void*>::from(archetype.components[cmpIdx].data[binIdx]);
       }
       call(args);
-      
+
     }
     ecs::uint lastBinSize = archetype.entityCount - (binN << archetype.chunkPower);
     if (lastBinSize > 0)
@@ -323,7 +323,7 @@ static void perform_ecs_eid_query(ecs::EntityId eid, const ecs::QueryCache &cach
       for (int cmpIdx : cachedArchetype)
       {
         const auto &cmp = archetype.components[cmpIdx];
-        
+
         *argPtr++ = das::cast<void*>::from(cmp.get(binIdx, inBinIdx, types[cmp.description.typeIndex].sizeOf));
       }
       call(args);
@@ -389,7 +389,7 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
       };
     file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
   }
-  
+
   for (auto &[system, types, mangledHash] : unresolvedEvents)
   {
     auto loopFunc = ctx->fnByMangledName(mangledHash);
@@ -402,7 +402,7 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
         vec4f eventArg = das::cast<const ecs::Event &>::from(event);
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
       };
-    
+
     system.unicastEventHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, const ecs::Event &event)
       {
         vec4f eventArg = das::cast<const ecs::Event &>::from(event);
@@ -428,7 +428,7 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
         vec4f eventArg = das::cast<ecs::Request &>::from(request);
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
       };
-    
+
     system.unicastRequestHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, ecs::Request &event)
       {
         vec4f eventArg = das::cast<ecs::Request &>::from(event);
@@ -450,7 +450,7 @@ namespace ecs
   int get_next_event_index();
   void register_event(int, EventTypeDescription);
   void update_event(int, EventTypeDescription);
-  
+
   int get_next_request_index();
   void register_request(int, RequestTypeDescription);
   void update_request(int, RequestTypeDescription);
@@ -552,7 +552,7 @@ ecs::EntityId create_entity_with_init(ecs::prefab_id id, const InitBlock &block,
 {
   if (id == ecs::invalidPrefabId)
     return ecs::EntityId();
-  
+
   ComponentInitializer overrides_list;
   vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
   context->invoke(block, &args, nullptr, at);
@@ -578,7 +578,7 @@ ecs::EntityId create_entity_immediate_with_init(ecs::prefab_id id, const InitBlo
 {
   if (id == ecs::invalidPrefabId)
     return ecs::EntityId();
-  
+
   ComponentInitializer overrides_list;
   vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
   context->invoke(block, &args, nullptr, at);
@@ -628,7 +628,7 @@ vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *
   if (typeId >= 0)
   {
     #define BASE_TYPE(enumType, cppType) case das::Type::enumType: list.emplace_back(name, typeId, *(const cppType*)&rawData); break
-    
+
     switch (typeDecl->baseType)
     {
     //case das::Type::tStructure: return type.structType->name.c_str(); break;
@@ -644,10 +644,10 @@ vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *
     BASE_TYPE(tDouble, double);
     BASE_TYPE(tBool, bool);
     case das::Type::tString: list.emplace_back(name, typeId, ecs::string((const char*)rawDataPtr)); break;
-    
+
     default: ECS_LOG("unsopported init_component %s:<%s> type<%d>", name, get_das_type_name(*typeDecl), typeId); break;
 
-    } 
+    }
   }
   else
   {

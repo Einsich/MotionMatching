@@ -90,6 +90,7 @@ def my_event_handler(event : MyEvent)
   return
   print("event = {event}\n")
 
+
 [ecs(stage=act, required=(x`int))]
 def creation_test() 
   let p = get_prefab_id("test2")

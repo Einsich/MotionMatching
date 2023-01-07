@@ -57,7 +57,7 @@ void register_query(
     const das::Array &require_args,
     const das::Array &require_not_args,
     das::smart_ptr<das::ExprBlock> block);
-  
+
 void perform_eid_query(ecs::EntityId eid, const das::Block &block, das::Context *context, das::LineInfoArg *line);
 void perform_query(const das::Block &block, das::Context *context, das::LineInfoArg *line);
 
@@ -79,9 +79,9 @@ inline const char* get_das_type_name(const das::TypeDecl &type)
   case das::Type::tDouble: return "double"; break;
   case das::Type::tString: return "string"; break;
   case das::Type::tBool: return "bool"; break;
-  
+
   default: return "unsopported type"; break;
-  } 
+  }
 }
 int register_das_event(const das::StructurePtr &st);
 int register_das_request(const das::StructurePtr &st);

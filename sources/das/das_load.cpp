@@ -22,7 +22,7 @@ void init_dascript()
   das::Module::Initialize();
 
   das::setDasRoot(eastl::string(root_path("sources/3rd_party/daScript").c_str()));
-  
+
   setup_das_watcher();
 
   load_das_files();
@@ -143,9 +143,9 @@ static void track_das_file(const std::string &file, FileWatchStatus status)
   switch (status)
   {
   case FileWatchStatus::Added : load_das_script(file.c_str()); break;
-  
+
   case FileWatchStatus::Changed : reload_das_script(file.c_str()); break;
-  case FileWatchStatus::Removed : 
+  case FileWatchStatus::Removed :
     break;
   }
 }
