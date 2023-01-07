@@ -6,7 +6,7 @@ require daslib/templates_boost
 require daslib/strings_boost
 require daslib/safe_addr
 
-require ecs_impl public
+require ecs_core public
 
 [typeinfo_macro(name="ecs_component_type_id")]
 class ECSComponentTypeId : AstTypeInfoMacro
@@ -58,7 +58,7 @@ def send_event(eid : EntityId; event : auto(TT))
 
 def send_event_immediate(eid : EntityId; event : auto(TT))
   unsafe
-    let typeId = typeinfo(ecs_event_type_id event)
+    let typeId = get_event_idx(typeinfo(stripped_typename event))//typeinfo(ecs_event_type_id event)
     if typeId >= 0
       builtin_send_eid_event_immediate(eid, typeinfo(sizeof event), typeId, addr(event))
     else
@@ -66,7 +66,7 @@ def send_event_immediate(eid : EntityId; event : auto(TT))
 
 def send_request(var event : auto(TT)&)
   unsafe
-    let typeId = typeinfo(ecs_request_type_id event)
+    let typeId = get_request_idx(typeinfo(stripped_typename event))//typeinfo(ecs_request_type_id event)
     if typeId >= 0
       builtin_send_request(typeinfo(sizeof event), typeId, addr(event))
     else
@@ -136,7 +136,7 @@ def private gather_query_args(query_args : dasvector`smart_ptr`Variable )
     var vtype <- clone_type(arg._type)
     vtype.baseType = Type tPointer
     vtype.flags = bitfield(0)
-    let argName = "{arg.name}`ptr"
+    let argName = "{arg.name}__ptr__"
     args.prtInc |> emplace_new <| qmacro($i(argName)++)
     if arg._type.isPointer
       args.ptrPass |> emplace_new <| qmacro($i(argName))
@@ -248,7 +248,7 @@ class ECSSystemMacro : AstFunctionAnnotation
       vars.prtInc |> erase(0)
 
     let systemName = string(func.name)
-    var systemLoop <- qmacro_function("{systemName}`implementation") <| $($a(vars.vars))
+    var systemLoop <- qmacro_function("{systemName}__implementation__") <| $($a(vars.vars))
       unsafe
         for i in range(n)
           $c(systemName)($a(vars.ptrPass))
@@ -303,6 +303,8 @@ class ECSSystemMacro : AstFunctionAnnotation
 
 
 def private validate_event(var st : StructurePtr; typeId, cppSizeOf : int; var errors : das_string; typeName : string)
+  if cppSizeOf < 0
+    return true //aot case, always true
   if typeId < 0
     errors := "there isn't registered {typeName} {st.name} in c++ part"
     return false
@@ -341,4 +343,7 @@ class DasRequest : AstStructureAnnotation
 
 def set(var override_list : ComponentInitializer implicit; name : string; component)
 
-  builtin_init(typeinfo(ast_typedecl component), typeinfo(ecs_component_type_id component), override_list, name, component)
+  builtin_init(typeinfo(ast_typedecl component),
+  get_component_type_idx(typeinfo(stripped_typename component))
+  //typeinfo(ecs_component_type_id component)
+  , override_list, name, component)

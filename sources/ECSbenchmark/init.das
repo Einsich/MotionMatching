@@ -1,5 +1,6 @@
 require math
-
+options log_nodes
+options log_nodes_aot_hash
 
 require ecs
 require engine
@@ -8,18 +9,25 @@ require engine
 //before=(systems)
 //after=(systems)
 //tags=(tags)
-
-[ecs(stage=act,required_not=(a`int))]
-def hi_func(m : float; var pos, vel : float3&; center: float3)  
-  let dt = get_delta_time()
+def test_func(dt, m : float; var pos, vel : float3&; center: float3)
   let dir = center - pos
   let distance = length(dir)
   let F = dir * m * 0.0001f / (distance*distance*distance)
   let a = F / m
   vel += a * dt
   pos += vel * dt
-  //print("dt = {dt}, m = {m}, pos = {pos}, vel = {vel}, center = {center}\n");
 
+
+[ecs(stage=act)]
+def das_system_test(m : float; var pos, vel : float3&; center: float3)
+  test_func(get_delta_time(), m, pos, vel, center)
+
+
+[ecs(stage=act)]
+def das_query_test()
+  let dt = get_delta_time()
+  query() <| $[eq] (m : float; var pos, vel : float3&; center: float3)
+    test_func(dt, m, pos, vel, center)
 
 /* [ecs(stage=act)]
 def test_c()
@@ -51,19 +59,20 @@ def created_event(event : OnSceneCreated)
     //init |> set("str", [[XXXStruct]])
     //init |> set("arr", x)
 
-  create_entity(p) <| $(init)
+  let eid = create_entity(p) <| $(init)
     init |> set("s", "lolkek")
     init |> set("i", 55)
 
   create_entity(p) <| $(init)
     init |> set("s", "chebureck")
     init |> set("i", 1111111111)
+    init |> set("e", eid)
 
 
   create_entity_immediate("das_prefab") <| $(init)
     init |> set("s", "immediate")
     init |> set("i", 609)
-  
+
 [ecs]
 def created_event(event : OnEntityCreated; i : int; f : float; s : string; f3 : float3)
   print("hello i={i} f={f} s={s}, f3={f3}\n")
@@ -92,7 +101,7 @@ def my_event_handler(event : MyEvent)
 
 
 [ecs(stage=act, required=(x`int))]
-def creation_test() 
+def creation_test()
   let p = get_prefab_id("test2")
 
   create_entity(p)
@@ -101,17 +110,17 @@ def creation_test()
   create_entity_immediate("test2")
 
 [ecs(required=counter`int)]
-def test_event(event : TestEvent; eid : EntityId)     
+def test_event(event : TestEvent; eid : EntityId)
 
-  send_event([[MyEvent() x=0, y=11, z="aaa"]])               
-  //send_event(10)               
+  send_event([[MyEvent() x=0, y=11, z="aaa"]])
+  //send_event(10)
   query(eid) <| $[eq] (var counter : int&)
-    counter += event.inc  
+    counter += event.inc
     //    print("counter = {counter} inc = {event.inc}\n")
 
 [ecs_cpp_request]
 struct TestRequest
-  sum : int  
+  sum : int
 
 [ecs]
 def test_request(var request : TestRequest; counter : int)

@@ -50,7 +50,10 @@ static bool compile_script(const das::string &file_path, das::ProgramPtr &out_pr
 {
   das::ModuleGroup dummyLibGroup;
   // compile program
-  auto program = das::compileDaScript(file_path, get_file_access(), tout, dummyLibGroup);
+  das::CodeOfPolicies policies;
+  policies.aot = true;
+  //policies.fail_on_no_aot = false;
+  auto program = das::compileDaScript(file_path, get_file_access(), tout, dummyLibGroup, false, policies);
   if (program->failed() ) {
     tout << "failed to compile\n";
     for ( auto & err : program->errors ) {

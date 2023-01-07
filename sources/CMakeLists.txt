@@ -17,6 +17,9 @@ endif()
 
 
 set(SRC_ROOT ${CMAKE_SOURCE_DIR})
+set(AOT_COMPILER_PATH ${SRC_ROOT}/../Builds/rel/${GAME}-aot.exe)
+set(DAS_PROJECT_PATH ${SRC_ROOT}/das/common.das_project)
+set(DAS_ROOT ${SRC_ROOT}/3rd_party/daScript)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-m64 -Wall -Wextra -Wno-pragma-pack -Wno-deprecated-declarations -g")
@@ -67,14 +70,25 @@ set(EXE_SOURCES )
 
 if(IS_AOT_COMPILER)
     set(EXE_SOURCES ${SRC_ROOT}/3rd_party/daScript/utils/daScript/main.cpp)
-    include_directories(${SRC_ROOT}/3rd_party/daScript/include)
-    include_directories(${SRC_ROOT}/3rd_party/eastl/include)
-    include_directories(${SRC_ROOT}/3rd_party/ecs/include)
 endif()
 
 set(GAME_CMAKE ${SRC_ROOT}/${GAME}/game.cmake)
 
 add_executable(${GAME_NAME} ${EXE_SOURCES})
 include(${GAME_CMAKE})
+set(EXE_SOURCES )
+if(IS_AOT_COMPILER)
+    target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/daScript/include)
+    target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/eastl/include)
+    target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/ecs/include)
+else()
+    #target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/daScript/include)
+    #target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/eastl/include)
+    #target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/3rd_party/ecs/include)
+    #target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/das)
+    #target_include_directories(${GAME_NAME} PRIVATE ${SRC_ROOT}/engine)
+    #set(EXE_SOURCES ${SRC_ROOT}/${GAME_NAME}/das/init.das.cpp)
+    #target_sources(${GAME_NAME} PRIVATE ${EXE_SOURCES})
+endif()
 target_link_libraries(${GAME_NAME} ${ADDITIONAL_LIBS})
 

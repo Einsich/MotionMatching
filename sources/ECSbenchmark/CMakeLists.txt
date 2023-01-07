@@ -18,5 +18,11 @@ if (IS_AOT_COMPILER)
 else()
   set(SOURCES_DIRS . das_modules)
 endif()
+
+if(NOT IS_AOT_COMPILER)
+  execute_process(COMMAND ${AOT_COMPILER_PATH} -aot ${MODULE_PATH}/init.das ${MODULE_PATH}/init.das.cpp -project ${DAS_PROJECT_PATH} -dasroot ${DAS_ROOT})
+endif()
+
 message(${SOURCES_DIRS})
+set(OBJECT_LIB true)
 include(../module.cmake)

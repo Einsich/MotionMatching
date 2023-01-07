@@ -6,6 +6,18 @@
 
 static bool log_system_arguments = false;
 
+int get_event_sizeof(int type_id)
+{
+  const auto &types = ecs::get_all_registered_events();
+  return (uint32_t)type_id < types.size() ? types[type_id].sizeOf : 0;
+}
+
+int get_request_sizeof(int type_id)
+{
+  const auto &types = ecs::get_all_registered_requests();
+  return (uint32_t)type_id < types.size() ? types[type_id].sizeOf : 0;
+}
+
 static ecs::vector<ecs::string> to_ecs_string_array(const das::Array &a, const char *descr)
 {
   ecs::vector<ecs::string> v(a.size);
@@ -335,6 +347,11 @@ void perform_query(const das::Block &block, das::Context *context, das::LineInfo
 {
   auto closureBlock = (das::SimNode_ClosureBlock*)block.body;
   auto cache = (ecs::QueryCache*)closureBlock->annotationData;
+  if (cache == nullptr)
+  {
+    ECS_ERROR("missed [eq] annotation in ecs query", line->fileInfo->name.c_str(), line->line);
+    return;
+  }
 
   perform_ecs_loop(*cache, [&](vec4f *args) { context->invoke(block, args, nullptr, line);});
 }

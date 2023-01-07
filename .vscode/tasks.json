@@ -77,6 +77,20 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "dependsOn":["Kill aot compiler"]
+        },
+        {
+            "type": "shell",
+            "label": "Kill aot compiler",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "taskkill //IM ${config:launchOption.currentConfig.Project.name}-aot.exe //F || true",
+
+            "group": {
+                "kind": "build",
+                "isDefault": true
             }
         },
         {

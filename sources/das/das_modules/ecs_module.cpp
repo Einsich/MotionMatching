@@ -14,22 +14,23 @@ struct ANNOTATION : das::ManagedStructureAnnotation <CPP_TYPE> {                
 #define VOID_VALUE_ANNOTATION(ANNOTATION, NAME, CPP_TYPE)                                \
 struct ANNOTATION : das::ManagedValueAnnotation <CPP_TYPE> {                             \
   ANNOTATION() : ManagedValueAnnotation (NAME, #CPP_TYPE) {}                             \
+  bool hasNonTrivialCtor() const override { return false; }                              \
 }
 
-VOID_STRUCTURE_ANNOTATION(EventAnnotation, "Event", ecs::Event);
-VOID_STRUCTURE_ANNOTATION(RequestAnnotation, "Request", ecs::Request);
-VOID_VALUE_ANNOTATION(EntityIdAnnotation, "EntityId", ecs::EntityId);
+VOID_STRUCTURE_ANNOTATION(EventAnnotation, "Event", ::ecs::Event);
+VOID_STRUCTURE_ANNOTATION(RequestAnnotation, "Request", ::ecs::Request);
+VOID_VALUE_ANNOTATION(EntityIdAnnotation, "EntityId", ::ecs::EntityId);
 VOID_STRUCTURE_ANNOTATION(ComponentInitializerAnnotation, "ComponentInitializer", ComponentInitializer);
 
-VOID_STRUCTURE_ANNOTATION(OnEntityCreatedAnnotation, "OnEntityCreated", ecs::OnEntityCreated);
-VOID_STRUCTURE_ANNOTATION(OnEntityDestroyedAnnotation, "OnEntityDestroyed", ecs::OnEntityDestroyed);
-VOID_STRUCTURE_ANNOTATION(OnEntityTerminatedAnnotation, "OnEntityTerminated", ecs::OnEntityTerminated);
-VOID_STRUCTURE_ANNOTATION(OnSceneCreatedAnnotation, "OnSceneCreated", ecs::OnSceneCreated);
-VOID_STRUCTURE_ANNOTATION(OnSceneTerminatedAnnotation, "OnSceneTerminated", ecs::OnSceneTerminated);
+VOID_STRUCTURE_ANNOTATION(OnEntityCreatedAnnotation, "OnEntityCreated", ::ecs::OnEntityCreated);
+VOID_STRUCTURE_ANNOTATION(OnEntityDestroyedAnnotation, "OnEntityDestroyed", ::ecs::OnEntityDestroyed);
+VOID_STRUCTURE_ANNOTATION(OnEntityTerminatedAnnotation, "OnEntityTerminated", ::ecs::OnEntityTerminated);
+VOID_STRUCTURE_ANNOTATION(OnSceneCreatedAnnotation, "OnSceneCreated", ::ecs::OnSceneCreated);
+VOID_STRUCTURE_ANNOTATION(OnSceneTerminatedAnnotation, "OnSceneTerminated", ::ecs::OnSceneTerminated);
 
 
 struct StringAnnotation : das::ManagedStructureAnnotation <ecs::string> {
-  StringAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("ecs_string", ml, "ecs::string")
+  StringAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation ("ecs_string", ml, "::ecs::string")
   {
     addProperty<DAS_BIND_MANAGED_PROP(size)>("length", "size");
     addProperty<DAS_BIND_MANAGED_PROP(c_str)>("c_str", "c_str");
@@ -39,7 +40,7 @@ struct StringAnnotation : das::ManagedStructureAnnotation <ecs::string> {
 class Module_ECS : public das::Module
 {
 public:
-  Module_ECS() : Module("ecs_impl")
+  Module_ECS() : Module("ecs_core")
   {
     das::ModuleLibrary lib;
     lib.addModule(this);
@@ -76,12 +77,12 @@ public:
     addExtern<DAS_BIND_FUN(::get_event_sizeof)>(*this, lib, "get_event_sizeof", das::SideEffects::accessExternal, "::get_event_sizeof");
     addExtern<DAS_BIND_FUN(::get_request_sizeof)>(*this, lib, "get_request_sizeof", das::SideEffects::accessExternal, "::get_request_sizeof");
 
-    addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::accessExternal, "ecs::event_name_to_index");
-    addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::accessExternal, "ecs::request_name_to_index");
-    addExtern<DAS_BIND_FUN(ecs::type_name_to_index)>(*this, lib, "get_component_type_idx", das::SideEffects::accessExternal, "ecs::type_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::event_name_to_index)>(*this, lib, "get_event_idx", das::SideEffects::accessExternal, "::ecs::event_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::request_name_to_index)>(*this, lib, "get_request_idx", das::SideEffects::accessExternal, "::ecs::request_name_to_index");
+    addExtern<DAS_BIND_FUN(ecs::type_name_to_index)>(*this, lib, "get_component_type_idx", das::SideEffects::accessExternal, "::ecs::type_name_to_index");
 
 
-    addExtern<ecs::uint(*)(const char*), ecs::get_prefab_id>(*this, lib, "get_prefab_id", das::SideEffects::accessExternal, "ecs::get_prefab_id");
+    addExtern<ecs::uint(*)(const char*), ecs::get_prefab_id>(*this, lib, "get_prefab_id", das::SideEffects::accessExternal, "::ecs::get_prefab_id");
     addExtern<DAS_BIND_FUN(::create_entity_with_init)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity_with_init");
     addExtern<DAS_BIND_FUN(::create_entity_with_init_n)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity_with_init_n");
     addExtern<DAS_BIND_FUN(::create_entity)>(*this, lib, "create_entity", das::SideEffects::modifyExternal, "::create_entity");
@@ -98,7 +99,8 @@ public:
   virtual das::ModuleAotType aotRequire(das::TextWriter &tw) const override
   {
     // specifying which include files are required for this module
-    // tw << "#include \"tutorial02aot.h\"\n";
+    tw << "#include <ecs/ecs.h>\n";
+    tw << "#include <das_modules/ecs_module.h>\n";
     // specifying AOT type, in this case direct cpp mode (and not hybrid mode)
     return das::ModuleAotType::cpp;
   }

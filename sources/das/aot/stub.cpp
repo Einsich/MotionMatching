@@ -71,6 +71,17 @@ int register_das_request(const das::StructurePtr &st)
   printf("register_das_event %s\n", st->name.c_str());
   return 0;
 }
+
+int get_event_sizeof(int type_id)
+{
+  return -1;
+}
+
+int get_request_sizeof(int type_id)
+{
+  return -1;
+}
+
 void builtin_send_event(int size_of, int eventId, const void *event) { assert(0); }
 void builtin_send_event_immediate(int size_of, int eventId, const void *event) { assert(0); }
 void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event) { assert(0); }

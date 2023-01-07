@@ -11,9 +11,11 @@ foreach(DIR ${SOURCES_DIRS})
 endforeach()
 
 include_directories(${MODULE_PATH})
-
+if (OBJECT_LIB)
+add_library(${MODULE_NAME} OBJECT ${SOURCES})
+else()
 add_library(${MODULE_NAME} STATIC ${SOURCES})
-
+endif()
 set(SOURCES )
 set(SOURCES_DIRS )
 set(SOURCES_REC_DIRS )

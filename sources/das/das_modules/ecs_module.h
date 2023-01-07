@@ -2,16 +2,16 @@
 #include <daScript/daScript.h>
 #include <ecs/ecs.h>
 
-MAKE_TYPE_FACTORY(string, ecs::string)
-MAKE_TYPE_FACTORY(Event, ecs::Event)
-MAKE_TYPE_FACTORY(Request, ecs::Request)
-MAKE_TYPE_FACTORY(EntityId, ecs::EntityId)
-MAKE_TYPE_FACTORY(OnEntityCreated, ecs::OnEntityCreated)
-MAKE_TYPE_FACTORY(OnEntityDestroyed, ecs::OnEntityDestroyed)
-MAKE_TYPE_FACTORY(OnEntityTerminated, ecs::OnEntityTerminated)
-MAKE_TYPE_FACTORY(OnSceneCreated, ecs::OnSceneCreated)
-MAKE_TYPE_FACTORY(OnSceneTerminated, ecs::OnSceneTerminated)
-using ComponentInitializer = ecs::vector<ecs::ComponentPrefab>;
+MAKE_TYPE_FACTORY(string, ::ecs::string)
+MAKE_TYPE_FACTORY(Event, ::ecs::Event)
+MAKE_TYPE_FACTORY(Request, ::ecs::Request)
+MAKE_TYPE_FACTORY(EntityId, ::ecs::EntityId)
+MAKE_TYPE_FACTORY(OnEntityCreated, ::ecs::OnEntityCreated)
+MAKE_TYPE_FACTORY(OnEntityDestroyed, ::ecs::OnEntityDestroyed)
+MAKE_TYPE_FACTORY(OnEntityTerminated, ::ecs::OnEntityTerminated)
+MAKE_TYPE_FACTORY(OnSceneCreated, ::ecs::OnSceneCreated)
+MAKE_TYPE_FACTORY(OnSceneTerminated, ::ecs::OnSceneTerminated)
+using ComponentInitializer = ::ecs::vector<ecs::ComponentPrefab>;
 MAKE_TYPE_FACTORY(ComponentInitializer, ComponentInitializer)
 
 namespace das {
@@ -86,17 +86,10 @@ inline const char* get_das_type_name(const das::TypeDecl &type)
 int register_das_event(const das::StructurePtr &st);
 int register_das_request(const das::StructurePtr &st);
 
-inline int get_event_sizeof(int type_id)
-{
-  const auto &types = ecs::get_all_registered_events();
-  return (uint32_t)type_id < types.size() ? types[type_id].sizeOf : 0;
-}
+//will return -1 in aot mode
+int get_event_sizeof(int type_id);
+int get_request_sizeof(int type_id);
 
-inline int get_request_sizeof(int type_id)
-{
-  const auto &types = ecs::get_all_registered_requests();
-  return (uint32_t)type_id < types.size() ? types[type_id].sizeOf : 0;
-}
 void builtin_send_event(int size_of, int eventId, const void *event);
 void builtin_send_event_immediate(int size_of, int eventId, const void *event);
 void builtin_send_eid_event(ecs::EntityId eid, int size_of, int eventId, const void *event);
