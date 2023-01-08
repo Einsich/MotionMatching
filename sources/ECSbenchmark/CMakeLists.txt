@@ -11,17 +11,19 @@ include_directories(${SRC_ROOT}/das)
 
 include(../ecs_pull.cmake)
 set(SOURCES )
-ecs_pull_module()
-ecs_gather_modules(ecs_pull; ECSbenchmarkLib)
+
 if (IS_AOT_COMPILER)
   set(SOURCES_DIRS aot das_modules)
 else()
+  ecs_pull_module()
+  ecs_gather_modules(ecs_pull; ECSbenchmarkLib)
   set(SOURCES_DIRS . das_modules)
 endif()
 
 if(NOT IS_AOT_COMPILER)
   execute_process(COMMAND ${AOT_COMPILER_PATH} -aot ${MODULE_PATH}/init.das ${MODULE_PATH}/init.das.cpp -project ${DAS_PROJECT_PATH} -dasroot ${DAS_ROOT})
-endif()
+
+  endif()
 
 message(${SOURCES_DIRS})
 set(OBJECT_LIB true)

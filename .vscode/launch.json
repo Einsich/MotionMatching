@@ -17,12 +17,20 @@
             }
         },
         {
-            "name": "Run project2",
+            "name": "Run aot",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}/${config:launchOption.currentConfig.Project.name}-${config:launchOption.currentConfig.BuildType}.exe",
-            "cwd": "${workspaceFolder}/${config:launchOption.currentConfig.Project.name}",
-            "args": [],
+            "program": "${workspaceFolder}/Builds/dbg/${config:launchOption.currentConfig.Project.name}-aot.exe",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "-aot",
+                "sources/ECSbenchmark/init.das",
+                "sources/ECSbenchmark/init.das.cpp",
+                "-project",
+                "sources/das/common.das_project",
+                "-dasroot",
+                "sources/3rd_party/daScript",
+            ],
            // "preLaunchTask": "Build project",
             "linux": {
                 "type": "cppdbg",

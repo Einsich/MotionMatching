@@ -34,7 +34,7 @@ class ECSRequestTypeId : AstTypeInfoMacro
 
 def send_event(event : auto(TT))
   unsafe
-    let typeId = typeinfo(ecs_event_type_id event)
+    let typeId = get_event_idx(typeinfo(stripped_typename event))//typeinfo(ecs_event_type_id event)
     if typeId >= 0
       builtin_send_event(typeinfo(sizeof event), typeId, addr(event))
     else
@@ -42,7 +42,7 @@ def send_event(event : auto(TT))
 
 def send_event_immediate(event : auto(TT))
   unsafe
-    let typeId = typeinfo(ecs_event_type_id event)
+    let typeId = get_event_idx(typeinfo(stripped_typename event))//typeinfo(ecs_event_type_id event)
     if typeId >= 0
       builtin_send_event_immediate(typeinfo(sizeof event), typeId, addr(event))
     else
@@ -50,7 +50,7 @@ def send_event_immediate(event : auto(TT))
 
 def send_event(eid : EntityId; event : auto(TT))
   unsafe
-    let typeId = typeinfo(ecs_event_type_id event)
+    let typeId = get_event_idx(typeinfo(stripped_typename event))//typeinfo(ecs_event_type_id event)
     if typeId >= 0
       builtin_send_eid_event(eid, typeinfo(sizeof event), typeId, addr(event))
     else
@@ -208,20 +208,20 @@ def private get_system_type(sys_args : dasvector`smart_ptr`Variable; args:Annota
     return QueryType System
   let name = get_das_type_name(*sys_args[0]._type)
 
-  if name == "Event"
+  if name == "Event" || name == "OnEntityCreated" || name == "OnEntityDestroyed" || name == "OnEntityTerminated" || name == "OnSceneCreated" || name == "OnSceneTerminated"
     return QueryType Event
 
   if name == "Request"
     return QueryType Request
 
-  let eventIdx = get_event_idx(name)
-  //print("type {name} is {eventIdx}\n")
-  if eventIdx >= 0
-    return QueryType Event
-  let requestIdx = get_request_idx(name)
-  //print("type {name} is {requestIdx}\n")
-  if requestIdx >= 0
-    return QueryType Request
+  let structType = (*sys_args[0])._type.structType
+  if structType != null
+
+    for ann in structType.annotations
+      if ann.annotation.name == "ecs_cpp_event" || ann.annotation.name == "ecs_event"
+        return QueryType Event
+      elif ann.annotation.name == "ecs_cpp_request" || ann.annotation.name == "ecs_request"
+        return QueryType Request
 
   return QueryType System
 

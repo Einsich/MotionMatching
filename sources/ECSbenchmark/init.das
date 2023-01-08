@@ -1,7 +1,4 @@
 require math
-options log_nodes
-options log_nodes_aot_hash
-
 require ecs
 require engine
 //required=(name`type)

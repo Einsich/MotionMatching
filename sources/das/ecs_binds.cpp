@@ -159,6 +159,7 @@ void register_system(
     uint64_t mangled_hash)
 {
   const char *name = system->name.c_str();
+  stage = stage ? stage : "";
   printf("System(stage=%s): %s\n", stage, system->describe().c_str());
 
   unresolvedSystems.emplace_back(ecs::SystemDescription(system->at.fileInfo->name.c_str(), name, new ecs::QueryCache(),
@@ -619,12 +620,6 @@ ecs::EntityId create_entity_immediate_n(ecs::prefab_id id)
 
 ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, das::Context *context, das::LineInfoArg *at)
 {
-  ecs::prefab_id id = ecs::get_prefab_id(name);
-  if (id != ecs::invalidPrefabId)
-  {
-    ECS_ERROR("prefab \"%s\" already exists!", name);
-    return ecs::invalidPrefabId;
-  }
   ComponentInitializer overrides_list;
   vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
   context->invoke(block, &args, nullptr, at);

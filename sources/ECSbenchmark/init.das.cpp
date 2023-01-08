@@ -7,12 +7,12 @@
  // require builtin
  // require math
 #include "daScript/simulate/aot_builtin_math.h"
+ // require strings
+#include "daScript/simulate/aot_builtin_string.h"
  // require rtti
 #include "daScript/simulate/aot_builtin_rtti.h"
 #include "daScript/ast/ast.h"
 #include "daScript/ast/ast_handle.h"
- // require strings
-#include "daScript/simulate/aot_builtin_string.h"
  // require ast
 #include "daScript/ast/ast.h"
 #include "daScript/simulate/aot_builtin_ast.h"
@@ -329,25 +329,25 @@ static_assert(offsetof(TestRequest,sum)==0,"structure field offset mismatch with
 }
 
 inline void _Funcecs_0x60_send_event_668f484c5594ade2 ( Context * __context__, MyEvent const  & __event_rename_at_35 );
-inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_12, float __m_rename_at_12, float3 & __pos_rename_at_12, float3 & __vel_rename_at_12, float3 __center_rename_at_12 );
+inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_9, float __m_rename_at_9, float3 & __pos_rename_at_9, float3 & __vel_rename_at_9, float3 __center_rename_at_9 );
 inline void das_system_test__implementation___d296e0466911cef8 ( Context * __context__, uint32_t __n_rename_at_251, float const  * __m__ptr___rename_at_251, float3 * __pos__ptr___rename_at_251, float3 * __vel__ptr___rename_at_251, float3 const  * __center__ptr___rename_at_251 );
-inline void das_system_test_b809060a654d2132 ( Context * __context__, float __m_rename_at_22, float3 & __pos_rename_at_22, float3 & __vel_rename_at_22, float3 __center_rename_at_22 );
+inline void das_system_test_b809060a654d2132 ( Context * __context__, float __m_rename_at_19, float3 & __pos_rename_at_19, float3 & __vel_rename_at_19, float3 __center_rename_at_19 );
 inline void das_query_test__implementation___e3bba28dd465e49 ( Context * __context__, uint32_t __n_rename_at_251 );
-inline void das_query_test_c1cafffdc575571b ( Context * __context__ );
-inline void created_event__implementation___d5eea9a330bd499d ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnSceneCreated const  * __event__ptr___rename_at_251 );
-inline void created_event_e699080f31c6d7d4 ( Context * __context__, ::ecs::OnSceneCreated const  & __event_rename_at_47 );
-inline void created_event__implementation___96d8b7817d60378b ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __i__ptr___rename_at_251, float const  * __f__ptr___rename_at_251, ::ecs::string * __s__ptr___rename_at_251, float3 const  * __f3__ptr___rename_at_251 );
-inline void created_event_49bc7bf17abc6b37 ( Context * __context__, ::ecs::OnEntityCreated const  & __event_rename_at_77, int32_t __i_rename_at_77, float __f_rename_at_77, char * const  __s_rename_at_77, float3 __f3_rename_at_77 );
-inline void created_event__implementation___b948e1c63201b45e ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251, ::ecs::string * __name__ptr___rename_at_251 );
-inline void created_event_6af492e36368737f ( Context * __context__, ::ecs::OnEntityCreated const  & __event_rename_at_82, int32_t __counter_rename_at_82, char * const  __name_rename_at_82 );
-inline void my_event_handler__implementation___7a7cc6957ef84965 ( Context * __context__, uint32_t __n_rename_at_251, MyEvent const  * __event__ptr___rename_at_251 );
-inline void my_event_handler_6fd7d4d78f664169 ( Context * __context__, MyEvent const  & __event_rename_at_98 );
+inline void das_query_test_de064fea36e4a04 ( Context * __context__ );
+inline void created_event__implementation___3fe45e87017004a5 ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnSceneCreated const  * __event__ptr___rename_at_251 );
+inline void created_event_e699080f31c6d7d4 ( Context * __context__, ::ecs::OnSceneCreated const  & __event_rename_at_44 );
+inline void created_event__implementation___b6d2fd11d04a6acf ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __i__ptr___rename_at_251, float const  * __f__ptr___rename_at_251, ::ecs::string * __s__ptr___rename_at_251, float3 const  * __f3__ptr___rename_at_251 );
+inline void created_event_49bc7bf17abc6b37 ( Context * __context__, ::ecs::OnEntityCreated const  & __event_rename_at_74, int32_t __i_rename_at_74, float __f_rename_at_74, char * const  __s_rename_at_74, float3 __f3_rename_at_74 );
+inline void created_event__implementation___73010dbf672f3506 ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251, ::ecs::string * __name__ptr___rename_at_251 );
+inline void created_event_6af492e36368737f ( Context * __context__, ::ecs::OnEntityCreated const  & __event_rename_at_79, int32_t __counter_rename_at_79, char * const  __name_rename_at_79 );
+inline void my_event_handler__implementation___422d7ef64b7c4672 ( Context * __context__, uint32_t __n_rename_at_251, MyEvent const  * __event__ptr___rename_at_251 );
+inline void my_event_handler_6fd7d4d78f664169 ( Context * __context__, MyEvent const  & __event_rename_at_95 );
 inline void creation_test__implementation___1b3063228cb52c91 ( Context * __context__, uint32_t __n_rename_at_251 );
 inline void creation_test_b0e874b95a9256e6 ( Context * __context__ );
-inline void test_event__implementation___434dd1282c05ca15 ( Context * __context__, uint32_t __n_rename_at_251, TestEvent const  * __event__ptr___rename_at_251, ::ecs::EntityId const  * __eid__ptr___rename_at_251 );
-inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const  & __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 );
-inline void test_request__implementation___f98aee5d0ea64e90 ( Context * __context__, uint32_t __n_rename_at_251, TestRequest * __request__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251 );
-inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest & __request_rename_at_126, int32_t __counter_rename_at_126 );
+inline void test_event__implementation___c9612b41a9671f00 ( Context * __context__, uint32_t __n_rename_at_251, TestEvent const  * __event__ptr___rename_at_251, ::ecs::EntityId const  * __eid__ptr___rename_at_251 );
+inline void test_event_dab533da028fafe ( Context * __context__, TestEvent const  & __event_rename_at_110, ::ecs::EntityId const  __eid_rename_at_110 );
+inline void test_request__implementation___b293cbc65ac192d5 ( Context * __context__, uint32_t __n_rename_at_251, TestRequest * __request__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251 );
+inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest & __request_rename_at_123, int32_t __counter_rename_at_123 );
 
 void __init_script ( Context * __context__, bool __init_shared )
 {
@@ -364,14 +364,14 @@ inline void _Funcecs_0x60_send_event_668f484c5594ade2 ( Context * __context__, M
 	};
 }
 
-inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_12, float __m_rename_at_12, float3 & __pos_rename_at_12, float3 & __vel_rename_at_12, float3 __center_rename_at_12 )
+inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_9, float __m_rename_at_9, float3 & __pos_rename_at_9, float3 & __vel_rename_at_9, float3 __center_rename_at_9 )
 {
-	float3 __dir_rename_at_13 = ((float3)(SimPolicy<float3>::Sub(__center_rename_at_12,__pos_rename_at_12,*__context__,nullptr)));
-	float __distance_rename_at_14 = ((float)length3(__dir_rename_at_13));
-	float3 __F_rename_at_15 = ((float3)(SimPolicy<float3>::DivVecScal((SimPolicy<float3>::MulVecScal((SimPolicy<float3>::MulVecScal(__dir_rename_at_13,cast<float>::from(__m_rename_at_12),*__context__,nullptr)),cast<float>::from(9.99999975e-05f),*__context__,nullptr)),cast<float>::from(((__distance_rename_at_14 * __distance_rename_at_14) * __distance_rename_at_14)),*__context__,nullptr)));
-	float3 __a_rename_at_16 = ((float3)(SimPolicy<float3>::DivVecScal(__F_rename_at_15,cast<float>::from(__m_rename_at_12),*__context__,nullptr)));
-	SimPolicy<float3>::SetAdd((char *)&(__vel_rename_at_12),(SimPolicy<float3>::MulVecScal(__a_rename_at_16,cast<float>::from(__dt_rename_at_12),*__context__,nullptr)),*__context__,nullptr);
-	SimPolicy<float3>::SetAdd((char *)&(__pos_rename_at_12),(SimPolicy<float3>::MulVecScal(__vel_rename_at_12,cast<float>::from(__dt_rename_at_12),*__context__,nullptr)),*__context__,nullptr);
+	float3 __dir_rename_at_10 = ((float3)(SimPolicy<float3>::Sub(__center_rename_at_9,__pos_rename_at_9,*__context__,nullptr)));
+	float __distance_rename_at_11 = ((float)length3(__dir_rename_at_10));
+	float3 __F_rename_at_12 = ((float3)(SimPolicy<float3>::DivVecScal((SimPolicy<float3>::MulVecScal((SimPolicy<float3>::MulVecScal(__dir_rename_at_10,cast<float>::from(__m_rename_at_9),*__context__,nullptr)),cast<float>::from(9.99999975e-05f),*__context__,nullptr)),cast<float>::from(((__distance_rename_at_11 * __distance_rename_at_11) * __distance_rename_at_11)),*__context__,nullptr)));
+	float3 __a_rename_at_13 = ((float3)(SimPolicy<float3>::DivVecScal(__F_rename_at_12,cast<float>::from(__m_rename_at_9),*__context__,nullptr)));
+	SimPolicy<float3>::SetAdd((char *)&(__vel_rename_at_9),(SimPolicy<float3>::MulVecScal(__a_rename_at_13,cast<float>::from(__dt_rename_at_9),*__context__,nullptr)),*__context__,nullptr);
+	SimPolicy<float3>::SetAdd((char *)&(__pos_rename_at_9),(SimPolicy<float3>::MulVecScal(__vel_rename_at_9,cast<float>::from(__dt_rename_at_9),*__context__,nullptr)),*__context__,nullptr);
 }
 
 inline void das_system_test__implementation___d296e0466911cef8 ( Context * __context__, uint32_t __n_rename_at_251, float const  * __m__ptr___rename_at_251, float3 * __pos__ptr___rename_at_251, float3 * __vel__ptr___rename_at_251, float3 const  * __center__ptr___rename_at_251 )
@@ -394,9 +394,9 @@ inline void das_system_test__implementation___d296e0466911cef8 ( Context * __con
 	};
 }
 
-inline void das_system_test_b809060a654d2132 ( Context * __context__, float __m_rename_at_22, float3 & __pos_rename_at_22, float3 & __vel_rename_at_22, float3 __center_rename_at_22 )
+inline void das_system_test_b809060a654d2132 ( Context * __context__, float __m_rename_at_19, float3 & __pos_rename_at_19, float3 & __vel_rename_at_19, float3 __center_rename_at_19 )
 {
-	test_func_a6fab27e71e3efab(__context__,::get_delta_time(),__m_rename_at_22,__pos_rename_at_22,__vel_rename_at_22,__center_rename_at_22);
+	test_func_a6fab27e71e3efab(__context__,::get_delta_time(),__m_rename_at_19,__pos_rename_at_19,__vel_rename_at_19,__center_rename_at_19);
 }
 
 inline void das_query_test__implementation___e3bba28dd465e49 ( Context * __context__, uint32_t __n_rename_at_251 )
@@ -409,16 +409,16 @@ inline void das_query_test__implementation___e3bba28dd465e49 ( Context * __conte
 		__need_loop_253 = __i_iterator.first(__context__,(__i_rename_at_253)) && __need_loop_253;
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
-			das_query_test_c1cafffdc575571b(__context__);
+			das_query_test_de064fea36e4a04(__context__);
 		}
 		__i_iterator.close(__context__,(__i_rename_at_253));
 	};
 }
 
-inline void das_query_test_c1cafffdc575571b ( Context * __context__ ) { das_stack_prologue __prologue(__context__,192,"das_query_test " DAS_FILE_LINE);
+inline void das_query_test_de064fea36e4a04 ( Context * __context__ ) { das_stack_prologue __prologue(__context__,192,"das_query_test " DAS_FILE_LINE);
 {
-	float __dt_rename_at_28 = ((float)::get_delta_time());
-	::perform_query(das_make_block<void,uint32_t,float const  *,float3 *,float3 *,float3 const  *>(__context__,96,0,&__func_info__87e49841c6409ea,[&](uint32_t __n_rename_at_0, float const  * __m__ptr___rename_at_29, float3 * __pos__ptr___rename_at_29, float3 * __vel__ptr___rename_at_29, float3 const  * __center__ptr___rename_at_29) -> void{
+	float __dt_rename_at_25 = ((float)::get_delta_time());
+	::perform_query(das_make_block<void,uint32_t,float const  *,float3 *,float3 *,float3 const  *>(__context__,96,__context__->adBySid(8969123185387455669u),&__func_info__87e49841c6409ea,[&](uint32_t __n_rename_at_0, float const  * __m__ptr___rename_at_26, float3 * __pos__ptr___rename_at_26, float3 * __vel__ptr___rename_at_26, float3 const  * __center__ptr___rename_at_26) -> void{
 		{
 			bool __need_loop_183 = true;
 			// i : int const
@@ -428,12 +428,12 @@ inline void das_query_test_c1cafffdc575571b ( Context * __context__ ) { das_stac
 			for ( ; __need_loop_183 ; __need_loop_183 = __i_iterator.next(__context__,(__i_rename_at_183)) )
 			{
 				das_invoke<void>::invoke<float,float3 &,float3 &,float3>(__context__,nullptr,[&](float const  __m_rename_at_184, float3 & __pos_rename_at_184, float3 & __vel_rename_at_184, float3 __center_rename_at_184) DAS_AOT_INLINE_LAMBDA -> void{
-					test_func_a6fab27e71e3efab(__context__,__dt_rename_at_28,__m_rename_at_184,__pos_rename_at_184,__vel_rename_at_184,__center_rename_at_184);
-				},das_deref(__context__,__m__ptr___rename_at_29),das_deref(__context__,__pos__ptr___rename_at_29),das_deref(__context__,__vel__ptr___rename_at_29),das_deref(__context__,__center__ptr___rename_at_29));
-				das_ptr_inc(__m__ptr___rename_at_29,4);
-				das_ptr_inc(__pos__ptr___rename_at_29,12);
-				das_ptr_inc(__vel__ptr___rename_at_29,12);
-				das_ptr_inc(__center__ptr___rename_at_29,12);
+					test_func_a6fab27e71e3efab(__context__,__dt_rename_at_25,__m_rename_at_184,__pos_rename_at_184,__vel_rename_at_184,__center_rename_at_184);
+				},das_deref(__context__,__m__ptr___rename_at_26),das_deref(__context__,__pos__ptr___rename_at_26),das_deref(__context__,__vel__ptr___rename_at_26),das_deref(__context__,__center__ptr___rename_at_26));
+				das_ptr_inc(__m__ptr___rename_at_26,4);
+				das_ptr_inc(__pos__ptr___rename_at_26,12);
+				das_ptr_inc(__vel__ptr___rename_at_26,12);
+				das_ptr_inc(__center__ptr___rename_at_26,12);
 			}
 			__i_iterator.close(__context__,(__i_rename_at_183));
 		};
@@ -441,7 +441,7 @@ inline void das_query_test_c1cafffdc575571b ( Context * __context__ ) { das_stac
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL)));
 }}
 
-inline void created_event__implementation___d5eea9a330bd499d ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnSceneCreated const  * __event__ptr___rename_at_251 )
+inline void created_event__implementation___3fe45e87017004a5 ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnSceneCreated const  * __event__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -452,39 +452,38 @@ inline void created_event__implementation___d5eea9a330bd499d ( Context * __conte
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
 			created_event_e699080f31c6d7d4(__context__,das_deref(__context__,__event__ptr___rename_at_251));
-			das_ptr_inc(__event__ptr___rename_at_251,1);
 		}
 		__i_iterator.close(__context__,(__i_rename_at_253));
 	};
 }
 
-inline void created_event_e699080f31c6d7d4 ( Context * __context__, ::ecs::OnSceneCreated const  &  __event_rename_at_47 ) { das_stack_prologue __prologue(__context__,320,"created_event " DAS_FILE_LINE);
+inline void created_event_e699080f31c6d7d4 ( Context * __context__, ::ecs::OnSceneCreated const  &  __event_rename_at_44 ) { das_stack_prologue __prologue(__context__,320,"created_event " DAS_FILE_LINE);
 {
 	builtin_print(((char *) "hello world!\n"),__context__);
 	builtin_print(((char *) "hello world!!\n"),__context__);
 	builtin_print(((char *) "hello world!!!\n"),__context__);
-	uint32_t __p_rename_at_52 = ((uint32_t)::create_entity_prefab(((char *) "das_prefab"),das_make_block<void,ComponentInitializer &>(__context__,96,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_52) -> void{
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_52),((char *) "i"),1);
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,float>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXf*/ 16861265537427395858u)),das_arg<ComponentInitializer>::pass(__init_rename_at_52),((char *) "f"),1.f);
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_52),((char *) "s"),((char *) "xxxx0000xxxiiii"));
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,float3>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXf3*/ 9371518136105281299u)),das_arg<ComponentInitializer>::pass(__init_rename_at_52),((char *) "f3"),v_make_vec4f(1.f,2.f,3.f,0.f));
+	uint32_t __p_rename_at_49 = ((uint32_t)::create_entity_prefab(((char *) "das_prefab"),das_make_block<void,ComponentInitializer &>(__context__,96,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_49) -> void{
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_49),((char *) "i"),1);
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,float>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXf*/ 16861265537427395858u)),das_arg<ComponentInitializer>::pass(__init_rename_at_49),((char *) "f"),1.f);
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_49),((char *) "s"),((char *) "xxxx0000xxxiiii"));
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,float3>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXf3*/ 9371518136105281299u)),das_arg<ComponentInitializer>::pass(__init_rename_at_49),((char *) "f3"),v_make_vec4f(1.f,2.f,3.f,0.f));
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL))));
-	::ecs::EntityId __eid_rename_at_62 = ((::ecs::EntityId)::create_entity_with_init(__p_rename_at_52,das_make_block<void,ComponentInitializer &>(__context__,176,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_62) -> void{
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_62),((char *) "s"),((char *) "lolkek"));
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_62),((char *) "i"),55);
+	::ecs::EntityId __eid_rename_at_59 = ((::ecs::EntityId)::create_entity_with_init(__p_rename_at_49,das_make_block<void,ComponentInitializer &>(__context__,176,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_59) -> void{
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_59),((char *) "s"),((char *) "lolkek"));
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_59),((char *) "i"),55);
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL))));
-	::create_entity_with_init(__p_rename_at_52,das_make_block<void,ComponentInitializer &>(__context__,240,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_66) -> void{
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_66),((char *) "s"),((char *) "chebureck"));
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_66),((char *) "i"),1111111111);
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,::ecs::EntityId const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXH<ecs_core::EntityId>*/ 9401185574874402403u)),das_arg<ComponentInitializer>::pass(__init_rename_at_66),((char *) "e"),__eid_rename_at_62);
+	::create_entity_with_init(__p_rename_at_49,das_make_block<void,ComponentInitializer &>(__context__,240,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_63) -> void{
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_63),((char *) "s"),((char *) "chebureck"));
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_63),((char *) "i"),1111111111);
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,::ecs::EntityId const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXH<ecs_core::EntityId>*/ 9401185574874402403u)),das_arg<ComponentInitializer>::pass(__init_rename_at_63),((char *) "e"),__eid_rename_at_59);
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL)));
-	::create_entity_immediate_with_init_n(((char *) "das_prefab"),das_make_block<void,ComponentInitializer &>(__context__,304,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_72) -> void{
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_72),((char *) "s"),((char *) "immediate"));
-		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_72),((char *) "i"),609);
+	::create_entity_immediate_with_init_n(((char *) "das_prefab"),das_make_block<void,ComponentInitializer &>(__context__,304,0,&__func_info__80fe84e807e9d70e,[&](ComponentInitializer & __init_rename_at_69) -> void{
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,char * const >(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXs*/ 16861279831078562601u)),das_arg<ComponentInitializer>::pass(__init_rename_at_69),((char *) "s"),((char *) "immediate"));
+		das_invoke_function<void>::invoke<ComponentInitializer &,char * const ,int32_t>(__context__,nullptr,Func(__context__->fnByMangledName(/*ecs`set IH<ecs_core::ComponentInitializer> Cs CXi*/ 16861268835962280491u)),das_arg<ComponentInitializer>::pass(__init_rename_at_69),((char *) "i"),609);
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL)));
 }}
 
-inline void created_event__implementation___96d8b7817d60378b ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __i__ptr___rename_at_251, float const  * __f__ptr___rename_at_251, ::ecs::string * __s__ptr___rename_at_251, float3 const  * __f3__ptr___rename_at_251 )
+inline void created_event__implementation___b6d2fd11d04a6acf ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __i__ptr___rename_at_251, float const  * __f__ptr___rename_at_251, ::ecs::string * __s__ptr___rename_at_251, float3 const  * __f3__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -495,7 +494,6 @@ inline void created_event__implementation___96d8b7817d60378b ( Context * __conte
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
 			created_event_49bc7bf17abc6b37(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__i__ptr___rename_at_251),das_deref(__context__,__f__ptr___rename_at_251),((char * const )(das_deref(__context__,__s__ptr___rename_at_251).c_str() /*c_str*/)),das_deref(__context__,__f3__ptr___rename_at_251));
-			das_ptr_inc(__event__ptr___rename_at_251,1);
 			das_ptr_inc(__i__ptr___rename_at_251,4);
 			das_ptr_inc(__f__ptr___rename_at_251,4);
 			das_ptr_inc(__s__ptr___rename_at_251,32);
@@ -505,12 +503,12 @@ inline void created_event__implementation___96d8b7817d60378b ( Context * __conte
 	};
 }
 
-inline void created_event_49bc7bf17abc6b37 ( Context * __context__, ::ecs::OnEntityCreated const  &  __event_rename_at_77, int32_t __i_rename_at_77, float __f_rename_at_77, char * const  __s_rename_at_77, float3 __f3_rename_at_77 )
+inline void created_event_49bc7bf17abc6b37 ( Context * __context__, ::ecs::OnEntityCreated const  &  __event_rename_at_74, int32_t __i_rename_at_74, float __f_rename_at_74, char * const  __s_rename_at_74, float3 __f3_rename_at_74 )
 {
-	builtin_print(das_string_builder(__context__,SimNode_AotInterop<9>(__tinfo_0, cast<char * const >::from(((char *) "hello i=")), cast<int32_t>::from(__i_rename_at_77), cast<char * const >::from(((char *) " f=")), cast<float>::from(__f_rename_at_77), cast<char * const >::from(((char *) " s=")), cast<char * const >::from(__s_rename_at_77), cast<char * const >::from(((char *) ", f3=")), cast<float3>::from(__f3_rename_at_77), cast<char * const >::from(((char *) "\n")))),__context__);
+	builtin_print(das_string_builder(__context__,SimNode_AotInterop<9>(__tinfo_0, cast<char * const >::from(((char *) "hello i=")), cast<int32_t>::from(__i_rename_at_74), cast<char * const >::from(((char *) " f=")), cast<float>::from(__f_rename_at_74), cast<char * const >::from(((char *) " s=")), cast<char * const >::from(__s_rename_at_74), cast<char * const >::from(((char *) ", f3=")), cast<float3>::from(__f3_rename_at_74), cast<char * const >::from(((char *) "\n")))),__context__);
 }
 
-inline void created_event__implementation___b948e1c63201b45e ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251, ::ecs::string * __name__ptr___rename_at_251 )
+inline void created_event__implementation___73010dbf672f3506 ( Context * __context__, uint32_t __n_rename_at_251, ::ecs::OnEntityCreated const  * __event__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251, ::ecs::string * __name__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -521,7 +519,6 @@ inline void created_event__implementation___b948e1c63201b45e ( Context * __conte
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
 			created_event_6af492e36368737f(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__counter__ptr___rename_at_251),((char * const )(das_deref(__context__,__name__ptr___rename_at_251).c_str() /*c_str*/)));
-			das_ptr_inc(__event__ptr___rename_at_251,1);
 			das_ptr_inc(__counter__ptr___rename_at_251,4);
 			das_ptr_inc(__name__ptr___rename_at_251,32);
 		}
@@ -529,12 +526,12 @@ inline void created_event__implementation___b948e1c63201b45e ( Context * __conte
 	};
 }
 
-inline void created_event_6af492e36368737f ( Context * __context__, ::ecs::OnEntityCreated const  &  __event_rename_at_82, int32_t __counter_rename_at_82, char * const  __name_rename_at_82 )
+inline void created_event_6af492e36368737f ( Context * __context__, ::ecs::OnEntityCreated const  &  __event_rename_at_79, int32_t __counter_rename_at_79, char * const  __name_rename_at_79 )
 {
-	builtin_print(das_string_builder(__context__,SimNode_AotInterop<5>(__tinfo_1, cast<char * const >::from(((char *) "hello counter=")), cast<int32_t>::from(__counter_rename_at_82), cast<char * const >::from(((char *) " name=")), cast<char * const >::from(__name_rename_at_82), cast<char * const >::from(((char *) "\n")))),__context__);
+	builtin_print(das_string_builder(__context__,SimNode_AotInterop<5>(__tinfo_1, cast<char * const >::from(((char *) "hello counter=")), cast<int32_t>::from(__counter_rename_at_79), cast<char * const >::from(((char *) " name=")), cast<char * const >::from(__name_rename_at_79), cast<char * const >::from(((char *) "\n")))),__context__);
 }
 
-inline void my_event_handler__implementation___7a7cc6957ef84965 ( Context * __context__, uint32_t __n_rename_at_251, MyEvent const  * __event__ptr___rename_at_251 )
+inline void my_event_handler__implementation___422d7ef64b7c4672 ( Context * __context__, uint32_t __n_rename_at_251, MyEvent const  * __event__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -545,13 +542,12 @@ inline void my_event_handler__implementation___7a7cc6957ef84965 ( Context * __co
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
 			my_event_handler_6fd7d4d78f664169(__context__,das_deref(__context__,__event__ptr___rename_at_251));
-			das_ptr_inc(__event__ptr___rename_at_251,24);
 		}
 		__i_iterator.close(__context__,(__i_rename_at_253));
 	};
 }
 
-inline void my_event_handler_6fd7d4d78f664169 ( Context * __context__, MyEvent const  &  __event_rename_at_98 )
+inline void my_event_handler_6fd7d4d78f664169 ( Context * __context__, MyEvent const  &  __event_rename_at_95 )
 {
 }
 
@@ -573,14 +569,14 @@ inline void creation_test__implementation___1b3063228cb52c91 ( Context * __conte
 
 inline void creation_test_b0e874b95a9256e6 ( Context * __context__ )
 {
-	uint32_t __p_rename_at_105 = ((uint32_t)::ecs::get_prefab_id(((char *) "test2")));
-	::create_entity_n(__p_rename_at_105);
+	uint32_t __p_rename_at_102 = ((uint32_t)::ecs::get_prefab_id(((char *) "test2")));
+	::create_entity_n(__p_rename_at_102);
 	::create_entity(((char *) "test2"));
-	::create_entity_immediate_n(__p_rename_at_105);
+	::create_entity_immediate_n(__p_rename_at_102);
 	::create_entity_immediate(((char *) "test2"));
 }
 
-inline void test_event__implementation___434dd1282c05ca15 ( Context * __context__, uint32_t __n_rename_at_251, TestEvent const  * __event__ptr___rename_at_251, ::ecs::EntityId const  * __eid__ptr___rename_at_251 )
+inline void test_event__implementation___c9612b41a9671f00 ( Context * __context__, uint32_t __n_rename_at_251, TestEvent const  * __event__ptr___rename_at_251, ::ecs::EntityId const  * __eid__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -590,25 +586,24 @@ inline void test_event__implementation___434dd1282c05ca15 ( Context * __context_
 		__need_loop_253 = __i_iterator.first(__context__,(__i_rename_at_253)) && __need_loop_253;
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
-			test_event_6b4f46df34f87c64(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__eid__ptr___rename_at_251));
-			das_ptr_inc(__event__ptr___rename_at_251,4);
+			test_event_dab533da028fafe(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__eid__ptr___rename_at_251));
 			das_ptr_inc(__eid__ptr___rename_at_251,8);
 		}
 		__i_iterator.close(__context__,(__i_rename_at_253));
 	};
 }
 
-inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const  &  __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 ) { das_stack_prologue __prologue(__context__,208,"test_event " DAS_FILE_LINE);
+inline void test_event_dab533da028fafe ( Context * __context__, TestEvent const  &  __event_rename_at_110, ::ecs::EntityId const  __eid_rename_at_110 ) { das_stack_prologue __prologue(__context__,208,"test_event " DAS_FILE_LINE);
 {
-	MyEvent _temp_make_local_115_13_32;
+	MyEvent _temp_make_local_112_13_32;
 	_Funcecs_0x60_send_event_668f484c5594ade2(__context__,das_arg<MyEvent>::pass((([&]() -> MyEvent& {
-		das_copy((_temp_make_local_115_13_32.x),(0));
-		das_copy((_temp_make_local_115_13_32.y),(11));
-		das_copy((_temp_make_local_115_13_32.z),(((char *) "aaa")));
-		das_copy((_temp_make_local_115_13_32.w),(999));
-		return _temp_make_local_115_13_32;
+		das_copy((_temp_make_local_112_13_32.x),(0));
+		das_copy((_temp_make_local_112_13_32.y),(11));
+		das_copy((_temp_make_local_112_13_32.z),(((char *) "aaa")));
+		das_copy((_temp_make_local_112_13_32.w),(999));
+		return _temp_make_local_112_13_32;
 	})())));
-	::perform_eid_query(__eid_rename_at_113,das_make_block<void,uint32_t,int32_t *>(__context__,112,0,&__func_info__55fb71370c77bca7,[&](uint32_t __n_rename_at_0, int32_t * __counter__ptr___rename_at_117) -> void{
+	::perform_eid_query(__eid_rename_at_110,das_make_block<void,uint32_t,int32_t *>(__context__,112,__context__->adBySid(12621125466375522424u),&__func_info__55fb71370c77bca7,[&](uint32_t __n_rename_at_0, int32_t * __counter__ptr___rename_at_114) -> void{
 		{
 			bool __need_loop_183 = true;
 			// i : int const
@@ -618,9 +613,9 @@ inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const
 			for ( ; __need_loop_183 ; __need_loop_183 = __i_iterator.next(__context__,(__i_rename_at_183)) )
 			{
 				das_invoke<void>::invoke<int32_t &>(__context__,nullptr,[&](int32_t & __counter_rename_at_184) DAS_AOT_INLINE_LAMBDA -> void{
-					__counter_rename_at_184 += __event_rename_at_113.inc;
-				},das_deref(__context__,__counter__ptr___rename_at_117));
-				das_ptr_inc(__counter__ptr___rename_at_117,4);
+					__counter_rename_at_184 += __event_rename_at_110.inc;
+				},das_deref(__context__,__counter__ptr___rename_at_114));
+				das_ptr_inc(__counter__ptr___rename_at_114,4);
 			}
 			__i_iterator.close(__context__,(__i_rename_at_183));
 		};
@@ -628,7 +623,7 @@ inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const
 	}),__context__,((LineInfoArg *)(&LineInfo::g_LineInfoNULL)));
 }}
 
-inline void test_request__implementation___f98aee5d0ea64e90 ( Context * __context__, uint32_t __n_rename_at_251, TestRequest * __request__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251 )
+inline void test_request__implementation___b293cbc65ac192d5 ( Context * __context__, uint32_t __n_rename_at_251, TestRequest * __request__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251 )
 {
 	{
 		bool __need_loop_253 = true;
@@ -639,16 +634,15 @@ inline void test_request__implementation___f98aee5d0ea64e90 ( Context * __contex
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
 			test_request_285b8f4d0bf632af(__context__,das_arg<TestRequest>::pass(das_deref(__context__,__request__ptr___rename_at_251)),das_deref(__context__,__counter__ptr___rename_at_251));
-			das_ptr_inc(__request__ptr___rename_at_251,4);
 			das_ptr_inc(__counter__ptr___rename_at_251,4);
 		}
 		__i_iterator.close(__context__,(__i_rename_at_253));
 	};
 }
 
-inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest &  __request_rename_at_126, int32_t __counter_rename_at_126 )
+inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest &  __request_rename_at_123, int32_t __counter_rename_at_123 )
 {
-	__request_rename_at_126.sum += __counter_rename_at_126;
+	__request_rename_at_123.sum += __counter_rename_at_123;
 }
 
 static void registerAotFunctions ( AotLibrary & aotLib ) {
@@ -669,40 +663,40 @@ static void registerAotFunctions ( AotLibrary & aotLib ) {
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, float , float3 & , float3 & , float3  ),&das_system_test_b809060a654d2132>>();
 	};
 	// das_query_test__implementation___e3bba28dd465e49
-	aotLib[0x67786b8a099ffed6] = [&](Context & ctx){
+	aotLib[0x63c03d9099fe1b8f] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t  ),&das_query_test__implementation___e3bba28dd465e49>>();
 	};
-	// das_query_test_c1cafffdc575571b
-	aotLib[0xa943421c2a3a950f] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__ ),&das_query_test_c1cafffdc575571b>>();
+	// das_query_test_de064fea36e4a04
+	aotLib[0xeb3426c6f88bf677] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__ ),&das_query_test_de064fea36e4a04>>();
 	};
-	// created_event__implementation___d5eea9a330bd499d
-	aotLib[0x17cb45ef59b97c49] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnSceneCreated const  *  ),&created_event__implementation___d5eea9a330bd499d>>();
+	// created_event__implementation___3fe45e87017004a5
+	aotLib[0x1e118f79b230877d] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnSceneCreated const  *  ),&created_event__implementation___3fe45e87017004a5>>();
 	};
 	// created_event_e699080f31c6d7d4
 	aotLib[0x6edb784e1036ce45] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, ::ecs::OnSceneCreated const  &  ),&created_event_e699080f31c6d7d4>>();
 	};
-	// created_event__implementation___96d8b7817d60378b
-	aotLib[0xa3c4c860ddb36496] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnEntityCreated const  * , int32_t const  * , float const  * , ::ecs::string * , float3 const  *  ),&created_event__implementation___96d8b7817d60378b>>();
+	// created_event__implementation___b6d2fd11d04a6acf
+	aotLib[0x902fa0725495d5e] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnEntityCreated const  * , int32_t const  * , float const  * , ::ecs::string * , float3 const  *  ),&created_event__implementation___b6d2fd11d04a6acf>>();
 	};
 	// created_event_49bc7bf17abc6b37
 	aotLib[0x94ee5e0324119d31] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, ::ecs::OnEntityCreated const  & , int32_t , float , char * const  , float3  ),&created_event_49bc7bf17abc6b37>>();
 	};
-	// created_event__implementation___b948e1c63201b45e
-	aotLib[0x27a5263e2c5d3ef1] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnEntityCreated const  * , int32_t const  * , ::ecs::string *  ),&created_event__implementation___b948e1c63201b45e>>();
+	// created_event__implementation___73010dbf672f3506
+	aotLib[0xb477fa0447a1993d] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , ::ecs::OnEntityCreated const  * , int32_t const  * , ::ecs::string *  ),&created_event__implementation___73010dbf672f3506>>();
 	};
 	// created_event_6af492e36368737f
 	aotLib[0x4eb5a89d717fe825] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, ::ecs::OnEntityCreated const  & , int32_t , char * const   ),&created_event_6af492e36368737f>>();
 	};
-	// my_event_handler__implementation___7a7cc6957ef84965
-	aotLib[0x80a206b3767f1759] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , MyEvent const  *  ),&my_event_handler__implementation___7a7cc6957ef84965>>();
+	// my_event_handler__implementation___422d7ef64b7c4672
+	aotLib[0x2e788f2929862a3d] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , MyEvent const  *  ),&my_event_handler__implementation___422d7ef64b7c4672>>();
 	};
 	// my_event_handler_6fd7d4d78f664169
 	aotLib[0xe7c3639b2f17fd65] = [&](Context & ctx){
@@ -716,17 +710,17 @@ static void registerAotFunctions ( AotLibrary & aotLib ) {
 	aotLib[0x39c40e7c4769cbd5] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__ ),&creation_test_b0e874b95a9256e6>>();
 	};
-	// test_event__implementation___434dd1282c05ca15
-	aotLib[0x4cc9f31e62323761] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , TestEvent const  * , ::ecs::EntityId const  *  ),&test_event__implementation___434dd1282c05ca15>>();
+	// test_event__implementation___c9612b41a9671f00
+	aotLib[0xedf9aa3bdf686d36] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , TestEvent const  * , ::ecs::EntityId const  *  ),&test_event__implementation___c9612b41a9671f00>>();
 	};
-	// test_event_6b4f46df34f87c64
-	aotLib[0x9d181fb5b68e4326] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, TestEvent const  & , ::ecs::EntityId const   ),&test_event_6b4f46df34f87c64>>();
+	// test_event_dab533da028fafe
+	aotLib[0x594932b47416caba] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, TestEvent const  & , ::ecs::EntityId const   ),&test_event_dab533da028fafe>>();
 	};
-	// test_request__implementation___f98aee5d0ea64e90
-	aotLib[0x4656a44279a155e0] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , TestRequest * , int32_t const  *  ),&test_request__implementation___f98aee5d0ea64e90>>();
+	// test_request__implementation___b293cbc65ac192d5
+	aotLib[0x1d7b94f754c80de0] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , TestRequest * , int32_t const  *  ),&test_request__implementation___b293cbc65ac192d5>>();
 	};
 	// test_request_285b8f4d0bf632af
 	aotLib[0x4d632e831cc96e69] = [&](Context & ctx){

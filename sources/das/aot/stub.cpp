@@ -48,6 +48,9 @@ void register_query(
     das::smart_ptr<das::ExprBlock> block)
 {
   printf("register_query %s:%d\n", block->at.fileInfo->name.c_str(), block->at.line);
+  auto mangledName = block->getMangledName(true,true);
+  block->annotationData = (intptr_t)"fakeData";
+  block->annotationDataSid = das::hash_blockz64((uint8_t *)mangledName.c_str());
 }
 
 void perform_query(const das::Block &block, das::Context *context, das::LineInfoArg *line)

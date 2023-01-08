@@ -52,7 +52,9 @@ static bool compile_script(const das::string &file_path, das::ProgramPtr &out_pr
   // compile program
   das::CodeOfPolicies policies;
   policies.aot = true;
-  //policies.fail_on_no_aot = false;
+  policies.aot_module = true;
+  policies.fail_on_no_aot = false;
+  policies.fail_on_lack_of_aot_export = true;
   auto program = das::compileDaScript(file_path, get_file_access(), tout, dummyLibGroup, false, policies);
   if (program->failed() ) {
     tout << "failed to compile\n";
