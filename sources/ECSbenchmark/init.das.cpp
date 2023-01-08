@@ -328,7 +328,7 @@ static_assert(sizeof(TestRequest)==4,"structure size mismatch with DAS");
 static_assert(offsetof(TestRequest,sum)==0,"structure field offset mismatch with DAS");
 }
 
-inline void _Funcecs_0x60_send_event_7d22e23efb8d7d9e ( Context * __context__, MyEvent const  & __event_rename_at_35 );
+inline void _Funcecs_0x60_send_event_668f484c5594ade2 ( Context * __context__, MyEvent const  & __event_rename_at_35 );
 inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_12, float __m_rename_at_12, float3 & __pos_rename_at_12, float3 & __vel_rename_at_12, float3 __center_rename_at_12 );
 inline void das_system_test__implementation___d296e0466911cef8 ( Context * __context__, uint32_t __n_rename_at_251, float const  * __m__ptr___rename_at_251, float3 * __pos__ptr___rename_at_251, float3 * __vel__ptr___rename_at_251, float3 const  * __center__ptr___rename_at_251 );
 inline void das_system_test_b809060a654d2132 ( Context * __context__, float __m_rename_at_22, float3 & __pos_rename_at_22, float3 & __vel_rename_at_22, float3 __center_rename_at_22 );
@@ -345,7 +345,7 @@ inline void my_event_handler_6fd7d4d78f664169 ( Context * __context__, MyEvent c
 inline void creation_test__implementation___1b3063228cb52c91 ( Context * __context__, uint32_t __n_rename_at_251 );
 inline void creation_test_b0e874b95a9256e6 ( Context * __context__ );
 inline void test_event__implementation___434dd1282c05ca15 ( Context * __context__, uint32_t __n_rename_at_251, TestEvent const  * __event__ptr___rename_at_251, ::ecs::EntityId const  * __eid__ptr___rename_at_251 );
-inline void test_event_555a2dafd479d69a ( Context * __context__, TestEvent const  & __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 );
+inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const  & __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 );
 inline void test_request__implementation___f98aee5d0ea64e90 ( Context * __context__, uint32_t __n_rename_at_251, TestRequest * __request__ptr___rename_at_251, int32_t const  * __counter__ptr___rename_at_251 );
 inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest & __request_rename_at_126, int32_t __counter_rename_at_126 );
 
@@ -353,9 +353,15 @@ void __init_script ( Context * __context__, bool __init_shared )
 {
 }
 
-inline void _Funcecs_0x60_send_event_7d22e23efb8d7d9e ( Context * __context__, MyEvent const  &  __event_rename_at_35 )
+inline void _Funcecs_0x60_send_event_668f484c5594ade2 ( Context * __context__, MyEvent const  &  __event_rename_at_35 )
 {
-	builtin_print(((char *) "need to call default initializer in send_event([[MyEvent() ...]])\n"),__context__);
+	int32_t __typeId_rename_at_37 = ((int32_t)::ecs::event_name_to_index(((char *) "MyEvent")));
+	if ( __typeId_rename_at_37 >= 0 )
+	{
+		::builtin_send_event(24,__typeId_rename_at_37,das_auto_cast<void * const >::cast(das_ref(__context__,__event_rename_at_35)));
+	} else {
+		builtin_print(((char *) "need to call default initializer in send_event([[MyEvent() ...]])\n"),__context__);
+	};
 }
 
 inline void test_func_a6fab27e71e3efab ( Context * __context__, float __dt_rename_at_12, float __m_rename_at_12, float3 & __pos_rename_at_12, float3 & __vel_rename_at_12, float3 __center_rename_at_12 )
@@ -584,7 +590,7 @@ inline void test_event__implementation___434dd1282c05ca15 ( Context * __context_
 		__need_loop_253 = __i_iterator.first(__context__,(__i_rename_at_253)) && __need_loop_253;
 		for ( ; __need_loop_253 ; __need_loop_253 = __i_iterator.next(__context__,(__i_rename_at_253)) )
 		{
-			test_event_555a2dafd479d69a(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__eid__ptr___rename_at_251));
+			test_event_6b4f46df34f87c64(__context__,das_deref(__context__,__event__ptr___rename_at_251),das_deref(__context__,__eid__ptr___rename_at_251));
 			das_ptr_inc(__event__ptr___rename_at_251,4);
 			das_ptr_inc(__eid__ptr___rename_at_251,8);
 		}
@@ -592,10 +598,10 @@ inline void test_event__implementation___434dd1282c05ca15 ( Context * __context_
 	};
 }
 
-inline void test_event_555a2dafd479d69a ( Context * __context__, TestEvent const  &  __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 ) { das_stack_prologue __prologue(__context__,208,"test_event " DAS_FILE_LINE);
+inline void test_event_6b4f46df34f87c64 ( Context * __context__, TestEvent const  &  __event_rename_at_113, ::ecs::EntityId const  __eid_rename_at_113 ) { das_stack_prologue __prologue(__context__,208,"test_event " DAS_FILE_LINE);
 {
 	MyEvent _temp_make_local_115_13_32;
-	_Funcecs_0x60_send_event_7d22e23efb8d7d9e(__context__,das_arg<MyEvent>::pass((([&]() -> MyEvent& {
+	_Funcecs_0x60_send_event_668f484c5594ade2(__context__,das_arg<MyEvent>::pass((([&]() -> MyEvent& {
 		das_copy((_temp_make_local_115_13_32.x),(0));
 		das_copy((_temp_make_local_115_13_32.y),(11));
 		das_copy((_temp_make_local_115_13_32.z),(((char *) "aaa")));
@@ -646,9 +652,9 @@ inline void test_request_285b8f4d0bf632af ( Context * __context__, TestRequest &
 }
 
 static void registerAotFunctions ( AotLibrary & aotLib ) {
-	// _Funcecs_0x60_send_event_7d22e23efb8d7d9e
-	aotLib[0x395ab898843a4045] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, MyEvent const  &  ),&_Funcecs_0x60_send_event_7d22e23efb8d7d9e>>();
+	// _Funcecs_0x60_send_event_668f484c5594ade2
+	aotLib[0x95c57e388b6a9d01] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, MyEvent const  &  ),&_Funcecs_0x60_send_event_668f484c5594ade2>>();
 	};
 	// test_func_a6fab27e71e3efab
 	aotLib[0xfeaa733fb59cfa2d] = [&](Context & ctx){
@@ -711,12 +717,12 @@ static void registerAotFunctions ( AotLibrary & aotLib ) {
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__ ),&creation_test_b0e874b95a9256e6>>();
 	};
 	// test_event__implementation___434dd1282c05ca15
-	aotLib[0x9f72d099f0426d99] = [&](Context & ctx){
+	aotLib[0x4cc9f31e62323761] = [&](Context & ctx){
 		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, uint32_t , TestEvent const  * , ::ecs::EntityId const  *  ),&test_event__implementation___434dd1282c05ca15>>();
 	};
-	// test_event_555a2dafd479d69a
-	aotLib[0xdab9266ce1133131] = [&](Context & ctx){
-		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, TestEvent const  & , ::ecs::EntityId const   ),&test_event_555a2dafd479d69a>>();
+	// test_event_6b4f46df34f87c64
+	aotLib[0x9d181fb5b68e4326] = [&](Context & ctx){
+		return ctx.code->makeNode<SimNode_Aot<void (*) ( Context * __context__, TestEvent const  & , ::ecs::EntityId const   ),&test_event_6b4f46df34f87c64>>();
 	};
 	// test_request__implementation___f98aee5d0ea64e90
 	aotLib[0x4656a44279a155e0] = [&](Context & ctx){
