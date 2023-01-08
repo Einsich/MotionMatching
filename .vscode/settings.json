@@ -155,13 +155,24 @@
           "delpoy_only_project_folder": "true"
         }
       }
-    ]
+    ],
+    "NeedAotGeneration": [
+      {
+        "name": "Yes",
+        "value": "aot_generation"
+      },
+      {
+        "name": "No",
+        "value": ""
+      },
+    ],
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "rel",
     "Project": {
       "name": "ECSbenchmark"
-    }
+    },
+    "NeedAotGeneration": "aot_generation"
   },
   "cmake.configureOnOpen": false,
   "cmake.sourceDirectory": "${workspaceFolder}/sources/3rd_party/daScript/3rdparty/uriparser/cmake/test_find_package",

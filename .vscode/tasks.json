@@ -47,7 +47,8 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "yes"
+                "yes",
+                "${config:launchOption.currentConfig.NeedAotGeneration}"
             ],
             "windows": {
                 "command": "Tools/build_script.bat"
@@ -69,7 +70,7 @@
                 "${config:launchOption.currentConfig.Project.name}",
                 "rel",
                 "yes",
-                "yes"
+                "aot_compiler"
             ],
             "windows": {
                 "command": "Tools/build_script.bat"
@@ -125,7 +126,8 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "${config:launchOption.currentConfig.BuildType}",
-                "no"
+                "no",
+                "${config:launchOption.currentConfig.NeedAotGeneration}"
             ],
             "windows": {
                 "command": "Tools/build_script.bat"
@@ -146,7 +148,8 @@
             "args": [
                 "${config:launchOption.currentConfig.Project.name}",
                 "rel",
-                "yes"
+                "yes",
+                "aot_generation"
             ],
             "windows": {
                 "command": "Tools/build_script.bat"
