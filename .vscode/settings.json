@@ -168,9 +168,10 @@
     ],
   },
   "launchOption.currentConfig": {
-    "BuildType": "rel",
+    "BuildType": "dbg",
     "Project": {
-      "name": "ECSbenchmark"
+      "name": "Strategy",
+      "delpoy_only_project_folder": "false"
     },
     "NeedAotGeneration": "aot_generation"
   },
