@@ -11,7 +11,9 @@
 #include <ecs/ecs.h>
 #include "file_watcher.h"
 #include <profiler.h>
+#include <mutex>
 
+static std::mutex jobsMutex;
 namespace ecs_ex
 {
   void load_templates_from_blk();
@@ -41,7 +43,7 @@ static void profiler_pop()
   PROFILER_POP();
 }
 
-static void start_ecs()
+static void start_ecs(bool editor)
 {
   ecs::ecs_log = &debug_log;
   ecs::ecs_error = &debug_error;
@@ -52,7 +54,7 @@ static void start_ecs()
 
   ecs::init(false);
   ecs::init_singletones();
-  
+
   ecs::vector<ecs::string> editorTags, gameTags;
 #ifndef RELEASE
   editorTags.emplace_back("debug");
@@ -60,8 +62,8 @@ static void start_ecs()
 #endif
   editorTags.emplace_back("editor");
   gameTags.emplace_back("game");
-    
-  ecs::set_system_tags(gameTags);
+
+  ecs::set_system_tags(editor ? editorTags : gameTags);
 
   ecs::pull_registered_files();
 }
@@ -84,7 +86,7 @@ void Application::start()
 
   compile_shaders();
   bool editor = !metaInfo.startGame;
-  
+
   #ifdef RELEASE
   editor = false;
   #endif
@@ -92,10 +94,10 @@ void Application::start()
   create_all_resources_from_metadata();
   ecs_ex::load_templates_from_blk();
 
-  start_ecs();
+  start_ecs(editor);
 
   init_dascript();//should be called after start_ecs
-  
+
   scene->start_scene(root_path(metaInfo.firstScene.c_str()), editor);
 }
 bool Application::sdl_event_handler()
@@ -108,20 +110,20 @@ bool Application::sdl_event_handler()
     ImGui_ImplSDL2_ProcessEvent(&event);
     switch(event.type){
       case SDL_QUIT: running = false; break;
-      
-      case SDL_KEYDOWN: 
-      
+
+      case SDL_KEYDOWN:
+
       if(event.key.keysym.sym == SDLK_F2)
         scene->restart_cur_scene();
-      
+
       if(event.key.keysym.sym == SDLK_F3)
         scene->swap_editor_game_scene();
-      
+
       case SDL_KEYUP: input.event_process(event.key, Time::time());
 
       if(event.key.keysym.sym == SDLK_ESCAPE)
         running = false;
-        
+
 
       case SDL_MOUSEBUTTONDOWN:
       case SDL_MOUSEBUTTONUP: input.event_process(event.button, Time::time()); break;
@@ -129,7 +131,7 @@ bool Application::sdl_event_handler()
       case SDL_MOUSEMOTION: input.event_process(event.motion, Time::time()); break;
 
       case SDL_MOUSEWHEEL: input.event_process(event.wheel, Time::time()); break;
-      
+
       case SDL_WINDOWEVENT: break;
     }
   }
@@ -143,17 +145,18 @@ void Application::main_loop()
     OPTICK_FRAME("MainThread");
     clear_tmp_allocation();
     timer.update();
-    
+
     {
       PROFILER_EVENT("file watching");
       update_watching();
     }
-    uint mainThreadJobsCount = mainThreadJobs.size();
-    if (mainThreadJobsCount > 0)
     {
-      for (uint i = 0; i < mainThreadJobsCount; i++)
-        mainThreadJobs[i]();
-      mainThreadJobs.erase(mainThreadJobs.begin(), mainThreadJobs.begin() + mainThreadJobsCount);
+      std::unique_lock<std::mutex> lock(jobsMutex);
+      auto jobs = std::move(mainThreadJobs);
+      mainThreadJobs.clear();
+      lock.unlock();
+      for (auto &job : jobs)
+        job();
     }
     {
       PROFILER_EVENT("sdl_events");
@@ -183,7 +186,7 @@ void Application::main_loop()
           ImGui::EndMainMenuBar();
         }
       }
-      
+
       PROFILER_EVENT("imgui_render");
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -222,6 +225,7 @@ const std::string &root_path()
 
 void add_main_thread_job(std::function<void()> &&job)
 {
+  std::unique_lock<std::mutex> lock(jobsMutex);
   Application::instance().mainThreadJobs.emplace_back(std::move(job));
 }
 
