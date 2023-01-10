@@ -44,7 +44,7 @@ static void text_appear_single_handler(ecs::EntityId eid, const ecs::Event &even
 static void registration_pull_text_render()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/text_render.inl:217",
   "gather_text",
   &gather_text__cache__,
   {
@@ -59,7 +59,7 @@ static void registration_pull_text_render()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/text_render.inl:194",
   "text_render",
   &text_render__cache__,
   {
@@ -75,7 +75,7 @@ static void registration_pull_text_render()
   &text_render_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/text_render.inl:169",
   "text_changed",
   &text_changed__cache__,
   {
@@ -94,7 +94,7 @@ static void registration_pull_text_render()
   ecs::EventIndex<OnEntityEdited>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/text_render.inl:180",
   "text_appear",
   &text_appear__cache__,
   {

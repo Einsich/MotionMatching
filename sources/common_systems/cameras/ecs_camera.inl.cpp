@@ -180,7 +180,7 @@ static void freecam_mouse_click_handler_single_handler(ecs::EntityId eid, const 
 static void registration_pull_ecs_camera()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:29",
   "find_all_created_camera",
   &find_all_created_camera__cache__,
   {
@@ -194,7 +194,7 @@ static void registration_pull_ecs_camera()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:42",
   "find_editor_camera",
   &find_editor_camera__cache__,
   {
@@ -208,7 +208,7 @@ static void registration_pull_ecs_camera()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:126",
   "check_arcball_target",
   &check_arcball_target__cache__,
   {
@@ -219,7 +219,7 @@ static void registration_pull_ecs_camera()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:232",
   "get_main_cam_query",
   &get_main_cam_query__cache__,
   {
@@ -231,7 +231,7 @@ static void registration_pull_ecs_camera()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:59",
   "set_main_camera",
   &set_main_camera__cache__,
   {
@@ -250,7 +250,7 @@ static void registration_pull_ecs_camera()
   &set_main_camera_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:118",
   "arcball_camera_update",
   &arcball_camera_update__cache__,
   {
@@ -268,7 +268,7 @@ static void registration_pull_ecs_camera()
   &arcball_camera_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:202",
   "freecamera_update",
   &freecamera_update__cache__,
   {
@@ -285,7 +285,7 @@ static void registration_pull_ecs_camera()
   &freecamera_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:252",
   "update_main_camera_game_transformations",
   &update_main_camera_game_transformations__cache__,
   {
@@ -300,7 +300,7 @@ static void registration_pull_ecs_camera()
   &update_main_camera_game_transformations_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:258",
   "update_main_camera_editor_transformations",
   &update_main_camera_editor_transformations__cache__,
   {
@@ -316,7 +316,7 @@ static void registration_pull_ecs_camera()
   &update_main_camera_editor_transformations_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:24",
   "find_main_camera_game",
   &find_main_camera_game__cache__,
   {
@@ -331,7 +331,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:37",
   "find_main_camera_editor",
   &find_main_camera_editor__cache__,
   {
@@ -346,7 +346,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:70",
   "arcball_created",
   &arcball_created__cache__,
   {
@@ -362,7 +362,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:78",
   "arccam_mouse_move_handler",
   &arccam_mouse_move_handler__cache__,
   {
@@ -378,7 +378,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<MouseMoveEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:91",
   "arccam_mouse_click_handler",
   &arccam_mouse_click_handler__cache__,
   {
@@ -394,7 +394,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<MouseClickEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:104",
   "arccam_mouse_wheel_handler",
   &arccam_mouse_wheel_handler__cache__,
   {
@@ -410,7 +410,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<MouseWheelEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:155",
   "freecam_created",
   &freecam_created__cache__,
   {
@@ -426,7 +426,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:164",
   "freecam_mouse_move_handler",
   &freecam_mouse_move_handler__cache__,
   {
@@ -443,7 +443,7 @@ static void registration_pull_ecs_camera()
   ecs::EventIndex<MouseMoveEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/cameras/ecs_camera.inl:186",
   "freecam_mouse_click_handler",
   &freecam_mouse_click_handler__cache__,
   {

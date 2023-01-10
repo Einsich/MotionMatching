@@ -52,7 +52,7 @@ static void init_single_handler(ecs::EntityId eid, const ecs::Event &event)
 static void registration_pull_test()
 {
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:104",
   "ecs_update",
   &ecs_update__cache__,
   {
@@ -70,7 +70,7 @@ static void registration_pull_test()
   &ecs_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:109",
   "vector_structs_update",
   &vector_structs_update__cache__,
   {},
@@ -83,7 +83,7 @@ static void registration_pull_test()
   &vector_structs_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:117",
   "vector_pointers_update",
   &vector_pointers_update__cache__,
   {},
@@ -96,7 +96,7 @@ static void registration_pull_test()
   &vector_pointers_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:144",
   "test_event_send",
   &test_event_send__cache__,
   {},
@@ -109,7 +109,7 @@ static void registration_pull_test()
   &test_event_send_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:159",
   "test_request_send",
   &test_request_send__cache__,
   {},
@@ -122,7 +122,7 @@ static void registration_pull_test()
   &test_request_send_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/test.inl:25",
   "init",
   &init__cache__,
   {},

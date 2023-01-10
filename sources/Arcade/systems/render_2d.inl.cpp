@@ -20,7 +20,7 @@ static void render_scene_implementation()
 static void registration_pull_render_2d()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/render_2d.inl:24",
   "gather_sprites",
   &gather_sprites__cache__,
   {
@@ -33,7 +33,7 @@ static void registration_pull_render_2d()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/render_2d.inl:10",
   "render_scene",
   &render_scene__cache__,
   {

@@ -60,7 +60,7 @@ static void lock_unlock_camera_single_handler(ecs::EntityId eid, const ecs::Even
 static void registration_pull_camera()
 {
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:33",
   "camera_lerp",
   &camera_lerp__cache__,
   {
@@ -77,7 +77,7 @@ static void registration_pull_camera()
   &camera_lerp_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:8",
   "setup_camera",
   &setup_camera__cache__,
   {
@@ -100,7 +100,7 @@ static void registration_pull_camera()
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:44",
   "change_zoom",
   &change_zoom__cache__,
   {
@@ -119,7 +119,7 @@ static void registration_pull_camera()
   ecs::EventIndex<MouseWheelEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:56",
   "move_camera",
   &move_camera__cache__,
   {
@@ -138,7 +138,7 @@ static void registration_pull_camera()
   ecs::EventIndex<MouseMoveEvent>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:71",
   "lock_unlock_camera",
   &lock_unlock_camera__cache__,
   {

@@ -36,7 +36,7 @@ static void listener_mousemove_single_handler(ecs::EntityId eid, const ecs::Even
 static void registration_pull_test_recorder()
 {
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/test_recorder.inl:11",
   "recorder_ui",
   &recorder_ui__cache__,
   {
@@ -54,7 +54,7 @@ static void registration_pull_test_recorder()
   &recorder_ui_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/test_recorder.inl:84",
   "listener_keybord",
   &listener_keybord__cache__,
   {
@@ -72,7 +72,7 @@ static void registration_pull_test_recorder()
   ecs::EventIndex<KeyEventAnyActionKey>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/test_recorder.inl:99",
   "listener_mousemove",
   &listener_mousemove__cache__,
   {

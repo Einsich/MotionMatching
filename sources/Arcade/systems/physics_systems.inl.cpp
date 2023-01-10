@@ -27,7 +27,7 @@ static void collision_detection_implementation()
 static void registration_pull_physics_systems()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/physics_systems.inl:29",
   "gather_all_target_colliders",
   &gather_all_target_colliders__cache__,
   {
@@ -42,7 +42,7 @@ static void registration_pull_physics_systems()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/physics_systems.inl:7",
   "move_all_entity_with_velocity",
   &move_all_entity_with_velocity__cache__,
   {
@@ -59,7 +59,7 @@ static void registration_pull_physics_systems()
   &move_all_entity_with_velocity_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/physics_systems.inl:21",
   "collision_detection",
   &collision_detection__cache__,
   {

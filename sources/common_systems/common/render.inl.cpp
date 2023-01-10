@@ -116,7 +116,7 @@ static void mesh_loader_single_handler(ecs::EntityId eid, const ecs::Event &even
 static void registration_pull_render()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:52",
   "find_light",
   &find_light__cache__,
   {
@@ -127,7 +127,7 @@ static void registration_pull_render()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:334",
   "find_collidable_entity",
   &find_collidable_entity__cache__,
   {
@@ -139,7 +139,7 @@ static void registration_pull_render()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:193",
   "find_matrices",
   &find_matrices__cache__,
   {
@@ -150,7 +150,7 @@ static void registration_pull_render()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:35",
   "render_submenu",
   &render_submenu__cache__,
   {
@@ -165,7 +165,7 @@ static void registration_pull_render()
   &render_submenu_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:48",
   "set_global_render_data",
   &set_global_render_data__cache__,
   {
@@ -180,7 +180,7 @@ static void registration_pull_render()
   &set_global_render_data_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:65",
   "lod_selector",
   &lod_selector__cache__,
   {
@@ -201,7 +201,7 @@ static void registration_pull_render()
   &lod_selector_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:98",
   "frustum_culling",
   &frustum_culling__cache__,
   {
@@ -222,7 +222,7 @@ static void registration_pull_render()
   &frustum_culling_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:140",
   "process_mesh_position",
   &process_mesh_position__cache__,
   {
@@ -243,7 +243,7 @@ static void registration_pull_render()
   &process_mesh_position_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:155",
   "render_sky_box",
   &render_sky_box__cache__,
   {
@@ -258,7 +258,7 @@ static void registration_pull_render()
   &render_sky_box_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:165",
   "render_debug_arrows",
   &render_debug_arrows__cache__,
   {
@@ -274,7 +274,7 @@ static void registration_pull_render()
   &render_debug_arrows_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:211",
   "main_instanced_render",
   &main_instanced_render__cache__,
   {
@@ -290,7 +290,7 @@ static void registration_pull_render()
   &main_instanced_render_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:319",
   "render_collision",
   &render_collision__cache__,
   {
@@ -305,7 +305,7 @@ static void registration_pull_render()
   &render_collision_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:26",
   "add_global_uniform",
   &add_global_uniform__cache__,
   {},
@@ -318,7 +318,7 @@ static void registration_pull_render()
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/render.inl:60",
   "mesh_loader",
   &mesh_loader__cache__,
   {

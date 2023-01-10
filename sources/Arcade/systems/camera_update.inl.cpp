@@ -32,7 +32,7 @@ static void change_zoom_single_handler(ecs::EntityId eid, const ecs::Event &even
 static void registration_pull_camera_update()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/camera_update.inl:13",
   "update_main_camera_position",
   &update_main_camera_position__cache__,
   {
@@ -45,7 +45,7 @@ static void registration_pull_camera_update()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/camera_update.inl:8",
   "update_camera_pos_before_render",
   &update_camera_pos_before_render__cache__,
   {
@@ -62,7 +62,7 @@ static void registration_pull_camera_update()
   &update_camera_pos_before_render_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/camera_update.inl:20",
   "change_zoom",
   &change_zoom__cache__,
   {

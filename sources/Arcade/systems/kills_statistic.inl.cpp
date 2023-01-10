@@ -39,7 +39,7 @@ static void collect_kills_single_handler(ecs::EntityId eid, const ecs::Event &ev
 static void registration_pull_kills_statistic()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/kills_statistic.inl:30",
   "gather_all_targets",
   &gather_all_targets__cache__,
   {},
@@ -50,7 +50,7 @@ static void registration_pull_kills_statistic()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/kills_statistic.inl:14",
   "show_kill_stat",
   &show_kill_stat__cache__,
   {
@@ -65,7 +65,7 @@ static void registration_pull_kills_statistic()
   &show_kill_stat_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/kills_statistic.inl:25",
   "check_winner",
   &check_winner__cache__,
   {
@@ -82,7 +82,7 @@ static void registration_pull_kills_statistic()
   &check_winner_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/kills_statistic.inl:6",
   "collect_kills",
   &collect_kills__cache__,
   {

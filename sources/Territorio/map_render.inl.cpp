@@ -35,7 +35,7 @@ static void update_map_textures_implementation()
 static void registration_pull_map_render()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/map_render.inl:18",
   "get_world_renderer",
   &get_world_renderer__cache__,
   {
@@ -46,7 +46,7 @@ static void registration_pull_map_render()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/map_render.inl:35",
   "gather_sprites",
   &gather_sprites__cache__,
   {
@@ -61,7 +61,7 @@ static void registration_pull_map_render()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/map_render.inl:25",
   "render_scene",
   &render_scene__cache__,
   {
@@ -78,7 +78,7 @@ static void registration_pull_map_render()
   &render_scene_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/map_render.inl:58",
   "update_map_textures",
   &update_map_textures__cache__,
   {

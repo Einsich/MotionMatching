@@ -17,7 +17,7 @@ static void init_game_single_handler(ecs::EntityId eid, const ecs::Event &event)
 static void registration_pull_init_game()
 {
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_game.inl:6",
   "init_game",
   &init_game__cache__,
   {

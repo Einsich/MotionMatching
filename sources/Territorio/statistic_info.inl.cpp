@@ -32,7 +32,7 @@ static void move_text_single_handler(ecs::EntityId eid, const ecs::Event &event)
 static void registration_pull_statistic_info()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:105",
   "gather_lands",
   &gather_lands__cache__,
   {
@@ -47,7 +47,7 @@ static void registration_pull_statistic_info()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:92",
   "show_statistic",
   &show_statistic__cache__,
   {
@@ -62,7 +62,7 @@ static void registration_pull_statistic_info()
   &show_statistic_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:141",
   "move_text",
   &move_text__cache__,
   {

@@ -12,7 +12,7 @@ static void process_animation_implementation()
 static void registration_pull_render_system()
 {
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/render_system.inl:10",
   "process_animation",
   &process_animation__cache__,
   {

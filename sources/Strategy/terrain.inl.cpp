@@ -44,7 +44,7 @@ static void create_terrain_single_handler(ecs::EntityId eid, const ecs::Event &e
 static void registration_pull_terrain()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/terrain.inl:247",
   "query_water",
   &query_water__cache__,
   {
@@ -62,7 +62,7 @@ static void registration_pull_terrain()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/terrain.inl:15",
   "set_map_render_data",
   &set_map_render_data__cache__,
   {
@@ -77,7 +77,7 @@ static void registration_pull_terrain()
   &set_map_render_data_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/terrain.inl:11",
   "add_map_uniform",
   &add_map_uniform__cache__,
   {},
@@ -90,7 +90,7 @@ static void registration_pull_terrain()
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/terrain.inl:163",
   "create_terrain",
   &create_terrain__cache__,
   {

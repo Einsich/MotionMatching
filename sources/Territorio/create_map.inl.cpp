@@ -25,7 +25,7 @@ static void create_map_single_handler(ecs::EntityId eid, const ecs::Event &event
 static void registration_pull_create_map()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/create_map.inl:31",
   "spawn_player_query",
   &spawn_player_query__cache__,
   {
@@ -39,7 +39,7 @@ static void registration_pull_create_map()
   ));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/create_map.inl:55",
   "create_map",
   &create_map__cache__,
   {

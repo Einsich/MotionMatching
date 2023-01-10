@@ -47,7 +47,7 @@ static void start_test_single_handler(ecs::EntityId eid, const ecs::Event &event
 static void registration_pull_tester_controller()
 {
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/tester_controller.inl:19",
   "get_tests",
   &get_tests__cache__,
   {
@@ -58,7 +58,7 @@ static void registration_pull_tester_controller()
   ));
 
   ecs::register_query(ecs::QueryDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/tester_controller.inl:69",
   "get_tests2",
   &get_tests2__cache__,
   {
@@ -69,7 +69,7 @@ static void registration_pull_tester_controller()
   ));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/tester_controller.inl:14",
   "tester_update",
   &tester_update__cache__,
   {
@@ -86,7 +86,7 @@ static void registration_pull_tester_controller()
   &tester_update_implementation));
 
   ecs::register_system(ecs::SystemDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/tester_controller.inl:86",
   "test_count",
   &test_count__cache__,
   {
@@ -103,7 +103,7 @@ static void registration_pull_tester_controller()
   &test_count_implementation));
 
   ecs::register_event(ecs::EventDescription(
-  "",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/tester_controller.inl:61",
   "start_test",
   &start_test__cache__,
   {
