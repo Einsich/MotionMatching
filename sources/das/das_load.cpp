@@ -28,6 +28,18 @@ void init_dascript()
   load_das_files();
 }
 
+void tick_dascript()
+{
+  for (const auto&[name, file] : files)
+  {
+    if (auto &context = file->ctx)
+    {
+      context->restart();
+      context->restartHeaps();
+    }
+  }
+}
+
 void close_dascript()
 {
   files.clear();

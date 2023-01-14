@@ -106,14 +106,47 @@ def creation_test()
   create_entity_immediate(p)
   create_entity_immediate("test2")
 
+//[ecs_type]
+[persistent(mixed_heap=true)]
+struct Camera
+  position : float3
+  name : string
+  x, y : float = 2f
+  a : array<string>
+  /* def Camera()
+    name = "mainCamera"
+    a <- [{auto "loh"; "poh"}] */
+
+var globalCounter = 0
+
+var globalData : array<int>
+var mainCamera : Camera?
+
+def makeCamera(var memory : Camera)
+  unsafe
+    memory <- Camera()
+
+
 [ecs(required=counter`int)]
 def test_event(event : TestEvent; eid : EntityId)
-
+  if mainCamera == null
+    mainCamera = new Camera()
+    print("mainCamera={mainCamera}\n")
+    makeCamera(*mainCamera)
+    print("mainCamera={mainCamera}\n")
+    mainCamera.position = float3(1,2,3)
+    mainCamera.a <- [{auto "{globalCounter}"; "{34}"}]
+    print("mainCamera={mainCamera}\n")
+  globalCounter++
+  //globalData |> push(globalCounter)
+  //print("globalCounter={globalCounter} globalData = {globalData}\n")
+  let k = new Camera()
+  print("mainCamera={mainCamera}\n")
   send_event([[MyEvent() x=0, y=11, z="aaa"]])
   //send_event(10)
   query(eid) <| $[eq] (var counter : int&)
     counter += event.inc
-    //    print("counter = {counter} inc = {event.inc}\n")
+    //print("counter = {counter} inc = {event.inc}\n")
 
 [ecs_cpp_request]
 struct TestRequest

@@ -170,10 +170,9 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "Strategy",
-      "delpoy_only_project_folder": "false"
+      "name": "ECSbenchmark"
     },
-    "NeedAotGeneration": "aot_generation"
+    "NeedAotGeneration": ""
   },
   "cmake.configureOnOpen": false,
   "cmake.sourceDirectory": "${workspaceFolder}/sources/3rd_party/daScript/3rdparty/uriparser/cmake/test_find_package",

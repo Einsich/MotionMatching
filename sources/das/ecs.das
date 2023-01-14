@@ -344,6 +344,13 @@ class DasRequest : AstStructureAnnotation
 def set(var override_list : ComponentInitializer implicit; name : string; component)
 
   builtin_init(typeinfo(ast_typedecl component),
-  get_component_type_idx(typeinfo(stripped_typename component))
-  //typeinfo(ecs_component_type_id component)
-  , override_list, name, component)
+    get_component_type_idx(typeinfo(stripped_typename component))
+    //typeinfo(ecs_component_type_id component)
+    , override_list, name, component)
+
+
+[structure_macro(name=ecs_type)]
+class DasECSType : AstStructureAnnotation
+  def override apply ( var st:StructurePtr; var group:ModuleGroup; args:AnnotationArgumentList; var errors : das_string ) : bool
+    st |> append_annotation("$", "persistent", [{auto "mixed_heap", [[RttiValue tBool=true]]}])
+    return true

@@ -24,6 +24,7 @@ void save_all_resources_to_metadata();
 //daScript functionality
 void init_dascript();
 void close_dascript();
+void tick_dascript();
 
 Application::Application(const std::string &project_name, const std::string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
@@ -149,6 +150,10 @@ void Application::main_loop()
     {
       PROFILER_EVENT("file watching");
       update_watching();
+    }
+    {
+      PROFILER_EVENT("tick daScript");
+      tick_dascript();
     }
     {
       std::unique_lock<std::mutex> lock(jobsMutex);

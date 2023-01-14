@@ -667,3 +667,31 @@ vec4f init_component(das::Context &context, das::SimNode_CallBase *call, vec4f *
   }
   return v_zero();
 }
+/*
+#include <ecs/type_registration.h>
+
+struct DasTypeFabric final : public ecs::TypeFabric
+{
+  das::StructurePtr annotation;
+  DasTypeFabric(ecs::Type type, bool has_awaiter = false):
+    ecs::TypeFabric(type, true, has_awaiter)
+  {}
+
+  void copy_constructor(void *raw_memory, const void *source) const override
+  {
+    annotation->canCopy()
+    new (raw_memory) T(*(const T *)source);
+  }
+  void move_constructor(void *raw_memory, void *source) const override
+  {
+    new (raw_memory) T(std::move(*(T *)source));
+  }
+  void destructor(void *memory) const override
+  {
+    ((T *)memory)->~T();
+  }
+  void prefab_constructor(void *raw_memory, const ecs::ComponentPrefab &prefab, bool r_value) const override
+  {
+    return template_blk_constructor<T>(raw_memory, prefab, r_value);
+  }
+}; */
