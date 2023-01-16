@@ -23,7 +23,7 @@ static void init_imgui_style_single_handler(ecs::EntityId eid, const ecs::Event 
 
 static void registration_pull_entity_viewer()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/entity_viewer.inl:21",
   "entity_viewer",
   &entity_viewer__cache__,
@@ -36,9 +36,9 @@ static void registration_pull_entity_viewer()
   {},
   {},
   {"debug"},
-  &entity_viewer_implementation));
+  &entity_viewer_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/entity_viewer.inl:12",
   "init_imgui_style",
   &init_imgui_style__cache__,
@@ -50,7 +50,7 @@ static void registration_pull_entity_viewer()
   {},
   {},
   {"debug"},
-  &init_imgui_style_handler, &init_imgui_style_single_handler),
+  &init_imgui_style_handler, &init_imgui_style_single_handler,
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
 }

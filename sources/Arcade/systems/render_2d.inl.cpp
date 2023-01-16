@@ -19,7 +19,7 @@ static void render_scene_implementation()
 
 static void registration_pull_render_2d()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/render_2d.inl:24",
   "gather_sprites",
   &gather_sprites__cache__,
@@ -30,9 +30,9 @@ static void registration_pull_render_2d()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/render_2d.inl:10",
   "render_scene",
   &render_scene__cache__,
@@ -47,7 +47,7 @@ static void registration_pull_render_2d()
   {},
   {},
   {},
-  &render_scene_implementation));
+  &render_scene_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_render_2d)

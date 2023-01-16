@@ -43,7 +43,7 @@ static void selecte_single_handler(ecs::EntityId eid, const ecs::Event &event)
 
 static void registration_pull_map_editor()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/map_editor.inl:55",
   "toggle_water",
   &toggle_water__cache__,
@@ -54,9 +54,9 @@ static void registration_pull_map_editor()
     {"isWater", ecs::TypeIndex<ecs::Tag>::value}
   },
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/map_editor.inl:27",
   "country_builder",
   &country_builder__cache__,
@@ -70,9 +70,9 @@ static void registration_pull_map_editor()
   {},
   {},
   {"editor"},
-  &country_builder_implementation));
+  &country_builder_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/map_editor.inl:107",
   "trace_province",
   &trace_province__cache__,
@@ -88,10 +88,10 @@ static void registration_pull_map_editor()
   {},
   {},
   {"editor"},
-  &trace_province_handler, &trace_province_single_handler),
+  &trace_province_handler, &trace_province_single_handler,
   ecs::EventIndex<MouseClickEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/map_editor.inl:139",
   "selecte",
   &selecte__cache__,
@@ -106,7 +106,7 @@ static void registration_pull_map_editor()
   {},
   {},
   {},
-  &selecte_handler, &selecte_single_handler),
+  &selecte_handler, &selecte_single_handler,
   ecs::EventIndex<MouseClickEvent>::value);
 
 }

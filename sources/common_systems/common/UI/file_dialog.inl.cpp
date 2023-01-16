@@ -11,7 +11,7 @@ static void open_dialog_implementation()
 
 static void registration_pull_file_dialog()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/file_dialog.inl:8",
   "open_dialog",
   &open_dialog__cache__,
@@ -24,7 +24,7 @@ static void registration_pull_file_dialog()
   {},
   {},
   {"editor"},
-  &open_dialog_implementation));
+  &open_dialog_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_file_dialog)

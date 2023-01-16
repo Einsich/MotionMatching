@@ -84,10 +84,10 @@ EVENT() init(const ecs::OnSceneCreated &)
     }
   }
 
-  ecs::prefab_id tmpl2 = ecs::create_entity_prefab(ecs::EntityPrefab("test2", {
+  ecs::prefab_id tmpl2 = ecs::create_entity_prefab("test2", {
     {"counter", 7},
     {"name", ecs::string("lolik")}
-  }));
+  });
 
   ecs::create_entity(tmpl2);
   fflush(stdout);

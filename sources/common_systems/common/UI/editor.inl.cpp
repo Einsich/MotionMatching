@@ -18,7 +18,7 @@ static void asset_viewer_implementation()
 
 static void registration_pull_editor()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/editor.inl:29",
   "resources_menu",
   &resources_menu__cache__,
@@ -31,9 +31,9 @@ static void registration_pull_editor()
   {},
   {},
   {"editor"},
-  &resources_menu_implementation));
+  &resources_menu_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/editor.inl:49",
   "asset_viewer",
   &asset_viewer__cache__,
@@ -47,7 +47,7 @@ static void registration_pull_editor()
   {},
   {},
   {"editor"},
-  &asset_viewer_implementation));
+  &asset_viewer_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_editor)

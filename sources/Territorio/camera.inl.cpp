@@ -59,7 +59,7 @@ static void lock_unlock_camera_single_handler(ecs::EntityId eid, const ecs::Even
 
 static void registration_pull_camera()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:33",
   "camera_lerp",
   &camera_lerp__cache__,
@@ -74,9 +74,9 @@ static void registration_pull_camera()
   {},
   {},
   {},
-  &camera_lerp_implementation));
+  &camera_lerp_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:8",
   "setup_camera",
   &setup_camera__cache__,
@@ -96,10 +96,10 @@ static void registration_pull_camera()
   {},
   {},
   {},
-  &setup_camera_handler, &setup_camera_single_handler),
+  &setup_camera_handler, &setup_camera_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:44",
   "change_zoom",
   &change_zoom__cache__,
@@ -115,10 +115,10 @@ static void registration_pull_camera()
   {},
   {},
   {},
-  &change_zoom_handler, &change_zoom_single_handler),
+  &change_zoom_handler, &change_zoom_single_handler,
   ecs::EventIndex<MouseWheelEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:56",
   "move_camera",
   &move_camera__cache__,
@@ -134,10 +134,10 @@ static void registration_pull_camera()
   {},
   {},
   {},
-  &move_camera_handler, &move_camera_single_handler),
+  &move_camera_handler, &move_camera_single_handler,
   ecs::EventIndex<MouseMoveEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/camera.inl:71",
   "lock_unlock_camera",
   &lock_unlock_camera__cache__,
@@ -151,7 +151,7 @@ static void registration_pull_camera()
   {},
   {},
   {},
-  &lock_unlock_camera_handler, &lock_unlock_camera_single_handler),
+  &lock_unlock_camera_handler, &lock_unlock_camera_single_handler,
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
 
 }

@@ -18,7 +18,7 @@ static void debug_console_ui_implementation()
 
 static void registration_pull_common_ui()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/common_ui.inl:11",
   "fps_ui",
   &fps_ui__cache__,
@@ -31,9 +31,9 @@ static void registration_pull_common_ui()
   {},
   {},
   {},
-  &fps_ui_implementation));
+  &fps_ui_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/UI/common_ui.inl:17",
   "debug_console_ui",
   &debug_console_ui__cache__,
@@ -46,7 +46,7 @@ static void registration_pull_common_ui()
   {},
   {},
   {"debug"},
-  &debug_console_ui_implementation));
+  &debug_console_ui_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_common_ui)

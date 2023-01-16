@@ -35,7 +35,7 @@ static void controller_crouch_event_handler_single_handler(ecs::EntityId eid, co
 
 static void registration_pull_person_controller()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/person_controller.inl:94",
   "peson_controller_update",
   &peson_controller_update__cache__,
@@ -53,9 +53,9 @@ static void registration_pull_person_controller()
   {},
   {},
   {"game"},
-  &peson_controller_update_implementation));
+  &peson_controller_update_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/person_controller.inl:221",
   "controller_mouse_move_handler",
   &controller_mouse_move_handler__cache__,
@@ -68,10 +68,10 @@ static void registration_pull_person_controller()
   {},
   {},
   {},
-  &controller_mouse_move_handler_handler, &controller_mouse_move_handler_single_handler),
+  &controller_mouse_move_handler_handler, &controller_mouse_move_handler_single_handler,
   ecs::EventIndex<ControllerMouseMoveEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/person_controller.inl:233",
   "controller_crouch_event_handler",
   &controller_crouch_event_handler__cache__,
@@ -83,7 +83,7 @@ static void registration_pull_person_controller()
   {},
   {},
   {},
-  &controller_crouch_event_handler_handler, &controller_crouch_event_handler_single_handler),
+  &controller_crouch_event_handler_handler, &controller_crouch_event_handler_single_handler,
   ecs::EventIndex<ControllerKeyBoardEvent>::value);
 
 }

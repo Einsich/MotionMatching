@@ -23,7 +23,7 @@ static void spawn_coin_effect_single_handler(ecs::EntityId eid, const ecs::Event
 
 static void registration_pull_coin_effect()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/coin_effect.inl:10",
   "coin_move",
   &coin_move__cache__,
@@ -43,9 +43,9 @@ static void registration_pull_coin_effect()
   {},
   {},
   {},
-  &coin_move_implementation));
+  &coin_move_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/coin_effect.inl:34",
   "spawn_coin_effect",
   &spawn_coin_effect__cache__,
@@ -58,7 +58,7 @@ static void registration_pull_coin_effect()
   {},
   {},
   {},
-  &spawn_coin_effect_handler, &spawn_coin_effect_single_handler),
+  &spawn_coin_effect_handler, &spawn_coin_effect_single_handler,
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
 
 }

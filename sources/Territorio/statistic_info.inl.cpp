@@ -31,7 +31,7 @@ static void move_text_single_handler(ecs::EntityId eid, const ecs::Event &event)
 
 static void registration_pull_statistic_info()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:105",
   "gather_lands",
   &gather_lands__cache__,
@@ -44,9 +44,9 @@ static void registration_pull_statistic_info()
     {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
   },
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:92",
   "show_statistic",
   &show_statistic__cache__,
@@ -59,9 +59,9 @@ static void registration_pull_statistic_info()
   {},
   {},
   {},
-  &show_statistic_implementation));
+  &show_statistic_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/statistic_info.inl:141",
   "move_text",
   &move_text__cache__,
@@ -74,7 +74,7 @@ static void registration_pull_statistic_info()
   {},
   {},
   {},
-  &move_text_handler, &move_text_single_handler),
+  &move_text_handler, &move_text_single_handler,
   ecs::EventIndex<MouseMoveEvent>::value);
 
 }

@@ -42,7 +42,7 @@ static void init_animation_material_single_handler(ecs::EntityId eid, const ecs:
 
 static void registration_pull_animation_player()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/animation_player.inl:10",
   "animation_player_update",
   &animation_player_update__cache__,
@@ -56,9 +56,9 @@ static void registration_pull_animation_player()
   {},
   {},
   {},
-  &animation_player_update_implementation));
+  &animation_player_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/animation_player.inl:50",
   "update_bone_remap",
   &update_bone_remap__cache__,
@@ -73,9 +73,9 @@ static void registration_pull_animation_player()
   {},
   {},
   {},
-  &update_bone_remap_implementation));
+  &update_bone_remap_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/animation_player.inl:28",
   "init_animation_character",
   &init_animation_character__cache__,
@@ -87,10 +87,10 @@ static void registration_pull_animation_player()
   {},
   {},
   {},
-  &init_animation_character_handler, &init_animation_character_single_handler),
+  &init_animation_character_handler, &init_animation_character_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/animation_player.inl:68",
   "init_animation_material",
   &init_animation_material__cache__,
@@ -102,7 +102,7 @@ static void registration_pull_animation_player()
   {},
   {},
   {"game"},
-  &init_animation_material_handler, &init_animation_material_single_handler),
+  &init_animation_material_handler, &init_animation_material_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
 }

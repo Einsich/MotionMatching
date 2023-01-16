@@ -28,7 +28,7 @@ static void scene_destroy_single_handler(ecs::EntityId eid, const ecs::Event &ev
 
 static void registration_pull_start_scene()
 {
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/start_scene.inl:20",
   "init_anim_settings",
   &init_anim_settings__cache__,
@@ -42,10 +42,10 @@ static void registration_pull_start_scene()
   {},
   {},
   {"game"},
-  &init_anim_settings_handler, &init_anim_settings_single_handler),
+  &init_anim_settings_handler, &init_anim_settings_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/start_scene.inl:32",
   "scene_destroy",
   &scene_destroy__cache__,
@@ -59,7 +59,7 @@ static void registration_pull_start_scene()
   {},
   {},
   {},
-  &scene_destroy_handler, &scene_destroy_single_handler),
+  &scene_destroy_handler, &scene_destroy_single_handler,
   ecs::EventIndex<ecs::OnEntityDestroyed>::value);
 
 }

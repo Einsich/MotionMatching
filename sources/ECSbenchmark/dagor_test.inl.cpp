@@ -93,7 +93,7 @@ static void dag_init_single_handler(ecs::EntityId eid, const ecs::Event &event)
 
 static void registration_pull_dagor_test()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:141",
   "cache_trach",
   &cache_trach__cache__,
@@ -109,9 +109,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &cache_trach_implementation));
+  &cache_trach_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:153",
   "dag_soa_update",
   &dag_soa_update__cache__,
@@ -122,9 +122,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_soa_update_implementation));
+  &dag_soa_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:163",
   "prune_cache_",
   &prune_cache___cache__,
@@ -135,9 +135,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &prune_cache__implementation));
+  &prune_cache__implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:167",
   "dag_ecs_update",
   &dag_ecs_update__cache__,
@@ -151,9 +151,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_ecs_update_implementation));
+  &dag_ecs_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:172",
   "prune_cache0",
   &prune_cache0__cache__,
@@ -164,9 +164,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &prune_cache0_implementation));
+  &prune_cache0_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:177",
   "dag_vector_structs_update",
   &dag_vector_structs_update__cache__,
@@ -177,9 +177,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_vector_structs_update_implementation));
+  &dag_vector_structs_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:185",
   "prune_cache1",
   &prune_cache1__cache__,
@@ -190,9 +190,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &prune_cache1_implementation));
+  &prune_cache1_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:190",
   "dag_vector_pointers_update",
   &dag_vector_pointers_update__cache__,
@@ -203,9 +203,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_vector_pointers_update_implementation));
+  &dag_vector_pointers_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:198",
   "prune_cache2",
   &prune_cache2__cache__,
@@ -216,9 +216,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &prune_cache2_implementation));
+  &prune_cache2_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:203",
   "dag_vector_pointers_virtual_update",
   &dag_vector_pointers_virtual_update__cache__,
@@ -229,9 +229,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_vector_pointers_virtual_update_implementation));
+  &dag_vector_pointers_virtual_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:211",
   "prune_cache3",
   &prune_cache3__cache__,
@@ -242,9 +242,9 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &prune_cache3_implementation));
+  &prune_cache3_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSbenchmark/dagor_test.inl:39",
   "dag_init",
   &dag_init__cache__,
@@ -254,7 +254,7 @@ static void registration_pull_dagor_test()
   {},
   {},
   {},
-  &dag_init_handler, &dag_init_single_handler),
+  &dag_init_handler, &dag_init_single_handler,
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
 }

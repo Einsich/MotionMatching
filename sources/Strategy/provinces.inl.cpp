@@ -36,7 +36,7 @@ static void create_provinces_single_handler(ecs::EntityId eid, const ecs::Event 
 
 static void registration_pull_provinces()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/provinces.inl:31",
   "toggle_map_mode",
   &toggle_map_mode__cache__,
@@ -47,9 +47,9 @@ static void registration_pull_provinces()
     {"isTree", ecs::TypeIndex<ecs::Tag>::value}
   },
   {}
-  ));
+  );
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/provinces.inl:18",
   "change_terrain_mode",
   &change_terrain_mode__cache__,
@@ -63,10 +63,10 @@ static void registration_pull_provinces()
   {},
   {},
   {},
-  &change_terrain_mode_handler, &change_terrain_mode_single_handler),
+  &change_terrain_mode_handler, &change_terrain_mode_single_handler,
   ecs::EventIndex<KeyDownEvent<SDLK_m>>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/provinces.inl:37",
   "create_provinces",
   &create_provinces__cache__,
@@ -84,7 +84,7 @@ static void registration_pull_provinces()
   {},
   {},
   {},
-  &create_provinces_handler, &create_provinces_single_handler),
+  &create_provinces_handler, &create_provinces_single_handler,
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
 }

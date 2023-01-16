@@ -61,7 +61,7 @@ static void circle_attack_single_handler(ecs::EntityId eid, const ecs::Event &ev
 
 static void registration_pull_core_logic()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:12",
   "controll_targets",
   &controll_targets__cache__,
@@ -77,9 +77,9 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &controll_targets_implementation));
+  &controll_targets_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:77",
   "destroy_old_bullets",
   &destroy_old_bullets__cache__,
@@ -96,9 +96,9 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &destroy_old_bullets_implementation));
+  &destroy_old_bullets_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:89",
   "move_hero",
   &move_hero__cache__,
@@ -115,9 +115,9 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &move_hero_implementation));
+  &move_hero_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:31",
   "look_at_mouse_position_when_mouse_moves",
   &look_at_mouse_position_when_mouse_moves__cache__,
@@ -132,10 +132,10 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &look_at_mouse_position_when_mouse_moves_handler, &look_at_mouse_position_when_mouse_moves_single_handler),
+  &look_at_mouse_position_when_mouse_moves_handler, &look_at_mouse_position_when_mouse_moves_single_handler,
   ecs::EventIndex<MouseMoveEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:52",
   "fire_when_mouse_click",
   &fire_when_mouse_click__cache__,
@@ -152,10 +152,10 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &fire_when_mouse_click_handler, &fire_when_mouse_click_single_handler),
+  &fire_when_mouse_click_handler, &fire_when_mouse_click_single_handler,
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/core_logic.inl:66",
   "circle_attack",
   &circle_attack__cache__,
@@ -170,7 +170,7 @@ static void registration_pull_core_logic()
   {},
   {},
   {},
-  &circle_attack_handler, &circle_attack_single_handler),
+  &circle_attack_handler, &circle_attack_single_handler,
   ecs::EventIndex<KeyDownEvent<SDLK_SPACE>>::value);
 
 }

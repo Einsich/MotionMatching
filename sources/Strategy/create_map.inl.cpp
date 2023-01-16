@@ -28,7 +28,7 @@ static void spawn_buildings_single_handler(ecs::EntityId eid, const ecs::Event &
 
 static void registration_pull_create_map()
 {
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/create_map.inl:47",
   "scene_created",
   &scene_created__cache__,
@@ -38,10 +38,10 @@ static void registration_pull_create_map()
   {},
   {},
   {},
-  &scene_created_handler, &scene_created_single_handler),
+  &scene_created_handler, &scene_created_single_handler,
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Strategy/create_map.inl:66",
   "spawn_buildings",
   &spawn_buildings__cache__,
@@ -56,7 +56,7 @@ static void registration_pull_create_map()
   {},
   {},
   {},
-  &spawn_buildings_handler, &spawn_buildings_single_handler),
+  &spawn_buildings_handler, &spawn_buildings_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
 }

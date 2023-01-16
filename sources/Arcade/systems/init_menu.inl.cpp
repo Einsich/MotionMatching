@@ -30,7 +30,7 @@ static void setup_camera_single_handler(ecs::EntityId eid, const ecs::Event &eve
 
 static void registration_pull_init_menu()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_menu.inl:34",
   "start_game_button",
   &start_game_button__cache__,
@@ -46,9 +46,9 @@ static void registration_pull_init_menu()
   {},
   {},
   {},
-  &start_game_button_implementation));
+  &start_game_button_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_menu.inl:51",
   "exit_menu_button",
   &exit_menu_button__cache__,
@@ -63,9 +63,9 @@ static void registration_pull_init_menu()
   {},
   {},
   {},
-  &exit_menu_button_implementation));
+  &exit_menu_button_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_menu.inl:14",
   "setup_camera",
   &setup_camera__cache__,
@@ -80,7 +80,7 @@ static void registration_pull_init_menu()
   {},
   {},
   {},
-  &setup_camera_handler, &setup_camera_single_handler),
+  &setup_camera_handler, &setup_camera_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
 }

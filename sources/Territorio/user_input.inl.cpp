@@ -70,7 +70,7 @@ static void select_invasion_single_handler(ecs::EntityId eid, const ecs::Event &
 
 static void registration_pull_user_input()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:12",
   "is_game_started",
   &is_game_started__cache__,
@@ -79,9 +79,9 @@ static void registration_pull_user_input()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:41",
   "select_map_query",
   &select_map_query__cache__,
@@ -90,9 +90,9 @@ static void registration_pull_user_input()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:90",
   "change_invasion_weight",
   &change_invasion_weight__cache__,
@@ -108,9 +108,9 @@ static void registration_pull_user_input()
   {},
   {},
   {},
-  &change_invasion_weight_implementation));
+  &change_invasion_weight_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:103",
   "check_mouse_over_ui",
   &check_mouse_over_ui__cache__,
@@ -121,9 +121,9 @@ static void registration_pull_user_input()
   {},
   {},
   {},
-  &check_mouse_over_ui_implementation));
+  &check_mouse_over_ui_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:10",
   "start_game",
   &start_game__cache__,
@@ -135,10 +135,10 @@ static void registration_pull_user_input()
   {},
   {},
   {},
-  &start_game_handler, &start_game_single_handler),
+  &start_game_handler, &start_game_single_handler,
   ecs::EventIndex<KeyDownEvent<SDLK_RETURN>>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:36",
   "select_spawn_point",
   &select_spawn_point__cache__,
@@ -152,10 +152,10 @@ static void registration_pull_user_input()
   {},
   {},
   {},
-  &select_spawn_point_handler, &select_spawn_point_single_handler),
+  &select_spawn_point_handler, &select_spawn_point_single_handler,
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::RightButton>>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/user_input.inl:57",
   "select_invasion",
   &select_invasion__cache__,
@@ -174,7 +174,7 @@ static void registration_pull_user_input()
   {},
   {},
   {},
-  &select_invasion_handler, &select_invasion_single_handler),
+  &select_invasion_handler, &select_invasion_single_handler,
   ecs::EventIndex<MouseButtonDownEvent<MouseButton::LeftButton>>::value);
 
 }

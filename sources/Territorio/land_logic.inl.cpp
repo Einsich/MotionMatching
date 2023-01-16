@@ -85,7 +85,7 @@ static void game_started_single_handler(ecs::EntityId eid, const ecs::Event &eve
 
 static void registration_pull_land_logic()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:142",
   "lands_economic",
   &lands_economic__cache__,
@@ -97,9 +97,9 @@ static void registration_pull_land_logic()
     {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
   },
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:151",
   "gather_invaders",
   &gather_invaders__cache__,
@@ -110,9 +110,9 @@ static void registration_pull_land_logic()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:231",
   "gather_invaders2",
   &gather_invaders2__cache__,
@@ -125,9 +125,9 @@ static void registration_pull_land_logic()
     {"isPlayableLand", ecs::TypeIndex<ecs::Tag>::value}
   },
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:246",
   "query_victim2",
   &query_victim2__cache__,
@@ -138,9 +138,9 @@ static void registration_pull_land_logic()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:25",
   "query_neighbor",
   &query_neighbor__cache__,
@@ -151,9 +151,9 @@ static void registration_pull_land_logic()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:162",
   "query_victim",
   &query_victim__cache__,
@@ -164,9 +164,9 @@ static void registration_pull_land_logic()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:72",
   "update_bot_invasions",
   &update_bot_invasions__cache__,
@@ -183,9 +183,9 @@ static void registration_pull_land_logic()
   {},
   {},
   {},
-  &update_bot_invasions_implementation));
+  &update_bot_invasions_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:122",
   "map_update",
   &map_update__cache__,
@@ -206,9 +206,9 @@ static void registration_pull_land_logic()
   {},
   {},
   {},
-  &map_update_implementation));
+  &map_update_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:209",
   "border_update",
   &border_update__cache__,
@@ -222,9 +222,9 @@ static void registration_pull_land_logic()
   {},
   {},
   {},
-  &border_update_implementation));
+  &border_update_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/land_logic.inl:47",
   "game_started",
   &game_started__cache__,
@@ -240,7 +240,7 @@ static void registration_pull_land_logic()
   {},
   {},
   {},
-  &game_started_handler, &game_started_single_handler),
+  &game_started_handler, &game_started_single_handler,
   ecs::EventIndex<OnGameStarted>::value);
 
 }

@@ -11,7 +11,7 @@ static void process_animation_implementation()
 
 static void registration_pull_render_system()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/render_system.inl:10",
   "process_animation",
   &process_animation__cache__,
@@ -28,7 +28,7 @@ static void registration_pull_render_system()
   {},
   {"lod_selector"},
   {},
-  &process_animation_implementation));
+  &process_animation_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_render_system)

@@ -28,7 +28,7 @@ static void load_scene_event_single_handler(ecs::EntityId eid, const ecs::Event 
 
 static void registration_pull_init_scene()
 {
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_scene.inl:8",
   "init_sprites_shaders_camera",
   &init_sprites_shaders_camera__cache__,
@@ -41,10 +41,10 @@ static void registration_pull_init_scene()
   {},
   {},
   {},
-  &init_sprites_shaders_camera_handler, &init_sprites_shaders_camera_single_handler),
+  &init_sprites_shaders_camera_handler, &init_sprites_shaders_camera_single_handler,
   ecs::EventIndex<ecs::OnSceneCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Arcade/systems/init_scene.inl:33",
   "load_scene_event",
   &load_scene_event__cache__,
@@ -54,7 +54,7 @@ static void registration_pull_init_scene()
   {},
   {},
   {},
-  &load_scene_event_handler, &load_scene_event_single_handler),
+  &load_scene_event_handler, &load_scene_event_single_handler,
   ecs::EventIndex<LoadSceneEvent>::value);
 
 }

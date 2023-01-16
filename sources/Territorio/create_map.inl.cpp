@@ -24,7 +24,7 @@ static void create_map_single_handler(ecs::EntityId eid, const ecs::Event &event
 
 static void registration_pull_create_map()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/create_map.inl:31",
   "spawn_player_query",
   &spawn_player_query__cache__,
@@ -36,9 +36,9 @@ static void registration_pull_create_map()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/Territorio/create_map.inl:55",
   "create_map",
   &create_map__cache__,
@@ -57,7 +57,7 @@ static void registration_pull_create_map()
   {},
   {},
   {},
-  &create_map_handler, &create_map_single_handler),
+  &create_map_handler, &create_map_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
 }

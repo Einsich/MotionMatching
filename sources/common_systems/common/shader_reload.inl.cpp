@@ -48,7 +48,7 @@ static void reload_directional_light_single_handler(ecs::EntityId eid, const ecs
 
 static void registration_pull_shader_reload()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/shader_reload.inl:29",
   "update_material",
   &update_material__cache__,
@@ -57,9 +57,9 @@ static void registration_pull_shader_reload()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/shader_reload.inl:24",
   "reload_shaders",
   &reload_shaders__cache__,
@@ -69,10 +69,10 @@ static void registration_pull_shader_reload()
   {},
   {},
   {"debug"},
-  &reload_shaders_handler, &reload_shaders_single_handler),
+  &reload_shaders_handler, &reload_shaders_single_handler,
   ecs::EventIndex<KeyDownEvent<SDLK_F5>>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/shader_reload.inl:33",
   "load_directional_light",
   &load_directional_light__cache__,
@@ -84,10 +84,10 @@ static void registration_pull_shader_reload()
   {},
   {},
   {},
-  &load_directional_light_handler, &load_directional_light_single_handler),
+  &load_directional_light_handler, &load_directional_light_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/common_systems/common/shader_reload.inl:38",
   "reload_directional_light",
   &reload_directional_light__cache__,
@@ -99,7 +99,7 @@ static void registration_pull_shader_reload()
   {},
   {},
   {"editor"},
-  &reload_directional_light_handler, &reload_directional_light_single_handler),
+  &reload_directional_light_handler, &reload_directional_light_single_handler,
   ecs::EventIndex<OnEntityEdited>::value);
 
 }

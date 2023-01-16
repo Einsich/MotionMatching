@@ -79,7 +79,7 @@ static void animation_player_handler_single_handler(ecs::EntityId eid, const ecs
 
 static void registration_pull_third_person_controller()
 {
-  ecs::register_query(ecs::QueryDescription(
+  ecs::register_query(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:50",
   "update_attached_camera",
   &update_attached_camera__cache__,
@@ -88,9 +88,9 @@ static void registration_pull_third_person_controller()
   },
   {},
   {}
-  ));
+  );
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:36",
   "third_peson_controller_update",
   &third_peson_controller_update__cache__,
@@ -105,9 +105,9 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &third_peson_controller_update_implementation));
+  &third_peson_controller_update_implementation);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:18",
   "third_controller_appear",
   &third_controller_appear__cache__,
@@ -120,10 +120,10 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &third_controller_appear_handler, &third_controller_appear_single_handler),
+  &third_controller_appear_handler, &third_controller_appear_single_handler,
   ecs::EventIndex<ecs::OnEntityCreated>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:60",
   "mouse_move_handler",
   &mouse_move_handler__cache__,
@@ -138,10 +138,10 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &mouse_move_handler_handler, &mouse_move_handler_single_handler),
+  &mouse_move_handler_handler, &mouse_move_handler_single_handler,
   ecs::EventIndex<MouseMoveEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:82",
   "mouse_wheel_handler",
   &mouse_wheel_handler__cache__,
@@ -153,10 +153,10 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &mouse_wheel_handler_handler, &mouse_wheel_handler_single_handler),
+  &mouse_wheel_handler_handler, &mouse_wheel_handler_single_handler,
   ecs::EventIndex<MouseWheelEvent>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:92",
   "crouch_event_handler",
   &crouch_event_handler__cache__,
@@ -170,10 +170,10 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &crouch_event_handler_handler, &crouch_event_handler_single_handler),
+  &crouch_event_handler_handler, &crouch_event_handler_single_handler,
   ecs::EventIndex<KeyEventAnyActionKey>::value);
 
-  ecs::register_event(ecs::EventDescription(
+  ecs::register_event(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/third_person_controller.inl:98",
   "animation_player_handler",
   &animation_player_handler__cache__,
@@ -187,7 +187,7 @@ static void registration_pull_third_person_controller()
   {},
   {},
   {},
-  &animation_player_handler_handler, &animation_player_handler_single_handler),
+  &animation_player_handler_handler, &animation_player_handler_single_handler,
   ecs::EventIndex<KeyEventAnyActionKey>::value);
 
 }

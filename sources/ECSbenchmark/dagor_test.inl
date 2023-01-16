@@ -40,7 +40,7 @@ EVENT() dag_init(const ecs::OnSceneCreated &)
 {
   return;
   debug_log("struct sizeof = %d", sizeof(DagorTestEntity));
-  ecs::prefab_id tmpl1 = ecs::create_entity_prefab(ecs::EntityPrefab("test1", {
+  ecs::prefab_id tmpl1 = ecs::create_entity_prefab("test1", {
     {"p", vec3()},
     {"v", vec3()},
     {"int_variable", 10},
@@ -55,7 +55,7 @@ EVENT() dag_init(const ecs::OnSceneCreated &)
     {"data7", mat4(1.f)},
     {"data8", mat4(1.f)},
     {"data9", mat4(1.f)}
-  }));
+  });
   {
     TimeScope a("ecs_create");
     for (uint i = 0; i < dagorEntityCount; i++)

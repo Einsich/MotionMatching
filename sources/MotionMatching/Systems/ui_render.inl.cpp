@@ -39,7 +39,7 @@ static void mm_early_text_perf_implementation()
 
 static void registration_pull_ui_render()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/ui_render.inl:103",
   "briefing_ui",
   &briefing_ui__cache__,
@@ -50,9 +50,9 @@ static void registration_pull_ui_render()
   {},
   {},
   {},
-  &briefing_ui_implementation));
+  &briefing_ui_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/ui_render.inl:117",
   "motion_matching_statistic",
   &motion_matching_statistic__cache__,
@@ -69,9 +69,9 @@ static void registration_pull_ui_render()
   {},
   {},
   {},
-  &motion_matching_statistic_implementation));
+  &motion_matching_statistic_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/ui_render.inl:145",
   "current_anim_index",
   &current_anim_index__cache__,
@@ -86,9 +86,9 @@ static void registration_pull_ui_render()
   {},
   {},
   {},
-  &current_anim_index_implementation));
+  &current_anim_index_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/ui_render.inl:242",
   "menu_ui",
   &menu_ui__cache__,
@@ -102,9 +102,9 @@ static void registration_pull_ui_render()
   {},
   {},
   {},
-  &menu_ui_implementation));
+  &menu_ui_implementation);
 
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/ui_render.inl:253",
   "mm_early_text_perf",
   &mm_early_text_perf__cache__,
@@ -117,7 +117,7 @@ static void registration_pull_ui_render()
   {},
   {},
   {},
-  &mm_early_text_perf_implementation));
+  &mm_early_text_perf_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_ui_render)

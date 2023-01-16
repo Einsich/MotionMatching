@@ -11,7 +11,7 @@ static void motion_matching_update_implementation()
 
 static void registration_pull_motion_matching()
 {
-  ecs::register_system(ecs::SystemDescription(
+  ecs::register_system(
   "C:/Users/Lord/workDirectory/MotionMatching/sources/MotionMatching/Systems/motion_matching.inl:91",
   "motion_matching_update",
   &motion_matching_update__cache__,
@@ -33,7 +33,7 @@ static void registration_pull_motion_matching()
   {"animation_player_update"},
   {},
   {"game"},
-  &motion_matching_update_implementation));
+  &motion_matching_update_implementation);
 
 }
 ECS_FILE_REGISTRATION(&registration_pull_motion_matching)

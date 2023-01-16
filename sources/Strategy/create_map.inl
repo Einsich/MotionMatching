@@ -48,11 +48,11 @@ EVENT() scene_created(const ecs::OnSceneCreated&)
 {
   Asset<Mesh> flag = create_flag(1, 2, 1.5f, 0.02f);
   Asset<Material> flag_mat = get_resource<Material>("flag");
-  const ecs::prefab_id flagTemplate = ecs::create_entity_prefab(ecs::EntityPrefab("flag", {
+  const ecs::prefab_id flagTemplate = ecs::create_entity_prefab("flag", {
       {"transform", Transform()},
       {"mesh", flag},
       {"material", flag_mat}
-  }));
+  });
 
   uint N = 5;
   for (uint i = 0; i < N; i++)
