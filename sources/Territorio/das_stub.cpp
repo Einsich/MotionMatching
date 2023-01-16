@@ -11,3 +11,8 @@ void tick_dascript()
 {
 
 }
+
+void game_main_loop()
+{
+
+}

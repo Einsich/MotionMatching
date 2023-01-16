@@ -162,3 +162,8 @@ SYSTEM(stage=act) test_request_send()
   ecs::send_request(r);
   //debug_log("sum = %d", r.sum);
 }
+
+void game_main_loop()
+{
+
+}
