@@ -26,6 +26,8 @@ void init_dascript();
 void close_dascript();
 void tick_dascript();
 
+void game_main_loop();
+
 Application::Application(const std::string &project_name, const std::string &root, int width, int height, bool full_screen):
 context(project_name, width, height, full_screen), timer(), scene(new SceneManager()),
 root(root),
@@ -173,6 +175,7 @@ void Application::main_loop()
       ecs::update_archetype_manager();
       ecs::perform_deffered_events();
 
+      game_main_loop();
       ecs::perform_stage("act");
       Application::instance().get_context().swap_buffer();
       ecs::perform_stage("before_render");

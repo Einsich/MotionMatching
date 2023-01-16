@@ -247,6 +247,6 @@ namespace ecs_ex
     linearize_extends(rawTemplates);
 
     for (RawTemplate &tmpl : rawTemplates)
-      ecs::create_entity_prefab(ecs::EntityPrefab(tmpl.name.c_str(), std::move(tmpl.components)));
+      ecs::create_entity_prefab(tmpl.name.c_str(), std::move(tmpl.components));
   }
 }

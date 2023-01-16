@@ -391,7 +391,14 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
 
   for(auto &system : unresolvedQueries)
   {
-    file.resolvedQueries.emplace_back(ecs::register_query(std::move(system)));
+    file.resolvedQueries.emplace_back(ecs::register_query(
+      std::move(system.file),
+      std::move(system.name),
+      system.cache,
+      std::move(system.arguments),
+      std::move(system.requiredComponents),
+      std::move(system.requiredNotComponents)
+      ));
   }
 
   for(auto &[system, mangledHash] : unresolvedSystems)
@@ -401,11 +408,22 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     {
       continue;
     }
-    system.system = [cache = system.cache, ctx, loopFunc]()
+
+    file.resolvedSystems.emplace_back(ecs::register_system(
+      std::move(system.file),
+      std::move(system.name),
+      system.cache,
+      std::move(system.arguments),
+      std::move(system.requiredComponents),
+      std::move(system.requiredNotComponents),
+      std::move(system.stage),
+      std::move(system.before),
+      std::move(system.after),
+      std::move(system.tags),
+      [cache = system.cache, ctx, loopFunc]()
       {
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);});
-      };
-    file.resolvedSystems.emplace_back(ecs::register_system(std::move(system)));
+      }));
   }
 
   for (auto &[system, types, mangledHash] : unresolvedEvents)
@@ -415,22 +433,32 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     {
       continue;
     }
-    system.broadcastEventHandler = [cache = system.cache, ctx, loopFunc](const ecs::Event &event)
+
+    for (const auto &type : types)
+    {
+      auto copy = system;
+      int eventId = ecs::event_name_to_index(type.c_str());
+      file.resolvedEvents.emplace_back(ecs::register_event(
+      std::move(copy.file),
+      std::move(copy.name),
+      copy.cache,
+      std::move(copy.arguments),
+      std::move(copy.requiredComponents),
+      std::move(copy.requiredNotComponents),
+      std::move(copy.before),
+      std::move(copy.after),
+      std::move(copy.tags),
+      [cache = copy.cache, ctx, loopFunc](const ecs::Event &event)
       {
         vec4f eventArg = das::cast<const ecs::Event &>::from(event);
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
-      };
-
-    system.unicastEventHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, const ecs::Event &event)
+      },
+      [cache = copy.cache, ctx, loopFunc](ecs:: EntityId eid, const ecs::Event &event)
       {
         vec4f eventArg = das::cast<const ecs::Event &>::from(event);
         perform_ecs_eid_query(eid, *cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
-      };
-    for (const auto &type : types)
-    {
-      auto eventCopy = system;
-      int eventId = ecs::event_name_to_index(type.c_str());
-      file.resolvedEvents.emplace_back(ecs::register_event(std::move(eventCopy), eventId));
+      }
+      , eventId));
     }
   }
 
@@ -441,22 +469,32 @@ void resolve_systems(const das::ContextPtr &ctx, DasFile &file)
     {
       continue;
     }
-    system.broadcastRequestHandler = [cache = system.cache, ctx, loopFunc](ecs::Request &request)
+
+    for (const auto &type : types)
+    {
+      auto copy = system;
+      int eventId = ecs::request_name_to_index(type.c_str());
+      file.resolvedRequests.emplace_back(ecs::register_request(
+      std::move(copy.file),
+      std::move(copy.name),
+      copy.cache,
+      std::move(copy.arguments),
+      std::move(copy.requiredComponents),
+      std::move(copy.requiredNotComponents),
+      std::move(copy.before),
+      std::move(copy.after),
+      std::move(copy.tags),
+      [cache = system.cache, ctx, loopFunc](ecs::Request &request)
       {
         vec4f eventArg = das::cast<ecs::Request &>::from(request);
         perform_ecs_loop(*cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
-      };
-
-    system.unicastRequestHandler = [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, ecs::Request &event)
+      },
+      [cache = system.cache, ctx, loopFunc](ecs:: EntityId eid, ecs::Request &event)
       {
         vec4f eventArg = das::cast<ecs::Request &>::from(event);
         perform_ecs_eid_query(eid, *cache, [&](vec4f *args) { ctx->call(loopFunc, args, nullptr);}, &eventArg);
-      };
-    for (const auto &type : types)
-    {
-      auto eventCopy = system;
-      int eventId = ecs::request_name_to_index(type.c_str());
-      file.resolvedRequests.emplace_back(ecs::register_request(std::move(eventCopy), eventId));
+      }
+      , eventId));
     }
   }
   clear_unresolved_systems();
@@ -623,7 +661,7 @@ ecs::prefab_id create_entity_prefab(const char *name, const InitBlock &block, da
   ComponentInitializer overrides_list;
   vec4f args = das::cast<ComponentInitializer&>::from(overrides_list);
   context->invoke(block, &args, nullptr, at);
-  return ecs::create_entity_prefab(ecs::EntityPrefab(name, std::move(overrides_list)));
+  return ecs::create_entity_prefab(name, std::move(overrides_list));
 }
 
 #include <3dmath.h>
