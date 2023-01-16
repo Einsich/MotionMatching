@@ -154,6 +154,13 @@
           "name": "Territorio",
           "delpoy_only_project_folder": "true"
         }
+      },
+      {
+        "name": "ECSMultiThreading",
+        "value": {
+          "name": "ECSMultiThreading",
+          "delpoy_only_project_folder": "true"
+        }
       }
     ],
     "NeedAotGeneration": [
@@ -170,7 +177,8 @@
   "launchOption.currentConfig": {
     "BuildType": "dbg",
     "Project": {
-      "name": "ECSbenchmark"
+      "name": "ECSMultiThreading",
+      "delpoy_only_project_folder": "true"
     },
     "NeedAotGeneration": ""
   },
