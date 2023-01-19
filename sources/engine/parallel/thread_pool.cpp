@@ -17,6 +17,7 @@ struct thread_pool {
 
   std::vector<std::thread> workers;
   int busyWorkers = 0;
+  int numWorkers = 0;
   bool terminatePool;
 
   void add_job(std::function<void()>&& f) {
@@ -29,9 +30,9 @@ struct thread_pool {
 
   thread_pool():terminatePool(false)
   {
-    auto num_threads = std::thread::hardware_concurrency();
-    busyWorkers = num_threads;
-    for (std::size_t i = 0; i < num_threads; ++i)
+    numWorkers = std::thread::hardware_concurrency();
+    busyWorkers = numWorkers;
+    for (int i = 0; i < numWorkers; ++i)
     {
       workers.emplace_back(std::thread(&thread_pool::infinite_loop, this, i));
     }
@@ -50,7 +51,7 @@ struct thread_pool {
     workers.clear();
   }
 private:
-  void infinite_loop(std::size_t idx) {
+  void infinite_loop(int idx) {
     std::string name = "Worker" + std::to_string(idx);
     OPTICK_THREAD(name.c_str());
     while (true){
@@ -74,6 +75,17 @@ private:
 };
 
 static thread_pool threadPool;
+static thread_local int currentThreadId = -1;
+
+int get_current_thread_id()
+{
+  return currentThreadId;
+}
+
+int get_worker_count()
+{
+  return threadPool.numWorkers;
+}
 
 void add_job(std::function<void()>&& f)
 {

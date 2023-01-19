@@ -4,12 +4,15 @@
 #include "application/time.h"
 #include <list>
 #include <stdarg.h>
+#include <mutex>
+
 const int MaxQueueSize = 32;
 struct Message
 {
   std::string message;
   bool status;
 };
+static std::mutex m;
 std::list<Message> &messages_list()
 {
   static std::list<Message> q;
@@ -23,6 +26,7 @@ void debug_common(const char *fmt, int status, va_list args)
 {
   vsnprintf(messageBuf, messageLen, fmt, args);
   snprintf(timeBuf, timeLen, "[%.2f] ", Time::time());
+  std::unique_lock read_write_lock(m);
   auto &q = messages_list();
   if (q.size() >= MaxQueueSize)
   {
@@ -57,6 +61,7 @@ void debug_log(const char *fmt, ...)
 
 void debug_show()
 {
+  std::unique_lock read_write_lock(m);
   for (const Message &m: messages_list())
     ImGui::TextColored(m.status ? ImVec4(1,1,1,1) : ImVec4(1,0.1f,0.1f,1) , "%s", m.message.c_str());
 }

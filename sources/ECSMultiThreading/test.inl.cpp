@@ -17,7 +17,7 @@ static void init_single_handler(ecs::EntityId eid, const ecs::Event &event)
 static void registration_pull_test()
 {
   ecs::register_event(
-  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSMultiThreading/test.inl:162",
+  "C:/Users/Lord/workDirectory/MotionMatching/sources/ECSMultiThreading/test.inl:168",
   "init",
   &init__cache__,
   {},

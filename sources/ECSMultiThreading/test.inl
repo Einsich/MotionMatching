@@ -88,6 +88,12 @@ template<typename F>
 static void create_system(int system_idx, int args_count, const char *stage, F f)
 {
   std::string name = "system_" + std::to_string(system_idx);
+
+  ecs::vector<ecs::string> after;
+  for (int i = 0, n = rand() % 2; system_idx != 0 && i < n; i++)
+  {
+    after.emplace_back("system_" + std::to_string(rand() % system_idx));
+  }
   ecs::QueryCache *cache = new ecs::QueryCache();
   ecs::vector<ecs::ArgumentDescription> args;
 
@@ -105,7 +111,7 @@ static void create_system(int system_idx, int args_count, const char *stage, F f
   ecs::register_system(
     "", name.c_str(), cache,
     std::move(args),
-    {}, {}, stage, {}, {}, {},
+    {}, {}, stage, {}, std::move(after), {},
     [cache, f]() { ecs::perform_system(*cache, f); });
 }
 
@@ -163,40 +169,35 @@ EVENT() init(const ecs::OnSceneCreated &)
 {
   init_systems();
   init_entities();
-  auto &mgr = ecs::get_query_manager();
-  auto id = mgr.findStageId("one_thread");
-  const auto &systems = mgr.activeSystems[id];
-  for (auto sys1 : systems)
-    for (auto sys2 : systems)
-    {
-      if (sys1 == sys2)
-        continue;
-
-      bool haveDataRace = false;
-      for (const auto &arg1 : sys1->arguments)
-      {
-        for (const auto &arg2 : sys2->arguments)
-        {
-          if (arg2.fastCompare(arg1) &&
-              (arg2.accessType == ecs::AccessType::ReadWrite ||
-              arg1.accessType == ecs::AccessType::ReadWrite))
-          {
-            haveDataRace = true;
-            break;
-          }
-        }
-        if (haveDataRace)
-          break;
-      }
-      if (haveDataRace)
-      {
-        ECS_LOG("%s %s have datarace", sys1->name.c_str(), sys2->name.c_str());
-      }
-    }
 }
 
 #include <profiler.h>
 #include <parallel/thread_pool.h>
+#include <mutex>
+
+static std::mutex m;
+static ecs::vector<ecs::QueryDescription*> currentTasks;
+
+static bool can_execute_query(const ecs::QueryDescription *test_query, int thread_id)
+{
+  for (auto previous_task : test_query->mtDescription.shouldWait)
+    if (previous_task->mtDescription.pendingCount > 0)
+      return false;
+  for (int i = 0, n = currentTasks.size(); i < n; i++)
+  {
+    if (currentTasks[i] == test_query)
+      return false;
+    if (i != thread_id)
+    {
+      for (auto task_with_race : test_query->mtDescription.hasDataRace)
+        if (currentTasks[i] == task_with_race)
+          return false;
+    }
+  }
+  return true;
+}
+
+
 
 void game_main_loop()
 {
@@ -214,18 +215,70 @@ void game_main_loop()
   if (systems.empty())
     return;
   OPTICK_EVENT("multi_threading");
+  int workerCount = get_worker_count();
+  currentTasks.assign(workerCount, nullptr);
+  for (auto sys : systems)
+    sys->mtDescription.pendingCount++;
 
-  for (auto *system : systems)
+  for (int workerId = 0; workerId < workerCount; workerId++)
   {
-    add_job([system](){ OPTICK_EVENT_DYNAMIC(system->name.c_str()); system->system(); });
+    add_job([&systems, workerId]()
+    {
+      uint from = 0;
+      uint end = systems.size();
+      while (from != end)
+      {
+        uint cur;
+        {
+          std::unique_lock read_write_lock(m);
+
+          while (from != end && (systems[from]->mtDescription.pendingCount == 0))
+            ++from;
+          if (from == end)
+            break;
+          cur = from;
+          while (cur != end)
+          {
+            if (systems[cur]->mtDescription.pendingCount == 0)
+            {
+              ++cur;
+              continue;
+            }
+
+            if (can_execute_query(systems[cur], workerId))
+            {
+              ECS_ASSERT(systems[cur]->mtDescription.pendingCount == 1);
+              currentTasks[workerId] = systems[cur];
+              break;
+            }
+            else
+            {
+              ++cur;
+            }
+          }
+        }
+        if (cur == end)
+        {
+          //no task found
+          continue;
+        }
+        auto system = systems[cur];
+        {
+          OPTICK_EVENT_DYNAMIC(system->name.c_str());
+          system->system();
+        }
+        {
+          std::unique_lock write_lock(m);
+          currentTasks[workerId] = nullptr;
+          system->mtDescription.pendingCount--;
+          ECS_ASSERT(systems[cur]->mtDescription.pendingCount == 0);
+        }
+      }
+    });
   }
   wait_jobs();
+
+  for (auto sys : systems)
+    ECS_ASSERT(sys->mtDescription.pendingCount==0);
 }
 
-struct MultiThreadSystem
-{
-  ecs::vector<ecs::QueryDescription *> shouldWait;
-  ecs::vector<ecs::QueryDescription *> hasDataRace;
-  ecs::vector<ecs::QueryHandle> dependsOn;
-  bool onlyMainThread;
-};
