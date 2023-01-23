@@ -85,14 +85,14 @@ static void synthetic_system_4(int &a1, int &a2, int &a3, int &a4)
 constexpr int systemArgsCount = 4;
 
 template<typename F>
-static void create_system(int system_idx, int args_count, const char *stage, F f)
+static void create_system(const char *name_str, int system_idx, int args_count, const char *stage, F f)
 {
-  std::string name = "system_" + std::to_string(system_idx);
+  std::string name = name_str + std::to_string(system_idx);
 
   ecs::vector<ecs::string> after;
-  for (int i = 0, n = rand() % 2; system_idx != 0 && i < n; i++)
+  for (int i = 0, n = rand() % 3; system_idx != 0 && i < n; i++)
   {
-    after.emplace_back("system_" + std::to_string(rand() % system_idx));
+    after.emplace_back(name_str + std::to_string(rand() % system_idx));
   }
   ecs::QueryCache *cache = new ecs::QueryCache();
   ecs::vector<ecs::ArgumentDescription> args;
@@ -103,7 +103,7 @@ static void create_system(int system_idx, int args_count, const char *stage, F f
   [&](const char *name)
   { args.emplace_back(name, intTypeIdx, ecs::AccessType::ReadWrite, false, false); });
 
-  ECS_LOG("system_%d", system_idx);
+  ECS_LOG("%s%d", name_str, system_idx);
   for (const auto &arg : args)
     printf("%s, ", arg.name.c_str());
   printf("\n");
@@ -144,44 +144,55 @@ static void init_entities()
   ECS_LOG("created %d entities", totalEntityCount);
 }
 
-static void init_systems()
+static void init_systems(const char *name, const char *stage, int system_count[systemArgsCount])
 {
-  int systemCount[systemArgsCount] = {20, 15, 10, 5};
 
   int sysIdx = 0;
-  for (int i = 0; i < systemCount[0]; i++)
-    create_system(++sysIdx, 1, "one_thread", &synthetic_system_1);
-  for (int i = 0; i < systemCount[1]; i++)
-    create_system(++sysIdx, 2, "one_thread", &synthetic_system_2);
-  for (int i = 0; i < systemCount[2]; i++)
-    create_system(++sysIdx, 3, "one_thread", &synthetic_system_3);
-  for (int i = 0; i < systemCount[3]; i++)
-    create_system(++sysIdx, 4, "one_thread", &synthetic_system_4);
+  for (int i = 0; i < system_count[0]; i++)
+    create_system(name, ++sysIdx, 1, stage, &synthetic_system_1);
+  for (int i = 0; i < system_count[1]; i++)
+    create_system(name, ++sysIdx, 2, stage, &synthetic_system_2);
+  for (int i = 0; i < system_count[2]; i++)
+    create_system(name, ++sysIdx, 3, stage, &synthetic_system_3);
+  for (int i = 0; i < system_count[3]; i++)
+    create_system(name, ++sysIdx, 4, stage, &synthetic_system_4);
 
   int totalSystemCount = 0;
   for (int i = 0; i < systemArgsCount; i++)
-    totalSystemCount += systemCount[i];
+    totalSystemCount += system_count[i];
 
   ECS_LOG("created %d systems", totalSystemCount);
 }
 
 EVENT() init(const ecs::OnSceneCreated &)
 {
-  init_systems();
+  int actSystemCount[systemArgsCount] = {20, 15, 10, 5};
+  int renderSystemCount[systemArgsCount] = {10, 10, 10, 10};
+  init_systems("act_", "act_stage", actSystemCount);
+  init_systems("render_", "render_stage", renderSystemCount);
   init_entities();
 }
 
 #include <profiler.h>
 #include <parallel/thread_pool.h>
 #include <mutex>
+#include <shared_mutex>
 
-static std::mutex m;
+static std::shared_mutex m;
 static ecs::vector<ecs::QueryDescription*> currentTasks;
+
+static bool is_executing(const ecs::QueryDescription *test_query)
+{
+  for (auto task : currentTasks)
+    if (task == test_query)
+      return true;
+  return false;
+}
 
 static bool can_execute_query(const ecs::QueryDescription *test_query, int thread_id)
 {
   for (auto previous_task : test_query->mtDescription.shouldWait)
-    if (previous_task->mtDescription.pendingCount > 0)
+    if (!previous_task->mtDescription.executed)
       return false;
   for (int i = 0, n = currentTasks.size(); i < n; i++)
   {
@@ -197,7 +208,85 @@ static bool can_execute_query(const ecs::QueryDescription *test_query, int threa
   return true;
 }
 
+struct SystemQueue
+{
+  const ecs::vector<ecs::SystemDescription*> &systems;
+  uint from, end, current;
+  SystemQueue(const ecs::vector<ecs::SystemDescription*> &systems) :
+    systems(systems), from(0), end(systems.size()), current(0)
+  {
 
+    for (auto sys : systems)
+      sys->mtDescription.executed = false;
+  }
+  ~SystemQueue()
+  {
+    for (auto sys : systems)
+      ECS_ASSERT(sys->mtDescription.executed==true);
+  }
+
+  ecs::SystemDescription* get_next(int worker_id)
+  {
+    while (from != end && (systems[from]->mtDescription.executed || is_executing(systems[from])))
+      ++from;
+    if (from == end)
+      return nullptr;
+
+    current = from;
+
+    while (current != end)
+    {
+      if (!systems[current]->mtDescription.executed && can_execute_query(systems[current], worker_id))
+      {
+        ECS_ASSERT(!systems[current]->mtDescription.executed);
+        currentTasks[worker_id] = systems[current];
+        return systems[current];
+      }
+      else
+      {
+        ++current;
+      }
+    }
+    return nullptr;
+  }
+
+
+};
+static void finish_task(ecs::SystemDescription *task, int worker_id)
+{
+  OPTICK_EVENT("lock2");
+  std::unique_lock write_lock(m);
+  OPTICK_EVENT("under_lock2");
+  currentTasks[worker_id] = nullptr;
+  ECS_ASSERT(!task->mtDescription.executed);
+  task->mtDescription.executed = true;
+
+}
+
+ecs::SystemDescription * select_task(ecs::list<SystemQueue> &queues, int worker_id)
+{
+  OPTICK_EVENT("lock");
+  std::unique_lock read_write_lock(m);
+  OPTICK_EVENT("under_lock");
+
+  for (auto &q : queues)
+    if (auto task = q.get_next(worker_id))
+      return task;
+
+  return nullptr;
+}
+
+void process_stage_queue(ecs::list<SystemQueue> &q, int worker_id)
+{
+  while (auto task = select_task(q, worker_id))
+  {
+    {
+      OPTICK_EVENT_DYNAMIC(task->name.c_str());
+      task->system();
+    }
+    finish_task(task, worker_id);
+  }
+}
 
 void game_main_loop()
 {
@@ -205,80 +294,69 @@ void game_main_loop()
   one_thread = !one_thread;
   if (one_thread)
   {
-    ecs::perform_stage("one_thread");
+    ecs::perform_stage("act_stage");
+    ecs::perform_stage("render_stage");
     return;
   }
   auto &mgr = ecs::get_query_manager();
-  auto id = mgr.findStageId("one_thread");
-  const auto &systems = mgr.activeSystems[id];
+  auto actId = mgr.findStageId("act_stage");
+  auto renderId = mgr.findStageId("render_stage");
+  const auto &actSystems = mgr.activeSystems[actId];
+  const auto &renderSystems = mgr.activeSystems[renderId];
 
-  if (systems.empty())
-    return;
+
   OPTICK_EVENT("multi_threading");
-  int workerCount = get_worker_count();
-  currentTasks.assign(workerCount, nullptr);
-  for (auto sys : systems)
-    sys->mtDescription.pendingCount++;
+  int workerCount = get_worker_count()-1;
+  currentTasks.assign(workerCount+1, nullptr);
 
-  for (int workerId = 0; workerId < workerCount; workerId++)
+  ecs::list<SystemQueue> q;
+  q.emplace_back(actSystems);
+  q.emplace_back(renderSystems);
+
+  for (int workerId = 1; workerId <= workerCount; workerId++)
   {
-    add_job([&systems, workerId]()
+    add_job([&q, workerId]()
     {
-      uint from = 0;
-      uint end = systems.size();
-      while (from != end)
-      {
-        uint cur;
-        {
-          std::unique_lock read_write_lock(m);
-
-          while (from != end && (systems[from]->mtDescription.pendingCount == 0))
-            ++from;
-          if (from == end)
-            break;
-          cur = from;
-          while (cur != end)
-          {
-            if (systems[cur]->mtDescription.pendingCount == 0)
-            {
-              ++cur;
-              continue;
-            }
-
-            if (can_execute_query(systems[cur], workerId))
-            {
-              ECS_ASSERT(systems[cur]->mtDescription.pendingCount == 1);
-              currentTasks[workerId] = systems[cur];
-              break;
-            }
-            else
-            {
-              ++cur;
-            }
-          }
-        }
-        if (cur == end)
-        {
-          //no task found
-          continue;
-        }
-        auto system = systems[cur];
-        {
-          OPTICK_EVENT_DYNAMIC(system->name.c_str());
-          system->system();
-        }
-        {
-          std::unique_lock write_lock(m);
-          currentTasks[workerId] = nullptr;
-          system->mtDescription.pendingCount--;
-          ECS_ASSERT(systems[cur]->mtDescription.pendingCount == 0);
-        }
-      }
+      process_stage_queue(q, workerId);
     });
   }
+
+  process_stage_queue(q, 0);
+
   wait_jobs();
 
-  for (auto sys : systems)
-    ECS_ASSERT(sys->mtDescription.pendingCount==0);
 }
 
+
+SYSTEM(stage=imgui_render) ecs_view()
+{
+  static std::optional<ImVec2> prevPressedCursor;
+  static ImVec2 mouseDelta;
+
+  if (ImGui::Begin("ecs view"))
+  {
+    ImVec2 curDelta;
+    if (ImGui::IsMouseDown(1))
+    {
+      ImVec2 curPos = ImGui::GetMousePos();
+      if (prevPressedCursor)
+      {
+        curDelta = ImVec2(curPos.x - prevPressedCursor->x, curPos.y - prevPressedCursor->y);
+      }
+      prevPressedCursor = curPos;
+    }
+    else
+      prevPressedCursor = {};
+    ImDrawList &list = *ImGui::GetWindowDrawList();
+    ImVec2 pos = ImGui::GetWindowPos();
+    mouseDelta.x += curDelta.x;
+    mouseDelta.y += curDelta.y;
+    pos.x += mouseDelta.x;
+    pos.y += mouseDelta.y;
+    list.AddText(ImVec2(pos.x + 20, pos.y + 20), IM_COL32_WHITE, "lol");
+
+
+
+  }
+  ImGui::End();
+}

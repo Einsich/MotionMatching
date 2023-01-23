@@ -16,7 +16,7 @@ struct thread_pool {
   std::queue<std::function<void()>> tasks;
 
   std::vector<std::thread> workers;
-  int busyWorkers = 0;
+  std::atomic<int> busyWorkers = 0;
   int numWorkers = 0;
   bool terminatePool;
 
@@ -59,14 +59,14 @@ private:
       {
         // usual thread-safe queue code:
         std::unique_lock<std::mutex> l(m);
-        busyWorkers--;
+        busyWorkers.fetch_sub(1);
         if (tasks.empty()){
           v.wait(l,[&]{return !tasks.empty() || terminatePool;});
         }
         if (terminatePool)
           return;
         f = std::move(tasks.front());
-        busyWorkers++;
+        busyWorkers.fetch_add(1);
         tasks.pop();
       }
       f();
@@ -91,7 +91,7 @@ void add_job(std::function<void()>&& f)
 {
   threadPool.add_job(std::move(f));
 }
-
+#pragma clang optimize off
 void wait_jobs()
 {
   PROFILER_EVENT("thread_pool_wait")

@@ -175,7 +175,7 @@
     ],
   },
   "launchOption.currentConfig": {
-    "BuildType": "dbg",
+    "BuildType": "rel",
     "Project": {
       "name": "ECSMultiThreading",
       "delpoy_only_project_folder": "true"
